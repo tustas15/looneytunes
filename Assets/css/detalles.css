@@ -1,0 +1,109 @@
+/* Estilos generales */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f8f8;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* Encabezado */
+header {
+    background-color: #ff8c00; /* Naranja */
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0;
+}
+
+/* Navegación */
+nav {
+    background-color: #ff7f00; /* Naranja oscuro */
+    padding: 10px;
+    text-align: right;
+}
+
+nav a {
+    color: #fff;
+    text-decoration: none;
+    padding: 5px 10px;
+}
+
+nav a:hover {
+    background-color: #ff6600; /* Naranja más oscuro */
+}
+
+/* Título del cuestionario */
+h2 {
+    color: #ff8c00; /* Naranja */
+    margin-bottom: 20px;
+}
+
+/* Contenedores */
+.container {
+    margin: 20px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    max-width: 600px; /* Ancho máximo del contenedor */
+    width: 100%; /* Ancho del 100% para mantener la responsividad */
+}
+
+/* Tablas */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background-color: #ff8c00; /* Naranja */
+    color: #fff;
+}
+
+/* Formularios */
+form {
+    margin-top: 20px;
+}
+
+input[type="text"],
+input[type="date"],
+input[type="submit"] {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+input[type="submit"] {
+    background-color: #ff8c00; /* Naranja */
+    color: #fff;
+    cursor: pointer;
+}
+
+input[type="submit"]:hover {
+    background-color: #ff7f00; /* Naranja oscuro */
+}
+
+/* Enlaces */
+a {
+    color: #ff8c00; /* Naranja */
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
