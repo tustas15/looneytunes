@@ -1,11 +1,14 @@
 <?php
 // Conexión a la base de datos
 require_once('../Admin/configuracion/conexion.php');
+
 session_start();
+
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../Public/login.php");
     exit();
 }
+
 if (!isset($_SESSION['tipo_usuario'])) {
     echo "Tipo de usuario no definido.";
     exit();
@@ -13,13 +16,9 @@ if (!isset($_SESSION['tipo_usuario'])) {
 $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
 $tipo_usuario = $_SESSION['tipo_usuario'];
 
-
 $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
 $usuario = isset($_SESSION['usuario']) ? $_SESSION['usuario'] : 'Usuario';
 $tipo_usuario = $_SESSION['tipo_usuario'];
-
-
-
 
 try {
     // Consulta SQL
@@ -41,12 +40,12 @@ try {
     echo "Error al ejecutar la consulta: " . $e->getMessage();
 }
 
-include './includes/header.php';
+include './includespro/header.php';
 ?>
 
 <!-- Page Heading -->
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Bienvenido, Administrador <?= $nombre ?></h1>
+    <h1 class="h3 mb-0 text-gray-800"> Bienvenido, Administrador <?= $nombre ?></h1>
     <a href="./configuracion/respaldo/downloadFile.php" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Generar Respaldo</a>
 </div>
 
@@ -342,5 +341,5 @@ include './includes/header.php';
 
 
 <?php
-include './includes/footer.php';
+include './includespro/footer.php';
 ?>
