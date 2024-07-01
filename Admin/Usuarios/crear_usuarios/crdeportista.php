@@ -1,3 +1,19 @@
+<?php
+// Mostrar el mensaje de éxito o error desde procces_depo.php
+$message = '';
+if (isset($_GET['message'])) {
+    if ($_GET['message'] === 'success') {
+        $message = '<div style="margin: 20px; padding: 20px; border: 1px solid #4CAF50; background-color: #DFF2BF; color: #4CAF50; font-family: Arial, sans-serif; font-size: 16px; border-radius: 5px; text-align: center;">
+                        Registro exitoso
+                    </div>';
+    } else {
+        $message = '<div style="margin: 20px; padding: 20px; border: 1px solid #FF0000; background-color: #FFBABA; color: #D8000C; font-family: Arial, sans-serif; font-size: 16px; border-radius: 5px; text-align: center;">
+                        Error: ' . htmlspecialchars($_GET['message']) . '
+                    </div>';
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -45,7 +61,7 @@
                 <input type="text" class="form-control form-control-user" name="genero" placeholder="Genero" required>
             </div>
             <div class="form-group">
-                <input type="email" class="form-control form-control-user" id="exampleInputEmail" aria-describedby="emailHelp" placeholder="Introducir la dirección de correo electrónico..." required>
+                <input type="email" class="form-control form-control-user" name="correo_d" placeholder="Introducir la dirección de correo electrónico..." required>
             </div>
             <!-- Campo desplegable para seleccionar representante -->
             <div class="form-group">
@@ -72,6 +88,8 @@
             <button type="submit" class="btn btn-primary btn-user btn-block">Registrar Cuenta</button>
         </form>
         <!-- Fin del formulario de login -->
+
+        <?php echo $message; ?>
 
         <!-- Botón para volver atrás -->
         <div class="text-center mt-4">

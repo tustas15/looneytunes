@@ -1,8 +1,13 @@
 <?php
-include '../conexion/conexion.php';
+include './Admin/configuracion/conexion.php';
 
 try {
-    // Preparar la consulta SQL para insertar los datos en usuario
+    // Verificar que todos los campos están completos
+    if (!isset($_POST['nombre'], $_POST['apellido'], $_POST['experiencia'], $_POST['celular'], $_POST['correo'], $_POST['direccion'], $_POST['cedula'])) {
+        throw new Exception('Todos los campos son obligatorios.');
+    }
+
+    // Preparar la consulta SQL para insertar los datos en tab_usuarios
     $stmt = $conn->prepare("INSERT INTO tab_usuarios (usuario, pass) VALUES (:usuario, :pass)");
     // Encriptar la contraseña
     $hashed_password = password_hash($_POST['cedula'], PASSWORD_DEFAULT);
@@ -12,16 +17,17 @@ try {
     
     $stmt->execute();
 
-    $id_usuario= $conn->lastInsertId();
+    $id_usuario = $conn->lastInsertId();
 
-    $tipo='2';
+    $tipo = '2';
 
+    // Insertar en tab_usu_tipo
     $stmt = $conn->prepare('INSERT INTO tab_usu_tipo (id_tipo, id_usuario) VALUES (:id_tipo, :id_usuario)');
     $stmt->bindParam(':id_tipo', $tipo);
     $stmt->bindParam(':id_usuario', $id_usuario);
     $stmt->execute();
 
-    // Preparar la consulta SQL para insertar los datos
+    // Preparar la consulta SQL para insertar los datos en tab_entrenadores
     $stmt = $conn->prepare('INSERT INTO tab_entrenadores (id_usuario, nombre_entre, apellido_entre, experiencia_entre, celular_entre, correo_entre, direccion_entre, cedula_entre) 
     VALUES (:id_usuario, :nombre_entre, :apellido_entre, :experiencia_entre, :celular_entre, :correo_entre, :direccion_entre, :cedula_entre)');
     // Bind de parámetros
@@ -45,11 +51,11 @@ try {
     $stmt = $conn->prepare($query);
     $stmt->execute([$id_usuario, $evento, $ip]);
 
-    echo '<div style="margin: 20px; padding: 20px; border: 1px solid #4CAF50; background-color: #DFF2BF; color: #4CAF50; font-family: Arial, sans-serif; font-size: 16px; border-radius: 5px; text-align: center;">
-            Registro exitoso
-          </div>';
-} catch(PDOException $e) {
-    echo "Error: " . $e->getMessage();
+    // Redirigir con mensaje de éxito
+    header("Location: ../crentrenador.php?message=success");
+} catch (Exception $e) {
+    // Redirigir con mensaje de error
+    header("Location: ../crentrenador.php?message=" . urlencode($e->getMessage()));
 }
 
 // Cerrar la conexión

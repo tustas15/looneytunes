@@ -1,8 +1,13 @@
 <?php
-include '../conexion/conexion.php';
+include './Admin/configuracion/conexion.php';
 
 try {
-    // Preparar la consulta SQL para insertar los datos en usuario
+    // Verificar que todos los campos están completos
+    if (!isset($_POST['nombre_d'], $_POST['apellido_d'], $_POST['nacimiendo_d'], $_POST['cedula_d'], $_POST['celular_d'], $_POST['genero'], $_POST['correo_d'], $_POST['representante'])) {
+        throw new Exception('Todos los campos son obligatorios.');
+    }
+
+    // Preparar la consulta SQL para insertar los datos en tab_usuarios
     $stmt = $conn->prepare("INSERT INTO tab_usuarios (usuario, pass) VALUES (:usuario, :pass)");
     // Encriptar la contraseña
     $hashed_password = password_hash($_POST['cedula_d'], PASSWORD_DEFAULT);
@@ -16,16 +21,15 @@ try {
 
     $tipo = '4';
 
+    // Insertar en tab_usu_tipo
     $stmt = $conn->prepare('INSERT INTO tab_usu_tipo (id_tipo, id_usuario) VALUES (:id_tipo, :id_usuario)');
-    $stmt->bindParam('id_tipo', $tipo);
-    $stmt->bindParam('id_usuario', $id_usuario);
+    $stmt->bindParam(':id_tipo', $tipo);
+    $stmt->bindParam(':id_usuario', $id_usuario);
     $stmt->execute();
 
     // Preparar la consulta SQL para insertar los datos en tab_deportistas
-    $stmt = $conn->prepare('INSERT INTO tab_deportistas (id_usuario, NOMBRE_DEPO, APELLIDO_DEPO, FECHA_NACIMIENTO, CEDULA_DEPO, NUMERO_CELULAR, GENERO) 
-    VALUES (:id_usuario, :NOMBRE_DEPO, :APELLIDO_DEPO, :FECHA_NACIMIENTO, :CEDULA_DEPO, :NUMERO_CELULAR, :GENERO)');
-    // Bind de parámetros
-
+    $stmt = $conn->prepare('INSERT INTO tab_deportistas (id_usuario, NOMBRE_DEPO, APELLIDO_DEPO, FECHA_NACIMIENTO, CEDULA_DEPO, NUMERO_CELULAR, GENERO, CORREO) 
+    VALUES (:id_usuario, :NOMBRE_DEPO, :APELLIDO_DEPO, :FECHA_NACIMIENTO, :CEDULA_DEPO, :NUMERO_CELULAR, :GENERO, :CORREO)');
     $stmt->bindParam(':id_usuario', $id_usuario);
     $stmt->bindParam(':NOMBRE_DEPO', $_POST['nombre_d']);
     $stmt->bindParam(':APELLIDO_DEPO', $_POST['apellido_d']);
@@ -33,6 +37,7 @@ try {
     $stmt->bindParam(':CEDULA_DEPO', $_POST['cedula_d']);
     $stmt->bindParam(':NUMERO_CELULAR', $_POST['celular_d']);
     $stmt->bindParam(':GENERO', $_POST['genero']);
+    $stmt->bindParam(':CORREO', $_POST['correo_d']);
 
     // Ejecutar la consulta
     $stmt->execute();
@@ -51,11 +56,11 @@ try {
     $stmt = $conn->prepare($query);
     $stmt->execute([$id_usuario, $evento, $ip]);
 
-    echo '<div style="margin: 20px; padding: 20px; border: 1px solid #4CAF50; background-color: #DFF2BF; color: #4CAF50; font-family: Arial, sans-serif; font-size: 16px; border-radius: 5px; text-align: center;">
-            Registro exitoso
-          </div>';
-} catch (PDOException $e) {
-    echo "Error: " . $e->getMessage();
+    // Redirigir con mensaje de éxito
+    header("Location: ../crdeportista.php?message=success");
+} catch (Exception $e) {
+    // Redirigir con mensaje de error
+    header("Location: ../crdeportista.php?message=" . urlencode($e->getMessage()));
 }
 
 // Cerrar la conexión

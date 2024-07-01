@@ -22,7 +22,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($user) {
             if (password_verify($password, $user['PASS'])) {
                 // Registra la actividad de inicio de sesión en la base de datos
-                $evento = "Inicio de sesión";
+                $evento = "Se ha iniciado una nueva sesión";
                 $query = "INSERT INTO tab_logs (ID_USUARIO, EVENTO, HORA_LOG, DIA_LOG, IP) VALUES (?, ?, CURRENT_TIME(), CURRENT_DATE(), ?)";
                 $stmt = $conn->prepare($query);
                 $stmt->execute([$user['ID_USUARIO'], $evento, $ip]);

@@ -202,7 +202,7 @@
                         <div class="dropdown-item-icon"><i data-feather="settings"></i></div>
                         Account
                     </a>
-                    <a class="dropdown-item" href="#!">
+                    <a class="dropdown-item" href="../Public/logout.php">
                         <div class="dropdown-item-icon"><i data-feather="log-out"></i></div>
                         Logout
                     </a>
@@ -472,11 +472,11 @@
                         </a>
                     </div>
                 </div>
-                <!-- Sidenav Footer-->
+                <!-- Sidenav Footer -->
                 <div class="sidenav-footer">
                     <div class="sidenav-footer-content">
                         <div class="sidenav-footer-subtitle">Logged in as:</div>
-                        <div class="sidenav-footer-title">Valerie Luna</div>
+                        <div class="sidenav-footer-title"><?php echo htmlspecialchars($nombre); ?></div>
                     </div>
                 </div>
             </nav>

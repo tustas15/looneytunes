@@ -1,64 +1,16 @@
 <?php
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    include './Admin/configuracion/conexion.php';
-
-    try {
-        // Iniciar la transacción
-        $conn->beginTransaction();
-
-        // Preparar la consulta SQL para insertar los datos en tab_usuarios
-        $stmt = $conn->prepare("INSERT INTO tab_usuarios (usuario, pass) VALUES (:usuario, :pass)");
-        $hashed_password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-
-        // Bind de parámetros
-        $stmt->bindParam(':usuario', $_POST['nombre_a']);
-        $stmt->bindParam(':pass', $hashed_password);
-        $stmt->execute();
-
-        $id_usuario = $conn->lastInsertId();
-
-        $tipo = '1';
-
-        // Preparar la consulta SQL para insertar en tab_usu_tipo
-        $stmt = $conn->prepare('INSERT INTO tab_usu_tipo (id_tipo, id_usuario) VALUES (:id_tipo, :id_usuario)');
-        $stmt->bindParam(':id_tipo', $tipo);
-        $stmt->bindParam(':id_usuario', $id_usuario);
-        $stmt->execute();
-
-        // Preparar la consulta SQL para insertar los datos en tab_administradores
-        $stmt = $conn->prepare('INSERT INTO tab_administradores (ID_USUARIO, NOMBRE_ADMIN, APELLIDO_ADMIN, CELULAR_ADMIN) 
-            VALUES (:ID_USUARIO, :NOMBRE_ADMIN, :APELLIDO_ADMIN, :CELULAR_ADMIN)');
-
-        // Bind de parámetros
-        $stmt->bindParam(':ID_USUARIO', $id_usuario);
-        $stmt->bindParam(':NOMBRE_ADMIN', $_POST['nombre_a']);
-        $stmt->bindParam(':APELLIDO_ADMIN', $_POST['apellido_a']);
-        $stmt->bindParam(':CELULAR_ADMIN', $_POST['celular_a']);
-        $stmt->execute();
-
-        // Confirmar la transacción
-        $conn->commit();
-
-        // Registrar el evento en la tabla tab_logs
-        $evento = "Registro de cuenta de administrador: " . $_POST['nombre_a'] . " " . $_POST['apellido_a'];
-        $ip = $_SERVER['REMOTE_ADDR'];
-        $query = "INSERT INTO tab_logs (ID_USUARIO, EVENTO, HORA_LOG, DIA_LOG, IP) VALUES (?, ?, CURRENT_TIME(), CURRENT_DATE(), ?)";
-        $stmt = $conn->prepare($query);
-        $stmt->execute([$id_usuario, $evento, $ip]);
-
+// Mostrar el mensaje de éxito o error desde process_admin.php
+$message = '';
+if (isset($_GET['message'])) {
+    if ($_GET['message'] === 'success') {
         $message = '<div style="margin: 20px; padding: 20px; border: 1px solid #4CAF50; background-color: #DFF2BF; color: #4CAF50; font-family: Arial, sans-serif; font-size: 16px; border-radius: 5px; text-align: center;">
                         Registro exitoso
                     </div>';
-    } catch (PDOException $e) {
-        // Revertir la transacción en caso de error
-        $conn->rollBack();
+    } else {
         $message = '<div style="margin: 20px; padding: 20px; border: 1px solid #FF0000; background-color: #FFBABA; color: #D8000C; font-family: Arial, sans-serif; font-size: 16px; border-radius: 5px; text-align: center;">
-                        Error: ' . htmlspecialchars($e->getMessage()) . '
+                        Error: ' . htmlspecialchars($_GET['message']) . '
                     </div>';
     }
-
-    // Cerrar la conexión
-    $conn = null;
 }
 ?>
 
@@ -92,30 +44,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 </div>
                                 <div class="card-body">
                                     <!-- Registration form-->
-                                    <form method="POST" action="">
+                                    <form method="POST" action="process_admin.php">
                                         <!-- Form Row-->
                                         <div class="row gx-3">
                                             <div class="col-md-6">
                                                 <!-- Form Group (first name)-->
                                                 <div class="mb-3">
                                                     <label class="small mb-1" for="nombre_a">First Name</label>
-                                                    <input class="form-control" id="nombre_a" name="nombre_a" type="text" placeholder="Enter first name" required />
+                                                    <input class="form-control" id="nombre_a" name="nombre_a" type="text" placeholder="Enter first name" value="<?php echo htmlspecialchars($_POST['nombre_a'] ?? '', ENT_QUOTES); ?>" required />
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <!-- Form Group (last name)-->
                                                 <div class="mb-3">
                                                     <label class="small mb-1" for="apellido_a">Last Name</label>
-                                                    <input class="form-control" id="apellido_a" name="apellido_a" type="text" placeholder="Enter last name" required />
+                                                    <input class="form-control" id="apellido_a" name="apellido_a" type="text" placeholder="Enter last name" value="<?php echo htmlspecialchars($_POST['apellido_a'] ?? '', ENT_QUOTES); ?>" required />
                                                 </div>
                                             </div>
                                         </div>
-                                        <!-- Form Group (email address)            -->
+                                        <!-- Form Group (email address)-->
                                         <div class="mb-3">
-                                            <label class="small mb-1" for="inputEmailAddress">Email</label>
-                                            <input class="form-control" id="inputEmailAddress" name="celular_a" type="email" aria-describedby="emailHelp" placeholder="Enter email address" required />
+                                            <label class="small mb-1" for="celular_a">Email</label>
+                                            <input class="form-control" id="celular_a" name="celular_a" type="email" aria-describedby="emailHelp" placeholder="Enter email address" value="<?php echo htmlspecialchars($_POST['celular_a'] ?? '', ENT_QUOTES); ?>" required />
                                         </div>
-                                        <!-- Form Row    -->
+                                        <!-- Form Row -->
                                         <div class="row gx-3">
                                             <div class="col-md-6">
                                                 <!-- Form Group (password)-->
@@ -135,11 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <!-- Form Group (create account submit)-->
                                         <button class="btn btn-primary btn-block" type="submit">Create Account</button>
                                     </form>
-                                    <?php
-                                    if (isset($message)) {
-                                        echo $message;
-                                    }
-                                    ?>
+                                    <?php echo $message; ?>
                                 </div>
                                 <div class="card-footer text-center">
                                     <div class="small"><a href="auth-login-basic.html">Have an account? Go to login</a></div>

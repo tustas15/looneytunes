@@ -1,3 +1,19 @@
+<?php
+// Mostrar el mensaje de éxito o error desde procces_form.php
+$message = '';
+if (isset($_GET['message'])) {
+    if ($_GET['message'] === 'success') {
+        $message = '<div style="margin: 20px; padding: 20px; border: 1px solid #4CAF50; background-color: #DFF2BF; color: #4CAF50; font-family: Arial, sans-serif; font-size: 16px; border-radius: 5px; text-align: center;">
+                        Registro exitoso
+                    </div>';
+    } else {
+        $message = '<div style="margin: 20px; padding: 20px; border: 1px solid #FF0000; background-color: #FFBABA; color: #D8000C; font-family: Arial, sans-serif; font-size: 16px; border-radius: 5px; text-align: center;">
+                        Error: ' . htmlspecialchars($_GET['message']) . '
+                    </div>';
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -24,8 +40,8 @@
             <h1>Crear una cuenta Entrenador</h1>
         </div>
         
-        <!-- Reemplazar el formulario actual con el formulario de login -->
-        <form action="../procces/process_form.php" method="post" class="user">
+        <!-- Formulario para crear una cuenta de Entrenador -->
+        <form action="../procces/procces_form.php" method="post" class="user">
             <div class="form-group">
                 <input type="text" class="form-control form-control-user" name="nombre" placeholder="Nombre" required>
             </div>
@@ -39,7 +55,7 @@
                 <input type="text" class="form-control form-control-user" name="celular" placeholder="Celular" required>
             </div>
             <div class="form-group">
-                <input type="text" class="form-control form-control-user" name="correo" placeholder="Correo" required>
+                <input type="email" class="form-control form-control-user" name="correo" placeholder="Correo" required>
             </div>
             <div class="form-group">
                 <input type="text" class="form-control form-control-user" name="direccion" placeholder="Direccion" required>
@@ -50,7 +66,9 @@
             <button type="submit" class="btn btn-primary btn-user btn-block">Registrar Cuenta</button>
         </form>
         <!-- Fin del formulario de login -->
-        
+
+        <?php echo $message; ?>
+
         <!-- Botón para volver atrás -->
         <div class="text-center mt-4">
             <a href="../index.php" onclick="history.back();" class="btn btn-secondary btn-user">Volver</a>
