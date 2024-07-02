@@ -1,303 +1,194 @@
 <?php
+session_start();
 require_once('/xampp/htdocs/tutorial/conexion/conexion.php');
 
-// Verificar si se recibió un parámetro ID_USUARIO en la URL
-if (isset($_GET['ID_USUARIO'])) {
-    $id_usuario = $_GET['ID_USUARIO'];
+// Verificar si el usuario ha iniciado sesión
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../index.php");
+    exit();
+}
 
-    try {
-        // Consulta SQL para obtener el perfil del usuario
-        $sql = "SELECT u.USUARIO, t.TIPO
-                FROM tab_usuarios u
-                INNER JOIN tab_usu_tipo ut ON u.ID_USUARIO = ut.ID_USUARIO
-                INNER JOIN tab_tipo_usuario t ON ut.ID_TIPO = t.ID_TIPO
-                WHERE u.ID_USUARIO = :id_usuario";
+// Obtener el ID del usuario logueado
+$id_usuario = $_SESSION['user_id'];
+$tipo_usuario = $_SESSION['tipo_usuario']; // 'admin', 'entrenador', 'representante'
 
-        // Preparar la consulta
-        $stmt = $conn->prepare($sql);
-        $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
+// Inicializar las variables
+$nombre = $apellido = $telefono = $experiencia = $correo = $direccion = $cedula = $nombre_depo = $apellido_depo = $fecha_nacimiento_depo = $cedula_depo = $numero_celular_depo = $genero_depo = '';
+$deportistas = [];
 
-        // Ejecutar la consulta
+// Obtener el ID del usuario cuyo perfil se debe mostrar (si está presente en la URL)
+$id_perfil = isset($_GET['ID_USUARIO']) ? intval($_GET['ID_USUARIO']) : $id_usuario;
+
+try {
+    // Conexión a la base de datos
+    $conn = new PDO("mysql:host=$server;port=$port;dbname=$db", $user, $pass);
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    if ($tipo_usuario === 1) {
+        // Consultar los datos del administrador
+        $stmt = $conn->prepare("SELECT * FROM tab_administradores WHERE ID_USUARIO = :id_usuario");
+        $stmt->bindParam(':id_usuario', $id_perfil, PDO::PARAM_INT);
         $stmt->execute();
+        $admin = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        // Obtener el resultado
-        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        // Verificar si se encontró un usuario con el ID dado
-        if ($resultado) {
-            // Información del perfil
-            $usuario = htmlspecialchars($resultado['USUARIO']);
-            $tipo = htmlspecialchars($resultado['TIPO']);
-        } else {
-            $error_message = "No se encontró un usuario con ID " . $id_usuario;
+        if ($admin) {
+            $nombre = htmlspecialchars($admin['NOMBRE_ADMIN']);
+            $apellido = htmlspecialchars($admin['APELLIDO_ADMIN']);
+            $telefono = htmlspecialchars($admin['CELULAR_ADMIN']);
         }
+    } elseif ($tipo_usuario === 2) {
+        // Consultar los datos del entrenador
+        $stmt = $conn->prepare("SELECT * FROM tab_entrenadores WHERE ID_USUARIO = :id_usuario");
+        $stmt->bindParam(':id_usuario', $id_perfil, PDO::PARAM_INT);
+        $stmt->execute();
+        $entrenador = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    } catch(PDOException $e) {
-        $error_message = "Error: " . $e->getMessage();
+        if ($entrenador) {
+            $nombre = htmlspecialchars($entrenador['NOMBRE_ENTRE']);
+            $apellido = htmlspecialchars($entrenador['APELLIDO_ENTRE']);
+            $telefono = htmlspecialchars($entrenador['CELULAR_ENTRE']);
+            $experiencia = htmlspecialchars($entrenador['EXPERIENCIA_ENTRE']);
+            $correo = htmlspecialchars($entrenador['CORREO_ENTRE']);
+            $direccion = htmlspecialchars($entrenador['DIRECCION_ENTRE']);
+        }
+    } elseif ($tipo_usuario === 3) {
+        // Consultar los datos del representante
+        $stmt = $conn->prepare("SELECT * FROM tab_representantes WHERE ID_USUARIO = :id_usuario");
+        $stmt->bindParam(':id_usuario', $id_perfil, PDO::PARAM_INT);
+        $stmt->execute();
+        $representante = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($representante) {
+            $nombre = htmlspecialchars($representante['NOMBRE_REPRE']);
+            $apellido = htmlspecialchars($representante['APELLIDO_REPRE']);
+            $telefono = htmlspecialchars($representante['CELULAR_REPRE']);
+            $correo = htmlspecialchars($representante['CORREO_REPRE']);
+            $direccion = htmlspecialchars($representante['DIRECCION_REPRE']);
+            $cedula = htmlspecialchars($representante['CEDULA_REPRE']);
+
+            // Obtener los deportistas asociados al representante
+            $deportistas_stmt = $conn->prepare("
+                SELECT d.ID_DEPORTISTA, d.NOMBRE_DEPO, d.APELLIDO_DEPO
+                FROM tab_representantes_deportistas rd
+                INNER JOIN tab_deportistas d ON rd.ID_DEPORTISTA = d.ID_DEPORTISTA
+                WHERE rd.ID_REPRESENTANTE = :id_representante
+            ");
+            $deportistas_stmt->bindParam(':id_representante', $id_perfil, PDO::PARAM_INT);
+            $deportistas_stmt->execute();
+            $deportistas = $deportistas_stmt->fetchAll(PDO::FETCH_ASSOC);
+        }
     }
 
-    // Cerrar conexión
-    $conn = null;
+    // Manejar la actualización del perfil
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && $id_perfil === $id_usuario) {
+        $nuevo_nombre = htmlspecialchars($_POST['nombre']);
+        $nuevo_apellido = htmlspecialchars($_POST['apellido']);
+        $nuevo_telefono = htmlspecialchars($_POST['telefono']);
+        $nuevo_email = isset($_POST['email']) ? htmlspecialchars($_POST['email']) : '';
+        $nuevo_password = isset($_POST['password']) ? htmlspecialchars($_POST['password']) : '';
 
-} else {
-    $error_message = "No se proporcionó un ID_USUARIO válido en la URL.";
+        // Actualizar datos en la base de datos
+        if ($tipo_usuario === 1) {
+            $update_stmt = $conn->prepare("
+                UPDATE tab_administradores
+                SET NOMBRE_ADMIN = :nombre, APELLIDO_ADMIN = :apellido, CELULAR_ADMIN = :telefono
+                WHERE ID_USUARIO = :id_usuario
+            ");
+        } elseif ($tipo_usuario === 2) {
+            $update_stmt = $conn->prepare("
+                UPDATE tab_entrenadores
+                SET NOMBRE_ENTRE = :nombre, APELLIDO_ENTRE = :apellido, CELULAR_ENTRE = :telefono, CORREO_ENTRE = :email, DIRECCION_ENTRE = :direccion, EXPERIENCIA_ENTRE = :experiencia
+                WHERE ID_USUARIO = :id_usuario
+            ");
+            $update_stmt->bindParam(':experiencia', $_POST['experiencia'], PDO::PARAM_STR);
+            $update_stmt->bindParam(':direccion', $_POST['direccion'], PDO::PARAM_STR);
+        } elseif ($tipo_usuario === 3) {
+            $update_stmt = $conn->prepare("
+                UPDATE tab_representantes
+                SET NOMBRE_REPRE = :nombre, APELLIDO_REPRE = :apellido, CELULAR_REPRE = :telefono, CORREO_REPRE = :email, DIRECCION_REPRE = :direccion
+                WHERE ID_USUARIO = :id_usuario
+            ");
+            $update_stmt->bindParam(':direccion', $_POST['direccion'], PDO::PARAM_STR);
+        }
+
+        $update_stmt->bindParam(':nombre', $nuevo_nombre, PDO::PARAM_STR);
+        $update_stmt->bindParam(':apellido', $nuevo_apellido, PDO::PARAM_STR);
+        $update_stmt->bindParam(':telefono', $nuevo_telefono, PDO::PARAM_STR);
+        $update_stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
+
+        if ($tipo_usuario === 2 || $tipo_usuario === 3) {
+            $update_stmt->bindParam(':email', $nuevo_email, PDO::PARAM_STR);
+        }
+
+        $update_stmt->execute();
+
+        // Actualizar la contraseña si se proporciona una nueva
+        if ($nuevo_password && ($tipo_usuario === 2 || $tipo_usuario === 3)) {
+            $update_password_stmt = $conn->prepare("
+                UPDATE tab_usuarios SET PASSWORD_USUARIO = :password WHERE ID_USUARIO = :id_usuario
+            ");
+            $hashed_password = password_hash($nuevo_password, PASSWORD_BCRYPT);
+            $update_password_stmt->bindParam(':password', $hashed_password, PDO::PARAM_STR);
+            $update_password_stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
+            $update_password_stmt->execute();
+        }
+
+        echo "<p>Perfil actualizado con éxito.</p>";
+    }
+
+} catch (PDOException $e) {
+    echo "Error: " . $e->getMessage();
 }
+
+$conn = null;
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="es">
 <head>
-    <meta charset="utf-8">
-    <title>Profile with Data and Skills</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style type="text/css">
-        body {
-            margin-top: 20px;
-            color: #1a202c;
-            text-align: left;
-            background-color: #e2e8f0;
-        }
-
-        .main-body {
-            padding: 15px;
-        }
-
-        .card {
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .1), 0 1px 2px 0 rgba(0, 0, 0, .06);
-        }
-
-        .card-body {
-            padding: 1rem;
-        }
-
-        .gutters-sm {
-            margin-right: -8px;
-            margin-left: -8px;
-        }
-
-        .gutters-sm>.col,
-        .gutters-sm>[class*=col-] {
-            padding-right: 8px;
-            padding-left: 8px;
-        }
-
-        .mb-3,
-        .my-3 {
-            margin-bottom: 1rem !important;
-        }
-
-        .bg-gray-300 {
-            background-color: #e2e8f0;
-        }
-
-        .h-100 {
-            height: 100% !important;
-        }
-
-        .shadow-none {
-            box-shadow: none !important;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil de Usuario</title>
 </head>
-
 <body>
-    <div class="container">
-        <div class="main-body">
-            <div class="row gutters-sm">
-                <div class="col-md-4 mb-3">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="d-flex flex-column align-items-center text-center">
-                                <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Admin" class="rounded-circle" width="150">
-                                <div class="mt-3">
-                                    <h4><?php echo isset($usuario) ? $usuario : 'Usuario'; ?></h4>
-                                    <p class="text-secondary mb-1"><?php echo isset($tipo) ? $tipo : 'Tipo de Usuario'; ?></p>
-                                    <p class="text-muted font-size-sm">Bay Area, San Francisco, CA</p>
-                                    <button class="btn btn-primary">Follow</button>
-                                    <button class="btn btn-outline-primary">Message</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-8">
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-sm-3">
-                                    <h6 class="mb-0">Full Name</h6>
-                                </div>
-                                <div class="col-sm-9 text-secondary">
-                                    <?php echo isset($usuario) ? $usuario : 'Usuario'; ?>
-                                </div>
-                            </div>
-                            <hr>
-                            <div class="row">
-                                <div class="col-sm-3">
-                                    <h6 class="mb-0">Email</h6>
-                                </div>
-                                <div class="col-sm-9 text-secondary">
-                                    fip@jukmuh.al
-                                </div>
-                            </div>
-                            <hr>
-                            <div class="row">
-                                <div class="col-sm-3">
-                                    <h6 class="mb-0">Phone</h6>
-                                </div>
-                                <div class="col-sm-9 text-secondary">
-                                    (239) 816-9029
-                                </div>
-                            </div>
-                            <hr>
-                            <div class="row">
-                                <div class="col-sm-3">
-                                    <h6 class="mb-0">Mobile</h6>
-                                </div>
-                                <div class="col-sm-9 text-secondary">
-                                    (320) 380-4539
-                                </div>
-                            </div>
-                            <hr>
-                            <div class="row">
-                                <div class="col-sm-3">
-                                    <h6 class="mb-0">Address</h6>
-                                </div>
-                                <div class="col-sm-9 text-secondary">
-                                    Bay Area, San Francisco, CA
-                                </div>
-                            </div>
-                            <hr>
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    <a class="btn btn-info" target="__blank" href="https://www.bootdey.com/snippets/view/profile-edit-data-and-skills">Edit</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+    <h1>Perfil de Usuario</h1>
+    <form action="" method="POST">
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre" name="nombre" value="<?php echo $nombre; ?>" required>
+        <br>
+        <label for="apellido">Apellido:</label>
+        <input type="text" id="apellido" name="apellido" value="<?php echo $apellido; ?>" required>
+        <br>
+        <label for="telefono">Teléfono:</label>
+        <input type="text" id="telefono" name="telefono" value="<?php echo $telefono; ?>" required>
+        <br>
+        <?php if ($tipo_usuario === 2): ?>
+            <label for="experiencia">Experiencia:</label>
+            <textarea id="experiencia" name="experiencia"><?php echo $experiencia; ?></textarea>
+            <br>
+            <label for="direccion">Dirección:</label>
+            <input type="text" id="direccion" name="direccion" value="<?php echo $direccion; ?>">
+            <br>
+        <?php endif; ?>
+        <?php if ($tipo_usuario === 3): ?>
+            <label for="direccion">Dirección:</label>
+            <input type="text" id="direccion" name="direccion" value="<?php echo $direccion; ?>">
+            <br>
+            <label for="email">Correo:</label>
+            <input type="email" id="email" name="email" value="<?php echo $correo; ?>">
+            <br>
+        <?php endif; ?>
+        <input type="submit" value="Actualizar Perfil">
+    </form>
 
-                    <div class="row gutters-sm">
-                        <div class="col-sm-6 mb-3">
-                            <div class="card h-100">
-                                <div class="card-body">
-                                    <h6 class="d-flex align-items-center mb-3">Skills</h6>
-                                    <small>Web Design</small>
-                                    <div class="progress mb-3" style="height: 5px">
-                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 80%" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <small>Website Markup</small>
-                                    <div class="progress mb-3" style="height: 5px">
-                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 72%" aria-valuenow="72" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <small>One Page</small>
-                                    <div class="progress mb-3" style="height: 5px">
-                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 89%" aria-valuenow="89" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <small>Mobile Template</small>
-                                    <div class="progress mb-3" style="height: 5px">
-                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 55%" aria-valuenow="55" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <small>Backend API</small>
-                                    <div class="progress mb-3" style="height: 5px">
-                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 66%" aria-valuenow="66" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-6 mb-3">
-                            <div class="card h-100">
-                                <div class="card-body">
-                                    <h6 class="d-flex align-items-center mb-3">Projects</h6>
-                                    <small>Project 1</small>
-                                    <div class="progress mb-3" style="height: 5px">
-                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 80%" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <small>Project 2</small>
-                                    <div class="progress mb-3" style="height: 5px">
-                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 72%" aria-valuenow="72" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <small>Project 3</small>
-                                    <div class="progress mb-3" style="height: 5px">
-                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 89%" aria-valuenow="89" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <small>Project 4</small>
-                                    <div class="progress mb-3" style="height: 5px">
-                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 55%" aria-valuenow="55" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <small>Project 5</small>
-                                    <div class="progress mb-3" style="height: 5px">
-                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 66%" aria-valuenow="66" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+    <?php if ($tipo_usuario === 3 && $deportistas): ?>
+        <h2>Deportistas Asociados</h2>
+        <ul>
+            <?php foreach ($deportistas as $deportista): ?>
+                <li><?php echo htmlspecialchars($deportista['NOMBRE_DEPO'] . ' ' . $deportista['APELLIDO_DEPO']); ?></li>
+            <?php endforeach; ?>
+        </ul>
+    <?php endif; ?>
 
-                    <div class="row gutters-sm">
-                        <div class="col-sm-6 mb-3">
-                            <div class="card h-100">
-                                <div class="card-body">
-                                    <h6 class="d-flex align-items-center mb-3">Experience</h6>
-                                    <small>Company 1</small>
-                                    <div class="progress mb-3" style="height: 5px">
-                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 80%" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <small>Company 2</small>
-                                    <div class="progress mb-3" style="height: 5px">
-                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 72%" aria-valuenow="72" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <small>Company 3</small>
-                                    <div class="progress mb-3" style="height: 5px">
-                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 89%" aria-valuenow="89" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <small>Company 4</small>
-                                    <div class="progress mb-3" style="height: 5px">
-                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 55%" aria-valuenow="55" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <small>Company 5</small>
-                                    <div class="progress mb-3" style="height: 5px">
-                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 66%" aria-valuenow="66" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-6 mb-3">
-                            <div class="card h-100">
-                                <div class="card-body">
-                                    <h6 class="d-flex align-items-center mb-3">Certifications</h6>
-                                    <small>Certification 1</small>
-                                    <div class="progress mb-3" style="height: 5px">
-                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 80%" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <small>Certification 2</small>
-                                    <div class="progress mb-3" style="height: 5px">
-                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 72%" aria-valuenow="72" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <small>Certification 3</small>
-                                    <div class="progress mb-3" style="height: 5px">
-                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 89%" aria-valuenow="89" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <small>Certification 4</small>
-                                    <div class="progress mb-3" style="height: 5px">
-                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 55%" aria-valuenow="55" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <small>Certification 5</small>
-                                    <div class="progress mb-3" style="height: 5px">
-                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 66%" aria-valuenow="66" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>

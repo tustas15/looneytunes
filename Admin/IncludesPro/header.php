@@ -27,7 +27,7 @@
         <!-- * * Tip * * You can use text or an image for your navbar brand.-->
         <!-- * * * * * * When using an image, we recommend the SVG format.-->
         <!-- * * * * * * Dimensions: Maximum height: 32px, maximum width: 240px-->
-        <a class="navbar-brand pe-3 ps-4 ps-lg-2" href="index.php">Dashboard</a>
+        <a class="navbar-brand pe-3 ps-4 ps-lg-2" href="../index.php">Dashboard</a>
         <!-- Navbar Search Input-->
         <!-- * * Note: * * Visible only on and above the lg breakpoint-->
         <form class="form-inline me-auto d-none d-lg-block me-3">
@@ -234,11 +234,11 @@
                         <!-- Sidenav Menu Heading (Core)-->
                         <div class="sidenav-menu-heading">Core</div>
                         <!-- Sidenav Accordion (Dashboard)-->
-                        <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseDashboards" aria-expanded="false" aria-controls="collapseDashboards">
-                            <div class="nav-link-icon" href="/index.php"><i data-feather="activity"></i></div>
-                            Dashboards
+                        <a class="nav-link" href=" ../index.php">
+                            <div class="nav-link-icon"><i data-feather="home"></i></div>
+                            Dashboard
                         </a>
-                        
+
                         <!-- Sidenav Heading (App Views)-->
                         <div class="sidenav-menu-heading">Perfiles</div>
                         <!-- Sidenav Accordion (Pages)-->
@@ -248,25 +248,29 @@
                             <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                         </a>
                         <div class="collapse" id="collapsePages" data-bs-parent="#accordionSidenav">
-    <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPagesMenu">
-        <!-- Nested Sidenav Accordion (Pages -> Account)-->
-        <a class="nav-link" href="/looneytunes/admin/usuarios/crear_usuarios/cradmin.php">Administradores</a>
-        <a class="nav-link" href="/looneytunes/admin/usuarios/crear_usuarios/crentrenador.php">Entrenadores</a>
-        <a class="nav-link" href="/looneytunes/admin/usuarios/crear_usuarios/crrepresentante.php">Representantes</a>
-        <a class="nav-link" href="/looneytunes/admin/usuarios/crear_usuarios/crdeportista.php">Deportistas</a>
-    </nav>
-</div>
+                            <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPagesMenu">
+                                <!-- Nested Sidenav Accordion (Pages -> Account)-->
+                                <a class="nav-link" href="/looneytunes/admin/configuracion/busqueda/indexadministrador.php">Administradores</a>
+                                <a class="nav-link" href="/looneytunes/admin/configuracion/busqueda/indexentrenador.php">Entrenadores</a>
+                                <a class="nav-link" href="/looneytunes/admin/configuracion/busqueda/indexrepresentante.php">Representantes</a>
+                                <a class="nav-link" href="/looneytunes/admin/configuracion/busqueda/indexdeportista.php">Deportistas</a>
+                            </nav>
+                        </div>
 
                         <!-- Sidenav Accordion (Flows)-->
                         <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseFlows" aria-expanded="false" aria-controls="collapseFlows">
                             <div class="nav-link-icon"><i data-feather="repeat"></i></div>
                             Flows
                             <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            
                         </a>
                         <div class="collapse" id="collapseFlows" data-bs-parent="#accordionSidenav">
-                            <nav class="sidenav-menu-nested nav">
-                                <a class="nav-link" href="multi-tenant-select.html">Multi-Tenant Registration</a>
-                                <a class="nav-link" href="wizard.html">Wizard</a>
+                        <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPagesMenu">
+                                <!-- Nested Sidenav Accordion (Pages -> Account)-->
+                                <a class="nav-link" href="/looneytunes/admin/usuarios/crear_usuarios/cradmin.php">Administradores</a>
+                                <a class="nav-link" href="/looneytunes/admin/usuarios/crear_usuarios/crentrenador.php">Entrenadores</a>
+                                <a class="nav-link" href="/looneytunes/admin/usuarios/crear_usuarios/crrepresentante.php">Representantes</a>
+                                <a class="nav-link" href="/looneytunes/admin/usuarios/crear_usuarios/crdeportista.php">Deportistas</a>
                             </nav>
                         </div>
                         <!-- Sidenav Heading (UI Toolkit)-->

@@ -3,7 +3,7 @@
 require_once('/xampp/htdocs/tutorial/conexion/conexion.php');
 
 try {
-    // Consulta para obtener todos los usuarios tipo "entrenador"
+    // Consulta para obtener todos los usuarios tipo "deportista"
     $stmt = $conn->prepare("SELECT u.ID_USUARIO, u.USUARIO
                             FROM tab_usuarios u
                             INNER JOIN tab_usu_tipo ut ON u.ID_USUARIO = ut.ID_USUARIO
@@ -16,7 +16,7 @@ try {
     echo "<h1>Lista de Entrenadores</h1>";
     echo "<ul>";
     foreach ($entrenadores as $entrenador) {
-        echo "<li><a href='perfil.php?ID_USUARIO=" . htmlspecialchars($entrenador['ID_USUARIO']) . "'>" . htmlspecialchars($entrenador['USUARIO']) . "</a></li>";
+        echo "<li><a href='../../../Public/profile.php?ID_USUARIO=" . htmlspecialchars($entrenador['ID_USUARIO']) . "'>" . htmlspecialchars($entrenador['USUARIO']) . "</a></li>";
     }
     echo "</ul>";
 

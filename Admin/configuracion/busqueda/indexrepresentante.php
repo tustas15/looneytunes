@@ -28,7 +28,7 @@ require_once('/xampp/htdocs/tutorial/conexion/conexion.php');
         echo "<h1>Lista de Representantes</h1>";
         echo "<ul>";
         foreach ($representantes as $representante) {
-            echo "<li><a href='perfilrepresentante.php?ID_USUARIO=" . htmlspecialchars($representante['ID_USUARIO']) . "'>" . htmlspecialchars($representante['USUARIO']) . "</a></li>";
+            echo "<li><a href='../../../Public/profile.php?ID_USUARIO=" . htmlspecialchars($representante['ID_USUARIO']) . "'>" . htmlspecialchars($representante['USUARIO']) . "</a></li>";
         }
         echo "</ul>";
     } catch (PDOException $e) {
