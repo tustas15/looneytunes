@@ -11,9 +11,10 @@ if (isset($_SESSION['user_id'])) {
 
     // Registra la actividad de cierre de sesión en la base de datos
     $evento = "Cierre de sesión";
-    $query = "INSERT INTO tab_logs (ID_USUARIO, EVENTO, HORA_LOG, DIA_LOG, IP) VALUES (?, ?, CURRENT_TIME(), CURRENT_DATE(), ?)";
+    $tipo_evento = "cierre_sesion"; // Agregar el tipo de evento
+    $query = "INSERT INTO tab_logs (ID_USUARIO, EVENTO, HORA_LOG, DIA_LOG, IP, TIPO_EVENTO) VALUES (?, ?, CURRENT_TIME(), CURRENT_DATE(), ?, ?)";
     $stmt = $conn->prepare($query);
-    $stmt->execute([$_SESSION['user_id'], $evento, $ip]);
+    $stmt->execute([$_SESSION['user_id'], $evento, $ip, $tipo_evento]);
 }
 
 // Elimina todas las variables de sesión
