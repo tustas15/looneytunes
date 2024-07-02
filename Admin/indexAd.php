@@ -41,14 +41,28 @@ try {
 // Obtener logs de actividad
 try {
     $idUsuario = $_SESSION['user_id'];
-    $query = "SELECT * FROM tab_logs WHERE ID_USUARIO = ? ORDER BY DIA_LOG DESC, HORA_LOG DESC";
+    $logsPerPage = 10;  // Número de logs por página
+    $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;  // Página actual
+    $offset = ($page - 1) * $logsPerPage;
+
+    $query = "SELECT * FROM tab_logs WHERE ID_USUARIO = ? ORDER BY DIA_LOG DESC, HORA_LOG DESC LIMIT ? OFFSET ?";
     $stmtLogs = $conn->prepare($query);
     if ($stmtLogs === false) {
         throw new Exception("Error al preparar la consulta: " . $conn->errorInfo()[2]);
     }
     $stmtLogs->bindParam(1, $idUsuario, PDO::PARAM_INT);
+    $stmtLogs->bindParam(2, $logsPerPage, PDO::PARAM_INT);
+    $stmtLogs->bindParam(3, $offset, PDO::PARAM_INT);
     $stmtLogs->execute();
     $logs = $stmtLogs->fetchAll(PDO::FETCH_ASSOC);
+
+    $totalLogsQuery = "SELECT COUNT(*) as total FROM tab_logs WHERE ID_USUARIO = ?";
+    $stmtTotalLogs = $conn->prepare($totalLogsQuery);
+    $stmtTotalLogs->bindParam(1, $idUsuario, PDO::PARAM_INT);
+    $stmtTotalLogs->execute();
+    $totalLogs = $stmtTotalLogs->fetch(PDO::FETCH_ASSOC)['total'];
+    $totalPages = ceil($totalLogs / $logsPerPage);
+
     if (empty($logs)) {
         $logsMessage = "<p>No hay registros de actividad para mostrar.</p>";
     }
@@ -63,26 +77,32 @@ $conn = null;
 // Función para calcular el tiempo transcurrido en formato legible
 function timeElapsedString($datetime, $full = false)
 {
-    $now = new DateTime();
+    $now = new DateTime;
     $ago = new DateTime($datetime);
     $diff = $now->diff($ago);
 
-    $timeStrings = array();
+    $diff->w = floor($diff->d / 7);
+    $diff->d -= $diff->w * 7;
 
-    if ($diff->y) $timeStrings[] = $diff->y . ' año' . ($diff->y > 1 ? 's' : '');
-    if ($diff->m) $timeStrings[] = $diff->m . ' mes' . ($diff->m > 1 ? 'es' : '');
-    if ($diff->d) $timeStrings[] = $diff->d . ' día' . ($diff->d > 1 ? 's' : '');
-    if ($diff->h) $timeStrings[] = $diff->h . ' hora' . ($diff->h > 1 ? 's' : '');
-    if ($diff->i) $timeStrings[] = $diff->i . ' minuto' . ($diff->i > 1 ? 's' : '');
-    if ($diff->s) $timeStrings[] = $diff->s . ' segundo' . ($diff->s > 1 ? 's' : '');
-
-    $result = $timeStrings ? implode(', ', $timeStrings) . ' ' : 'justo ahora';
-
-    if (!$full) {
-        return $result;
+    $string = array(
+        'y' => 'year',
+        'm' => 'month',
+        'w' => 'week',
+        'd' => 'day',
+        'h' => 'hour',
+        'i' => 'minute',
+        's' => 'second',
+    );
+    foreach ($string as $k => &$v) {
+        if ($diff->$k) {
+            $v = $diff->$k . ' ' . $v . ($diff->$k > 1 ? 's' : '');
+        } else {
+            unset($string[$k]);
+        }
     }
 
-    return $result;
+    if (!$full) $string = array_slice($string, 0, 1);
+    return $string ? implode(', ', $string) . ' ago' : 'just now';
 }
 
 include './includespro/header.php';
@@ -140,7 +160,7 @@ include './includespro/header.php';
                         </div>
                     </div>
                     <div class="card-footer d-flex align-items-center justify-content-between small">
-                        <a class="text-white stretched-link" href="#!">View Report</a>
+                        <a class="text-white stretched-link" href="../Admin/configuracion/busqueda/indexadministrador.php">View Report</a>
                         <div class="text-white"><i class="fas fa-angle-right"></i></div>
                     </div>
                 </div>
@@ -157,7 +177,7 @@ include './includespro/header.php';
                         </div>
                     </div>
                     <div class="card-footer d-flex align-items-center justify-content-between small">
-                        <a class="text-white stretched-link" href="#!">View Report</a>
+                        <a class="text-white stretched-link" href="../Admin/configuracion/busqueda/indexentrenador.php">View Report</a>
                         <div class="text-white"><i class="fas fa-angle-right"></i></div>
                     </div>
                 </div>
@@ -174,7 +194,7 @@ include './includespro/header.php';
                         </div>
                     </div>
                     <div class="card-footer d-flex align-items-center justify-content-between small">
-                        <a class="text-white stretched-link" href="#!">View Tasks</a>
+                        <a class="text-white stretched-link" href="../Admin/configuracion/busqueda/indexrepresentante.php">View Tasks</a>
                         <div class="text-white"><i class="fas fa-angle-right"></i></div>
                     </div>
                 </div>
@@ -191,7 +211,7 @@ include './includespro/header.php';
                         </div>
                     </div>
                     <div class="card-footer d-flex align-items-center justify-content-between small">
-                        <a class="text-white stretched-link" href="#!">View Requests</a>
+                        <a class="text-white stretched-link" href="../Admin/configuracion/busqueda/indexdeportista.php">View Requests</a>
                         <div class="text-white"><i class="fas fa-angle-right"></i></div>
                     </div>
                 </div>
@@ -200,12 +220,16 @@ include './includespro/header.php';
 
         <div class="row">
             <!-- logs -->
+            <h1>Actividad Reciente</h1>
+            <!-- logs -->
             <div class="col-xxl-4 col-xl-6 mb-4">
                 <div class="card card-header-actions h-100">
                     <div class="card-header">
                         Recent Activity
                         <div class="dropdown no-caret">
-                            <button class="btn btn-transparent-dark btn-icon dropdown-toggle" id="dropdownMenuButton" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="text-gray-500" data-feather="more-vertical"></i></button>
+                            <button class="btn btn-transparent-dark btn-icon dropdown-toggle" id="dropdownMenuButton" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="text-gray-500" data-feather="more-vertical"></i>
+                            </button>
                             <div class="dropdown-menu dropdown-menu-end animated--fade-in-up" aria-labelledby="dropdownMenuButton">
                                 <h6 class="dropdown-header">Filter Activity:</h6>
                                 <a class="dropdown-item" href="#!"><span class="badge bg-green-soft text-green my-1">Commerce</span></a>
@@ -254,6 +278,29 @@ include './includespro/header.php';
                                         </div>
                                     </div>
                                 <?php endforeach; ?>
+                                <nav aria-label="Page navigation example">
+                                    <ul class="pagination justify-content-center">
+                                        <?php if ($page > 1) : ?>
+                                            <li class="page-item">
+                                                <a class="page-link" href="?page=<?php echo $page - 1; ?>" aria-label="Anterior">
+                                                    <span aria-hidden="true">&laquo;</span>
+                                                </a>
+                                            </li>
+                                        <?php endif; ?>
+                                        <?php for ($i = 1; $i <= $totalPages; $i++) : ?>
+                                            <li class="page-item <?php if ($i == $page) echo 'active'; ?>">
+                                                <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                                            </li>
+                                        <?php endfor; ?>
+                                        <?php if ($page < $totalPages) : ?>
+                                            <li class="page-item">
+                                                <a class="page-link" href="?page=<?php echo $page + 1; ?>" aria-label="Siguiente">
+                                                    <span aria-hidden="true">&raquo;</span>
+                                                </a>
+                                            </li>
+                                        <?php endif; ?>
+                                    </ul>
+                                </nav>
                             <?php else : ?>
                                 <p>No hay registros de actividad para mostrar.</p>
                             <?php endif; ?>
@@ -261,6 +308,7 @@ include './includespro/header.php';
                     </div>
                 </div>
             </div>
+
             <!-- progreso -->
             <div class="col-xxl-4 col-xl-6 mb-4">
                 <div class="card card-header-actions h-100">
@@ -420,7 +468,7 @@ include './includespro/header.php';
                                 <button class="btn btn-datatable btn-icon btn-transparent-dark"><i data-feather="trash-2"></i></button>
                             </td>
                         </tr>
-                        
+
                     </tbody>
                 </table>
             </div>
