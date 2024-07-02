@@ -1,5 +1,5 @@
 <?php
-// Mostrar el mensaje de éxito o error desde procces_depo.php
+// Mostrar el mensaje de éxito o error desde procces_Depo.php
 $message = '';
 if (isset($_GET['message'])) {
     if ($_GET['message'] === 'success') {
@@ -15,98 +15,136 @@ if (isset($_GET['message'])) {
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
     <title>Registrar Deportista</title>
-    <link rel="stylesheet" href="css/registro.css">
-    <!-- Agregar estilos de SB Admin 2 -->
-    <link href="../PLANTILLA-BOOTSTRAP/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
-    <link href="../PLANTILLA-BOOTSTRAP/css/sb-admin-2.min.css" rel="stylesheet">
-    <link rel="icon" type="image/png" href="../img/logo.png">
+    <link href="../../../Assets/css/styles.css" rel="stylesheet" />
+    <link rel="icon" type="image/x-icon" href="../../../Assets/img/favicon.png" />
+    <script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.28.0/feather.min.js" crossorigin="anonymous"></script>
 </head>
 
-<body class="bg-gradient-primary">
+<body class="bg-primary">
+    <div id="layoutAuthentication">
+        <div id="layoutAuthentication_content">
+            <main>
+                <div class="container-xl px-4">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-7">
+                            <!-- Basic registration form -->
+                            <div class="card shadow-lg border-0 rounded-lg mt-5">
+                                <div class="card-header justify-content-center">
+                                    <h3 class="fw-light my-4">Crear una Cuenta de Deportista</h3>
+                                </div>
+                                <div class="card-body">
+                                    <!-- Mensaje de éxito o error -->
+                                    <?php echo $message; ?>
 
-    <div class="container">
-
-        <div class="header text-center">
-            <h1>Crear una cuenta Deportista</h1>
-        </div>
-
-        <!-- Formulario para crear una cuenta de Deportista -->
-        <form action="../procces/process_Depo.php" method="post" class="user">
-            <div class="form-group">
-                <input type="text" class="form-control form-control-user" name="nombre_d" placeholder="Nombre" required>
-            </div>
-            <div class="form-group">
-                <input type="text" class="form-control form-control-user" name="apellido_d" placeholder="Apellido" required>
-            </div>
-            <div class="form-group">
-                <input type="date" class="form-control form-control-user" name="nacimiendo_d" placeholder="Fecha de nacimiento" required>
-            </div>
-            <div class="form-group">
-                <input type="text" class="form-control form-control-user" name="cedula_d" placeholder="Cedula" required>
-            </div>
-            <div class="form-group">
-                <input type="text" class="form-control form-control-user" name="celular_d" placeholder="Celular" required>
-            </div>
-            <div class="form-group">
-                <input type="text" class="form-control form-control-user" name="genero" placeholder="Genero" required>
-            </div>
-            <div class="form-group">
-                <input type="email" class="form-control form-control-user" name="correo_d" placeholder="Introducir la dirección de correo electrónico..." required>
-            </div>
-            <!-- Campo desplegable para seleccionar representante -->
-            <div class="form-group">
-                <div class="select-container">
-                    <select class="form-control" name="representante" required>
-                        <option value="">Introducir el representante asociado al deportista</option>
-                        <?php
-                        // Conexión a la base de datos
-                        require_once('../conexion/conexion.php');
-                        $stmt = $conn->prepare("SELECT u.ID_USUARIO, u.USUARIO FROM tab_usuarios u
-                                    INNER JOIN tab_usu_tipo ut ON u.ID_USUARIO = ut.ID_USUARIO
-                                    WHERE ut.ID_TIPO = 3");
-                        $stmt->execute();
-                        $representantes = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                        foreach ($representantes as $representante) {
-                            echo "<option value='" . $representante['ID_USUARIO'] . "'>" . htmlspecialchars($representante['USUARIO']) . "</option>";
-                        }
-                        ?>
-                    </select>
-                    <div class="select-overlay"></div>
+                                    <!-- Formulario para crear una cuenta de Deportista -->
+                                    <form action="../procces/process_Depo.php" method="post">
+                                        <!-- Form Group (nombre) -->
+                                        <div class="mb-3">
+                                            <label class="small mb-1" for="nombre_d">Nombre</label>
+                                            <input class="form-control" id="nombre_d" name="nombre_d" type="text" placeholder="Ingrese el nombre" required />
+                                        </div>
+                                        <!-- Form Group (apellido) -->
+                                        <div class="mb-3">
+                                            <label class="small mb-1" for="apellido_d">Apellido</label>
+                                            <input class="form-control" id="apellido_d" name="apellido_d" type="text" placeholder="Ingrese el apellido" required />
+                                        </div>
+                                        <!-- Form Group (fecha de nacimiento) -->
+                                        <div class="mb-3">
+                                            <label class="small mb-1" for="nacimiendo_d">Fecha de Nacimiento</label>
+                                            <input class="form-control" id="nacimiendo_d" name="nacimiendo_d" type="date" placeholder="Ingrese la fecha de nacimiento" required />
+                                        </div>
+                                        <!-- Form Group (cédula) -->
+                                        <div class="mb-3">
+                                            <label class="small mb-1" for="cedula_d">Cédula</label>
+                                            <input class="form-control" id="cedula_d" name="cedula_d" type="text" placeholder="Ingrese la cédula" required />
+                                        </div>
+                                        <!-- Form Group (celular) -->
+                                        <div class="mb-3">
+                                            <label class="small mb-1" for="celular_d">Celular</label>
+                                            <input class="form-control" id="celular_d" name="celular_d" type="text" placeholder="Ingrese el celular" required />
+                                        </div>
+                                        <!-- Form Group (género) -->
+                                        <div class="mb-3">
+                                            <label class="small mb-1" for="genero">Género</label>
+                                            <select class="form-control" id="genero" name="genero" required>
+                                                <option value="">Seleccionar el género</option>
+                                                <option value="Masculino">Masculino</option>
+                                                <option value="Femenino">Femenino</option>
+                                                <option value="Otro">Otro</option>
+                                            </select>
+                                        </div>
+                                        <!-- Campo desplegable para seleccionar representante -->
+                                        <div class="mb-3">
+                                            <label class="small mb-1" for="representante">Representante</label>
+                                            <select class="form-control" id="representante" name="representante" required>
+                                                <option value="">Seleccionar el representante asociado al deportista</option>
+                                                <?php
+                                                // Conexión a la base de datos
+                                                require_once('../../configuracion/conexion.php');
+                                                $stmt = $conn->prepare("SELECT u.ID_USUARIO, u.USUARIO FROM tab_usuarios u
+                                                            INNER JOIN tab_usu_tipo ut ON u.ID_USUARIO = ut.ID_USUARIO
+                                                            WHERE ut.ID_TIPO = 3");
+                                                $stmt->execute();
+                                                $representantes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                                                foreach ($representantes as $representante) {
+                                                    echo "<option value='" . $representante['ID_USUARIO'] . "'>" . htmlspecialchars($representante['USUARIO']) . "</option>";
+                                                }
+                                                ?>
+                                            </select>
+                                        </div>
+                                        <!-- Botón de registro -->
+                                        <button class="btn btn-primary btn-block" type="submit">Crear Cuenta</button>
+                                        <a class="btn btn-primary btn-block" href="../../indexAd.php">Volver</a> <!-- Botón para volver -->
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-
-            <button type="submit" class="btn btn-primary btn-user btn-block">Registrar Cuenta</button>
-        </form>
-        <!-- Fin del formulario de login -->
-
-        <?php echo $message; ?>
-
-        <!-- Botón para volver atrás -->
-        <div class="text-center mt-4">
-            <a href="../index.php" onclick="history.back();" class="btn btn-secondary btn-user">Volver</a>
+            </main>
         </div>
-
+        <div id="layoutAuthentication_footer">
+            <footer class="footer-admin mt-auto footer-dark">
+                <div class="container-xl px-4">
+                    <div class="row">
+                        <div class="col-md-6 small">Copyright &copy; Looneytunes <span id="currentYear"></span></div>
+                        <div class="col-md-6 text-md-end small">
+                            <a href="#!">Privacy Policy</a>
+                            &middot;
+                            <a href="#!">Terms &amp; Conditions</a>
+                        </div>
+                    </div>
+                </div>
+                <script>
+                    // JavaScript para actualizar el año actual en el footer
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var currentYear = new Date().getFullYear();
+                        document.getElementById('currentYear').textContent = currentYear;
+                    });
+                </script>
+            </footer>
+        </div>
     </div>
 
     <!-- Bootstrap core JavaScript-->
-    <script src="../PLANTILLA-BOOTSTRAP/vendor/jquery/jquery.min.js"></script>
-    <script src="../PLANTILLA-BOOTSTRAP/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../../../Assets/vendor/jquery/jquery.min.js"></script>
+    <script src="../../../Assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
     <!-- Core plugin JavaScript-->
-    <script src="../PLANTILLA-BOOTSTRAP/vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="../../../Assets/vendor/jquery-easing/jquery.easing.min.js"></script>
 
     <!-- Custom scripts for all pages-->
-    <script src="../PLANTILLA-BOOTSTRAP/js/sb-admin-2.min.js"></script>
+    <script src="../../../Assets/js/sb-admin-2.min.js"></script>
 </body>
 
 </html>

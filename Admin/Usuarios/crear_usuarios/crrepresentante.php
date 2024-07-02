@@ -3,85 +3,120 @@
 $message = '';
 if (isset($_GET['message'])) {
     if ($_GET['message'] === 'success') {
-        $message = '<div style="margin: 20px; padding: 20px; border: 1px solid #4CAF50; background-color: #DFF2BF; color: #4CAF50; font-family: Arial, sans-serif; font-size: 16px; border-radius: 5px; text-align: center;">
-                        Registro exitoso
-                    </div>';
+        $message = '<div class="alert alert-success" role="alert">Registro exitoso</div>';
     } else {
-        $message = '<div style="margin: 20px; padding: 20px; border: 1px solid #FF0000; background-color: #FFBABA; color: #D8000C; font-family: Arial, sans-serif; font-size: 16px; border-radius: 5px; text-align: center;">
-                        Error: ' . htmlspecialchars($_GET['message']) . '
-                    </div>';
+        $message = '<div class="alert alert-danger" role="alert">Error: ' . htmlspecialchars($_GET['message']) . '</div>';
     }
 }
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <title>Registrar Representante</title>
-    <link rel="stylesheet" href="css/registro.css">
-    <!-- Agregar estilos de SB Admin 2 -->
-    <link href="../PLANTILLA-BOOTSTRAP/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
-    <link href="../PLANTILLA-BOOTSTRAP/css/sb-admin-2.min.css" rel="stylesheet">
-    <link rel="icon" type="image/png" href="../img/logo.png">
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>Registrar Deportista</title>
+    <link href="../../../Assets/css/styles.css" rel="stylesheet" />
+    <link rel="icon" type="image/x-icon" href="../../../Assets/img/favicon.png" />
+    <script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.28.0/feather.min.js" crossorigin="anonymous"></script>
 </head>
 
-<body class="bg-gradient-primary">
+<body class="bg-primary">
+    <div id="layoutAuthentication">
+        <div id="layoutAuthentication_content">
+            <main>
+                <div class="container-xl px-4">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-7">
+                            <!-- Basic registration form -->
+                            <div class="card shadow-lg border-0 rounded-lg mt-5">
+                                <div class="card-header text-center">
+                                    <h3 class="fw-light my-4">Crear una Cuenta de Representante</h3>
+                                </div>
+                                <div class="card-body">
+                                    <!-- Mensaje de éxito o error -->
+                                    <?php echo $message; ?>
 
-    <div class="container">
-
-        <div class="header text-center">
-            <h1>Crear una cuenta Representante</h1>
+                                    <!-- Formulario para crear una cuenta de Representante -->
+                                    <form action="../../../procces/process_Repre.php" method="post" class="user">
+                                        <!-- Form Group (nombre) -->
+                                        <div class="form-group mb-3">
+                                            <label class="small mb-1" for="nombre_r">Nombre</label>
+                                            <input class="form-control form-control-user" id="nombre_r" name="nombre_r" type="text" placeholder="Ingrese el nombre" required />
+                                        </div>
+                                        <!-- Form Group (apellido) -->
+                                        <div class="form-group mb-3">
+                                            <label class="small mb-1" for="apellido_r">Apellido</label>
+                                            <input class="form-control form-control-user" id="apellido_r" name="apellido_r" type="text" placeholder="Ingrese el apellido" required />
+                                        </div>
+                                        <!-- Form Group (celular) -->
+                                        <div class="form-group mb-3">
+                                            <label class="small mb-1" for="celular_r">Celular</label>
+                                            <input class="form-control form-control-user" id="celular_r" name="celular_r" type="text" placeholder="Ingrese el celular" required />
+                                        </div>
+                                        <!-- Form Group (correo electrónico) -->
+                                        <div class="form-group mb-3">
+                                            <label class="small mb-1" for="correo_r">Correo Electrónico</label>
+                                            <input class="form-control form-control-user" id="correo_r" name="correo_r" type="email" placeholder="Ingrese el correo electrónico" required />
+                                        </div>
+                                        <!-- Form Group (dirección) -->
+                                        <div class="form-group mb-3">
+                                            <label class="small mb-1" for="direccion_r">Dirección</label>
+                                            <input class="form-control form-control-user" id="direccion_r" name="direccion_r" type="text" placeholder="Ingrese la dirección" required />
+                                        </div>
+                                        <!-- Form Group (cédula) -->
+                                        <div class="form-group mb-3">
+                                            <label class="small mb-1" for="cedula_r">Cédula</label>
+                                            <input class="form-control form-control-user" id="cedula_r" name="cedula_r" type="text" placeholder="Ingrese la cédula" required />
+                                        </div>
+                                        <!-- Botón de registro -->
+                                        <button class="btn btn-primary btn-block" type="submit">Crear Cuenta</button>
+                                        <a class="btn btn-primary btn-block" href="../../indexAd.php">Volver</a> <!-- Botón para volver -->
+                                    </form>
+                                    <!-- Fin del formulario de registro -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
         </div>
-
-        <!-- Formulario para crear una cuenta de Representante -->
-        <form action="../procces/process_Repre.php" method="post" class="user">
-            <div class="form-group">
-                <input type="text" class="form-control form-control-user" name="nombre_r" placeholder="Nombre" required>
-            </div>
-            <div class="form-group">
-                <input type="text" class="form-control form-control-user" name="apellido_r" placeholder="Apellido" required>
-            </div>
-            <div class="form-group">
-                <input type="text" class="form-control form-control-user" name="celular_r" placeholder="Celular" required>
-            </div>
-            <div class="form-group">
-                <input type="email" class="form-control form-control-user" name="correo_r" placeholder="Correo" required>
-            </div>
-            <div class="form-group">
-                <input type="text" class="form-control form-control-user" name="direccion_r" placeholder="Direccion" required>
-            </div>
-            <div class="form-group">
-                <input type="text" class="form-control form-control-user" name="cedula_r" placeholder="Cedula" required>
-            </div>
-            <button type="submit" class="btn btn-primary btn-user btn-block">Registrar Cuenta</button>
-        </form>
-        <!-- Fin del formulario de login -->
-
-        <?php echo $message; ?>
-
-        <!-- Botón para volver atrás -->
-        <div class="text-center mt-4">
-            <a href="../index.php" onclick="history.back();" class="btn btn-secondary btn-user">Volver</a>
+        <div id="layoutAuthentication_footer">
+            <footer class="footer-admin mt-auto footer-dark">
+                <div class="container-xl px-4">
+                    <div class="row">
+                        <div class="col-md-6 small">Copyright &copy; Looneytunes <span id="currentYear"></span></div>
+                        <div class="col-md-6 text-md-end small">
+                            <a href="#!">Privacy Policy</a>
+                            &middot;
+                            <a href="#!">Terms &amp; Conditions</a>
+                        </div>
+                    </div>
+                </div>
+                <script>
+                    // JavaScript para actualizar el año actual en el footer
+                    document.addEventListener('DOMContentLoaded', function () {
+                        var currentYear = new Date().getFullYear();
+                        document.getElementById('currentYear').textContent = currentYear;
+                    });
+                </script>
+            </footer>
         </div>
-
     </div>
-
     <!-- Bootstrap core JavaScript-->
-    <script src="../PLANTILLA-BOOTSTRAP/vendor/jquery/jquery.min.js"></script>
-    <script src="../PLANTILLA-BOOTSTRAP/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../../../Assets/vendor/jquery/jquery.min.js"></script>
+    <script src="../../../Assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
     <!-- Core plugin JavaScript-->
-    <script src="../PLANTILLA-BOOTSTRAP/vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="../../../Assets/vendor/jquery-easing/jquery.easing.min.js"></script>
 
     <!-- Custom scripts for all pages-->
-    <script src="../PLANTILLA-BOOTSTRAP/js/sb-admin-2.min.js"></script>
+    <script src="../../../Assets/js/sb-admin-2.min.js"></script>
 </body>
 
 </html>

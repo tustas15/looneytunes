@@ -46,7 +46,7 @@
                 </a>
                 <div class="dropdown-menu dropdown-menu-end py-0 me-sm-n15 me-lg-0 o-hidden animated--fade-in-up" aria-labelledby="navbarDropdownDocs">
                     <a class="dropdown-item py-3" href="../Admin/configuracion/respaldo/downloadFile.php">
-                        <div class="icon-stack bg-primary-soft text-primary me-4"><i data-feather="book"></i></div>
+                        <div class="icon-stack bg-primary-soft text-primary me-4"><i data-feather="database"></i></div>
                         <div>
                             <div class="small text-gray-500">Generar Respaldo</div>
                             Haz click y descarga el respaldo del sistema
@@ -54,7 +54,7 @@
                     </a>
                     <div class="dropdown-divider m-0"></div>
                     <a class="dropdown-item py-3" href="#" data-bs-toggle="modal" data-bs-target="#uploadBackupModal">
-                        <div class="icon-stack bg-primary-soft text-primary me-4"><i data-feather="code"></i></div>
+                        <div class="icon-stack bg-primary-soft text-primary me-4"><i data-feather="upload"></i></div>
                         <div>
                             <div class="small text-gray-500">Subir Respaldo</div>
                             Haz click para subir el respaldo del sistema
@@ -199,7 +199,7 @@
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="../Public/profile.php">
                         <div class="dropdown-item-icon"><i data-feather="settings"></i></div>
-                        Account
+                        Cuenta
                     </a>
                     <a class="dropdown-item" href="../Public/logout.php">
                         <div class="dropdown-item-icon"><i data-feather="log-out"></i></div>
@@ -211,7 +211,7 @@
     </nav>
     <div id="layoutSidenav">
         <div id="layoutSidenav_nav">
-            <nav class="sidenav shadow-right sidenav-light">
+            <nav class="sidenav shadow-right sidenav-dark">
                 <div class="sidenav-menu">
                     <div class="nav accordion" id="accordionSidenav">
                         <!-- Sidenav Menu Heading (Account)-->
@@ -235,22 +235,12 @@
                         <div class="sidenav-menu-heading">Core</div>
                         <!-- Sidenav Accordion (Dashboard)-->
                         <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseDashboards" aria-expanded="false" aria-controls="collapseDashboards">
-                            <div class="nav-link-icon"><i data-feather="activity"></i></div>
+                            <div class="nav-link-icon" href="/index.php"><i data-feather="activity"></i></div>
                             Dashboards
-                            <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                         </a>
-                        <div class="collapse" id="collapseDashboards" data-bs-parent="#accordionSidenav">
-                            <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
-                                <a class="nav-link" href="dashboard-1.html">
-                                    Default
-                                    <span class="badge bg-primary-soft text-primary ms-auto">Updated</span>
-                                </a>
-                                <a class="nav-link" href="dashboard-2.html">Multipurpose</a>
-                                <a class="nav-link" href="dashboard-3.html">Affiliate</a>
-                            </nav>
-                        </div>
+                        
                         <!-- Sidenav Heading (App Views)-->
-                        <div class="sidenav-menu-heading">App Views</div>
+                        <div class="sidenav-menu-heading">Perfiles</div>
                         <!-- Sidenav Accordion (Pages)-->
                         <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
                             <div class="nav-link-icon"><i data-feather="grid"></i></div>
@@ -258,87 +248,15 @@
                             <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                         </a>
                         <div class="collapse" id="collapsePages" data-bs-parent="#accordionSidenav">
-                            <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPagesMenu">
-                                <!-- Nested Sidenav Accordion (Pages -> Account)-->
-                                <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#pagesCollapseAccount" aria-expanded="false" aria-controls="pagesCollapseAccount">
-                                    Account
-                                    <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                                </a>
-                                <div class="collapse" id="pagesCollapseAccount" data-bs-parent="#accordionSidenavPagesMenu">
-                                    <nav class="sidenav-menu-nested nav">
-                                        <a class="nav-link" href="account-profile.html">Profile</a>
-                                        <a class="nav-link" href="account-billing.html">Billing</a>
-                                        <a class="nav-link" href="account-security.html">Security</a>
-                                        <a class="nav-link" href="account-notifications.html">Notifications</a>
-                                    </nav>
-                                </div>
-                                <!-- Nested Sidenav Accordion (Pages -> Authentication)-->
-                                <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#pagesCollapseAuth" aria-expanded="false" aria-controls="pagesCollapseAuth">
-                                    Authentication
-                                    <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                                </a>
-                                <div class="collapse" id="pagesCollapseAuth" data-bs-parent="#accordionSidenavPagesMenu">
-                                    <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPagesAuth">
-                                        <!-- Nested Sidenav Accordion (Pages -> Authentication -> Basic)-->
-                                        <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#pagesCollapseAuthBasic" aria-expanded="false" aria-controls="pagesCollapseAuthBasic">
-                                            Basic
-                                            <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                                        </a>
-                                        <div class="collapse" id="pagesCollapseAuthBasic" data-bs-parent="#accordionSidenavPagesAuth">
-                                            <nav class="sidenav-menu-nested nav">
-                                                <a class="nav-link" href="auth-login-basic.html">Login</a>
-                                                <a class="nav-link" href="auth-register-basic.html">Register</a>
-                                                <a class="nav-link" href="auth-password-basic.html">Forgot Password</a>
-                                            </nav>
-                                        </div>
-                                        <!-- Nested Sidenav Accordion (Pages -> Authentication -> Social)-->
-                                        <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#pagesCollapseAuthSocial" aria-expanded="false" aria-controls="pagesCollapseAuthSocial">
-                                            Social
-                                            <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                                        </a>
-                                        <div class="collapse" id="pagesCollapseAuthSocial" data-bs-parent="#accordionSidenavPagesAuth">
-                                            <nav class="sidenav-menu-nested nav">
-                                                <a class="nav-link" href="auth-login-social.html">Login</a>
-                                                <a class="nav-link" href="auth-register-social.html">Register</a>
-                                                <a class="nav-link" href="auth-password-social.html">Forgot Password</a>
-                                            </nav>
-                                        </div>
-                                    </nav>
-                                </div>
-                                <!-- Nested Sidenav Accordion (Pages -> Error)-->
-                                <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#pagesCollapseError" aria-expanded="false" aria-controls="pagesCollapseError">
-                                    Error
-                                    <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                                </a>
-                                <div class="collapse" id="pagesCollapseError" data-bs-parent="#accordionSidenavPagesMenu">
-                                    <nav class="sidenav-menu-nested nav">
-                                        <a class="nav-link" href="error-400.html">400 Error</a>
-                                        <a class="nav-link" href="error-401.html">401 Error</a>
-                                        <a class="nav-link" href="error-403.html">403 Error</a>
-                                        <a class="nav-link" href="error-404-1.html">404 Error 1</a>
-                                        <a class="nav-link" href="error-404-2.html">404 Error 2</a>
-                                        <a class="nav-link" href="error-500.html">500 Error</a>
-                                        <a class="nav-link" href="error-503.html">503 Error</a>
-                                        <a class="nav-link" href="error-504.html">504 Error</a>
-                                    </nav>
-                                </div>
-                                <!-- Nested Sidenav Accordion (Pages -> Knowledge Base)-->
-                                <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#pagesCollapseKnowledgeBase" aria-expanded="false" aria-controls="pagesCollapseKnowledgeBase">
-                                    Knowledge Base
-                                    <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                                </a>
-                                <div class="collapse" id="pagesCollapseKnowledgeBase" data-bs-parent="#accordionSidenavPagesMenu">
-                                    <nav class="sidenav-menu-nested nav">
-                                        <a class="nav-link" href="knowledge-base-home-1.html">Home 1</a>
-                                        <a class="nav-link" href="knowledge-base-home-2.html">Home 2</a>
-                                        <a class="nav-link" href="knowledge-base-category.html">Category</a>
-                                        <a class="nav-link" href="knowledge-base-article.html">Article</a>
-                                    </nav>
-                                </div>
-                                <a class="nav-link" href="pricing.html">Pricing</a>
-                                <a class="nav-link" href="invoice.html">Invoice</a>
-                            </nav>
-                        </div>
+    <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPagesMenu">
+        <!-- Nested Sidenav Accordion (Pages -> Account)-->
+        <a class="nav-link" href="/looneytunes/admin/usuarios/crear_usuarios/cradmin.php">Administradores</a>
+        <a class="nav-link" href="/looneytunes/admin/usuarios/crear_usuarios/crentrenador.php">Entrenadores</a>
+        <a class="nav-link" href="/looneytunes/admin/usuarios/crear_usuarios/crrepresentante.php">Representantes</a>
+        <a class="nav-link" href="/looneytunes/admin/usuarios/crear_usuarios/crdeportista.php">Deportistas</a>
+    </nav>
+</div>
+
                         <!-- Sidenav Accordion (Flows)-->
                         <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseFlows" aria-expanded="false" aria-controls="collapseFlows">
                             <div class="nav-link-icon"><i data-feather="repeat"></i></div>

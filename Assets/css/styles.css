@@ -19508,35 +19508,45 @@ body {
 }
 
 .sidenav-dark {
-  background-color: #272f3b;
-  color: rgba(255, 255, 255, 0.5);
+  background-color: #0c55ec; /* Cambiar el color de fondo del menú lateral */
+  color: rgba(255, 255, 255, 0.5); /* Color de texto por defecto */
 }
+
 .sidenav-dark .sidenav-menu .sidenav-menu-heading {
-  color: rgba(255, 255, 255, 0.25);
+  color: rgba(255, 255, 255, 0.75); /* Color de los títulos de menú */
 }
+
 .sidenav-dark .sidenav-menu .nav-link {
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.75); /* Color del texto de los enlaces */
 }
+
 .sidenav-dark .sidenav-menu .nav-link .nav-link-icon {
-  color: rgba(255, 255, 255, 0.25);
+  color: rgba(255, 255, 255, 0.75); /* Color de los iconos de los enlaces */
 }
+
 .sidenav-dark .sidenav-menu .nav-link .sidenav-collapse-arrow {
-  color: rgba(255, 255, 255, 0.25);
+  color: rgba(255, 255, 255, 0.75); /* Color de las flechas de colapso */
 }
+
 .sidenav-dark .sidenav-menu .nav-link:hover {
-  color: #fff;
+  color: #ffffff; /* Color del texto de los enlaces al pasar el ratón */
 }
+
 .sidenav-dark .sidenav-menu .nav-link.active {
-  color: #fff;
+  color: #ffffff; /* Color del texto del enlace activo */
 }
+
 .sidenav-dark .sidenav-menu .nav-link.active .nav-link-icon {
-  color: #fff;
+  color: #ffffff; /* Color de los iconos del enlace activo */
 }
+
 .sidenav-dark .sidenav-menu-nested {
-  border-left-color: rgba(255, 255, 255, 0.15);
+  border-left-color: rgba(255, 255, 255, 0.25); /* Color del borde izquierdo del menú anidado */
 }
+
 .sidenav-dark .sidenav-footer {
-  background-color: rgba(0, 0, 0, 0.25);
+  background-color: rgba(0, 0, 0, 0.25); /* Color de fondo del pie de página del menú */
+  color: #ffffff; /* Color del texto del pie de página del menú */
 }
 
 .sidenav-light {

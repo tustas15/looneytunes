@@ -114,7 +114,7 @@ include './includespro/header.php';
                         <div class="row align-items-center">
                             <div class="col-xl-8 col-xxl-12">
                                 <div class="text-center text-xl-start text-xxl-center mb-4 mb-xl-0 mb-xxl-4">
-                                    <h1 class="text-primary">Bienvenido, Administrador <?= $nombre ?></h1>
+                                    <h1 class="text-primary">Bienvenido, <?= $nombre ?>.</h1>
                                     <p class="text-gray-700 mb-0"></p>
                                 </div>
                             </div>
@@ -153,7 +153,7 @@ include './includespro/header.php';
                                 <div class="text-white-75 small">Entrenadores</div>
                                 <div class="text-lg fw-bold number" data-role="entrenadores"><?php echo $result['entrenadores']; ?></div>
                             </div>
-                            <i class="feather-xl text-white-50" data-feather="dollar-sign"></i>
+                            <i class="feather-xl text-white-50" data-feather="clipboard"></i>
                         </div>
                     </div>
                     <div class="card-footer d-flex align-items-center justify-content-between small">
@@ -187,7 +187,7 @@ include './includespro/header.php';
                                 <div class="text-white-75 small">Deportistas</div>
                                 <div class="text-lg fw-bold number" data-role="deportistas"><?php echo $result['deportistas']; ?></div>
                             </div>
-                            <i class="feather-xl text-white-50" data-feather="message-circle"></i>
+                            <i class="feather-xl text-white-50" data-feather="dribbble"></i>
                         </div>
                     </div>
                     <div class="card-footer d-flex align-items-center justify-content-between small">

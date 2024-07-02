@@ -1,7 +1,7 @@
 <footer class="footer-admin mt-auto footer-light">
     <div class="container-xl px-4">
         <div class="row">
-            <div class="col-md-6 small">Copyright &copy; Your Website 2021</div>
+            <div class="col-md-6 small">Copyright &copy; Looneytunes <span id="currentYear"></span></div>
             <div class="col-md-6 text-md-end small">
                 <a href="#!">Privacy Policy</a>
                 &middot;
@@ -14,6 +14,13 @@
 </div>
 <script>
     feather.replace();
+</script>
+<script>
+    // JavaScript para actualizar el año actual en el footer
+    document.addEventListener('DOMContentLoaded', function () {
+        var currentYear = new Date().getFullYear();
+        document.getElementById('currentYear').textContent = currentYear;
+    });
 </script>
 <script>
     document.getElementById('uploadBackupLink').addEventListener('click', function() {

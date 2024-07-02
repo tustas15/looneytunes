@@ -1,18 +1,18 @@
 <?php
-include './Admin/configuracion/conexion.php';
+include '../../configuracion/conexion.php'; // Asegúrate de que esta ruta es correcta
+
+// Iniciar la transacción
+$conn->beginTransaction();
 
 try {
     // Verificar que las contraseñas coincidan
-    if ($_POST['password'] !== $_POST['confirm_password']) {
-        throw new Exception('Las contraseñas no coinciden.');
+    if (empty($_POST['celular_a'])) {
+        throw new Exception('El celular es obligatorio.');
     }
-
-    // Iniciar la transacción
-    $conn->beginTransaction();
 
     // Preparar la consulta SQL para insertar los datos en tab_usuarios
     $stmt = $conn->prepare("INSERT INTO tab_usuarios (usuario, pass) VALUES (:usuario, :pass)");
-    $hashed_password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+    $hashed_password = password_hash($_POST['celular_a'], PASSWORD_DEFAULT); // Usando celular como contraseña
 
     // Bind de parámetros
     $stmt->bindParam(':usuario', $_POST['nombre_a']);
@@ -46,16 +46,20 @@ try {
     // Registrar el evento en la tabla tab_logs
     $evento = "Registro de cuenta de administrador: " . $_POST['nombre_a'] . " " . $_POST['apellido_a'];
     $ip = $_SERVER['REMOTE_ADDR'];
-    $query = "INSERT INTO tab_logs (ID_USUARIO, EVENTO, HORA_LOG, DIA_LOG, IP_USUARIO) VALUES (?, ?, CURRENT_TIME(), CURRENT_DATE(), ?)";
+    $query = "INSERT INTO tab_logs (ID_USUARIO, EVENTO, HORA_LOG, DIA_LOG, IP) VALUES (?, ?, CURRENT_TIME(), CURRENT_DATE(), ?)";
     $stmt = $conn->prepare($query);
     $stmt->execute([$id_usuario, $evento, $ip]);
 
-    header("Location: cradmin.php?message=success"); // Redirige al formulario con un mensaje de éxito
+    header("Location: ../crear_usuarios/cradmin.php?message=Registro exitoso"); // Redirige al formulario con un mensaje de éxito
 } catch (Exception $e) {
     // Revertir la transacción en caso de error
-    $conn->rollBack();
-    header("Location: cradmin.php?message=" . urlencode($e->getMessage())); // Redirige al formulario con un mensaje de error
+    if ($conn->inTransaction()) {
+        $conn->rollBack();
+    }
+
+    header("Location: ../crear_usuarios/cradmin.php?message=" . urlencode($e->getMessage())); // Redirige al formulario con un mensaje de error
 }
 
 // Cerrar la conexión
 $conn = null;
+?>
