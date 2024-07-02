@@ -1,33 +1,105 @@
 <?php
 // Conexión a la base de datos
-require_once('/xampp/htdocs/tutorial/conexion/conexion.php');
+require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
+session_start();
 
-try {
-    // Consulta para obtener todos los usuarios tipo "entrenador"
-    $stmt = $conn->prepare("
-        SELECT u.ID_USUARIO, u.USUARIO
-        FROM tab_usuarios u
-        INNER JOIN tab_usu_tipo ut ON u.ID_USUARIO = ut.ID_USUARIO
-        INNER JOIN tab_tipo_usuario t ON ut.ID_TIPO = t.ID_TIPO
-        WHERE t.ID_TIPO = :tipo_entrenador
-    ");
-    $tipo_entrenador = 2;  // ID_TIPO para entrenadores
-    $stmt->bindParam(':tipo_entrenador', $tipo_entrenador, PDO::PARAM_INT);
-    $stmt->execute();
-    $entrenadores = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    // Mostrar la lista de entrenadores
-    echo "<h1>Lista de Entrenadores</h1>";
-    echo "<ul>";
-    foreach ($entrenadores as $entrenador) {
-        echo "<li><a href='../../../Public/profile.php?ID_USUARIO=" . htmlspecialchars($entrenador['ID_USUARIO']) . "'>" . htmlspecialchars($entrenador['USUARIO']) . "</a></li>";
-    }
-    echo "</ul>";
-
-} catch (PDOException $e) {
-    echo "Error: " . $e->getMessage();
+// Verificar si el usuario está autenticado
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../../../Public/login.php");
+    exit();
 }
 
-// Cierre de la conexión
-$conn = null;
+// Verificar el tipo de usuario
+if (!isset($_SESSION['tipo_usuario'])) {
+    echo "Tipo de usuario no definido.";
+    exit();
+}
+
+$nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
+$tipo_usuario = $_SESSION['tipo_usuario'];
+$usuario = isset($_SESSION['usuario']) ? $_SESSION['usuario'] : 'Usuario';
+
+include '/xampp/htdocs/looneytunes/admin/includespro/header.php';
 ?>
+
+<main>
+    <div class="container-xl px-4 mt-4">
+        <!-- Page title -->
+        <div class="page-title">
+            <h1>Lista de Entrenadores</h1>
+        </div>
+
+        <!-- Example DataTable for Dashboard Demo -->
+        <div class="card mb-4">
+            <div class="card-header">Entrenadores</div>
+            <div class="card-body">
+                <table id="datatablesSimple">
+                    <thead>
+                        <tr>
+                            <th>ID Entrenador</th>
+                            <th>ID Usuario</th>
+                            <th>Nombre</th>
+                            <th>Apellido</th>
+                            <th>Experiencia</th>
+                            <th>Celular</th>
+                            <th>Correo</th>
+                            <th>Perfil</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>ID Entrenador</th>
+                            <th>ID Usuario</th>
+                            <th>Nombre</th>
+                            <th>Apellido</th>
+                            <th>Experiencia</th>
+                            <th>Celular</th>
+                            <th>Correo</th>
+                            <th>Perfil</th>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                        <?php
+                        try {
+                            // Consulta para obtener todos los entrenadores con sus detalles
+                            $stmt = $conn->prepare("
+                                SELECT e.ID_ENTRENADOR, e.ID_USUARIO, u.USUARIO, e.NOMBRE_ENTRE, e.APELLIDO_ENTRE, e.EXPERIENCIA_ENTRE, e.CELULAR_ENTRE, e.CORREO_ENTRE
+                                FROM tab_entrenadores e
+                                INNER JOIN tab_usuarios u ON e.ID_USUARIO = u.ID_USUARIO
+                                WHERE e.ID_USUARIO IN (
+                                    SELECT ID_USUARIO FROM tab_usu_tipo WHERE ID_TIPO = :tipo_entrenador
+                                )
+                            ");
+                            $tipo_entrenador = 2;  // ID_TIPO para entrenadores
+                            $stmt->bindParam(':tipo_entrenador', $tipo_entrenador, PDO::PARAM_INT);
+                            $stmt->execute();
+                            $entrenadores = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                            // Mostrar la lista de entrenadores
+                            foreach ($entrenadores as $entrenador) {
+                                echo "<tr>";
+                                echo "<td>" . htmlspecialchars($entrenador['ID_ENTRENADOR']) . "</td>";
+                                echo "<td>" . htmlspecialchars($entrenador['ID_USUARIO']) . "</td>";
+                                echo "<td>" . htmlspecialchars($entrenador['NOMBRE_ENTRE']) . "</td>";
+                                echo "<td>" . htmlspecialchars($entrenador['APELLIDO_ENTRE']) . "</td>";
+                                echo "<td>" . htmlspecialchars($entrenador['EXPERIENCIA_ENTRE']) . "</td>";
+                                echo "<td>" . htmlspecialchars($entrenador['CELULAR_ENTRE']) . "</td>";
+                                echo "<td>" . htmlspecialchars($entrenador['CORREO_ENTRE']) . "</td>";
+                                echo "<td><a href='../perfil/perfil_entrenador.php?ID_USUARIO=" . htmlspecialchars($entrenador['ID_USUARIO']) . "'>Ver Perfil</a></td>";
+                                echo "</tr>";
+                            }
+                        } catch (PDOException $e) {
+                            echo "<tr><td colspan='8'>Error: " . $e->getMessage() . "</td></tr>";
+                        }
+
+                        // Cierre de la conexión
+                        $conn = null;
+                        ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+
+<?php include_once('/xampp/htdocs/looneytunes/admin/includespro/footer.php'); ?>

@@ -10,8 +10,8 @@
     <title>Dashboard </title>
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/litepicker/dist/css/litepicker.css" rel="stylesheet" />
-    <link href="../Assets/css/styles.css" rel="stylesheet" />
-    <link rel="icon" type="image/x-icon" href="../Assets/img/favicon.png" />
+    <link href="/looneytunes/Assets/css/styles.css" rel="stylesheet" />
+    <link rel="icon" type="image/x-icon" href="/looneytunes/Assets/img/favicon.png" />
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>
@@ -27,7 +27,7 @@
         <!-- * * Tip * * You can use text or an image for your navbar brand.-->
         <!-- * * * * * * When using an image, we recommend the SVG format.-->
         <!-- * * * * * * Dimensions: Maximum height: 32px, maximum width: 240px-->
-        <a class="navbar-brand pe-3 ps-4 ps-lg-2" href="../index.php">Dashboard</a>
+        <a class="navbar-brand pe-3 ps-4 ps-lg-2" href="/looneytunes/index.php">Dashboard</a>
         <!-- Navbar Search Input-->
         <!-- * * Note: * * Visible only on and above the lg breakpoint-->
         <form class="form-inline me-auto d-none d-lg-block me-3">
@@ -45,7 +45,7 @@
                     <i class="fas fa-chevron-right dropdown-arrow"></i>
                 </a>
                 <div class="dropdown-menu dropdown-menu-end py-0 me-sm-n15 me-lg-0 o-hidden animated--fade-in-up" aria-labelledby="navbarDropdownDocs">
-                    <a class="dropdown-item py-3" href="../Admin/configuracion/respaldo/downloadFile.php">
+                    <a class="dropdown-item py-3" href="/looneytunes/Admin/configuracion/respaldo/downloadFile.php">
                         <div class="icon-stack bg-primary-soft text-primary me-4"><i data-feather="database"></i></div>
                         <div>
                             <div class="small text-gray-500">Generar Respaldo</div>
@@ -71,7 +71,7 @@
                 </div>
             </li>
             <!-- Formulario para subir archivos (oculto) -->
-            <form id="uploadBackupForm" action="../Uploads/uploadBackup.php" method="POST" enctype="multipart/form-data" style="display:none;">
+            <form id="uploadBackupForm" action="/looneytunes//Uploads/uploadBackup.php" method="POST" enctype="multipart/form-data" style="display:none;">
                 <input type="file" id="backupFile" name="backupFile" required>
             </form>
 
@@ -152,7 +152,7 @@
                     </h6>
                     <!-- Example Message 1  -->
                     <a class="dropdown-item dropdown-notifications-item" href="#!">
-                        <img class="dropdown-notifications-item-img" src="../Assets/img/illustrations/profiles/profile-2.png" />
+                        <img class="dropdown-notifications-item-img" src="/looneytunes//Assets/img/illustrations/profiles/profile-2.png" />
                         <div class="dropdown-notifications-item-content">
                             <div class="dropdown-notifications-item-content-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div>
                             <div class="dropdown-notifications-item-content-details">Thomas Wilcox · 58m</div>
@@ -160,7 +160,7 @@
                     </a>
                     <!-- Example Message 2-->
                     <a class="dropdown-item dropdown-notifications-item" href="#!">
-                        <img class="dropdown-notifications-item-img" src="../Assets/img/illustrations/profiles/profile-3.png" />
+                        <img class="dropdown-notifications-item-img" src="/looneytunes/Assets/img/illustrations/profiles/profile-3.png" />
                         <div class="dropdown-notifications-item-content">
                             <div class="dropdown-notifications-item-content-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div>
                             <div class="dropdown-notifications-item-content-details">Emily Fowler · 2d</div>
@@ -168,7 +168,7 @@
                     </a>
                     <!-- Example Message 3-->
                     <a class="dropdown-item dropdown-notifications-item" href="#!">
-                        <img class="dropdown-notifications-item-img" src="../Assets/img/illustrations/profiles/profile-4.png" />
+                        <img class="dropdown-notifications-item-img" src="/looneytunes/Assets/img/illustrations/profiles/profile-4.png" />
                         <div class="dropdown-notifications-item-content">
                             <div class="dropdown-notifications-item-content-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div>
                             <div class="dropdown-notifications-item-content-details">Marshall Rosencrantz · 3d</div>
@@ -176,7 +176,7 @@
                     </a>
                     <!-- Example Message 4-->
                     <a class="dropdown-item dropdown-notifications-item" href="#!">
-                        <img class="dropdown-notifications-item-img" src="../Assets/img/illustrations/profiles/profile-5.png" />
+                        <img class="dropdown-notifications-item-img" src="/looneytunes/Assets/img/illustrations/profiles/profile-5.png" />
                         <div class="dropdown-notifications-item-content">
                             <div class="dropdown-notifications-item-content-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div>
                             <div class="dropdown-notifications-item-content-details">Colby Newton · 3d</div>
@@ -188,20 +188,20 @@
             </li>
             <!-- User Dropdown-->
             <li class="nav-item dropdown no-caret dropdown-user me-3 me-lg-4">
-                <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownUserImage" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img class="img-fluid" src="../Assets/img/illustrations/profiles/profile-1.png" /></a>
+                <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownUserImage" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img class="img-fluid" src="/looneytunes/Assets/img/illustrations/profiles/profile-1.png" /></a>
                 <div class="dropdown-menu dropdown-menu-end border-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownUserImage">
                     <h6 class="dropdown-header d-flex align-items-center">
-                        <img class="dropdown-user-img" src="../Assets/img/illustrations/profiles/profile-1.png" />
+                        <img class="dropdown-user-img" src="/looneytunes/Assets/img/illustrations/profiles/profile-1.png" />
                         <div class="dropdown-user-details">
                             <div class="dropdown-user-details-name"><?= $nombre ?></div>
                         </div>
                     </h6>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="../Public/profile.php">
+                    <a class="dropdown-item" href="/looneytunes/Public/profile.php">
                         <div class="dropdown-item-icon"><i data-feather="settings"></i></div>
                         Cuenta
                     </a>
-                    <a class="dropdown-item" href="../Public/logout.php">
+                    <a class="dropdown-item" href="/looneytunes/Public/logout.php">
                         <div class="dropdown-item-icon"><i data-feather="log-out"></i></div>
                         Logout
                     </a>
@@ -234,7 +234,7 @@
                         <!-- Sidenav Menu Heading (Core)-->
                         <div class="sidenav-menu-heading">Core</div>
                         <!-- Sidenav Accordion (Dashboard)-->
-                        <a class="nav-link" href=" ../index.php">
+                        <a class="nav-link" href=" /looneytunes/index.php">
                             <div class="nav-link-icon"><i data-feather="home"></i></div>
                             Dashboard
                         </a>
