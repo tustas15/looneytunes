@@ -152,7 +152,7 @@ try {
                     <div class="row mt-4">
                         <div class="col-md-12 d-flex justify-content-between">
                             <button type="submit" class="btn btn-primary">Actualizar</button>
-                            <a href="../lista_representantes.php" class="btn btn-primary">Volver a la Lista</a>
+                            <a href="/looneytunes/admin/configuracion/busqueda/indexrepresentante.php" class="btn btn-primary">Volver a la Lista</a>
                         </div>
                     </div>
                 </form>
