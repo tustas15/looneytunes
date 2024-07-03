@@ -47,7 +47,7 @@ if (isset($_GET['message'])) {
                                     <?php echo $message; ?>
 
                                     <!-- Formulario para crear una cuenta de Entrenador -->
-                                    <form action="../procces/procces_form.php" method="post" class="user">
+                                    <form action="../procces/process_form.php" method="post" class="user">
                                         <!-- Form Group (nombre) -->
                                         <div class="mb-3">
                                             <label class="small mb-1" for="nombre">Nombre</label>

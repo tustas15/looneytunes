@@ -1,5 +1,5 @@
 <?php
-include './Admin/configuracion/conexion.php';
+include '../../configuracion/conexion.php';
 
 try {
     // Verificar que todos los campos están completos
