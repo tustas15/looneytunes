@@ -309,7 +309,7 @@ include './includespro/header.php';
                 </div>
             </div>
 
-            <!-- progreso -->
+            <!-- progreso 
             <div class="col-xxl-4 col-xl-6 mb-4">
                 <div class="card card-header-actions h-100">
                     <div class="card-header">
@@ -377,8 +377,8 @@ include './includespro/header.php';
                     </div>
                 </div>
             </div>
-        </div>
-        <!-- Example Charts for Dashboard Demo-->
+        </div>-->
+        <!-- Example Charts for Dashboard Demo
         <div class="row">
             <div class="col-xl-6 mb-4">
                 <div class="card card-header-actions h-100">
@@ -422,8 +422,8 @@ include './includespro/header.php';
                     </div>
                 </div>
             </div>
-        </div>
-        <!-- Example DataTable for Dashboard Demo-->
+        </div>-->
+        <!-- Example DataTable for Dashboard Demo
         <div class="card mb-4">
             <div class="card-header">Personnel Management</div>
             <div class="card-body">
@@ -472,7 +472,7 @@ include './includespro/header.php';
                     </tbody>
                 </table>
             </div>
-        </div>
+        </div>-->
     </div>
 
     <?php
