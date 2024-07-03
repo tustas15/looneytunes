@@ -26,19 +26,19 @@ include '../Admin/configuracion/conexion.php';
 
             <!-- Main Content -->
             <div id="content">
-<!-- Topbar -->
-<nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">                    <?php
-                    // ... (código anterior)
-                    $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
-                    include '../representante/vistaRepre/navigation.php';
-                    ?>
+                <!-- Topbar -->
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow"> <?php
+                                                                                                        // ... (código anterior)
+                                                                                                        $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
+                                                                                                        include '../representante/vistaRepre/navigation.php';
+                                                                                                        ?>
 
                     <!-- End of Topbar -->
-                                <?php include '../representante/vistaRepre/footer.php'; ?>
-                            </div>
-                        </div>
-                    </div>
-                    <?php include '../representante/vistaRepre/scripts.php'; ?>
+                    <?php include '../representante/vistaRepre/footer.php'; ?>
+            </div>
+        </div>
+    </div>
+    <?php include '../representante/vistaRepre/scripts.php'; ?>
 </body>
 
 </html>

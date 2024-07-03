@@ -63,7 +63,7 @@ try {
 
     <!-- Custom styles for this template-->
     <link href="../AssetsFree/css/sb-admin-2.min.css" rel="stylesheet">
-    <link rel="icon" type="image/png" href="../AssetsFree/img/logo.png">
+    <link rel="icon" type="image/png" href="/looneytunes/AssetsFree/img/logo.png">
 
 </head>
 
