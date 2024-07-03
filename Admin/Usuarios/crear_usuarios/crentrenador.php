@@ -94,35 +94,4 @@ if (isset($_GET['message'])) {
                 </div>
             </main>
         </div>
-        <div id="layoutAuthentication_footer">
-            <footer class="footer-admin mt-auto footer-dark">
-                <div class="container-xl px-4">
-                    <div class="row">
-                        <div class="col-md-6 small">Copyright &copy; Looneytunes <span id="currentYear"></span></div>
-                        <div class="col-md-6 text-md-end small">
-                            <a href="#!">Privacy Policy</a>
-                            &middot;
-                            <a href="#!">Terms &amp; Conditions</a>
-                        </div>
-                    </div>
-                </div>
-                <script>
-                    // JavaScript para actualizar el año actual en el footer
-                    document.addEventListener('DOMContentLoaded', function() {
-                        var currentYear = new Date().getFullYear();
-                        document.getElementById('currentYear').textContent = currentYear;
-                    });
-                </script>
-            </footer>
-        </div>
-    </div>
-    <!-- Bootstrap core JavaScript-->
-    <script src="../../../Assets/vendor/jquery/jquery.min.js"></script>
-    <script src="../../../Assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <!-- Core plugin JavaScript-->
-    <script src="../../../Assets/vendor/jquery-easing/jquery.easing.min.js"></script>
-    <!-- Custom scripts for all pages-->
-    <script src="../../../Assets/js/sb-admin-2.min.js"></script>
-</body>
-
-</html>
+        <?php include_once('/xampp/htdocs/looneytunes/admin/includespro/footer.php'); ?>

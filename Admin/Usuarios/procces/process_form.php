@@ -45,7 +45,7 @@ try {
     $stmt->execute();
 
     // Registrar el evento en la tabla tab_logs
-    $evento = "Registro de nuevo entrenador: " . $_POST['nombre'] . " " . $_POST['apellido'];
+    $evento = "Registro de nuevo entrenador: " . $nombre . " " . $apellido;
     $ip = $_SERVER['REMOTE_ADDR'];
     $query = "INSERT INTO tab_logs (ID_USUARIO, EVENTO, HORA_LOG, DIA_LOG, IP) VALUES (?, ?, CURRENT_TIME(), CURRENT_DATE(), ?)";
     $stmt = $conn->prepare($query);

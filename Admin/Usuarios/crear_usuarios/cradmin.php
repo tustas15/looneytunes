@@ -67,29 +67,4 @@
                 </div>
             </main>
         </div>
-        <div id="layoutAuthentication_footer">
-            <footer class="footer-admin mt-auto footer-dark">
-                <div class="container-xl px-4">
-                    <div class="row">
-                        <div class="col-md-6 small">Copyright &copy; Looneytunes <span id="currentYear"></span></div>
-                        <div class="col-md-6 text-md-end small">
-                            <a href="#!">Privacy Policy</a>
-                            &middot;
-                            <a href="#!">Terms &amp; Conditions</a>
-                        </div>
-                    </div>
-                </div>
-            </footer>
-        </div>
-    </div>
-    <script>
-    // JavaScript para actualizar el año actual en el footer
-    document.addEventListener('DOMContentLoaded', function () {
-        var currentYear = new Date().getFullYear();
-        document.getElementById('currentYear').textContent = currentYear;
-    });
-</script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-    <script src="../../../Assets/js/scripts.js"></script>
-</body>
-</html>
+        <?php include_once('/xampp/htdocs/looneytunes/admin/includespro/footer.php'); ?>
