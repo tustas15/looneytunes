@@ -79,9 +79,12 @@ $usuario = isset($_SESSION['usuario']) ? htmlspecialchars($_SESSION['usuario'], 
                         <?php endif; ?>
                     </div>
                 </div>
+                <!-- Sidenav Footer -->
                 <div class="sidenav-footer">
-                    <div class="small">Logged in as: </div>
-                    <div class="sidenav-footer-title"><?= $nombre ?></div>
+                    <div class="sidenav-footer-content">
+                        <div class="sidenav-footer-subtitle">Logged in as:</div>
+                        <div class="sidenav-footer-title"><?php echo htmlspecialchars($nombre); ?></div>
+                    </div>
                 </div>
             </nav>
         </div>
