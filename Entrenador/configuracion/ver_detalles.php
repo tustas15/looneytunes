@@ -10,13 +10,20 @@ if (!isset($_SESSION['user_id'])) {
 $id_usuario = $_SESSION['user_id']; 
 
 // Consulta para obtener datos de tab_temp_deportistas y tab_detalles
-$sql = "SELECT td.ID_TEMP_DEPORTISTA, td.NOMBRE_DEPO, td.APELLIDO_DEPO, td.CEDULA_DEPO, 
-        td.FECHA_NACIMIENTO, td.NUMERO_CELULAR, td.GENERO,
-        d.NUMERO_CAMISA, d.ALTURA, d.PESO, d.FECHA_INGRESO
-        FROM tab_temp_deportistas td 
-        LEFT JOIN tab_detalles d ON td.ID_USUARIO = d.ID_USUARIO
-        WHERE td.ID_USUARIO = :id_usuario
-        ORDER BY td.FECHA_NACIMIENTO DESC"; 
+$sql = "WITH Ordenados AS (
+    SELECT td.ID_TEMP_DEPORTISTA, td.NOMBRE_DEPO, td.APELLIDO_DEPO, td.CEDULA_DEPO, 
+           td.FECHA_NACIMIENTO, td.NUMERO_CELULAR, td.GENERO,
+           d.NUMERO_CAMISA, d.ALTURA, d.PESO, d.FECHA_INGRESO,
+           ROW_NUMBER() OVER (PARTITION BY td.ID_DEPORTISTA ORDER BY d.FECHA_INGRESO DESC) AS fila
+    FROM tab_temp_deportistas td 
+    LEFT JOIN tab_detalles d ON td.ID_DEPORTISTA = d.ID_DEPORTISTA
+    WHERE td.ID_USUARIO = :id_usuario
+)
+SELECT ID_TEMP_DEPORTISTA, NOMBRE_DEPO, APELLIDO_DEPO, CEDULA_DEPO, 
+       FECHA_NACIMIENTO, NUMERO_CELULAR, GENERO,
+       NUMERO_CAMISA, ALTURA, PESO, FECHA_INGRESO
+FROM Ordenados
+WHERE fila = 1";
 
 $stmt = $conn->prepare($sql); 
 $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT); 
@@ -33,10 +40,25 @@ $deportistas = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> 
     <link rel="icon" type="image/png" href="../img/logo.png"> 
     <style> 
-        .table-responsive { max-height: 500px; overflow-y: auto; } 
+        .table-responsive { max-height: 500px; overflow-y: auto; }
+        .regresar-btn {
+    position: absolute;
+    top: 10px; 
+    right: 10px; 
+    padding: 8px 16px;
+    background-color: blue;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+}
+
+.regresar-btn:hover {
+    background-color: darkblue;
+}
     </style> 
 </head> 
-<body> 
+<body>
+    <a href="../entrenador/indexentrenador.php" class="regresar-btn">Regresar</a>
     <div class="container my-5"> 
         <h1>Detalles de Deportistas</h1> 
         <div class="table-responsive"> 
