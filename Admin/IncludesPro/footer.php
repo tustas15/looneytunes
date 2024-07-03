@@ -3,9 +3,9 @@
         <div class="row">
             <div class="col-md-6 small">Copyright &copy; Looneytunes <span id="currentYear"></span></div>
             <div class="col-md-6 text-md-end small">
-                <a href="#!">Privacy Policy</a>
-                &middot;
-                <a href="#!">Terms &amp; Conditions</a>
+            <a href="../Public/Privacy_Policy.php">Privacy Policy</a>
+                    &middot;
+                    <a href="../Public/terms_condition.php">Terms &amp; Conditions</a>
             </div>
         </div>
     </div>

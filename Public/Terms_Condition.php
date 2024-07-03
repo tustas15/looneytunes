@@ -63,7 +63,7 @@
                 <p>En ningún caso seremos responsables por daños indirectos, incidentales, especiales, consecuentes o punitivos que surjan de su uso de nuestros servicios.</p>
                 
                 <h2>7. Ley Aplicable</h2>
-                <p>Estos Términos y Condiciones se rigen e interpretan de acuerdo con las leyes de [Su País/Estado], sin tener en cuenta sus disposiciones sobre conflictos de leyes.</p>
+                <p>Estos Términos y Condiciones se rigen e interpretan de acuerdo con las leyes de Ecuador, sin tener en cuenta sus disposiciones sobre conflictos de leyes.</p>
                 
                 <h2>8. Cambios en Estos Términos</h2>
                 <p>Podemos actualizar nuestros Términos y Condiciones de vez en cuando. Le notificaremos sobre cualquier cambio publicando los nuevos Términos y Condiciones en esta página.</p>
