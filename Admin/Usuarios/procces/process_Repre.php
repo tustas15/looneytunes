@@ -56,12 +56,12 @@ try {
     $stmt->execute([$id_usuario, $evento, $ip, $tipo_evento]);
 
     // Redirigir con mensaje de éxito
-    header("Location: ../crrepresentante.php?message=success");
+    header("Location: ../crear_usuarios/crrepresentante.php?message=success");
 } catch (Exception $e) {
     // Revertir la transacción en caso de error
     $conn->rollBack();
     // Redirigir con mensaje de error
-    header("Location: ../crrepresentante.php?message=" . urlencode($e->getMessage()));
+    header("Location: ../crear_usuarios/crrepresentante.php?message=" . urlencode($e->getMessage()));
 }
 
 // Cerrar la conexión

@@ -52,10 +52,10 @@ try {
     $stmt->execute([$id_usuario, $evento, $ip]);
 
     // Redirigir con mensaje de éxito
-    header("Location: ../crentrenador.php?message=success");
+    header("Location: ../crear_usuarios/crentrenador.php?message=success");
 } catch (Exception $e) {
     // Redirigir con mensaje de error
-    header("Location: ../crentrenador.php?message=" . urlencode($e->getMessage()));
+    header("Location: ../crear_usuarios/crentrenador.php?message=" . urlencode($e->getMessage()));
 }
 
 // Cerrar la conexión
