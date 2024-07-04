@@ -71,7 +71,7 @@
                 </div>
             </li>
             <!-- Formulario para subir archivos (oculto) -->
-            <form id="uploadBackupForm" action="/looneytunes//Uploads/uploadBackup.php" method="POST" enctype="multipart/form-data" style="display:none;">
+            <form id="uploadBackupForm" action="/looneytunes/Uploads/uploadBackup.php" method="POST" enctype="multipart/form-data" style="display:none;">
                 <input type="file" id="backupFile" name="backupFile" required>
             </form>
 

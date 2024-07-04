@@ -71,20 +71,10 @@
                 </div>
             </li>
             <!-- Formulario para subir archivos (oculto) -->
-            <form id="uploadBackupForm" action="/looneytunes//Uploads/uploadBackup.php" method="POST" enctype="multipart/form-data" style="display:none;">
+            <form id="uploadBackupForm" action="/looneytunes/Uploads/uploadBackup.php" method="POST" enctype="multipart/form-data" style="display:none;">
                 <input type="file" id="backupFile" name="backupFile" required>
             </form>
 
-            <!-- JavaScript para manejar el clic en el enlace -->
-            <script>
-                document.getElementById('uploadBackupLink').addEventListener('click', function() {
-                    document.getElementById('backupFile').click();
-                });
-
-                document.getElementById('backupFile').addEventListener('change', function() {
-                    document.getElementById('uploadBackupForm').submit();
-                });
-            </script>
             <!-- Navbar Search Dropdown-->
             <!-- * * Note: * * Visible only below the lg breakpoint-->
             <li class="nav-item dropdown no-caret me-3 d-lg-none">
@@ -107,38 +97,7 @@
                         <i class="me-2" data-feather="bell"></i>
                         Alerts Center
                     </h6>
-                    <!-- Example Alert 1-->
-                    <a class="dropdown-item dropdown-notifications-item" href="#!">
-                        <div class="dropdown-notifications-item-icon bg-warning"><i data-feather="activity"></i></div>
-                        <div class="dropdown-notifications-item-content">
-                            <div class="dropdown-notifications-item-content-details">December 29, 2021</div>
-                            <div class="dropdown-notifications-item-content-text">This is an alert message. It's nothing serious, but it requires your attention.</div>
-                        </div>
-                    </a>
-                    <!-- Example Alert 2-->
-                    <a class="dropdown-item dropdown-notifications-item" href="#!">
-                        <div class="dropdown-notifications-item-icon bg-info"><i data-feather="bar-chart"></i></div>
-                        <div class="dropdown-notifications-item-content">
-                            <div class="dropdown-notifications-item-content-details">December 22, 2021</div>
-                            <div class="dropdown-notifications-item-content-text">A new monthly report is ready. Click here to view!</div>
-                        </div>
-                    </a>
-                    <!-- Example Alert 3-->
-                    <a class="dropdown-item dropdown-notifications-item" href="#!">
-                        <div class="dropdown-notifications-item-icon bg-danger"><i class="fas fa-exclamation-triangle"></i></div>
-                        <div class="dropdown-notifications-item-content">
-                            <div class="dropdown-notifications-item-content-details">December 8, 2021</div>
-                            <div class="dropdown-notifications-item-content-text">Critical system failure, systems shutting down.</div>
-                        </div>
-                    </a>
-                    <!-- Example Alert 4-->
-                    <a class="dropdown-item dropdown-notifications-item" href="#!">
-                        <div class="dropdown-notifications-item-icon bg-success"><i data-feather="user-plus"></i></div>
-                        <div class="dropdown-notifications-item-content">
-                            <div class="dropdown-notifications-item-content-details">December 2, 2021</div>
-                            <div class="dropdown-notifications-item-content-text">New user request. Woody has requested access to the organization.</div>
-                        </div>
-                    </a>
+
                     <a class="dropdown-item dropdown-notifications-footer" href="#!">View All Alerts</a>
                 </div>
             </li>
@@ -150,39 +109,7 @@
                         <i class="me-2" data-feather="mail"></i>
                         Message Center
                     </h6>
-                    <!-- Example Message 1  -->
-                    <a class="dropdown-item dropdown-notifications-item" href="#!">
-                        <img class="dropdown-notifications-item-img" src="/looneytunes//Assets/img/illustrations/profiles/profile-2.png" />
-                        <div class="dropdown-notifications-item-content">
-                            <div class="dropdown-notifications-item-content-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div>
-                            <div class="dropdown-notifications-item-content-details">Thomas Wilcox · 58m</div>
-                        </div>
-                    </a>
-                    <!-- Example Message 2-->
-                    <a class="dropdown-item dropdown-notifications-item" href="#!">
-                        <img class="dropdown-notifications-item-img" src="/looneytunes/Assets/img/illustrations/profiles/profile-3.png" />
-                        <div class="dropdown-notifications-item-content">
-                            <div class="dropdown-notifications-item-content-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div>
-                            <div class="dropdown-notifications-item-content-details">Emily Fowler · 2d</div>
-                        </div>
-                    </a>
-                    <!-- Example Message 3-->
-                    <a class="dropdown-item dropdown-notifications-item" href="#!">
-                        <img class="dropdown-notifications-item-img" src="/looneytunes/Assets/img/illustrations/profiles/profile-4.png" />
-                        <div class="dropdown-notifications-item-content">
-                            <div class="dropdown-notifications-item-content-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div>
-                            <div class="dropdown-notifications-item-content-details">Marshall Rosencrantz · 3d</div>
-                        </div>
-                    </a>
-                    <!-- Example Message 4-->
-                    <a class="dropdown-item dropdown-notifications-item" href="#!">
-                        <img class="dropdown-notifications-item-img" src="/looneytunes/Assets/img/illustrations/profiles/profile-5.png" />
-                        <div class="dropdown-notifications-item-content">
-                            <div class="dropdown-notifications-item-content-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div>
-                            <div class="dropdown-notifications-item-content-details">Colby Newton · 3d</div>
-                        </div>
-                    </a>
-                    <!-- Footer Link-->
+
                     <a class="dropdown-item dropdown-notifications-footer" href="#!">Read All Messages</a>
                 </div>
             </li>
@@ -217,83 +144,125 @@
                         <!-- Sidenav Menu Heading (Account)-->
                         <!-- * * Note: * * Visible only on and above the sm breakpoint-->
                         <div class="sidenav-menu-heading d-sm-none">Account</div>
-                        <!-- Sidenav Link (Alerts)-->
-                        <!-- * * Note: * * Visible only on and above the sm breakpoint-->
+                        <!-- Sidenav Accordion (Dashboard)-->
                         <a class="nav-link d-sm-none" href="#!">
-                            <div class="nav-link-icon"><i data-feather="bell"></i></div>
-                            Alerts
-                            <span class="badge bg-warning-soft text-warning ms-auto">4 New!</span>
+                            <div class="nav-link-icon"><i data-feather="settings"></i></div>
+                            Account
                         </a>
-                        <!-- Sidenav Link (Messages)-->
-                        <!-- * * Note: * * Visible only on and above the sm breakpoint-->
+                        <!-- Sidenav Link (Logout)-->
                         <a class="nav-link d-sm-none" href="#!">
-                            <div class="nav-link-icon"><i data-feather="mail"></i></div>
-                            Messages
-                            <span class="badge bg-success-soft text-success ms-auto">2 New!</span>
+                            <div class="nav-link-icon"><i data-feather="log-out"></i></div>
+                            Logout
                         </a>
                         <!-- Sidenav Menu Heading (Core)-->
                         <div class="sidenav-menu-heading">Core</div>
                         <!-- Sidenav Accordion (Dashboard)-->
-                        <a class="nav-link" href=" /looneytunes/index.php">
-                            <div class="nav-link-icon"><i data-feather="home"></i></div>
+                        <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseDashboards" aria-expanded="false" aria-controls="collapseDashboards">
+                            <div class="nav-link-icon"><i data-feather="activity"></i></div>
                             Dashboard
+                            <div class="sidenav-collapse-arrow"><i class="fas fa-chevron-right"></i></div>
                         </a>
-
-                        <!-- Sidenav Heading (App Views)-->
-                        <div class="sidenav-menu-heading">Interfaz</div>
+                        <div class="collapse" id="collapseDashboards" data-bs-parent="#accordionSidenav">
+                            <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
+                                <a class="nav-link" href="/looneytunes/index.php">Inicio</a>
+                            </nav>
+                        </div>
+                        <!-- Sidenav Heading (Add)-->
+                        <div class="sidenav-menu-heading">Añadir</div>
                         <!-- Sidenav Accordion (Pages)-->
                         <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
-                            <div class="nav-link-icon"><i class="fas fa-fw fa-cog"></i></div>
-                            Componentes
-                            <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            <div class="nav-link-icon"><i data-feather="grid"></i></div>
+                            Deportistas
+                            <div class="sidenav-collapse-arrow"><i class="fas fa-chevron-right"></i></div>
                         </a>
+                        <nav class="topnav navbar navbar-expand shadow justify-content-between justify-content-sm-start navbar-light bg-white" id="sidenavAccordion">
+                            <!-- Sidenav Toggle Button-->
+                            <button class="btn btn-icon btn-transparent-dark order-1 order-lg-0 me-2 ms-lg-2 me-lg-0" id="sidebarToggle"><i data-feather="menu"></i></button>
+                            <!-- Navbar Brand-->
+                            <a class="navbar-brand pe-3 ps-4 ps-lg-2" href="/looneytunes/index.php">Dashboard</a>
+                            <!-- Navbar Items-->
+                            <ul class="navbar-nav align-items-center ms-auto">
+                                <!-- Registrar Cédula -->
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#" id="registerCedulaLink"><i class="fas fa-id-card"></i> Registrar
+                                        Cédula</a>
+                                </li>
+                            </ul>
+                        </nav>
+
+                        <!-- Modal para registrar cédula -->
+                        <div class="modal fade" id="registerCedulaModal" tabindex="-1" aria-labelledby="registerCedulaModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="registerCedulaModalLabel">Registrar Cédula</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form id="registerCedulaForm" action="registrar.php" method="POST">
+                                            <div class="mb-3">
+                                                <label for="cedulaInput" class="form-label">Ingrese la Cédula</label>
+                                                <input type="text" class="form-control" id="cedulaInput" name="cedula" required>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">Registrar</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="collapse" id="collapsePages" data-bs-parent="#accordionSidenav">
                             <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPagesMenu">
-                                <!-- Nested Sidenav Accordion (Pages -> Account)-->
-                                <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#pagesCollapseAccount" aria-expanded="false" aria-controls="pagesCollapseAccount">
-                                    Perfiles
-                                    <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                                <!-- Add Deportistas Link -->
+                                <a class="nav-link" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseDeportistas" aria-expanded="false" aria-controls="collapseDeportistas">
+                                    Añadir
+                                    <div class="sidenav-collapse-arrow"><i class="fas fa-chevron-right"></i></div>
                                 </a>
-                                <div class="collapse" id="pagesCollapseAccount" data-bs-parent="#accordionSidenavPagesMenu">
+                                <div class="collapse" id="collapseDeportistas" data-bs-parent="#accordionSidenavPagesMenu">
                                     <nav class="sidenav-menu-nested nav">
-                                        <a class="nav-link" href="/looneytunes/admin/configuracion/busqueda/indexadministrador.php">Administradores</a>
-                                        <a class="nav-link" href="/looneytunes/admin/configuracion/busqueda/indexentrenador.php">Entrenadores</a>
-                                        <a class="nav-link" href="/looneytunes/admin/configuracion/busqueda/indexrepresentante.php">Representantes</a>
-                                        <a class="nav-link" href="/looneytunes/admin/configuracion/busqueda/indexdeportista.php">Deportistas</a>
+                                        <a class="nav-link" href="/looneytunes/entrenador/configuracion/registrar.php">Registrar Cédula</a>
                                     </nav>
                                 </div>
-                                <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#pagesCollapsePago" aria-expanded="false" aria-controls="pagesCollapsePago">
-                                    Pago
-                                    <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                                </a>
                             </nav>
                         </div>
-                        <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseFlows" aria-expanded="false" aria-controls="collapseFlows">
-                            <div class="nav-link-icon"><i class="fas fa-fw fa-wrench"></i></div>
-                            Utilidades
-                            <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                        <!-- Sidenav Heading (Consult)-->
+                        <div class="sidenav-menu-heading">Consultar</div>
+                        <!-- Sidenav Accordion (Pages)-->
+                        <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#consultaPages" aria-expanded="false" aria-controls="consultaPages">
+                            <div class="nav-link-icon"><i data-feather="grid"></i></div>
+                            Consultar Deportistas
+                            <div class="sidenav-collapse-arrow"><i class="fas fa-chevron-right"></i></div>
                         </a>
-                        <div class="collapse" id="collapseFlows" data-bs-parent="#accordionSidenav">
-                            <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavFlowsMenu">
-                                <!-- Nested Sidenav Accordion (Flows -> Crear Usuarios)-->
-                                <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#flowsCollapseCrearUsuarios" aria-expanded="false" aria-controls="flowsCollapseCrearUsuarios">
-                                    Crear Usuarios
-                                    <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                        <div class="collapse" id="consultaPages" data-bs-parent="#accordionSidenav">
+                            <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPagesMenu">
+                                <!-- Consult Deportistas Link -->
+                                <a class="nav-link" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#consultarDeportistas" aria-expanded="false" aria-controls="consultarDeportistas">
+                                    Consultar
+                                    <div class="sidenav-collapse-arrow"><i class="fas fa-chevron-right"></i></div>
                                 </a>
-                                <div class="collapse" id="flowsCollapseCrearUsuarios" data-bs-parent="#accordionSidenavFlowsMenu">
+                                <div class="collapse" id="consultarDeportistas" data-bs-parent="#accordionSidenavPagesMenu">
                                     <nav class="sidenav-menu-nested nav">
-                                        <a class="nav-link" href="/looneytunes/admin/usuarios/crear_usuarios/cradmin.php">Administrador</a>
-                                        <a class="nav-link" href="/looneytunes/admin/usuarios/crear_usuarios/crentrenador.php">Entrenador</a>
-                                        <a class="nav-link" href="/looneytunes/admin/usuarios/crear_usuarios/crrepresentante.php">Representante</a>
-                                        <a class="nav-link" href="/looneytunes/admin/usuarios/crear_usuarios/crdeportista.php">Deportista</a>
+                                        <a class="nav-link" href="/looneytunes/entrenador/busqueda/buscar_deportista.php">Buscar Deportista</a>
+                                        <a class="nav-link" href="/looneytunes/entrenador/busqueda/buscar_cedula.php">Buscar por Cédula</a>
+                                        <a class="nav-link" href="/looneytunes/entrenador/busqueda/buscar_nombre.php">Buscar por Nombre</a>
                                     </nav>
                                 </div>
                             </nav>
                         </div>
-                        
+                        <!-- Sidenav Heading (Reports)-->
+                        <div class="sidenav-menu-heading">Reportes</div>
+                        <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#reportesPages" aria-expanded="false" aria-controls="reportesPages">
+                            <div class="nav-link-icon"><i data-feather="file"></i></div>
+                            Generar Reportes
+                            <div class="sidenav-collapse-arrow"><i class="fas fa-chevron-right"></i></div>
+                        </a>
+                        <div class="collapse" id="reportesPages" data-bs-parent="#accordionSidenav">
+                            <nav class="sidenav-menu-nested nav">
+                                <a class="nav-link" href="/looneytunes/entrenador/reportes/generar_reportes.php">Generar Reportes</a>
+                            </nav>
+                        </div>
                     </div>
                 </div>
-                <!-- Sidenav Footer -->
+                <!-- Sidenav Footer-->
                 <div class="sidenav-footer">
                     <div class="sidenav-footer-content">
                         <div class="sidenav-footer-subtitle">Logged in as:</div>
@@ -301,5 +270,24 @@
                     </div>
                 </div>
             </nav>
+            <div class="modal fade" id="registerCedulaModal" tabindex="-1" aria-labelledby="registerCedulaModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="registerCedulaModalLabel">Registrar Cédula</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="registerCedulaForm" action="registrar.php" method="POST">
+                                <div class="mb-3">
+                                    <label for="cedulaInput" class="form-label">Ingrese la Cédula</label>
+                                    <input type="text" class="form-control" id="cedulaInput" name="cedula" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Registrar</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div id="layoutSidenav_content">

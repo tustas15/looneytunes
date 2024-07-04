@@ -3,9 +3,9 @@
         <div class="row">
             <div class="col-md-6 small">Copyright &copy; Looneytunes <span id="currentYear"></span></div>
             <div class="col-md-6 text-md-end small">
-            <a href="/looneytunes/Public/Privacy_Policy.php">Privacy Policy</a>
-                    &middot;
-                    <a href="/looneytunes/Public/terms_condition.php">Terms &amp; Conditions</a>
+                <a href="/looneytunes/Public/Privacy_Policy.php">Privacy Policy</a>
+                &middot;
+                <a href="/looneytunes/Public/terms_condition.php">Terms &amp; Conditions</a>
             </div>
         </div>
     </div>
@@ -15,9 +15,18 @@
 <script>
     feather.replace();
 </script>
+
+<!-- JavaScript para manejar el clic en el enlace -->
+<script>
+    document.querySelector('#registerCedulaLink').addEventListener('click', function(event) {
+        event.preventDefault();
+        var myModal = new bootstrap.Modal(document.getElementById('registerCedulaModal'));
+        myModal.show();
+    });
+</script>
 <script>
     // JavaScript para actualizar el año actual en el footer
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         var currentYear = new Date().getFullYear();
         document.getElementById('currentYear').textContent = currentYear;
     });
