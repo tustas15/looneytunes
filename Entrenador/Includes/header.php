@@ -53,13 +53,14 @@
                         </div>
                     </a>
                     <div class="dropdown-divider m-0"></div>
-                    <a class="dropdown-item py-3" href="/looneytunes/Uploads/uploadBackup.php" data-bs-toggle="modal" data-bs-target="#uploadBackupModal">
+                    <a class="dropdown-item py-3" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#uploadBackupModal">
                         <div class="icon-stack bg-primary-soft text-primary me-4"><i data-feather="upload"></i></div>
                         <div>
                             <div class="small text-gray-500">Subir Respaldo</div>
                             Haz click para subir el respaldo del sistema
                         </div>
                     </a>
+
                     <div class="dropdown-divider m-0"></div>
                     <a class="dropdown-item py-3" href="https://docs.startbootstrap.com/sb-admin-pro/changelog" target="_blank">
                         <div class="icon-stack bg-primary-soft text-primary me-4"><i data-feather="file-text"></i></div>
@@ -251,7 +252,7 @@
                             <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPagesMenu">
                                 <!-- Nested Sidenav Accordion (Pages -> Account)-->
                                 <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#pagesCollapseAccount" aria-expanded="false" aria-controls="pagesCollapseAccount">
-                                    Añadir
+                                    Perfiles
                                     <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                                 </a>
                                 <div class="collapse" id="pagesCollapseAccount" data-bs-parent="#accordionSidenavPagesMenu">
@@ -290,7 +291,30 @@
                                 </div>
                             </nav>
                         </div>
-                        
+
+                    </div>
+                </div>
+                <!-- Modal para Subir Backup -->
+                <div class="modal fade" id="uploadBackupModal" tabindex="-1" aria-labelledby="uploadBackupModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="uploadBackupModalLabel">Subir Respaldo</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <form id="uploadBackupForm" action="/looneytunes/Uploads/uploadBackup.php" method="POST" enctype="multipart/form-data">
+                                <div class="modal-body">
+                                    <div class="mb-3">
+                                        <label for="backupFile" class="form-label">Selecciona el archivo de respaldo</label>
+                                        <input type="file" class="form-control" id="backupFile" name="backupFile" required>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                    <button type="submit" class="btn btn-primary">Subir</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
                 <!-- Sidenav Footer -->

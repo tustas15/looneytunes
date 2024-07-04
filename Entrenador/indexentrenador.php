@@ -572,33 +572,7 @@ include './includes/header.php';
                     <th>Acciones</th>
                 </tr>
             </tfoot>
-            <tbody>
-                <?php
-                // Fetch data from the TEMP_DEPORTISTAS table
-                $sql = "SELECT * FROM TAB_TEMP_DEPORTISTAS WHERE ID_USUARIO = :id_usuario";
-                $stmt = $conn->prepare($sql);
-                $stmt->bindParam(':id_usuario', $_SESSION['user_id'], PDO::PARAM_INT);
-                $stmt->execute();
-                $tempDeportistas = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-                foreach ($tempDeportistas as $deportista) {
-                    echo '<tr>';
-                    echo '<td>' . htmlspecialchars($deportista['NOMBRE_DEPO']) . '</td>';
-                    echo '<td>' . htmlspecialchars($deportista['APELLIDO_DEPO']) . '</td>';
-                    echo '<td>' . htmlspecialchars($deportista['FECHA_NACIMIENTO']) . '</td>';
-                    echo '<td>' . htmlspecialchars($deportista['CEDULA_DEPO']) . '</td>';
-                    echo '<td>' . htmlspecialchars($deportista['NUMERO_CELULAR']) . '</td>';
-                    echo '<td>' . htmlspecialchars($deportista['GENERO']) . '</td>';
-                    echo '<td>
-                    <form method="POST" action="eliminar_deportista.php">
-                        <input type="hidden" name="id_deportista" value="' . htmlspecialchars($deportista['ID_DEPORTISTA']) . '">
-                        <button type="submit" name="delete" class="btn btn-datatable btn-icon btn-transparent-dark me-2"><i data-feather="trash-2"></i></button>
-                    </form>
-                  </td>';
-                    echo '</tr>';
-                }
-                ?>
-            </tbody>
+            
         </table>
     </div>
 </div>
