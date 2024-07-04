@@ -53,7 +53,7 @@
                         </div>
                     </a>
                     <div class="dropdown-divider m-0"></div>
-                    <a class="dropdown-item py-3" href="#" data-bs-toggle="modal" data-bs-target="#uploadBackupModal">
+                    <a class="dropdown-item py-3" href="/looneytunes/Uploads/uploadBackup.php" data-bs-toggle="modal" data-bs-target="#uploadBackupModal">
                         <div class="icon-stack bg-primary-soft text-primary me-4"><i data-feather="upload"></i></div>
                         <div>
                             <div class="small text-gray-500">Subir Respaldo</div>
