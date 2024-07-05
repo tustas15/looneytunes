@@ -1,45 +1,52 @@
 <?php
 // Conexión a la base de datos
 require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
+
 // Verificar que la conexión se estableció correctamente
 if ($conn === null) {
     die("Error de conexión a la base de datos.");
 }
+
 // Inicio de sesión
 session_start();
+
 // Comprobamos si el usuario está logueado
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../Public/login.php");
     exit();
 }
+
 // Comprobamos si el usuario es entrenador
 if (!isset($_SESSION['tipo_usuario'])) {
     echo "Tipo de usuario no definido.";
     exit();
 }
-// Comprobamos si el usuario entrenador
+
 $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
-$tipo_usuario = $_SESSION['tipo_usuario'];
-// Comprobamos si el usuario es entrenador
-$nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
-$usuario = isset($_SESSION['usuario']) ? $_SESSION['usuario'] : 'Usuario';
 $tipo_usuario = $_SESSION['tipo_usuario'];
 
-try {
-    // Consulta SQL
-    $sql = "SELECT
-            (SELECT COUNT(*) FROM tab_administradores) AS administradores,
-            (SELECT COUNT(*) FROM tab_entrenadores) AS entrenadores,
-            (SELECT COUNT(*) FROM tab_representantes) AS representantes,
-            (SELECT COUNT(*) FROM tab_deportistas) AS deportistas";
-    // Preparar la consulta
-    $stmt = $conn->prepare($sql);
-    // Ejecutar la consulta
-    $stmt->execute();
-    // Obtener los resultados como un array asociativo
-    $result = $stmt->fetch(PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
-    echo "Error al ejecutar la consulta: " . $e->getMessage();
+// Consulta para contar deportistas por categoría
+$sql_contar = "SELECT id_categoria, COUNT(*) as cantidad FROM tab_deportistas GROUP BY id_categoria";
+$stmt_contar = $conn->query($sql_contar);
+
+$categorias_count = array();
+
+if ($stmt_contar) {
+    while ($row = $stmt_contar->fetch(PDO::FETCH_ASSOC)) {
+        $categorias_count[$row['id_categoria']] = $row['cantidad'];
+    }
+}
+
+// Consulta para obtener los nombres de las categorías
+$sql_categorias = "SELECT id_categoria, categoria FROM tab_categorias";
+$stmt_categorias = $conn->query($sql_categorias);
+
+$categorias = array();
+
+if ($stmt_categorias) {
+    while ($row = $stmt_categorias->fetch(PDO::FETCH_ASSOC)) {
+        $categorias[$row['id_categoria']] = $row['categoria'];
+    }
 }
 
 // Cargar deportistas desde la base de datos si la variable de sesión está vacía
@@ -52,13 +59,14 @@ try {
 } catch (PDOException $e) {
     $_SESSION['error'] = "Error al cargar los deportistas: " . $e->getMessage();
     header('Location: error.php'); // Redirigir a una página de error
-    exit;
+    exit();
 }
 
 // Manejar la eliminación de deportistas
 if (isset($_POST['delete'])) {
     include './configuracion/eliminar_deportista.php'; // Mover la lógica de eliminación a un archivo separado
 }
+
 // Obtener la lista de deportistas de la sesión
 $deportistas = $_SESSION['deportistas'] ?? [];
 
@@ -69,20 +77,17 @@ try {
     $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;  // Página actual
     $offset = ($page - 1) * $logsPerPage;
 
-    $query = "SELECT * FROM tab_logs WHERE ID_USUARIO = ? ORDER BY DIA_LOG DESC, HORA_LOG DESC LIMIT ? OFFSET ?";
+    $query = "SELECT * FROM tab_logs WHERE ID_USUARIO = :id_usuario ORDER BY DIA_LOG DESC, HORA_LOG DESC LIMIT :limit OFFSET :offset";
     $stmtLogs = $conn->prepare($query);
-    if ($stmtLogs === false) {
-        throw new Exception("Error al preparar la consulta: " . $conn->errorInfo()[2]);
-    }
-    $stmtLogs->bindParam(1, $idUsuario, PDO::PARAM_INT);
-    $stmtLogs->bindParam(2, $logsPerPage, PDO::PARAM_INT);
-    $stmtLogs->bindParam(3, $offset, PDO::PARAM_INT);
+    $stmtLogs->bindParam(':id_usuario', $idUsuario, PDO::PARAM_INT);
+    $stmtLogs->bindParam(':limit', $logsPerPage, PDO::PARAM_INT);
+    $stmtLogs->bindParam(':offset', $offset, PDO::PARAM_INT);
     $stmtLogs->execute();
     $logs = $stmtLogs->fetchAll(PDO::FETCH_ASSOC);
 
-    $totalLogsQuery = "SELECT COUNT(*) as total FROM tab_logs WHERE ID_USUARIO = ?";
+    $totalLogsQuery = "SELECT COUNT(*) as total FROM tab_logs WHERE ID_USUARIO = :id_usuario";
     $stmtTotalLogs = $conn->prepare($totalLogsQuery);
-    $stmtTotalLogs->bindParam(1, $idUsuario, PDO::PARAM_INT);
+    $stmtTotalLogs->bindParam(':id_usuario', $idUsuario, PDO::PARAM_INT);
     $stmtTotalLogs->execute();
     $totalLogs = $stmtTotalLogs->fetch(PDO::FETCH_ASSOC)['total'];
     $totalPages = ceil($totalLogs / $logsPerPage);
@@ -90,7 +95,6 @@ try {
     if (empty($logs)) {
         $logsMessage = "<p>No hay registros de actividad para mostrar.</p>";
     }
-    $stmtLogs->closeCursor();
 } catch (Exception $e) {
     echo "Hubo un problema con la consulta: " . $e->getMessage();
     exit();
@@ -150,7 +154,6 @@ include './includes/header.php';
     </header>
     <!-- Main page content-->
     <div class="container-xl px-4 mt-n10">
-
         <div class="row">
             <div class="col-xxl-4 col-xl-12 mb-4">
                 <div class="card h-100">
@@ -167,158 +170,93 @@ include './includes/header.php';
                     </div>
                 </div>
             </div>
+        </div>
+        <!-- CARDS 1 -->
+        <div class="row">
+            <!-- Código HTML para mostrar las tarjetas -->
+            <div class="text-center text-xl-start text-xxl-center mb-4 mb-xl-0 mb-xxl-4">
+                <h1 class="text-primary">Categorías</h1>
+                <p class="text-gray-700 mb-0">Explora los diferentes tipos de categorías disponibles.</p>
+            </div>
 
+            <?php
+            $tarjetas = [
+                "MOSQUITOS" => ["color" => "bg-primary", "icon" => "users"],
+                "PRE MINI" => ["color" => "bg-warning", "icon" => "file-text"],
+                "MINI DAMAS" => ["color" => "bg-success", "icon" => "award"],
+                "MINI HOMBRES" => ["color" => "bg-danger", "icon" => "soccer-ball"],
+                "U13 DAMAS" => ["color" => "bg-info", "icon" => "users"],
+                "U13 HOMBRES" => ["color" => "bg-secondary", "icon" => "file-text"],
+                "U15 DAMAS" => ["color" => "bg-dark", "icon" => "award"],
+                "U15 HOMBRES" => ["color" => "bg-primary", "icon" => "soccer-ball"]
+            ];
 
-        </div>
-        <!-- CARDS 1-->
-<div class="row">
-    <div class="text-center text-xl-start text-xxl-center mb-4 mb-xl-0 mb-xxl-4">
-        <h1 class="text-primary">Categorías</h1>
-        <p class="text-gray-700 mb-0">Explora los diferentes tipos de categorías disponibles.</p>
-    </div>
-    <div class="col-lg-6 col-xl-3 mb-4">
-        <div class="card bg-primary text-white h-100">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div class="me-3">
-                        <div class="text-white-75 small">MOSQUITOS</div>
-                        <div class="text-lg fw-bold number" data-role="mosquitos"><?php echo $result['mosquitos']; ?></div>
-                    </div>
-                    <i class="feather-xl text-white-50" data-feather="users"></i>
-                </div>
-            </div>
-            <div class="card-footer d-flex align-items-center justify-content-between small">
-                <a class="text-white stretched-link" href="report_mosquitos.php">View Report</a>
-                <div class="text-white"><i class="fas fa-angle-right"></i></div>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-6 col-xl-3 mb-4">
-        <div class="card bg-warning text-white h-100">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div class="me-3">
-                        <div class="text-white-75 small">PRE MINI</div>
-                        <div class="text-lg fw-bold number" data-role="pre_mini"><?php echo $result['pre_mini']; ?></div>
-                    </div>
-                    <i class="feather-xl text-white-50" data-feather="file-text"></i>
-                </div>
-            </div>
-            <div class="card-footer d-flex align-items-center justify-content-between small">
-                <a class="text-white stretched-link" href="report_pre_mini.php">View Report</a>
-                <div class="text-white"><i class="fas fa-angle-right"></i></div>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-6 col-xl-3 mb-4">
-        <div class="card bg-success text-white h-100">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div class="me-3">
-                        <div class="text-white-75 small">MINI DAMAS</div>
-                        <div class="text-lg fw-bold number" data-role="mini_damas"><?php echo $result['mini_damas']; ?></div>
-                    </div>
-                    <i class="feather-xl text-white-50" data-feather="award"></i>
-                </div>
-            </div>
-            <div class="card-footer d-flex align-items-center justify-content-between small">
-                <a class="text-white stretched-link" href="report_mini_damas.php">View Report</a>
-                <div class="text-white"><i class="fas fa-angle-right"></i></div>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-6 col-xl-3 mb-4">
-        <div class="card bg-danger text-white h-100">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div class="me-3">
-                        <div class="text-white-75 small">MINI HOMBRES</div>
-                        <div class="text-lg fw-bold number" data-role="mini_hombres"><?php echo $result['mini_hombres']; ?></div>
-                    </div>
-                    <i class="feather-xl text-white-50" data-feather="soccer-ball"></i>
-                </div>
-            </div>
-            <div class="card-footer d-flex align-items-center justify-content-between small">
-                <a class="text-white stretched-link" href="report_mini_hombres.php">View Report</a>
-                <div class="text-white"><i class="fas fa-angle-right"></i></div>
-            </div>
-        </div>
-    </div>
-</div>
+            $counter = 0; // Para limitar el número de tarjetas a 8
 
-<!-- CARDS 2-->
-<div class="row">
-    <div class="col-lg-6 col-xl-3 mb-4">
-        <div class="card bg-primary text-white h-100">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div class="me-3">
-                        <div class="text-white-75 small">U13 DAMAS</div>
-                        <div class="text-lg fw-bold number" data-role="u13_damas"><?php echo $result['u13_damas']; ?></div>
+            foreach ($tarjetas as $nombre => $config) :
+                if ($counter >= 8) break; // Limitar a 8 tarjetas
+                $categoria_id = array_search($nombre, $categorias);
+                $cantidad = isset($categorias_count[$categoria_id]) ? $categorias_count[$categoria_id] : 0;
+            ?>
+                <div class="col-lg-6 col-xl-3 mb-4">
+                    <div class="card <?php echo $config['color']; ?> text-white h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="me-3">
+                                    <div class="text-white-75 small"><?php echo $nombre; ?></div>
+                                    <div class="text-lg fw-bold number" data-role="<?php echo strtolower(str_replace(' ', '_', $nombre)); ?>">
+                                        <?php echo $cantidad; ?>
+                                    </div>
+                                </div>
+                                <i class="feather-xl text-white-50" data-feather="<?php echo $config['icon']; ?>"></i>
+                            </div>
+                        </div>
+                        <div class="card-footer d-flex align-items-center justify-content-between small">
+                            <a class="text-white stretched-link" href="report_<?php echo strtolower(str_replace(' ', '_', $nombre)); ?>.php">View Report</a>
+                            <div class="text-white"><i class="fas fa-angle-right"></i></div>
+                        </div>
                     </div>
-                    <i class="feather-xl text-white-50" data-feather="users"></i>
                 </div>
-            </div>
-            <div class="card-footer d-flex align-items-center justify-content-between small">
-                <a class="text-white stretched-link" href="report_u13_damas.php">View Report</a>
-                <div class="text-white"><i class="fas fa-angle-right"></i></div>
-            </div>
+            <?php
+                $counter++;
+            endforeach;
+            ?>
         </div>
-    </div>
-    <div class="col-lg-6 col-xl-3 mb-4">
-        <div class="card bg-warning text-white h-100">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div class="me-3">
-                        <div class="text-white-75 small">U13 HOMBRES</div>
-                        <div class="text-lg fw-bold number" data-role="u13_hombres"><?php echo $result['u13_hombres']; ?></div>
+        <!-- CARDS 2 -->
+        <div class="row">
+            <?php foreach ($categorias as $categoria_id => $nombre_categoria) :
+                if ($counter >= 12) break; // Limitar a 12 tarjetas en total
+                // Asegúrate de que cada categoría no se repita en las tarjetas 2
+                if (!array_key_exists($nombre_categoria, $tarjetas)) :
+                    $color = isset($tarjetas[$nombre_categoria]['color']) ? $tarjetas[$nombre_categoria]['color'] : 'bg-secondary';
+                    $icon = isset($tarjetas[$nombre_categoria]['icon']) ? $tarjetas[$nombre_categoria]['icon'] : 'file-text';
+                    $cantidad = isset($categorias_count[$categoria_id]) ? $categorias_count[$categoria_id] : 0;
+            ?>
+                    <div class="col-lg-6 col-xl-3 mb-4">
+                        <div class="card <?php echo $color; ?> text-white h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="me-3">
+                                        <div class="text-white-75 small"><?php echo $nombre_categoria; ?></div>
+                                        <div class="text-lg fw-bold number" data-role="<?php echo strtolower(str_replace(' ', '_', $nombre_categoria)); ?>">
+                                            <?php echo $cantidad; ?>
+                                        </div>
+                                    </div>
+                                    <i class="feather-xl text-white-50" data-feather="<?php echo $icon; ?>"></i>
+                                </div>
+                            </div>
+                            <div class="card-footer d-flex align-items-center justify-content-between small">
+                                <a class="text-white stretched-link" href="report_<?php echo strtolower(str_replace(' ', '_', $nombre_categoria)); ?>.php">View Report</a>
+                                <div class="text-white"><i class="fas fa-angle-right"></i></div>
+                            </div>
+                        </div>
                     </div>
-                    <i class="feather-xl text-white-50" data-feather="file-text"></i>
-                </div>
-            </div>
-            <div class="card-footer d-flex align-items-center justify-content-between small">
-                <a class="text-white stretched-link" href="report_u13_hombres.php">View Report</a>
-                <div class="text-white"><i class="fas fa-angle-right"></i></div>
-            </div>
+            <?php
+                    $counter++;
+                endif;
+            endforeach;
+            ?>
         </div>
-    </div>
-    <div class="col-lg-6 col-xl-3 mb-4">
-        <div class="card bg-success text-white h-100">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div class="me-3">
-                        <div class="text-white-75 small">U15 DAMAS</div>
-                        <div class="text-lg fw-bold number" data-role="u15_damas"><?php echo $result['u15_damas']; ?></div>
-                    </div>
-                    <i class="feather-xl text-white-50" data-feather="award"></i>
-                </div>
-            </div>
-            <div class="card-footer d-flex align-items-center justify-content-between small">
-                <a class="text-white stretched-link" href="report_u15_damas.php">View Report</a>
-                <div class="text-white"><i class="fas fa-angle-right"></i></div>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-6 col-xl-3 mb-4">
-        <div class="card bg-danger text-white h-100">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div class="me-3">
-                        <div class="text-white-75 small">U15 HOMBRES</div>
-                        <div class="text-lg fw-bold number" data-role="u15_hombres"><?php echo $result['u15_hombres']; ?></div>
-                    </div>
-                    <i class="feather-xl text-white-50" data-feather="soccer-ball"></i>
-                </div>
-            </div>
-            <div class="card-footer d-flex align-items-center justify-content-between small">
-                <a class="text-white stretched-link" href="report_u15_hombres.php">View Report</a>
-                <div class="text-white"><i class="fas fa-angle-right"></i></div>
-            </div>
-        </div>
-    </div>
-</div>
-
-
         <div class="row">
             <!-- logs -->
             <h1>Actividad Reciente</h1>
@@ -418,114 +356,37 @@ include './includes/header.php';
                 <div class="card mb-4">
                     <div class="card-header">People</div>
                     <div class="card-body">
-                        <!-- Item 1-->
-                        <div class="d-flex align-items-center justify-content-between mb-4">
-                            <div class="d-flex align-items-center flex-shrink-0 me-3">
-                                <div class="avatar avatar-xl me-3 bg-gray-200"><img class="avatar-img img-fluid" src="assets/img/illustrations/profiles/profile-1.png" alt="" /></div>
-                                <div class="d-flex flex-column fw-bold">
-                                    <a class="text-dark line-height-normal mb-1" href="#!">Sid Rooney</a>
-                                    <div class="small text-muted line-height-normal">Position</div>
+                        <?php foreach ($deportistas as $index => $deportista) :
+                            // Extraer datos del deportista
+                            $nombre = htmlspecialchars($deportista['nombre']);
+                            $categoria = htmlspecialchars($deportista['categoria']);
+                            $foto = $deportista['foto'] ? 'assets/img/profiles/' . $deportista['foto'] : 'assets/img/illustrations/profiles/default.png';
+                            $id_deportista = $deportista['id_deportista'];
+                        ?>
+                            <!-- Item <?php echo $index + 1; ?>-->
+                            <div class="d-flex align-items-center justify-content-between mb-4">
+                                <div class="d-flex align-items-center flex-shrink-0 me-3">
+                                    <div class="avatar avatar-xl me-3 bg-gray-200">
+                                        <img class="avatar-img img-fluid" src="<?php echo $foto; ?>" alt="<?php echo $nombre; ?>" />
+                                    </div>
+                                    <div class="d-flex flex-column fw-bold">
+                                        <a class="text-dark line-height-normal mb-1" href="perfil_deportista.php?id=<?php echo $id_deportista; ?>">
+                                            <?php echo $nombre; ?>
+                                        </a>
+                                        <div class="small text-muted line-height-normal"><?php echo $categoria; ?></div>
+                                    </div>
+                                </div>
+                                <div class="dropdown no-caret">
+                                    <button class="btn btn-transparent-dark btn-icon dropdown-toggle" id="dropdownPeople<?php echo $index + 1; ?>" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i data-feather="more-vertical"></i>
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-end animated--fade-in-up" aria-labelledby="dropdownPeople<?php echo $index + 1; ?>">
+                                        <a class="dropdown-item" href="edit_deportista.php?id=<?php echo $id_deportista; ?>">Edit</a>
+                                        <a class="dropdown-item" href="delete_deportista.php?id=<?php echo $id_deportista; ?>">Delete</a>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="dropdown no-caret">
-                                <button class="btn btn-transparent-dark btn-icon dropdown-toggle" id="dropdownPeople1" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i data-feather="more-vertical"></i></button>
-                                <div class="dropdown-menu dropdown-menu-end animated--fade-in-up" aria-labelledby="dropdownPeople1">
-                                    <a class="dropdown-item" href="#!">Action</a>
-                                    <a class="dropdown-item" href="#!">Another action</a>
-                                    <a class="dropdown-item" href="#!">Something else here</a>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Item 2-->
-                        <div class="d-flex align-items-center justify-content-between mb-4">
-                            <div class="d-flex align-items-center flex-shrink-0 me-3">
-                                <div class="avatar avatar-xl me-3 bg-gray-200"><img class="avatar-img img-fluid" src="assets/img/illustrations/profiles/profile-2.png" alt="" /></div>
-                                <div class="d-flex flex-column fw-bold">
-                                    <a class="text-dark line-height-normal mb-1" href="#!">Keelan Garza</a>
-                                    <div class="small text-muted line-height-normal">Position</div>
-                                </div>
-                            </div>
-                            <div class="dropdown no-caret">
-                                <button class="btn btn-transparent-dark btn-icon dropdown-toggle" id="dropdownPeople2" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i data-feather="more-vertical"></i></button>
-                                <div class="dropdown-menu dropdown-menu-end animated--fade-in-up" aria-labelledby="dropdownPeople2">
-                                    <a class="dropdown-item" href="#!">Action</a>
-                                    <a class="dropdown-item" href="#!">Another action</a>
-                                    <a class="dropdown-item" href="#!">Something else here</a>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Item 3-->
-                        <div class="d-flex align-items-center justify-content-between mb-4">
-                            <div class="d-flex align-items-center flex-shrink-0 me-3">
-                                <div class="avatar avatar-xl me-3 bg-gray-200"><img class="avatar-img img-fluid" src="assets/img/illustrations/profiles/profile-3.png" alt="" /></div>
-                                <div class="d-flex flex-column fw-bold">
-                                    <a class="text-dark line-height-normal mb-1" href="#!">Kaia Smyth</a>
-                                    <div class="small text-muted line-height-normal">Position</div>
-                                </div>
-                            </div>
-                            <div class="dropdown no-caret">
-                                <button class="btn btn-transparent-dark btn-icon dropdown-toggle" id="dropdownPeople3" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i data-feather="more-vertical"></i></button>
-                                <div class="dropdown-menu dropdown-menu-end animated--fade-in-up" aria-labelledby="dropdownPeople3">
-                                    <a class="dropdown-item" href="#!">Action</a>
-                                    <a class="dropdown-item" href="#!">Another action</a>
-                                    <a class="dropdown-item" href="#!">Something else here</a>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Item 4-->
-                        <div class="d-flex align-items-center justify-content-between mb-4">
-                            <div class="d-flex align-items-center flex-shrink-0 me-3">
-                                <div class="avatar avatar-xl me-3 bg-gray-200"><img class="avatar-img img-fluid" src="assets/img/illustrations/profiles/profile-4.png" alt="" /></div>
-                                <div class="d-flex flex-column fw-bold">
-                                    <a class="text-dark line-height-normal mb-1" href="#!">Kerri Kearney</a>
-                                    <div class="small text-muted line-height-normal">Position</div>
-                                </div>
-                            </div>
-                            <div class="dropdown no-caret">
-                                <button class="btn btn-transparent-dark btn-icon dropdown-toggle" id="dropdownPeople4" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i data-feather="more-vertical"></i></button>
-                                <div class="dropdown-menu dropdown-menu-end animated--fade-in-up" aria-labelledby="dropdownPeople4">
-                                    <a class="dropdown-item" href="#!">Action</a>
-                                    <a class="dropdown-item" href="#!">Another action</a>
-                                    <a class="dropdown-item" href="#!">Something else here</a>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Item 5-->
-                        <div class="d-flex align-items-center justify-content-between mb-4">
-                            <div class="d-flex align-items-center flex-shrink-0 me-3">
-                                <div class="avatar avatar-xl me-3 bg-gray-200"><img class="avatar-img img-fluid" src="assets/img/illustrations/profiles/profile-5.png" alt="" /></div>
-                                <div class="d-flex flex-column fw-bold">
-                                    <a class="text-dark line-height-normal mb-1" href="#!">Georgina Findlay</a>
-                                    <div class="small text-muted line-height-normal">Position</div>
-                                </div>
-                            </div>
-                            <div class="dropdown no-caret">
-                                <button class="btn btn-transparent-dark btn-icon dropdown-toggle" id="dropdownPeople5" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i data-feather="more-vertical"></i></button>
-                                <div class="dropdown-menu dropdown-menu-end animated--fade-in-up" aria-labelledby="dropdownPeople5">
-                                    <a class="dropdown-item" href="#!">Action</a>
-                                    <a class="dropdown-item" href="#!">Another action</a>
-                                    <a class="dropdown-item" href="#!">Something else here</a>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Item 6-->
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div class="d-flex align-items-center flex-shrink-0 me-3">
-                                <div class="avatar avatar-xl me-3 bg-gray-200"><img class="avatar-img img-fluid" src="assets/img/illustrations/profiles/profile-6.png" alt="" /></div>
-                                <div class="d-flex flex-column fw-bold">
-                                    <a class="text-dark line-height-normal mb-1" href="#!">Wilf Ingram</a>
-                                    <div class="small text-muted line-height-normal">Position</div>
-                                </div>
-                            </div>
-                            <div class="dropdown no-caret">
-                                <button class="btn btn-transparent-dark btn-icon dropdown-toggle" id="dropdownPeople6" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i data-feather="more-vertical"></i></button>
-                                <div class="dropdown-menu dropdown-menu-end animated--fade-in-up" aria-labelledby="dropdownPeople6">
-                                    <a class="dropdown-item" href="#!">Action</a>
-                                    <a class="dropdown-item" href="#!">Another action</a>
-                                    <a class="dropdown-item" href="#!">Something else here</a>
-                                </div>
-                            </div>
-                        </div>
+                        <?php endforeach; ?>
                     </div>
                 </div>
             </div>

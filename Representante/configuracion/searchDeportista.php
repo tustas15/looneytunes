@@ -1,5 +1,5 @@
 <?php
-include '../Admin/configuracion/conexion.php'; // Asegúrate de que esta ruta sea correcta
+include '../conexion/conexion.php'; // Asegúrate de que esta ruta sea correcta
 
 // Verificar si se recibió la cédula
 if (isset($_POST['cedula'])) {

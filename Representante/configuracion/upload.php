@@ -2,7 +2,7 @@
 session_start();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    include '../Admin/configuracion/conexion.php';
+    include 'conexion.php';
 
     if (!hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
         echo "Error: CSRF token inválido.";

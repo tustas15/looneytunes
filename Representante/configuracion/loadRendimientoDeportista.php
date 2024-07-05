@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../Admin/configuracion/conexion.php';
+include '../conexion/conexion.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['deportista_id']) && isset($_POST['csrf_token'])) {
     // Verificar el token CSRF

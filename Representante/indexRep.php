@@ -1,44 +1,49 @@
 <?php
+// Conexión a la base de datos
+require_once('../Admin/configuracion/conexion.php');
+// Inicio de sesión
 session_start();
-include '../Admin/configuracion/conexion.php';
+// Comprobamos si el usuario está logueado
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../Public/login.php");
+    exit();
+}
+// Comprobamos si el usuario es entrenador
+if (!isset($_SESSION['tipo_usuario'])) {
+    echo "Tipo de usuario no definido.";
+    exit();
+}
+// Comprobamos si el usuario entrenador
+$nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
+$tipo_usuario = $_SESSION['tipo_usuario'];
+// Comprobamos si el usuario es entrenador
+$nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
+$usuario = isset($_SESSION['usuario']) ? $_SESSION['usuario'] : 'Usuario';
+$tipo_usuario = $_SESSION['tipo_usuario'];
+include './includes/header.php';
+
 ?>
-<!DOCTYPE html>
-<html lang="es">
 
-<head>
-    <?php include '../representante/vistaRepre/header.php'; ?>
-    <!-- Asegúrate de que el header.php esté correctamente incluido -->
-    <meta charset="utf-8">
-    <title>Home Page</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="indexRep.css"> <!-- Enlace a la hoja de estilos -->
-    <link rel="icon" type="image/png" href="../img/logo.png">
-</head>
+<!-- Page Heading -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Bienvenido, Representante <?= $nombre ?></h1>
+    <a href="../respaldo/downloadFile.php" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Generar Respaldo</a>
+</div>
 
-<body id="page-top">
-    <div id="wrapper">
-        <!-- Sidebar -->
-        <?php include '../representante/vistaRepre/sidebar.php'; ?>
-        <!-- End of Sidebar -->
 
-        <!-- Content Wrapper -->
-        <div id="content-wrapper" class="d-flex flex-column">
 
-            <!-- Main Content -->
-            <div id="content">
-                <!-- Topbar -->
-                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow"> <?php
-                                                                                                        // ... (código anterior)
-                                                                                                        $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
-                                                                                                        include '../representante/vistaRepre/navigation.php';
-                                                                                                        ?>
 
-                    <!-- End of Topbar -->
-                    <?php include '../representante/vistaRepre/footer.php'; ?>
-            </div>
-        </div>
-    </div>
-    <?php include '../representante/vistaRepre/scripts.php'; ?>
-</body>
 
-</html>
+
+
+
+
+
+
+
+
+
+
+
+
+

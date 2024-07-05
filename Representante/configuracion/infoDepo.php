@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../Admin/configuracion/conexion.php';
+include '../conexion/conexion.php';
 
 // Inicializar variables
 $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
