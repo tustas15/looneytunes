@@ -52,7 +52,11 @@ if ($stmt_categorias) {
 // Cargar deportistas desde la base de datos si la variable de sesión está vacía
 try {
     $id_usuario = $_SESSION['user_id'];
-    $stmt = $conn->prepare("SELECT * FROM TAB_TEMP_DEPORTISTAS WHERE ID_USUARIO = :id_usuario");
+    $stmt = $conn->prepare("SELECT TAB_TEMP_DEPORTISTAS.*, tab_categorias.categoria 
+                            FROM TAB_TEMP_DEPORTISTAS 
+                            LEFT JOIN tab_deportistas ON TAB_TEMP_DEPORTISTAS.ID_DEPORTISTA = tab_deportistas.id_deportista 
+                            LEFT JOIN tab_categorias ON tab_deportistas.ID_CATEGORIA = tab_categorias.id_categoria 
+                            WHERE TAB_TEMP_DEPORTISTAS.ID_USUARIO = :id_usuario");
     $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
     $stmt->execute();
     $_SESSION['deportistas'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -176,7 +180,7 @@ include './includes/header.php';
             <!-- Código HTML para mostrar las tarjetas -->
             <div class="text-center text-xl-start text-xxl-center mb-4 mb-xl-0 mb-xxl-4">
                 <h1 class="text-primary">Categorías</h1>
-                <p class="text-gray-700 mb-0">Explora los diferentes tipos de categorías disponibles.</p>
+                <br>
             </div>
 
             <?php
@@ -258,13 +262,12 @@ include './includes/header.php';
             ?>
         </div>
         <div class="row">
-            <!-- logs -->
-            <h1>Actividad Reciente</h1>
+          
             <!-- logs -->
             <div class="col-xxl-4 col-xl-6 mb-4">
                 <div class="card card-header-actions h-100">
                     <div class="card-header">
-                        Recent Activity
+                        Actividad Reciente
                         <div class="dropdown no-caret">
                             <button class="btn btn-transparent-dark btn-icon dropdown-toggle" id="dropdownMenuButton" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="text-gray-500" data-feather="more-vertical"></i>
@@ -352,47 +355,34 @@ include './includes/header.php';
 
             </div>
             <div class="col-xxl-4 col-xl-6 mb-4">
-                <!-- Team members / people dashboard card example-->
-                <div class="card mb-4">
-                    <div class="card-header">People</div>
-                    <div class="card-body">
-                        <?php foreach ($deportistas as $index => $deportista) :
-                            // Extraer datos del deportista
-                            $nombre = htmlspecialchars($deportista['nombre']);
-                            $categoria = htmlspecialchars($deportista['categoria']);
-                            $foto = $deportista['foto'] ? 'assets/img/profiles/' . $deportista['foto'] : 'assets/img/illustrations/profiles/default.png';
-                            $id_deportista = $deportista['id_deportista'];
-                        ?>
-                            <!-- Item <?php echo $index + 1; ?>-->
-                            <div class="d-flex align-items-center justify-content-between mb-4">
-                                <div class="d-flex align-items-center flex-shrink-0 me-3">
-                                    <div class="avatar avatar-xl me-3 bg-gray-200">
-                                        <img class="avatar-img img-fluid" src="<?php echo $foto; ?>" alt="<?php echo $nombre; ?>" />
-                                    </div>
-                                    <div class="d-flex flex-column fw-bold">
-                                        <a class="text-dark line-height-normal mb-1" href="perfil_deportista.php?id=<?php echo $id_deportista; ?>">
-                                            <?php echo $nombre; ?>
-                                        </a>
-                                        <div class="small text-muted line-height-normal"><?php echo $categoria; ?></div>
-                                    </div>
-                                </div>
-                                <div class="dropdown no-caret">
-                                    <button class="btn btn-transparent-dark btn-icon dropdown-toggle" id="dropdownPeople<?php echo $index + 1; ?>" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <i data-feather="more-vertical"></i>
-                                    </button>
-                                    <div class="dropdown-menu dropdown-menu-end animated--fade-in-up" aria-labelledby="dropdownPeople<?php echo $index + 1; ?>">
-                                        <a class="dropdown-item" href="edit_deportista.php?id=<?php echo $id_deportista; ?>">Edit</a>
-                                        <a class="dropdown-item" href="delete_deportista.php?id=<?php echo $id_deportista; ?>">Delete</a>
-                                    </div>
-                                </div>
+    <div class="card card-header-actions h-100">
+        <div class="card-header">
+            Deportistas
+        </div>
+        <div class="card-body">
+            <?php if (!empty($deportistas)) : ?>
+                <?php foreach ($deportistas as $deportista) : ?>
+                    <div class="d-flex align-items-center justify-content-between mb-4">
+                        <div class="d-flex align-items-center flex-shrink-0 me-3">
+                            <div class="avatar avatar-xl me-3 bg-gray-200">
+                                <img class="avatar-img img-fluid" src="assets/img/illustrations/profiles/profile-1.png" alt="" />
                             </div>
-                        <?php endforeach; ?>
+                            <div class="d-flex flex-column fw-bold">
+                                <a class="text-dark line-height-normal mb-1" href="#"><?php echo htmlspecialchars($deportista['NOMBRE_DEPO'] . ' ' . $deportista['APELLIDO_DEPO']); ?></a>
+                                <div class="small text-muted line-height-normal"><?php echo htmlspecialchars($deportista['categoria']); ?></div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
+                <?php endforeach; ?>
+            <?php else : ?>
+                <p>No hay deportistas asignados.</p>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>
         </div>
 
-        <div class="card-header">Lista de Deportistas</div>
+        <div class="card-header"><H3>LISTA DE DEPORTISTAS</H3></div>
         <div class="card-body">
             <table id="datatablesSimple" class="table table-striped table-bordered">
                 <thead>
