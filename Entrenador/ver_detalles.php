@@ -121,7 +121,7 @@ $deportistas = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 var selectedId = $(this).val();
                 if (selectedId) {
                     $.ajax({
-                        url: 'compare_details.php',
+                        url: 'configuracion/compare_details.php',
                         type: 'POST',
                         data: {id_temp_deportista: selectedId},
                         success: function(response) {
