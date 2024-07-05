@@ -7,7 +7,7 @@ if (!isset($_POST['cedula']) || !isset($_SESSION['user_id'])) {
     exit;
 }
 
-include '../Admin/configuracion/conexion.php';
+include '/xampp/htdocs/looneytunes/admin/configuracion/conexion.phpp';
 
 $cedula_to_delete = $_POST['cedula'];
 $id_usuario = $_SESSION['user_id'];

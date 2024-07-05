@@ -1,5 +1,5 @@
 <?php
-require_once('../Admin/configuracion/conexion.php');
+require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $id_temp_deportista = $_POST['id_temp_deportista'];

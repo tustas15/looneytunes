@@ -71,21 +71,7 @@
                     </a>
                 </div>
             </li>
-            <!-- Formulario para subir archivos (oculto) -->
-            <form id="uploadBackupForm" action="/looneytunes/Uploads/uploadBackup.php" method="POST" enctype="multipart/form-data" style="display:none;">
-                <input type="file" id="backupFile" name="backupFile" required>
-            </form>
 
-            <!-- JavaScript para manejar el clic en el enlace -->
-            <script>
-                document.getElementById('uploadBackupLink').addEventListener('click', function() {
-                    document.getElementById('backupFile').click();
-                });
-
-                document.getElementById('backupFile').addEventListener('change', function() {
-                    document.getElementById('uploadBackupForm').submit();
-                });
-            </script>
             <!-- Navbar Search Dropdown-->
             <!-- * * Note: * * Visible only below the lg breakpoint-->
             <li class="nav-item dropdown no-caret me-3 d-lg-none">
@@ -267,8 +253,26 @@
                                     Pago
                                     <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                                 </a>
+                                <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseAddForm" aria-expanded="false" aria-controls="collapseAddForm">
+                                    <i class="fas fa-user-plus"></i>
+                                    <span>Añadir</span>
+                                    <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                                </a>
+                                <!-- Contenido colapsable -->
+                                <div class="collapse" id="collapseAddForm" data-bs-parent="#accordionSidenavAddMenu">
+                                    <nav class="sidenav-menu-nested nav">
+                                        <!-- Formulario para registrar -->
+                                        <form class="collapse-item" method="post" action="/looneytunes/Entrenador/configuracion/registrar.php">
+                                            <div class="mb-3">
+                                                <input id="cedula_r" type="text" name="cedula_r" placeholder="Cédula" class="form-control" style="width: 150px; border: 1px solid #ced4da;">
+                                            </div>
+                                            <button type="submit" name="btnregistrar" class="btn btn-primary">Registrar</button>
+                                        </form>
+                                    </nav>
+                                </div>
                             </nav>
                         </div>
+                
                         <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseFlows" aria-expanded="false" aria-controls="collapseFlows">
                             <div class="nav-link-icon"><i class="fas fa-fw fa-wrench"></i></div>
                             Utilidades

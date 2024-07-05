@@ -171,153 +171,153 @@ include './includes/header.php';
 
         </div>
         <!-- CARDS 1-->
-        <div class="row">
-            <div class="text-center text-xl-start text-xxl-center mb-4 mb-xl-0 mb-xxl-4">
-                <h1 class="text-primary">Categorias</h1>
-                <p class="text-gray-700 mb-0"></p>
-            </div>
-            <div class="col-lg-6 col-xl-3 mb-4">
-                <div class="card bg-primary text-white h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="me-3">
-                                <div class="text-white-75 small">MOSQUITOS</div>
-                                <div class="text-lg fw-bold number" data-role="administradores"><?php echo $result['administradores']; ?></div>
-                            </div>
-                            <i class="feather-xl text-white-50" data-feather="user"></i>
-                        </div>
+<div class="row">
+    <div class="text-center text-xl-start text-xxl-center mb-4 mb-xl-0 mb-xxl-4">
+        <h1 class="text-primary">Categorías</h1>
+        <p class="text-gray-700 mb-0">Explora los diferentes tipos de categorías disponibles.</p>
+    </div>
+    <div class="col-lg-6 col-xl-3 mb-4">
+        <div class="card bg-primary text-white h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="me-3">
+                        <div class="text-white-75 small">MOSQUITOS</div>
+                        <div class="text-lg fw-bold number" data-role="mosquitos"><?php echo $result['mosquitos']; ?></div>
                     </div>
-                    <div class="card-footer d-flex align-items-center justify-content-between small">
-                        <a class="text-white stretched-link" href="#!">View Report</a>
-                        <div class="text-white"><i class="fas fa-angle-right"></i></div>
-                    </div>
+                    <i class="feather-xl text-white-50" data-feather="users"></i>
                 </div>
             </div>
-            <div class="col-lg-6 col-xl-3 mb-4">
-                <div class="card bg-warning text-white h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="me-3">
-                                <div class="text-white-75 small">PRE MINI</div>
-                                <div class="text-lg fw-bold number" data-role="entrenadores"><?php echo $result['entrenadores']; ?></div>
-                            </div>
-                            <i class="feather-xl text-white-50" data-feather="clipboard"></i>
-                        </div>
-                    </div>
-                    <div class="card-footer d-flex align-items-center justify-content-between small">
-                        <a class="text-white stretched-link" href="#!">View Report</a>
-                        <div class="text-white"><i class="fas fa-angle-right"></i></div>
-                    </div>
-                </div>
+            <div class="card-footer d-flex align-items-center justify-content-between small">
+                <a class="text-white stretched-link" href="report_mosquitos.php">View Report</a>
+                <div class="text-white"><i class="fas fa-angle-right"></i></div>
             </div>
-            <div class="col-lg-6 col-xl-3 mb-4">
-                <div class="card bg-success text-white h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="me-3">
-                                <div class="text-white-75 small">MINI DAMAS</div>
-                                <div class="text-lg fw-bold number" data-role="representantes"><?php echo $result['representantes']; ?></div>
-                            </div>
-                            <i class="feather-xl text-white-50" data-feather="check-square"></i>
-                        </div>
-                    </div>
-                    <div class="card-footer d-flex align-items-center justify-content-between small">
-                        <a class="text-white stretched-link" href="">View Tasks</a>
-                        <div class="text-white"><i class="fas fa-angle-right"></i></div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6 col-xl-3 mb-4">
-                <div class="card bg-danger text-white h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="me-3">
-                                <div class="text-white-75 small">MINI HOBRES</div>
-                                <div class="text-lg fw-bold number" data-role="deportistas"><?php echo $result['deportistas']; ?></div>
-                            </div>
-                            <i class="feather-xl text-white-50" data-feather="dribbble"></i>
-                        </div>
-                    </div>
-                    <div class="card-footer d-flex align-items-center justify-content-between small">
-                        <a class="text-white stretched-link" href="">View Requests</a>
-                        <div class="text-white"><i class="fas fa-angle-right"></i></div>
-                    </div>
-                </div>
-            </div>
-
         </div>
-        <!-- CARDS 2-->
-        <div class="row">
-            <div class="col-lg-6 col-xl-3 mb-4">
-                <div class="card bg-primary text-white h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="me-3">
-                                <div class="text-white-75 small">U13 DAMAS</div>
-                                <div class="text-lg fw-bold number" data-role="administradores"><?php echo $result['administradores']; ?></div>
-                            </div>
-                            <i class="feather-xl text-white-50" data-feather="user"></i>
-                        </div>
+    </div>
+    <div class="col-lg-6 col-xl-3 mb-4">
+        <div class="card bg-warning text-white h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="me-3">
+                        <div class="text-white-75 small">PRE MINI</div>
+                        <div class="text-lg fw-bold number" data-role="pre_mini"><?php echo $result['pre_mini']; ?></div>
                     </div>
-                    <div class="card-footer d-flex align-items-center justify-content-between small">
-                        <a class="text-white stretched-link" href="#!">View Report</a>
-                        <div class="text-white"><i class="fas fa-angle-right"></i></div>
-                    </div>
+                    <i class="feather-xl text-white-50" data-feather="file-text"></i>
                 </div>
             </div>
-            <div class="col-lg-6 col-xl-3 mb-4">
-                <div class="card bg-warning text-white h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="me-3">
-                                <div class="text-white-75 small">U13 HOMBRES</div>
-                                <div class="text-lg fw-bold number" data-role="entrenadores"><?php echo $result['entrenadores']; ?></div>
-                            </div>
-                            <i class="feather-xl text-white-50" data-feather="clipboard"></i>
-                        </div>
-                    </div>
-                    <div class="card-footer d-flex align-items-center justify-content-between small">
-                        <a class="text-white stretched-link" href="#!">View Report</a>
-                        <div class="text-white"><i class="fas fa-angle-right"></i></div>
-                    </div>
-                </div>
+            <div class="card-footer d-flex align-items-center justify-content-between small">
+                <a class="text-white stretched-link" href="report_pre_mini.php">View Report</a>
+                <div class="text-white"><i class="fas fa-angle-right"></i></div>
             </div>
-            <div class="col-lg-6 col-xl-3 mb-4">
-                <div class="card bg-success text-white h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="me-3">
-                                <div class="text-white-75 small">U15 DAMAS</div>
-                                <div class="text-lg fw-bold number" data-role="representantes"><?php echo $result['representantes']; ?></div>
-                            </div>
-                            <i class="feather-xl text-white-50" data-feather="check-square"></i>
-                        </div>
-                    </div>
-                    <div class="card-footer d-flex align-items-center justify-content-between small">
-                        <a class="text-white stretched-link" href="">View Tasks</a>
-                        <div class="text-white"><i class="fas fa-angle-right"></i></div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6 col-xl-3 mb-4">
-                <div class="card bg-danger text-white h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="me-3">
-                                <div class="text-white-75 small">U15 HOBRES</div>
-                                <div class="text-lg fw-bold number" data-role="deportistas"><?php echo $result['deportistas']; ?></div>
-                            </div>
-                            <i class="feather-xl text-white-50" data-feather="dribbble"></i>
-                        </div>
-                    </div>
-                    <div class="card-footer d-flex align-items-center justify-content-between small">
-                        <a class="text-white stretched-link" href="">View Requests</a>
-                        <div class="text-white"><i class="fas fa-angle-right"></i></div>
-                    </div>
-                </div>
-            </div>
-
         </div>
+    </div>
+    <div class="col-lg-6 col-xl-3 mb-4">
+        <div class="card bg-success text-white h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="me-3">
+                        <div class="text-white-75 small">MINI DAMAS</div>
+                        <div class="text-lg fw-bold number" data-role="mini_damas"><?php echo $result['mini_damas']; ?></div>
+                    </div>
+                    <i class="feather-xl text-white-50" data-feather="award"></i>
+                </div>
+            </div>
+            <div class="card-footer d-flex align-items-center justify-content-between small">
+                <a class="text-white stretched-link" href="report_mini_damas.php">View Report</a>
+                <div class="text-white"><i class="fas fa-angle-right"></i></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 col-xl-3 mb-4">
+        <div class="card bg-danger text-white h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="me-3">
+                        <div class="text-white-75 small">MINI HOMBRES</div>
+                        <div class="text-lg fw-bold number" data-role="mini_hombres"><?php echo $result['mini_hombres']; ?></div>
+                    </div>
+                    <i class="feather-xl text-white-50" data-feather="soccer-ball"></i>
+                </div>
+            </div>
+            <div class="card-footer d-flex align-items-center justify-content-between small">
+                <a class="text-white stretched-link" href="report_mini_hombres.php">View Report</a>
+                <div class="text-white"><i class="fas fa-angle-right"></i></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CARDS 2-->
+<div class="row">
+    <div class="col-lg-6 col-xl-3 mb-4">
+        <div class="card bg-primary text-white h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="me-3">
+                        <div class="text-white-75 small">U13 DAMAS</div>
+                        <div class="text-lg fw-bold number" data-role="u13_damas"><?php echo $result['u13_damas']; ?></div>
+                    </div>
+                    <i class="feather-xl text-white-50" data-feather="users"></i>
+                </div>
+            </div>
+            <div class="card-footer d-flex align-items-center justify-content-between small">
+                <a class="text-white stretched-link" href="report_u13_damas.php">View Report</a>
+                <div class="text-white"><i class="fas fa-angle-right"></i></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 col-xl-3 mb-4">
+        <div class="card bg-warning text-white h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="me-3">
+                        <div class="text-white-75 small">U13 HOMBRES</div>
+                        <div class="text-lg fw-bold number" data-role="u13_hombres"><?php echo $result['u13_hombres']; ?></div>
+                    </div>
+                    <i class="feather-xl text-white-50" data-feather="file-text"></i>
+                </div>
+            </div>
+            <div class="card-footer d-flex align-items-center justify-content-between small">
+                <a class="text-white stretched-link" href="report_u13_hombres.php">View Report</a>
+                <div class="text-white"><i class="fas fa-angle-right"></i></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 col-xl-3 mb-4">
+        <div class="card bg-success text-white h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="me-3">
+                        <div class="text-white-75 small">U15 DAMAS</div>
+                        <div class="text-lg fw-bold number" data-role="u15_damas"><?php echo $result['u15_damas']; ?></div>
+                    </div>
+                    <i class="feather-xl text-white-50" data-feather="award"></i>
+                </div>
+            </div>
+            <div class="card-footer d-flex align-items-center justify-content-between small">
+                <a class="text-white stretched-link" href="report_u15_damas.php">View Report</a>
+                <div class="text-white"><i class="fas fa-angle-right"></i></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 col-xl-3 mb-4">
+        <div class="card bg-danger text-white h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="me-3">
+                        <div class="text-white-75 small">U15 HOMBRES</div>
+                        <div class="text-lg fw-bold number" data-role="u15_hombres"><?php echo $result['u15_hombres']; ?></div>
+                    </div>
+                    <i class="feather-xl text-white-50" data-feather="soccer-ball"></i>
+                </div>
+            </div>
+            <div class="card-footer d-flex align-items-center justify-content-between small">
+                <a class="text-white stretched-link" href="report_u15_hombres.php">View Report</a>
+                <div class="text-white"><i class="fas fa-angle-right"></i></div>
+            </div>
+        </div>
+    </div>
+</div>
+
 
         <div class="row">
             <!-- logs -->
@@ -530,52 +530,52 @@ include './includes/header.php';
                 </div>
             </div>
         </div>
-        </ol>
-        <!-- Formulario para ingresar cédula -->
-<div class="card mb-4">
-    <div class="card-header">Registrar Deportista</div>
-    <div class="card-body">
-        <form action="registrar.php" method="POST">
-            <div class="mb-3">
-                <label for="cedula" class="form-label">Número de Cédula</label>
-                <input type="text" class="form-control" id="cedula" name="cedula_r" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Registrar</button>
-        </form>
-    </div>
-</div>
 
-<!-- Tabla de Deportistas Temporales -->
-<div class="card mb-4">
-    <div class="card-header">LISTA DEPORTISTAS</div>
-    <div class="card-body">
-        <table id="datatablesSimple">
-            <thead>
-                <tr>
-                    <th>Nombre</th>
-                    <th>Apellido</th>
-                    <th>Fecha de Nacimiento</th>
-                    <th>Cédula</th>
-                    <th>Número de Celular</th>
-                    <th>Género</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tfoot>
-                <tr>
-                    <th>Nombre</th>
-                    <th>Apellido</th>
-                    <th>Fecha de Nacimiento</th>
-                    <th>Cédula</th>
-                    <th>Número de Celular</th>
-                    <th>Género</th>
-                    <th>Acciones</th>
-                </tr>
-            </tfoot>
-            
-        </table>
+        <div class="card-header">Lista de Deportistas</div>
+        <div class="card-body">
+            <table id="datatablesSimple" class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Cédula</th>
+                        <th>Detalles</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Cédula</th>
+                        <th>Detalles</th>
+                        <th>Acción</th>
+                    </tr>
+                </tfoot>
+                <tbody>
+                    <?php foreach ($deportistas as $deportista) : ?>
+                        <tr>
+                            <td><?= htmlspecialchars($deportista['NOMBRE_DEPO'], ENT_QUOTES) ?></td>
+                            <td><?= htmlspecialchars($deportista['APELLIDO_DEPO'], ENT_QUOTES) ?></td>
+                            <td><?= htmlspecialchars($deportista['CEDULA_DEPO'], ENT_QUOTES) ?></td>
+                            <td>
+                                <form method="post" action="./configuracion/tab_detalles.php">
+                                    <input type="hidden" name="cedula_depo" value="<?= htmlspecialchars($deportista['CEDULA_DEPO'], ENT_QUOTES) ?>">
+                                    <input type="submit" name="detalles" class="btn btn-primary btn-sm" value="Detalles">
+                                </form>
+                            </td>
+                            <td>
+                                <form method="post" action="">
+                                    <input type="hidden" name="cedula" value="<?= htmlspecialchars($deportista['CEDULA_DEPO'], ENT_QUOTES) ?>">
+                                    <input type="submit" name="delete" class="btn btn-danger btn-sm" value="Eliminar">
+                                </form>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
     </div>
-</div>
 </main>
 
 <?php

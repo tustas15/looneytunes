@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../Admin/configuracion/conexion.php';
+require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
 
 if (isset($_POST['cedula_r'])) {
     $cedula_r = $_POST['cedula_r'];
@@ -17,10 +17,11 @@ if (isset($_POST['cedula_r'])) {
 
             if ($studentData) {
                 // Agregar a la tabla temporal
-                $sql_insert = "INSERT INTO TAB_TEMP_DEPORTISTAS (ID_USUARIO, NOMBRE_DEPO, APELLIDO_DEPO, FECHA_NACIMIENTO, CEDULA_DEPO, NUMERO_CELULAR, GENERO)
-                               VALUES (:id_usuario, :nombre, :apellido, :fecha_nacimiento, :cedula, :numero_celular, :genero)";
+                $sql_insert = "INSERT INTO TAB_TEMP_DEPORTISTAS (ID_USUARIO, ID_DEPORTISTA, NOMBRE_DEPO, APELLIDO_DEPO, FECHA_NACIMIENTO, CEDULA_DEPO, NUMERO_CELULAR, GENERO)
+                               VALUES (:id_usuario, :id_deportista, :nombre, :apellido, :fecha_nacimiento, :cedula, :numero_celular, :genero)";
                 $stmt_insert = $conn->prepare($sql_insert);
                 $stmt_insert->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
+                $stmt_insert->bindParam(':id_deportista', $studentData['ID_DEPORTISTA'], PDO::PARAM_INT);
                 $stmt_insert->bindParam(':nombre', $studentData['NOMBRE_DEPO'], PDO::PARAM_STR);
                 $stmt_insert->bindParam(':apellido', $studentData['APELLIDO_DEPO'], PDO::PARAM_STR);
                 $stmt_insert->bindParam(':fecha_nacimiento', $studentData['FECHA_NACIMIENTO'], PDO::PARAM_STR);
@@ -58,6 +59,6 @@ if (isset($_POST['cedula_r'])) {
     }
 }
 
-header('Location: ./indexEntrenador.php');
+header('Location: indexEntrenador.php');
 exit;
 ?>

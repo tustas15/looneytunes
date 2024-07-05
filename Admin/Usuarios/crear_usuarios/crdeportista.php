@@ -1,5 +1,5 @@
 <?php
-// Mostrar el mensaje de éxito o error desde procces_Depo.php
+// Mostrar el mensaje de éxito o error desde process_Depo.php
 $message = '';
 if (isset($_GET['message'])) {
     if ($_GET['message'] === 'success') {
@@ -60,8 +60,8 @@ if (isset($_GET['message'])) {
                                         </div>
                                         <!-- Form Group (fecha de nacimiento) -->
                                         <div class="mb-3">
-                                            <label class="small mb-1" for="nacimiendo_d">Fecha de Nacimiento</label>
-                                            <input class="form-control" id="nacimiendo_d" name="nacimiendo_d" type="date" placeholder="Ingrese la fecha de nacimiento" required />
+                                            <label class="small mb-1" for="nacimiento_d">Fecha de Nacimiento</label>
+                                            <input class="form-control" id="nacimiento_d" name="nacimiento_d" type="date" placeholder="Ingrese la fecha de nacimiento" required />
                                         </div>
                                         <!-- Form Group (cédula) -->
                                         <div class="mb-3">
@@ -83,6 +83,29 @@ if (isset($_GET['message'])) {
                                                 <option value="Otro">Otro</option>
                                             </select>
                                         </div>
+                                        <!-- Form Group (correo electrónico) -->
+                                        <div class="mb-3">
+                                            <label class="small mb-1" for="correo_d">Correo Electrónico</label>
+                                            <input class="form-control" id="correo_d" name="correo_d" type="email" placeholder="Ingrese el correo electrónico" required />
+                                        </div>
+                                        <!-- Form Group (categoría) -->
+                                        <div class="mb-3">
+                                            <label class="small mb-1" for="categoria_d">Categoría</label>
+                                            <select class="form-control" id="categoria_d" name="categoria_d" required>
+                                                <option value="">Seleccionar la categoría</option>
+                                                <?php
+                                                // Conexión a la base de datos
+                                                require_once('../../configuracion/conexion.php');
+                                                $stmt = $conn->prepare("SELECT ID_CATEGORIA, CATEGORIA FROM tab_categorias");
+                                                $stmt->execute();
+                                                $categorias = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                                                foreach ($categorias as $categoria) {
+                                                    echo "<option value='" . $categoria['ID_CATEGORIA'] . "'>" . htmlspecialchars($categoria['CATEGORIA']) . "</option>";
+                                                }
+                                                ?>
+                                            </select>
+                                        </div>
+
                                         <!-- Campo desplegable para seleccionar representante -->
                                         <div class="mb-3">
                                             <label class="small mb-1" for="representante">Representante</label>
@@ -90,7 +113,6 @@ if (isset($_GET['message'])) {
                                                 <option value="">Seleccionar el representante asociado al deportista</option>
                                                 <?php
                                                 // Conexión a la base de datos
-                                                require_once('../../configuracion/conexion.php');
                                                 $stmt = $conn->prepare("SELECT u.ID_USUARIO, u.USUARIO FROM tab_usuarios u
                                                             INNER JOIN tab_usu_tipo ut ON u.ID_USUARIO = ut.ID_USUARIO
                                                             WHERE ut.ID_TIPO = 3");
@@ -111,6 +133,6 @@ if (isset($_GET['message'])) {
                         </div>
                     </div>
                 </div>
-            </main>
+                </main>
         </div>
         <?php include_once('/xampp/htdocs/looneytunes/admin/includespro/footer.php'); ?>

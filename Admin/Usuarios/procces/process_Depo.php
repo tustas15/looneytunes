@@ -3,7 +3,7 @@ include '../../configuracion/conexion.php';
 
 try {
     // Verificar que todos los campos están completos
-    if (!isset($_POST['nombre_d'], $_POST['apellido_d'], $_POST['nacimiendo_d'], $_POST['cedula_d'], $_POST['celular_d'], $_POST['genero'], $_POST['correo_d'], $_POST['representante'])) {
+    if (!isset($_POST['nombre_d'], $_POST['apellido_d'], $_POST['nacimiento_d'], $_POST['cedula_d'], $_POST['celular_d'], $_POST['genero'], $_POST['correo_d'], $_POST['categoria_d'], $_POST['representante'])) {
         throw new Exception('Todos los campos son obligatorios.');
     }
 
@@ -28,43 +28,27 @@ try {
     $stmt->execute();
 
     // Preparar la consulta SQL para insertar los datos en tab_deportistas
-    $stmt = $conn->prepare('INSERT INTO tab_deportistas (id_usuario, NOMBRE_DEPO, APELLIDO_DEPO, FECHA_NACIMIENTO, CEDULA_DEPO, NUMERO_CELULAR, GENERO, CORREO) 
-    VALUES (:id_usuario, :NOMBRE_DEPO, :APELLIDO_DEPO, :FECHA_NACIMIENTO, :CEDULA_DEPO, :NUMERO_CELULAR, :GENERO, :CORREO)');
+    $stmt = $conn->prepare('INSERT INTO tab_deportistas (id_usuario, NOMBRE_DEPO, APELLIDO_DEPO, FECHA_NACIMIENTO, CEDULA_DEPO, NUMERO_CELULAR, GENERO, CORREO, ID_CATEGORIA, ID_REPRESENTANTE) 
+    VALUES (:id_usuario, :NOMBRE_DEPO, :APELLIDO_DEPO, :FECHA_NACIMIENTO, :CEDULA_DEPO, :NUMERO_CELULAR, :GENERO, :CORREO, :ID_CATEGORIA, :ID_REPRESENTANTE)');
     $stmt->bindParam(':id_usuario', $id_usuario);
     $stmt->bindParam(':NOMBRE_DEPO', $_POST['nombre_d']);
     $stmt->bindParam(':APELLIDO_DEPO', $_POST['apellido_d']);
-    $stmt->bindParam(':FECHA_NACIMIENTO', $_POST['nacimiendo_d']);
+    $stmt->bindParam(':FECHA_NACIMIENTO', $_POST['nacimiento_d']);
     $stmt->bindParam(':CEDULA_DEPO', $_POST['cedula_d']);
     $stmt->bindParam(':NUMERO_CELULAR', $_POST['celular_d']);
     $stmt->bindParam(':GENERO', $_POST['genero']);
     $stmt->bindParam(':CORREO', $_POST['correo_d']);
+    $stmt->bindParam(':ID_CATEGORIA', $_POST['categoria_d']);
+    $stmt->bindParam(':ID_REPRESENTANTE', $_POST['representante']);  // Asegúrate de que el campo id_representante esté en la tabla tab_deportistas
 
-    // Ejecutar la consulta
     $stmt->execute();
 
-    // Asignar el representante al deportista en la tabla tab_representantes_deportistas
-    $id_representante = $_POST['representante'];
-    $stmt = $conn->prepare('INSERT INTO tab_representantes_deportistas (ID_REPRESENTANTE, ID_DEPORTISTA) VALUES (:ID_REPRESENTANTE, :ID_DEPORTISTA)');
-    $stmt->bindParam(':ID_REPRESENTANTE', $id_representante);
-    $stmt->bindParam(':ID_DEPORTISTA', $id_usuario);
-    $stmt->execute();
-
-    // Registrar el evento en la tabla tab_logs
-    $evento = "Registro de nuevo deportista: " . $nombre . " " . $apellido;
-    $ip = $_SERVER['REMOTE_ADDR'];
-    $tipo_evento = 'nuevo_usuario';  // Define el tipo de evento
-
-    $query = "INSERT INTO tab_logs (ID_USUARIO, EVENTO, HORA_LOG, DIA_LOG, IP, TIPO_EVENTO) VALUES (?, ?, CURRENT_TIME(), CURRENT_DATE(), ?, ?)";
-    $stmt = $conn->prepare($query);
-    $stmt->execute([$id_usuario, $evento, $ip, $tipo_evento]);
-
-    // Redirigir con mensaje de éxito
-    header("Location: ../crear_usuarios/crdeportista.php?message=success");
+    // Redirigir a la página de éxito
+    header("Location: ../pages/crdeportista.php?message=success");
+    exit();
 } catch (Exception $e) {
-    // Redirigir con mensaje de error
-    header("Location: ../crear_usuarios/crdeportista.php?message=" . urlencode($e->getMessage()));
+    // Redirigir a la página de error con el mensaje de excepción
+    header("Location: ../pages/crdeportista.php?message=" . urlencode($e->getMessage()));
+    exit();
 }
-
-// Cerrar la conexión
-$conn = null;
 ?>

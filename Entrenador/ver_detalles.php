@@ -1,11 +1,11 @@
 <?php 
-require_once('../Admin/configuracion/conexion.php'); 
+require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
 session_start(); 
 
-if (!isset($_SESSION['user_id'])) { 
-    header("Location: ../Public/login.php"); 
-    exit(); 
-} 
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../Public/login.php");
+    exit();
+}
 
 $id_usuario = $_SESSION['user_id']; 
 

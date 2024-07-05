@@ -1,9 +1,9 @@
 <?php
 // Verificar si el usuario ha iniciado sesión
-require_once('../Admin/configuracion/conexion.php');
+require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
 session_start();
 if (!isset($_SESSION['user_id'])) {
-    header("Location: ../Public/login.php");
+    header("Location: ../login/login.html");
     exit();
 }
 
