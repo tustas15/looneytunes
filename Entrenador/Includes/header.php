@@ -282,12 +282,12 @@
                             <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavFlowsMenu">
                                 <!-- Nested Sidenav Accordion (Flows -> Crear Usuarios)-->
                                 <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#flowsCollapseCrearUsuarios" aria-expanded="false" aria-controls="flowsCollapseCrearUsuarios">
-                                    Crear Usuarios
+                                    Detalles
                                     <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                                 </a>
                                 <div class="collapse" id="flowsCollapseCrearUsuarios" data-bs-parent="#accordionSidenavFlowsMenu">
                                     <nav class="sidenav-menu-nested nav">
-                                        <a class="nav-link" href="/looneytunes/admin/usuarios/crear_usuarios/cradmin.php">Administrador</a>
+                                        <a class="nav-link" href="/looneytunes/entrenador/ver_detalles.php">Detalles</a>
                                         <a class="nav-link" href="/looneytunes/admin/usuarios/crear_usuarios/crentrenador.php">Entrenador</a>
                                         <a class="nav-link" href="/looneytunes/admin/usuarios/crear_usuarios/crrepresentante.php">Representante</a>
                                         <a class="nav-link" href="/looneytunes/admin/usuarios/crear_usuarios/crdeportista.php">Deportista</a>
