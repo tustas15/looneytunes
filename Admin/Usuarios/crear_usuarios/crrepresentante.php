@@ -43,7 +43,7 @@ if (isset($_GET['message'])) {
                                     <?php echo $message; ?>
 
                                     <!-- Formulario para crear una cuenta de Representante -->
-                                    <form action="../../../procces/process_Repre.php" method="post" class="user">
+                                    <form action="../procces/process_Repre.php" method="post" class="user">
                                         <!-- Form Group (nombre) -->
                                         <div class="form-group mb-3">
                                             <label class="small mb-1" for="nombre_r">Nombre</label>

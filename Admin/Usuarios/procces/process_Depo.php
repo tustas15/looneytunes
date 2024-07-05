@@ -7,6 +7,9 @@ try {
         throw new Exception('Todos los campos son obligatorios.');
     }
 
+    // Iniciar la transacción
+    $conn->beginTransaction();
+
     // Preparar la consulta SQL para insertar los datos en tab_usuarios
     $stmt = $conn->prepare("INSERT INTO tab_usuarios (usuario, pass) VALUES (:usuario, :pass)");
     // Encriptar la contraseña
@@ -28,8 +31,8 @@ try {
     $stmt->execute();
 
     // Preparar la consulta SQL para insertar los datos en tab_deportistas
-    $stmt = $conn->prepare('INSERT INTO tab_deportistas (id_usuario, NOMBRE_DEPO, APELLIDO_DEPO, FECHA_NACIMIENTO, CEDULA_DEPO, NUMERO_CELULAR, GENERO, CORREO, ID_CATEGORIA, ID_REPRESENTANTE) 
-    VALUES (:id_usuario, :NOMBRE_DEPO, :APELLIDO_DEPO, :FECHA_NACIMIENTO, :CEDULA_DEPO, :NUMERO_CELULAR, :GENERO, :CORREO, :ID_CATEGORIA, :ID_REPRESENTANTE)');
+    $stmt = $conn->prepare('INSERT INTO tab_deportistas (id_usuario, NOMBRE_DEPO, APELLIDO_DEPO, FECHA_NACIMIENTO, CEDULA_DEPO, NUMERO_CELULAR, GENERO, ID_CATEGORIA) 
+    VALUES (:id_usuario, :NOMBRE_DEPO, :APELLIDO_DEPO, :FECHA_NACIMIENTO, :CEDULA_DEPO, :NUMERO_CELULAR, :GENERO, :ID_CATEGORIA)');
     $stmt->bindParam(':id_usuario', $id_usuario);
     $stmt->bindParam(':NOMBRE_DEPO', $_POST['nombre_d']);
     $stmt->bindParam(':APELLIDO_DEPO', $_POST['apellido_d']);
@@ -37,18 +40,30 @@ try {
     $stmt->bindParam(':CEDULA_DEPO', $_POST['cedula_d']);
     $stmt->bindParam(':NUMERO_CELULAR', $_POST['celular_d']);
     $stmt->bindParam(':GENERO', $_POST['genero']);
-    $stmt->bindParam(':CORREO', $_POST['correo_d']);
     $stmt->bindParam(':ID_CATEGORIA', $_POST['categoria_d']);
-    $stmt->bindParam(':ID_REPRESENTANTE', $_POST['representante']);  // Asegúrate de que el campo id_representante esté en la tabla tab_deportistas
-
+    
     $stmt->execute();
 
+    // Aquí, el id_usuario de tab_deportistas es el mismo que id_usuario de tab_usuarios
+    // No necesitamos obtener el último ID insertado, ya que es el mismo id_usuario
+
+    // Insertar en tab_deportistas_representantes
+    $stmt = $conn->prepare('INSERT INTO tab_representantes_deportistas (id_deportista, id_representante) VALUES (:id_deportista, :id_representante)');
+    $stmt->bindParam(':id_deportista', $id_usuario);
+    $stmt->bindParam(':id_representante', $_POST['representante']);
+    $stmt->execute();
+
+    // Confirmar la transacción
+    $conn->commit();
+
     // Redirigir a la página de éxito
-    header("Location: ../pages/crdeportista.php?message=success");
+    header("Location: ../crear_usuarios/crdeportista.php?message=success");
     exit();
 } catch (Exception $e) {
+    // Revertir la transacción en caso de error
+    $conn->rollBack();
     // Redirigir a la página de error con el mensaje de excepción
-    header("Location: ../pages/crdeportista.php?message=" . urlencode($e->getMessage()));
+    header("Location: ../crear_usuarios/crdeportista.php?message=" . urlencode($e->getMessage()));
     exit();
 }
 ?>
