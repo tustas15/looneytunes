@@ -46,12 +46,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['guardar_detalles'])) 
         $stmt->bindParam(':fecha_ingreso', $fecha_ingreso, PDO::PARAM_STR);
 
         if ($stmt->execute()) {
-            echo "Los detalles se han guardado correctamente.";
+            $_SESSION['message'] = "Los detalles se han guardado correctamente.";
+            $_SESSION['message_type'] = 'success';
         } else {
-            echo "Error al guardar los detalles: " . $stmt->errorInfo()[2];
+            $_SESSION['message'] = "Error al guardar los detalles: " . $stmt->errorInfo()[2];
+            $_SESSION['message_type'] = 'danger';
         }
+        header("Location: tab_detalles.php?cedula_depo=" . urlencode($cedula_depo));
+        exit();
     } else {
-        echo "No se encontró el deportista con la cédula proporcionada.";
+        $_SESSION['message'] = "No se encontró el deportista con la cédula proporcionada.";
+        $_SESSION['message_type'] = 'danger';
+        header("Location: ../entrenador/indexentrenador.php");
+        exit();
     }
 }
 ?>
@@ -61,8 +68,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['guardar_detalles'])) 
 <head>
     <meta charset="UTF-8">
     <title>Detalles del Deportista</title>
-    <link rel="stylesheet" href="detalles.css">
-    <link rel="icon" type="image/png" href="../img/logo.png">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <link href="../../Assets/css/styles.css" rel="stylesheet" />
+    <link rel="icon" type="image/x-icon" href="/looneytunes/AssetsFree/img/logo.png" />
+    <script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.28.0/feather.min.js" crossorigin="anonymous"></script>
     <script>
         window.onload = function() {
             var today = new Date();
@@ -75,27 +86,57 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['guardar_detalles'])) 
         }
     </script>
 </head>
-<body>
-    <a href="../entrenador/indexentrenador.php" class="regresar-btn">Regresar</a>
-    <h1>Detalles del Deportista</h1>
-    
-    <h2>Detalles para: <?= htmlspecialchars($deportista['NOMBRE_DEPO'] . ' ' . $deportista['APELLIDO_DEPO']) ?></h2>
-
-    <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
-        <label for="numero_camisa">Número de Camiseta:</label>
-        <input type="text" id="numero_camisa" name="numero_camisa" required><br><br>
-
-        <label for="altura">Altura:</label>
-        <input type="text" id="altura" name="altura" required><br><br>
-
-        <label for="peso">Peso:</label>
-        <input type="text" id="peso" name="peso" required><br><br>
-
-        <label for="fecha_ingreso">Fecha de Ingreso:</label>
-        <input type="date" id="fecha_ingreso" name="fecha_ingreso" required><br><br>
-
-        <input type="hidden" name="cedula_depo" value="<?= htmlspecialchars($cedula_depo) ?>">
-        <input type="submit" name="guardar_detalles" value="Guardar Detalles">
-    </form>
+<body class="bg-primary">
+    <div id="layoutAuthentication">
+        <div id="layoutAuthentication_content">
+            <main>
+                <div class="container-xl px-4">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-7">
+                            <!-- Mensaje de éxito o error -->
+                            <?php
+                            if (isset($_SESSION['message'])) {
+                                $message_type = $_SESSION['message_type'] ?? 'info';
+                                echo '<div class="alert alert-' . $message_type . '">' . $_SESSION['message'] . '</div>';
+                                unset($_SESSION['message']);
+                            }
+                            ?>
+                            <!-- Detalles del Deportista -->
+                            <div class="card shadow-lg border-0 rounded-lg mt-5">
+                                <div class="card-header justify-content-center">
+                                    <h3 class="fw-light my-4">Detalles del Deportista</h3>
+                                </div>
+                                <div class="card-body">
+                                    <h2>Detalles para: <?= htmlspecialchars($deportista['NOMBRE_DEPO'] . ' ' . $deportista['APELLIDO_DEPO']) ?></h2>
+                                    <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
+                                        <div class="mb-3">
+                                            <label for="numero_camisa" class="form-label">Número de Camiseta:</label>
+                                            <input type="text" id="numero_camisa" name="numero_camisa" class="form-control" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="altura" class="form-label">Altura:</label>
+                                            <input type="text" id="altura" name="altura" class="form-control" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="peso" class="form-label">Peso:</label>
+                                            <input type="text" id="peso" name="peso" class="form-control" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="fecha_ingreso" class="form-label">Fecha de Ingreso:</label>
+                                            <input type="date" id="fecha_ingreso" name="fecha_ingreso" class="form-control" required>
+                                        </div>
+                                        <input type="hidden" name="cedula_depo" value="<?= htmlspecialchars($cedula_depo) ?>">
+                                        <button type="submit" name="guardar_detalles" class="btn btn-primary">Guardar Detalles</button>
+                                        <a href="../indexentrenador.php" class="btn btn-primary">Regresar</a>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+        <?php include_once('/xampp/htdocs/looneytunes/admin/includespro/footer.php'); ?>
+    </div>
 </body>
 </html>
