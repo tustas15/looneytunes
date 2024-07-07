@@ -53,8 +53,8 @@
                         </div>
                     </a>
                     <div class="dropdown-divider m-0"></div>
-                    <a class="dropdown-item py-3" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#uploadBackupModal">
-                        <div class="icon-stack bg-primary-soft text-primary me-4"><i data-feather="upload"></i></div>
+                    <a class="dropdown-item py-3" href="javascript:void(0);" data-toggle="modal" data-target="#uploadBackupModal">
+                        <div class="icon-stack bg-primary-soft text-primary me-4"><i class="fas fa-upload"></i></div>
                         <div>
                             <div class="small text-gray-500">Subir Respaldo</div>
                             Haz click para subir el respaldo del sistema
@@ -71,21 +71,7 @@
                     </a>
                 </div>
             </li>
-            <!-- Formulario para subir archivos (oculto) -->
-            <form id="uploadBackupForm" action="/looneytunes/Uploads/uploadBackup.php" method="POST" enctype="multipart/form-data" style="display:none;">
-                <input type="file" id="backupFile" name="backupFile" required>
-            </form>
 
-            <!-- JavaScript para manejar el clic en el enlace -->
-            <script>
-                document.getElementById('uploadBackupLink').addEventListener('click', function() {
-                    document.getElementById('backupFile').click();
-                });
-
-                document.getElementById('backupFile').addEventListener('change', function() {
-                    document.getElementById('uploadBackupForm').submit();
-                });
-            </script>
             <!-- Navbar Search Dropdown-->
             <!-- * * Note: * * Visible only below the lg breakpoint-->
             <li class="nav-item dropdown no-caret me-3 d-lg-none">
@@ -294,29 +280,7 @@
 
                     </div>
                 </div>
-                <!-- Modal para Subir Backup -->
-                <div class="modal fade" id="uploadBackupModal" tabindex="-1" aria-labelledby="uploadBackupModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="uploadBackupModalLabel">Subir Respaldo</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <form id="uploadBackupForm" action="/looneytunes/Uploads/uploadBackup.php" method="POST" enctype="multipart/form-data">
-                                <div class="modal-body">
-                                    <div class="mb-3">
-                                        <label for="backupFile" class="form-label">Selecciona el archivo de respaldo</label>
-                                        <input type="file" class="form-control" id="backupFile" name="backupFile" required>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                                    <button type="submit" class="btn btn-primary">Subir</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
+                
                 <!-- Sidenav Footer -->
                 <div class="sidenav-footer">
                     <div class="sidenav-footer-content">

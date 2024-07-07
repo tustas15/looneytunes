@@ -109,6 +109,18 @@ include './includespro/header.php';
 ?>
 
 <main>
+    <!-- Mostrar Mensajes -->
+    <?php
+    if (isset($_SESSION['message'])) {
+        $message_type = $_SESSION['message_type'] ?? 'info';
+        echo '<div class="container mt-3">';
+        echo '<div class="alert alert-' . $message_type . '">' . $_SESSION['message'] . '</div>';
+        echo '</div>';
+        // Borrar el mensaje de la sesión después de mostrarlo
+        unset($_SESSION['message']);
+        unset($_SESSION['message_type']);
+    }
+    ?>
     <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
         <div class="container-xl px-4">
             <div class="page-header-content pt-4">
