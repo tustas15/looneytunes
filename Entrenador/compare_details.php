@@ -20,16 +20,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $registros = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     if ($registros) {
+        // Generar datos para la gráfica
+        $grafica_datos = [];
+        foreach ($registros as $registro) {
+            $altura = $registro['ALTURA'] ?? 0;
+            $peso = $registro['PESO'] ?? 0;
+            $fecha = $registro['FECHA_INGRESO'] ?? 'N/A';
+
+            if ($altura > 0 && $peso > 0) {
+                // Calcular IMC: peso (kg) / (altura (m))^2
+                $imc = $peso / (($altura / 100) * ($altura / 100));
+                $grafica_datos[] = [
+                    'fecha' => $fecha,
+                    'imc' => $imc
+                ];
+            }
+        }
+
         echo '<h3>Historial de datos del deportista</h3>';
         echo '<table class="table table-bordered">';
         echo '<thead><tr>
                 <th>Fecha de Ingreso</th>
-                <th>Nombre</th>
-                <th>Apellido</th>
-                <th>Cédula</th>
-                <th>Fecha de Nacimiento</th>
-                <th>Número de Celular</th>
-                <th>Género</th>
                 <th>Número de Camiseta</th>
                 <th>Altura</th>
                 <th>Peso</th>
@@ -39,12 +50,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         foreach ($registros as $registro) {
             echo '<tr>';
             echo '<td>' . htmlspecialchars($registro['FECHA_INGRESO'] ?? 'N/A') . '</td>';
-            echo '<td>' . htmlspecialchars($registro['NOMBRE_DEPO']) . '</td>';
-            echo '<td>' . htmlspecialchars($registro['APELLIDO_DEPO']) . '</td>';
-            echo '<td>' . htmlspecialchars($registro['CEDULA_DEPO']) . '</td>';
-            echo '<td>' . htmlspecialchars($registro['FECHA_NACIMIENTO']) . '</td>';
-            echo '<td>' . htmlspecialchars($registro['NUMERO_CELULAR']) . '</td>';
-            echo '<td>' . htmlspecialchars($registro['GENERO']) . '</td>';
             echo '<td>' . htmlspecialchars($registro['NUMERO_CAMISA'] ?? 'N/A') . '</td>';
             echo '<td>' . htmlspecialchars($registro['ALTURA'] ?? 'N/A') . '</td>';
             echo '<td>' . htmlspecialchars($registro['PESO'] ?? 'N/A') . '</td>';
@@ -53,7 +58,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         echo '</tbody></table>';
 
-        // Add JavaScript for delete functionality
+        // Pasar datos de la gráfica a JavaScript
+        echo '<script>
+        var graficaDatos = ' . json_encode($grafica_datos) . ';
+        </script>';
+
+        // Add JavaScript for delete functionality and Chart.js
+        echo '<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>';
         echo '<script>
         $(document).ready(function() {
             $(".delete-historical-detail").on("click", function() {
@@ -77,8 +88,39 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     });
                 }
             });
+
+            // Crear gráfica
+            var ctx = document.getElementById("imcChart").getContext("2d");
+            var imcChart = new Chart(ctx, {
+                type: "line",
+                data: {
+                    labels: graficaDatos.map(d => d.fecha),
+                    datasets: [{
+                        label: "IMC",
+                        data: graficaDatos.map(d => d.imc),
+                        borderColor: "rgba(75, 192, 192, 1)",
+                        borderWidth: 1,
+                        fill: false
+                    }]
+                },
+                options: {
+                    scales: {
+                        x: {
+                            type: "time",
+                            time: {
+                                unit: "month"
+                            },
+                            reverse: true // Esta propiedad invierte el eje X
+                        },
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
         });
         </script>';
+        echo '<canvas id="imcChart" width="400" height="200"></canvas>';
     } else {
         echo 'No se encontraron detalles para el deportista seleccionado.';
     }
