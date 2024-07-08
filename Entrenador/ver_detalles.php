@@ -129,7 +129,7 @@ include './includes/header.php';
                 var selectedId = $(this).val();
                 if (selectedId) {
                     $.ajax({
-                        url: 'configuracion/compare_details.php',
+                        url: 'compare_details.php',
                         type: 'POST',
                         data: {
                             id_temp_deportista: selectedId
