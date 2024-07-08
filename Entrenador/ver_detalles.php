@@ -9,7 +9,7 @@ if (!isset($_SESSION['user_id'])) {
 
 $id_usuario = $_SESSION['user_id'];
 $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario'; 
-// Consulta para obtener datos de tab_temp_deportistas y tab_detalles
+
 $sql = "WITH Ordenados AS (
     SELECT td.ID_TEMP_DEPORTISTA, td.NOMBRE_DEPO, td.APELLIDO_DEPO, td.CEDULA_DEPO, 
            td.FECHA_NACIMIENTO, td.NUMERO_CELULAR, td.GENERO,
@@ -35,7 +35,6 @@ include './includes/header.php';
 
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <title>Detalles de Deportistas</title>
@@ -46,27 +45,9 @@ include './includes/header.php';
             max-height: 500px;
             overflow-y: auto;
         }
-
-        /* boton
-        .regresar-btn{
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            padding: 8px 16px;
-            background-color: blue;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-        }
-
-        .regresar-btn:hover {
-            background-color: darkblue;
-        }*/
     </style>
 </head>
-
 <body>
-    <!--<a href="../entrenador/indexentrenador.php" class="regresar-btn">Regresar</a>-->
     <div class="container my-5">
         <h1>Detalles de Deportistas</h1>
         <div class="table-responsive">
@@ -123,31 +104,39 @@ include './includes/header.php';
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="tabla.js"></script>
     <script>
-        $(document).ready(function() {
-            $('#select-alumno').on('change', function() {
-                var selectedId = $(this).val();
-                if (selectedId) {
-                    $.ajax({
-                        url: 'compare_details.php',
-                        type: 'POST',
-                        data: {
-                            id_temp_deportista: selectedId
-                        },
-                        success: function(response) {
-                            $('#compare-details').html(response);
-                        },
-                        error: function() {
-                            alert('Error al cargar los detalles de comparación.');
-                        }
-                    });
-                } else {
-                    $('#compare-details').html('');
+$(document).ready(function() {
+    function loadCompareDetails(selectedId) {
+        if (selectedId) {
+            $.ajax({
+                url: 'compare_details.php',
+                type: 'POST',
+                data: {
+                    id_temp_deportista: selectedId
+                },
+                success: function(response) {
+                    $('#compare-details').html(response);
+                    console.log("Respuesta recibida:", response); // Para depuración
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error AJAX:", status, error);
+                    alert('Error al cargar los detalles de comparación.');
                 }
             });
-        });
-    </script>
-</body>
+        } else {
+            $('#compare-details').html('');
+        }
+    }
+
+    $('#select-alumno').on('change', function() {
+        var selectedId = $(this).val();
+        console.log("ID seleccionado:", selectedId); // Para depuración
+        loadCompareDetails(selectedId);
+    });
+});
+</script>
 <footer class="footer-admin mt-auto footer-light">
     <div class="container-xl px-4">
         <div class="row">
@@ -220,6 +209,11 @@ include './includes/header.php';
 <script src="/looneytunes/Assets/js/datatables/datatables-simple-demo.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/litepicker/dist/bundle.js" crossorigin="anonymous"></script>
 <script src="/looneytunes/Assets/js/litepicker.js"></script>
+
+
+</body>
+</html>
+
 </body>
 
 </html>
