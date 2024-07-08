@@ -106,7 +106,7 @@ $(document).ready(function() {
 
     $(document).on("click", ".delete-historical-detail", function() {
         var id = $(this).data("id");
-        if (confirm("¿Está seguro de que desea eliminar este detalle histórico?")) {
+        if (confirm("¿Está seguro de que desea eliminar este detalle?")) {
             $.ajax({
                 url: "eliminar_detalle.php",
                 type: "POST",
