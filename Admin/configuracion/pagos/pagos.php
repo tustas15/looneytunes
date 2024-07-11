@@ -1,7 +1,7 @@
 <?php
 // Conexión a la base de datos
 session_start();
-require_once('../Admin/configuracion/conexion.php');
+require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
 
 
 include '../../Includespro/header.php';

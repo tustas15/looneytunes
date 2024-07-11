@@ -1,6 +1,6 @@
 <?php
 // Incluir archivo de conexión a la base de datos
-require_once('../Admin/configuracion/conexion.php');
+require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
 
 // Verificar si se recibieron datos del formulario
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {

@@ -1,5 +1,5 @@
 <?php
-require_once('../conexion.php');
+require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $idPago = $_POST['idPago'];

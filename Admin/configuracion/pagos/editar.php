@@ -1,5 +1,5 @@
 <?php
-require_once('../conexion.php');
+require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
 
 // Verificar si se ha proporcionado un ID_PAGO válido
 if (isset($_GET['id'])) {

@@ -1,6 +1,6 @@
 <?php
 // Incluir archivo de conexión a la base de datos
-require_once('../conexion.php');
+require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
 
 try {
     // Consulta SQL para obtener el historial de pagos
