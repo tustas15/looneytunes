@@ -249,9 +249,8 @@
                                         <a class="nav-link" href="/looneytunes/admin/configuracion/busqueda/indexdeportista.php">Deportistas</a>
                                     </nav>
                                 </div>
-                                <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#pagesCollapsePago" aria-expanded="false" aria-controls="pagesCollapsePago">
+                                <a class="nav-link" href="/looneytunes2/admin/configuracion/pagos/pagos.php" >
                                     Pago
-                                    <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                                 </a>
                             </nav>
                         </div>
