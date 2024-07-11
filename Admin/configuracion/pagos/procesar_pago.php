@@ -66,6 +66,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         // Llamar a historial_pagos.php para actualizar la tabla de pagos
         include 'historial_pagos.php';
+
+        // Llamar a index.php en la carpeta whatsapp para enviar mensaje de WhatsApp
+        $data = array(
+            'nombre' => $nombre_representante,
+            'valor' => $monto
+        );
+        $options = array(
+            'http' => array(
+                'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
+                'method'  => 'POST',
+                'content' => http_build_query($data),
+            ),
+        );
+        $context  = stream_context_create($options);
+        $result = file_get_contents('http://localhost/looneytunes/admin/configuracion/whatsapp/index.php', false, $context);
+        if ($result === FALSE) {
+            /* Handle error */
+            echo 'Error al enviar mensaje de WhatsApp';
+        }
     } catch (PDOException $e) {
         // Si hay algún error, hacer rollback y mostrar el mensaje de error
         $conn->rollback();
