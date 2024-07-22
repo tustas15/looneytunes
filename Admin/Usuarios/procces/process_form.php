@@ -3,7 +3,7 @@ include '../../configuracion/conexion.php';
 
 try {
     // Verificar que todos los campos están completos
-    if (!isset($_POST['nombre'], $_POST['apellido'], $_POST['experiencia'], $_POST['celular'], $_POST['correo'], $_POST['direccion'], $_POST['cedula'])) {
+    if (!isset($_POST['nombre'], $_POST['apellido'], $_POST['experiencia'], $_POST['celular'], $_POST['correo'], $_POST['direccion'], $_POST['cedula'], $_POST['categoria'])) {
         throw new Exception('Todos los campos son obligatorios.');
     }
 
@@ -47,17 +47,24 @@ try {
     // Ejecutar la consulta
     $stmt->execute();
 
-    // Confirmar la transacción
-    $conn->commit();
+    // Insertar en tab_entre_categoria para asociar al entrenador con la categoría
+    $stmt = $conn->prepare('INSERT INTO tab_entre_categoria (id_usuario, id_categoria) VALUES (:id_usuario, :id_categoria)');
+    $stmt->bindParam(':id_usuario', $id_usuario);
+    $stmt->bindParam(':id_categoria', $_POST['categoria']);
+    $stmt->execute();
 
-    // Registrar el evento en la tabla tab_logs
-    $evento = "Registro de nuevo entrenador: " . $_POST['nombre'] . " " . $_POST['apellido'];
+    // Registrar el evento
+    $id_usuario = $_SESSION['id_usuario'];
+    $evento = "Creación de cuenta de entrenador";
     $ip = $_SERVER['REMOTE_ADDR'];
-    $tipo_evento = 'nuevo_usuario';  // Define el tipo de evento
+    $tipo_evento = "Registro";
 
     $logQuery = "INSERT INTO tab_logs (ID_USUARIO, EVENTO, HORA_LOG, DIA_LOG, IP, TIPO_EVENTO) VALUES (?, ?, CURRENT_TIME(), CURRENT_DATE(), ?, ?)";
     $logStmt = $conn->prepare($logQuery);
     $logStmt->execute([$id_usuario, $evento, $ip, $tipo_evento]);
+
+    // Confirmar la transacción
+    $conn->commit();
 
     // Redirigir con mensaje de éxito
     header("Location: ../crear_usuarios/crentrenador.php?message=success");

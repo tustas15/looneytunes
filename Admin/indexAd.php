@@ -5,8 +5,6 @@ session_start();
 
 date_default_timezone_set('America/Guayaquil'); // Ajusta a tu zona horaria
 
-
-
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../Public/login.php");
     exit();
@@ -21,6 +19,19 @@ $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
 $tipo_usuario = $_SESSION['tipo_usuario'];
 
 $usuario = isset($_SESSION['usuario']) ? $_SESSION['usuario'] : 'Usuario';
+
+try {
+    // Consulta SQL para obtener las categorías y el número de deportistas por categoría
+    $sql = "SELECT c.ID_CATEGORIA, c.CATEGORIA, COUNT(d.ID_DEPORTISTA) AS num_deportistas
+            FROM tab_categorias c
+            LEFT JOIN tab_deportistas d ON c.ID_CATEGORIA = d.ID_CATEGORIA
+            GROUP BY c.ID_CATEGORIA, c.CATEGORIA";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute();
+    $categorias = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    echo "Error al ejecutar la consulta: " . $e->getMessage();
+}
 
 try {
     // Consulta SQL
@@ -85,7 +96,8 @@ $conn = null;
 
 
 // Función para calcular el tiempo transcurrido en formato legible
-function timeElapsedString($datetime, $full = false) {
+function timeElapsedString($datetime, $full = false)
+{
     $now = new DateTime;  // Crear un objeto DateTime con la hora actual.
     $ago = new DateTime($datetime);  // Crear un objeto DateTime con la fecha y hora proporcionadas.
     $diff = $now->diff($ago);  // Calcular la diferencia entre la hora actual y la proporcionada.
@@ -135,7 +147,7 @@ include './includespro/header.php';
     <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
         <div class="container-xl px-4">
             <div class="page-header-content pt-4">
-                <!--<div class="row align-items-center justify-content-between">
+                <div class="row align-items-center justify-content-between">
                     <div class="col-auto mt-4">
                         <h1 class="page-header-title">
                             <div class="page-header-icon"><i data-feather="activity"></i></div>
@@ -143,14 +155,14 @@ include './includespro/header.php';
                         </h1>
                         <div class="page-header-subtitle">Descripción general del panel y resumen de contenido</div>
                     </div>
-                </div>-->
+                </div>
             </div>
         </div>
     </header>
     <!-- Main page content-->
     <div class="container-xl px-4 mt-n10">
-
         <div class="row">
+            <!--Message Welcome-->
             <div class="col-xxl-4 col-xl-12 mb-4">
                 <div class="card h-100">
                     <div class="card-body h-100 p-5">
@@ -158,7 +170,7 @@ include './includespro/header.php';
                             <div class="col-xl-8 col-xxl-12">
                                 <div class="text-center text-xl-start text-xxl-center mb-4 mb-xl-0 mb-xxl-4">
                                     <h1 class="text-primary">Bienvenido, <?= $nombre ?>.</h1>
-                                    <p class="text-gray-700 mb-0"></p>
+                                    <p class="text-gray-700 mb-0">¡Explore nuestro kit de herramientas de interfaz de usuario completamente diseñado! Explore nuestras páginas de aplicaciones, componentes y utilidades prediseñadas.</p>
                                 </div>
                             </div>
                             <div class="col-xl-4 col-xxl-12 text-center"><img class="img-fluid" src="../assets/img/illustrations/at-work.svg" style="max-width: 26rem" /></div>
@@ -166,89 +178,11 @@ include './includespro/header.php';
                     </div>
                 </div>
             </div>
-
-
-        </div>
-        <!-- Example Colored Cards for Dashboard Demo-->
-        <div class="row">
-            <div class="col-lg-6 col-xl-3 mb-4">
-                <div class="card bg-primary text-white h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="me-3">
-                                <div class="text-white-75 small">Administradores</div>
-                                <div class="text-lg fw-bold number" data-role="administradores"><?php echo $result['administradores']; ?></div>
-                            </div>
-                            <i class="feather-xl text-white-50" data-feather="user"></i>
-                        </div>
-                    </div>
-                    <div class="card-footer d-flex align-items-center justify-content-between small">
-                        <a class="text-white stretched-link" href="../Admin/configuracion/busqueda/indexadministrador.php">View Report</a>
-                        <div class="text-white"><i class="fas fa-angle-right"></i></div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6 col-xl-3 mb-4">
-                <div class="card bg-warning text-white h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="me-3">
-                                <div class="text-white-75 small">Entrenadores</div>
-                                <div class="text-lg fw-bold number" data-role="entrenadores"><?php echo $result['entrenadores']; ?></div>
-                            </div>
-                            <i class="feather-xl text-white-50" data-feather="clipboard"></i>
-                        </div>
-                    </div>
-                    <div class="card-footer d-flex align-items-center justify-content-between small">
-                        <a class="text-white stretched-link" href="../Admin/configuracion/busqueda/indexentrenador.php">View Report</a>
-                        <div class="text-white"><i class="fas fa-angle-right"></i></div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6 col-xl-3 mb-4">
-                <div class="card bg-success text-white h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="me-3">
-                                <div class="text-white-75 small">Representantes</div>
-                                <div class="text-lg fw-bold number" data-role="representantes"><?php echo $result['representantes']; ?></div>
-                            </div>
-                            <i class="feather-xl text-white-50" data-feather="check-square"></i>
-                        </div>
-                    </div>
-                    <div class="card-footer d-flex align-items-center justify-content-between small">
-                        <a class="text-white stretched-link" href="../Admin/configuracion/busqueda/indexrepresentante.php">View Tasks</a>
-                        <div class="text-white"><i class="fas fa-angle-right"></i></div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6 col-xl-3 mb-4">
-                <div class="card bg-danger text-white h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="me-3">
-                                <div class="text-white-75 small">Deportistas</div>
-                                <div class="text-lg fw-bold number" data-role="deportistas"><?php echo $result['deportistas']; ?></div>
-                            </div>
-                            <i class="feather-xl text-white-50" data-feather="dribbble"></i>
-                        </div>
-                    </div>
-                    <div class="card-footer d-flex align-items-center justify-content-between small">
-                        <a class="text-white stretched-link" href="../Admin/configuracion/busqueda/indexdeportista.php">View Requests</a>
-                        <div class="text-white"><i class="fas fa-angle-right"></i></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <!-- logs -->
-            <h1>Actividad Reciente</h1>
-            <!-- logs -->
+            <!--Recent Activity-->
             <div class="col-xxl-4 col-xl-6 mb-4">
                 <div class="card card-header-actions h-100">
                     <div class="card-header">
-                        Recent Activity
+                        Actividades Recientes
                         <div class="dropdown no-caret">
                             <button class="btn btn-transparent-dark btn-icon dropdown-toggle" id="dropdownMenuButton" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="text-gray-500" data-feather="more-vertical"></i>
@@ -331,82 +265,128 @@ include './includespro/header.php';
                     </div>
                 </div>
             </div>
-
-            <!-- progreso 
+            <!-- Categorias -->
             <div class="col-xxl-4 col-xl-6 mb-4">
                 <div class="card card-header-actions h-100">
                     <div class="card-header">
-                        Progress Tracker
+                        Categorias del Club
                         <div class="dropdown no-caret">
                             <button class="btn btn-transparent-dark btn-icon dropdown-toggle" id="dropdownMenuButton" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="text-gray-500" data-feather="more-vertical"></i></button>
                             <div class="dropdown-menu dropdown-menu-end animated--fade-in-up" aria-labelledby="dropdownMenuButton">
-                                <a class="dropdown-item" href="#!">
+                                <a class="dropdown-item">
                                     <div class="dropdown-item-icon"><i class="text-gray-500" data-feather="list"></i></div>
-                                    Manage Tasks
+                                    Administrar Categorias
                                 </a>
-                                <a class="dropdown-item" href="#!">
+                                <a class="dropdown-item">
                                     <div class="dropdown-item-icon"><i class="text-gray-500" data-feather="plus-circle"></i></div>
-                                    Add New Task
+                                    Agregar Categorias
                                 </a>
-                                <a class="dropdown-item" href="#!">
+                                <a class="dropdown-item">
                                     <div class="dropdown-item-icon"><i class="text-gray-500" data-feather="minus-circle"></i></div>
-                                    Delete Tasks
+                                    Eliminar Categorias
                                 </a>
                             </div>
                         </div>
                     </div>
                     <div class="card-body">
-                        <h4 class="small">
-                            Server Migration
-                            <span class="float-end fw-bold">20%</span>
-                        </h4>
-                        <div class="progress mb-4">
-                            <div class="progress-bar bg-danger" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                        <h4 class="small">
-                            Sales Tracking
-                            <span class="float-end fw-bold">40%</span>
-                        </h4>
-                        <div class="progress mb-4">
-                            <div class="progress-bar bg-warning" role="progressbar" style="width: 40%" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                        <h4 class="small">
-                            Customer Database
-                            <span class="float-end fw-bold">60%</span>
-                        </h4>
-                        <div class="progress mb-4">
-                            <div class="progress-bar" role="progressbar" style="width: 60%" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                        <h4 class="small">
-                            Payout Details
-                            <span class="float-end fw-bold">80%</span>
-                        </h4>
-                        <div class="progress mb-4">
-                            <div class="progress-bar bg-info" role="progressbar" style="width: 80%" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                        <h4 class="small">
-                            Account Setup
-                            <span class="float-end fw-bold">Complete!</span>
-                        </h4>
-                        <div class="progress">
-                            <div class="progress-bar bg-success" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
+                        <?php foreach ($categorias as $categoria) : ?>
+                            <h4 class="small">
+                                <?php echo htmlspecialchars($categoria['CATEGORIA']); ?>
+                                <span class="float-end fw-bold"><?php echo $categoria['num_deportistas']; ?></span>
+                            </h4>
+                            <div class="progress mb-4">
+                                <div class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        <?php endforeach; ?>
                     </div>
                     <div class="card-footer position-relative">
                         <div class="d-flex align-items-center justify-content-between small text-body">
-                            <a class="stretched-link text-body" href="#!">Visit Task Center</a>
+                            <a class="stretched-link text-body" href="#!">Revisar Categoiras</a>
                             <i class="fas fa-angle-right"></i>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>-->
-            <!-- Example Charts for Dashboard Demo
+
+        </div>
+        <!-- Example Colored Cards for Dashboard Demo-->
+        <div class="row">
+            <div class="col-lg-6 col-xl-3 mb-4">
+                <div class="card bg-primary text-white h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="me-3">
+                                <div class="text-white-75 small">Administradores</div>
+                                <div class="text-lg fw-bold number" data-role="administradores"><?php echo $result['administradores']; ?></div>
+                            </div>
+                            <i class="feather-xl text-white-50" data-feather="user"></i>
+                        </div>
+                    </div>
+                    <div class="card-footer d-flex align-items-center justify-content-between small">
+                        <a class="text-white stretched-link" href="../Admin/configuracion/busqueda/indexadministrador.php">View Report</a>
+                        <div class="text-white"><i class="fas fa-angle-right"></i></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 col-xl-3 mb-4">
+                <div class="card bg-warning text-white h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="me-3">
+                                <div class="text-white-75 small">Entrenadores</div>
+                                <div class="text-lg fw-bold number" data-role="entrenadores"><?php echo $result['entrenadores']; ?></div>
+                            </div>
+                            <i class="feather-xl text-white-50" data-feather="clipboard"></i>
+                        </div>
+                    </div>
+                    <div class="card-footer d-flex align-items-center justify-content-between small">
+                        <a class="text-white stretched-link" href="../Admin/configuracion/busqueda/indexentrenador.php">View Report</a>
+                        <div class="text-white"><i class="fas fa-angle-right"></i></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 col-xl-3 mb-4">
+                <div class="card bg-success text-white h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="me-3">
+                                <div class="text-white-75 small">Representantes</div>
+                                <div class="text-lg fw-bold number" data-role="representantes"><?php echo $result['representantes']; ?></div>
+                            </div>
+                            <i class="feather-xl text-white-50" data-feather="check-square"></i>
+                        </div>
+                    </div>
+                    <div class="card-footer d-flex align-items-center justify-content-between small">
+                        <a class="text-white stretched-link" href="../Admin/configuracion/busqueda/indexrepresentante.php">View Tasks</a>
+                        <div class="text-white"><i class="fas fa-angle-right"></i></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 col-xl-3 mb-4">
+                <div class="card bg-danger text-white h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="me-3">
+                                <div class="text-white-75 small">Deportistas</div>
+                                <div class="text-lg fw-bold number" data-role="deportistas"><?php echo $result['deportistas']; ?></div>
+                            </div>
+                            <i class="feather-xl text-white-50" data-feather="dribbble"></i>
+                        </div>
+                    </div>
+                    <div class="card-footer d-flex align-items-center justify-content-between small">
+                        <a class="text-white stretched-link" href="../Admin/configuracion/busqueda/indexdeportista.php">View Requests</a>
+                        <div class="text-white"><i class="fas fa-angle-right"></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Example Charts for Dashboard Demo-->
         <div class="row">
             <div class="col-xl-6 mb-4">
                 <div class="card card-header-actions h-100">
                     <div class="card-header">
-                        Earnings Breakdown
+                        Desgloce de Ganancias
                         <div class="dropdown no-caret">
                             <button class="btn btn-transparent-dark btn-icon dropdown-toggle" id="areaChartDropdownExample" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="text-gray-500" data-feather="more-vertical"></i></button>
                             <div class="dropdown-menu dropdown-menu-end animated--fade-in-up" aria-labelledby="areaChartDropdownExample">
@@ -427,7 +407,7 @@ include './includespro/header.php';
             <div class="col-xl-6 mb-4">
                 <div class="card card-header-actions h-100">
                     <div class="card-header">
-                        Monthly Revenue
+                        Ganancia Mensual
                         <div class="dropdown no-caret">
                             <button class="btn btn-transparent-dark btn-icon dropdown-toggle" id="areaChartDropdownExample" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="text-gray-500" data-feather="more-vertical"></i></button>
                             <div class="dropdown-menu dropdown-menu-end animated--fade-in-up" aria-labelledby="areaChartDropdownExample">
@@ -445,57 +425,18 @@ include './includespro/header.php';
                     </div>
                 </div>
             </div>
-        </div>-->
-            <!-- Example DataTable for Dashboard Demo
+        </div>
         <div class="card mb-4">
-            <div class="card-header">Personnel Management</div>
-            <div class="card-body">
-                <table id="datatablesSimple">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Position</th>
-                            <th>Office</th>
-                            <th>Age</th>
-                            <th>Start date</th>
-                            <th>Salary</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tfoot>
-                        <tr>
-                            <th>Name</th>
-                            <th>Position</th>
-                            <th>Office</th>
-                            <th>Age</th>
-                            <th>Start date</th>
-                            <th>Salary</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </tfoot>
-                    <tbody>
-                        <tr>
-                            <td>Tiger Nixon</td>
-                            <td>System Architect</td>
-                            <td>Edinburgh</td>
-                            <td>61</td>
-                            <td>2011/04/25</td>
-                            <td>$320,800</td>
-                            <td>
-                                <div class="badge bg-primary text-white rounded-pill">Full-time</div>
-                            </td>
-                            <td>
-                                <button class="btn btn-datatable btn-icon btn-transparent-dark me-2"><i data-feather="more-vertical"></i></button>
-                                <button class="btn btn-datatable btn-icon btn-transparent-dark"><i data-feather="trash-2"></i></button>
-                            </td>
-                        </tr>
-
-                    </tbody>
-                </table>
+            <div class="card-body py-5">
+                <div class="d-flex flex-column justify-content-center">
+                    <img class="img-fluid mb-4" src="../assets/img/illustrations/data-report.svg" alt="" style="height: 10rem" />
+                    <div class="text-center px-0 px-lg-5">
+                        <h5>¡Nuevos informes están aquí! ¡Genera informes personalizados ahora!</h5>
+                        <p class="mb-4">Nuestro nuevo sistema de generación de informes ya está en línea. Puede comenzar a crear informes personalizados para cualquier documento disponible en su cuenta.</p>
+                        <a class="btn btn-primary p-3" href="#!">Empezar</a>
+                    </div>
+                </div>
             </div>
-        </div>-->
         </div>
 
         <?php

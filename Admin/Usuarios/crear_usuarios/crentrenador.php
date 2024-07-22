@@ -1,4 +1,11 @@
 <?php
+include '../../configuracion/conexion.php';
+
+// Obtener las categorías de la base de datos
+$stmt = $conn->prepare("SELECT ID_CATEGORIA, CATEGORIA FROM tab_categorias");
+$stmt->execute();
+$categorias = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 // Mostrar el mensaje de éxito o error desde procces_form.php
 $message = '';
 if (isset($_GET['message'])) {
@@ -83,6 +90,16 @@ if (isset($_GET['message'])) {
                                             <label class="small mb-1" for="cedula">Cédula</label>
                                             <input class="form-control" id="cedula" name="cedula" type="text" placeholder="Ingrese la cédula" required />
                                         </div>
+                                        <!-- Form Group (categoría) -->
+                                        <div class="mb-3">
+                                            <label class="small mb-1" for="categoria">Categoría</label>
+                                            <select class="form-control" id="categoria" name="categoria" required>
+                                                <option value="">Seleccione una categoría</option>
+                                                <?php foreach ($categorias as $categoria): ?>
+                                                    <option value="<?php echo $categoria['ID_CATEGORIA']; ?>"><?php echo $categoria['CATEGORIA']; ?></option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                        </div>
                                         <!-- Botón de registro -->
                                         <button class="btn btn-primary btn-block" type="submit">Crear Cuenta</button>
                                         <a class="btn btn-primary btn-block" href="../../indexAd.php">Volver</a> <!-- Botón para volver -->
@@ -95,3 +112,5 @@ if (isset($_GET['message'])) {
             </main>
         </div>
         <?php include_once('/xampp/htdocs/looneytunes/admin/includespro/footer.php'); ?>
+    </div>
+</body>
