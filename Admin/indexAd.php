@@ -3,6 +3,10 @@
 require_once('../Admin/configuracion/conexion.php');
 session_start();
 
+date_default_timezone_set('America/Guayaquil'); // Ajusta a tu zona horaria
+echo "Hora actual del servidor: " . date('Y-m-d H:i:s');
+
+
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../Public/login.php");
     exit();
@@ -78,6 +82,7 @@ try {
 }
 
 $conn = null;
+
 
 // Función para calcular el tiempo transcurrido en formato legible
 function timeElapsedString($datetime, $full = false) {
