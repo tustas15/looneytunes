@@ -2,6 +2,10 @@
 // Conexión a la base de datos
 require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
 
+date_default_timezone_set('America/Guayaquil'); // Ajusta a tu zona horaria
+echo "Hora actual del servidor: " . date('Y-m-d H:i:s');
+
+
 // Verificar que la conexión se estableció correctamente
 if ($conn === null) {
     die("Error de conexión a la base de datos.");
