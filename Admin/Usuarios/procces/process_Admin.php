@@ -43,7 +43,7 @@ try {
     // Confirmar la transacción
     $conn->commit();
 
-    /// Registrar el evento en la tabla tab_logs
+    // Registrar el evento en la tabla tab_logs
     $evento = "Registro de nuevo administrador: " . $nombre . " " . $apellido;
     $ip = $_SERVER['REMOTE_ADDR'];
     $tipo_evento = 'nuevo_usuario';  // Define el tipo de evento

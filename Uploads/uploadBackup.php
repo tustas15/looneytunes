@@ -6,6 +6,8 @@ session_start(); // Inicia la sesión
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_FILES['backupFile']) && $_FILES['backupFile']['error'] == UPLOAD_ERR_OK) {
         $backupFile = $_FILES['backupFile']['tmp_name'];
+        $ip = $_SERVER['REMOTE_ADDR']; // Obtener la IP del cliente
+        $userId = $_SESSION['user_id']; // Asegúrate de tener el ID del usuario en la sesión
 
         // Leer el contenido del archivo SQL
         $sql = file_get_contents($backupFile);
@@ -56,6 +58,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $_SESSION['message'] = "Respaldo subido exitosamente";
             $_SESSION['message_type'] = 'success';
+
+            // Registrar la actividad de restauración en el log
+            $evento = "Respaldo subido y restaurado exitosamente";
+            $tipo_evento = 'subida_base_datos'; // Define el tipo de evento
+
+            $logQuery = "INSERT INTO tab_logs (ID_USUARIO, EVENTO, HORA_LOG, DIA_LOG, IP, TIPO_EVENTO) VALUES (?, ?, CURRENT_TIME(), CURRENT_DATE(), ?, ?)";
+            $logStmt = $conn->prepare($logQuery);
+            $logStmt->execute([$userId, $evento, $ip, $tipo_evento]);
+
         } catch (PDOException $e) {
             $_SESSION['message'] = "Error: " . $e->getMessage();
             $_SESSION['message_type'] = 'danger';
@@ -74,3 +85,4 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit();
     }
 }
+?>

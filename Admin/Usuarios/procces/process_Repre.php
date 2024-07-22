@@ -47,13 +47,13 @@ try {
     $conn->commit();
 
     // Registrar el evento en la tabla tab_logs
-    $evento = "Registro de nuevo representante: " . $nombre . " " . $apellido;
+    $evento = "Registro de nuevo representante: " . $_POST['nombre_r'] . " " . $_POST['apellido_r'];
     $ip = $_SERVER['REMOTE_ADDR'];
     $tipo_evento = 'nuevo_usuario';  // Define el tipo de evento
 
-    $query = "INSERT INTO tab_logs (ID_USUARIO, EVENTO, HORA_LOG, DIA_LOG, IP, TIPO_EVENTO) VALUES (?, ?, CURRENT_TIME(), CURRENT_DATE(), ?, ?)";
-    $stmt = $conn->prepare($query);
-    $stmt->execute([$id_usuario, $evento, $ip, $tipo_evento]);
+    $logQuery = "INSERT INTO tab_logs (ID_USUARIO, EVENTO, HORA_LOG, DIA_LOG, IP, TIPO_EVENTO) VALUES (?, ?, CURRENT_TIME(), CURRENT_DATE(), ?, ?)";
+    $logStmt = $conn->prepare($logQuery);
+    $logStmt->execute([$id_usuario, $evento, $ip, $tipo_evento]);
 
     // Redirigir con mensaje de éxito
     header("Location: ../crear_usuarios/crrepresentante.php?message=success");

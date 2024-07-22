@@ -7,6 +7,9 @@ try {
         throw new Exception('Todos los campos son obligatorios.');
     }
 
+    // Iniciar la transacción
+    $conn->beginTransaction();
+
     // Preparar la consulta SQL para insertar los datos en tab_usuarios
     $stmt = $conn->prepare("INSERT INTO tab_usuarios (usuario, pass) VALUES (:usuario, :pass)");
     // Encriptar la contraseña
@@ -44,16 +47,23 @@ try {
     // Ejecutar la consulta
     $stmt->execute();
 
+    // Confirmar la transacción
+    $conn->commit();
+
     // Registrar el evento en la tabla tab_logs
-    $evento = "Registro de nuevo entrenador: " . $nombre . " " . $apellido;
+    $evento = "Registro de nuevo entrenador: " . $_POST['nombre'] . " " . $_POST['apellido'];
     $ip = $_SERVER['REMOTE_ADDR'];
-    $query = "INSERT INTO tab_logs (ID_USUARIO, EVENTO, HORA_LOG, DIA_LOG, IP) VALUES (?, ?, CURRENT_TIME(), CURRENT_DATE(), ?)";
-    $stmt = $conn->prepare($query);
-    $stmt->execute([$id_usuario, $evento, $ip]);
+    $tipo_evento = 'nuevo_usuario';  // Define el tipo de evento
+
+    $logQuery = "INSERT INTO tab_logs (ID_USUARIO, EVENTO, HORA_LOG, DIA_LOG, IP, TIPO_EVENTO) VALUES (?, ?, CURRENT_TIME(), CURRENT_DATE(), ?, ?)";
+    $logStmt = $conn->prepare($logQuery);
+    $logStmt->execute([$id_usuario, $evento, $ip, $tipo_evento]);
 
     // Redirigir con mensaje de éxito
     header("Location: ../crear_usuarios/crentrenador.php?message=success");
 } catch (Exception $e) {
+    // Revertir la transacción en caso de error
+    $conn->rollBack();
     // Redirigir con mensaje de error
     header("Location: ../crear_usuarios/crentrenador.php?message=" . urlencode($e->getMessage()));
 }

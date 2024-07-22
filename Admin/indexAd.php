@@ -45,6 +45,7 @@ try {
     $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;  // Página actual
     $offset = ($page - 1) * $logsPerPage;
 
+    // Consulta para obtener los logs
     $query = "SELECT * FROM tab_logs WHERE ID_USUARIO = ? ORDER BY DIA_LOG DESC, HORA_LOG DESC LIMIT ? OFFSET ?";
     $stmtLogs = $conn->prepare($query);
     if ($stmtLogs === false) {
@@ -56,6 +57,7 @@ try {
     $stmtLogs->execute();
     $logs = $stmtLogs->fetchAll(PDO::FETCH_ASSOC);
 
+    // Consulta para obtener el total de logs
     $totalLogsQuery = "SELECT COUNT(*) as total FROM tab_logs WHERE ID_USUARIO = ?";
     $stmtTotalLogs = $conn->prepare($totalLogsQuery);
     $stmtTotalLogs->bindParam(1, $idUsuario, PDO::PARAM_INT);
@@ -63,9 +65,12 @@ try {
     $totalLogs = $stmtTotalLogs->fetch(PDO::FETCH_ASSOC)['total'];
     $totalPages = ceil($totalLogs / $logsPerPage);
 
+    // Mensaje si no hay logs
     if (empty($logs)) {
         $logsMessage = "<p>No hay registros de actividad para mostrar.</p>";
     }
+
+    // Cerrar cursores
     $stmtLogs->closeCursor();
 } catch (Exception $e) {
     echo "Hubo un problema con la consulta: " . $e->getMessage();
@@ -75,34 +80,35 @@ try {
 $conn = null;
 
 // Función para calcular el tiempo transcurrido en formato legible
-function timeElapsedString($datetime, $full = false)
-{
-    $now = new DateTime;
-    $ago = new DateTime($datetime);
-    $diff = $now->diff($ago);
+function timeElapsedString($datetime, $full = false) {
+    $now = new DateTime;  // Crear un objeto DateTime con la hora actual.
+    $ago = new DateTime($datetime);  // Crear un objeto DateTime con la fecha y hora proporcionadas.
+    $diff = $now->diff($ago);  // Calcular la diferencia entre la hora actual y la proporcionada.
 
-    $diff->w = floor($diff->d / 7);
-    $diff->d -= $diff->w * 7;
+    $diff->w = floor($diff->d / 7);  // Calcular el número de semanas.
+    $diff->d -= $diff->w * 7;  // Ajustar los días restantes después de contabilizar las semanas.
 
-    $string = array(
-        'y' => 'year',
-        'm' => 'month',
-        'w' => 'week',
-        'd' => 'day',
-        'h' => 'hour',
-        'i' => 'minute',
-        's' => 'second',
-    );
+    // Definir una matriz que asocia cada unidad de tiempo con su nombre en singular.
+    $string = [
+        'y' => 'año',
+        'm' => 'mes',
+        'w' => 'semana',
+        'd' => 'día',
+        'h' => 'hora',
+        'i' => 'minuto',
+        's' => 'segundo',
+    ];
+    // Iterar sobre la matriz para construir la cadena de texto con las diferencias de tiempo.
     foreach ($string as $k => &$v) {
         if ($diff->$k) {
-            $v = $diff->$k . ' ' . $v . ($diff->$k > 1 ? 's' : '');
+            $v = $diff->$k . ' ' . $v . ($diff->$k > 1 ? 's' : '');  // Añadir la cantidad y pluralizar si es necesario.
         } else {
-            unset($string[$k]);
+            unset($string[$k]);  // Eliminar la unidad de tiempo si no hay diferencia en esa unidad.
         }
     }
 
-    if (!$full) $string = array_slice($string, 0, 1);
-    return $string ? implode(', ', $string) . ' ago' : 'just now';
+    if (!$full) $string = array_slice($string, 0, 1);  // Si $full es false, solo mostrar la unidad de tiempo más significativa.
+    return $string ? implode(', ', $string) . ' ago' : 'just now';  // Construir la cadena final.
 }
 
 include './includespro/header.php';
@@ -244,10 +250,10 @@ include './includespro/header.php';
                             </button>
                             <div class="dropdown-menu dropdown-menu-end animated--fade-in-up" aria-labelledby="dropdownMenuButton">
                                 <h6 class="dropdown-header">Filter Activity:</h6>
-                                <a class="dropdown-item" href="#!"><span class="badge bg-green-soft text-green my-1">Commerce</span></a>
-                                <a class="dropdown-item" href="#!"><span class="badge bg-blue-soft text-blue my-1">Reporting</span></a>
-                                <a class="dropdown-item" href="#!"><span class="badge bg-yellow-soft text-yellow my-1">Server</span></a>
-                                <a class="dropdown-item" href="#!"><span class="badge bg-purple-soft text-purple my-1">Users</span></a>
+                                <a class="dropdown-item"><span class="badge bg-green-soft text-green my-1">INICIO SESIÓN</span></a>
+                                <a class="dropdown-item"><span class="badge bg-red-soft text-red my-1">CIERRE SESIÓN</span></a>
+                                <a class="dropdown-item"><span class="badge bg-purple-soft text-purple my-1">USUARIO NUEVO</span></a>
+                                <a class="dropdown-item"><span class="badge bg-yellow-soft text-yellow my-1">SUBIDA BASE DATOS</span></a>
                             </div>
                         </div>
                     </div>
@@ -390,7 +396,7 @@ include './includespro/header.php';
                 </div>
             </div>
         </div>-->
-        <!-- Example Charts for Dashboard Demo
+            <!-- Example Charts for Dashboard Demo
         <div class="row">
             <div class="col-xl-6 mb-4">
                 <div class="card card-header-actions h-100">
@@ -435,7 +441,7 @@ include './includespro/header.php';
                 </div>
             </div>
         </div>-->
-        <!-- Example DataTable for Dashboard Demo
+            <!-- Example DataTable for Dashboard Demo
         <div class="card mb-4">
             <div class="card-header">Personnel Management</div>
             <div class="card-body">
@@ -485,8 +491,8 @@ include './includespro/header.php';
                 </table>
             </div>
         </div>-->
-    </div>
+        </div>
 
-    <?php
-    include './includespro/footer.php';
-    ?>
+        <?php
+        include './includespro/footer.php';
+        ?>

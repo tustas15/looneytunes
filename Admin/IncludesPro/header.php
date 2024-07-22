@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="utf-8" />
@@ -249,7 +249,7 @@
                                         <a class="nav-link" href="/looneytunes/admin/configuracion/busqueda/indexdeportista.php">Deportistas</a>
                                     </nav>
                                 </div>
-                                <a class="nav-link" href="/looneytunes/admin/configuracion/pagos/pagos.php" >
+                                <a class="nav-link" href="/looneytunes/admin/configuracion/pagos/pagos.php">
                                     Pago
                                 </a>
                             </nav>
@@ -279,7 +279,7 @@
 
                     </div>
                 </div>
-                
+
                 <!-- Sidenav Footer -->
                 <div class="sidenav-footer">
                     <div class="sidenav-footer-content">

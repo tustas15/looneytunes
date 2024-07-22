@@ -107,32 +107,35 @@ try {
 $conn = null;
 
 // Función para calcular el tiempo transcurrido en formato legible
-function timeElapsedString($datetime, $full = false)
-{
-    $now = new DateTime;
-    $ago = new DateTime($datetime);
-    $diff = $now->diff($ago);
+function timeElapsedString($datetime, $full = false) {
+    $now = new DateTime;  // Crear un objeto DateTime con la hora actual.
+    $ago = new DateTime($datetime);  // Crear un objeto DateTime con la fecha y hora proporcionadas.
+    $diff = $now->diff($ago);  // Calcular la diferencia entre la hora actual y la proporcionada.
 
+    $diff->w = floor($diff->d / 7);  // Calcular el número de semanas.
+    $diff->d -= $diff->w * 7;  // Ajustar los días restantes después de contabilizar las semanas.
 
-    $string = array(
-        'y' => 'year',
-        'm' => 'month',
-        'w' => 'week',
-        'd' => 'day',
-        'h' => 'hour',
-        'i' => 'minute',
-        's' => 'second',
-    );
+    // Definir una matriz que asocia cada unidad de tiempo con su nombre en singular.
+    $string = [
+        'y' => 'año',
+        'm' => 'mes',
+        'w' => 'semana',
+        'd' => 'día',
+        'h' => 'hora',
+        'i' => 'minuto',
+        's' => 'segundo',
+    ];
+    // Iterar sobre la matriz para construir la cadena de texto con las diferencias de tiempo.
     foreach ($string as $k => &$v) {
         if ($diff->$k) {
-            $v = $diff->$k . ' ' . $v . ($diff->$k > 1 ? 's' : '');
+            $v = $diff->$k . ' ' . $v . ($diff->$k > 1 ? 's' : '');  // Añadir la cantidad y pluralizar si es necesario.
         } else {
-            unset($string[$k]);
+            unset($string[$k]);  // Eliminar la unidad de tiempo si no hay diferencia en esa unidad.
         }
     }
 
-    if (!$full) $string = array_slice($string, 0, 1);
-    return $string ? implode(', ', $string) . ' ago' : 'just now';
+    if (!$full) $string = array_slice($string, 0, 1);  // Si $full es false, solo mostrar la unidad de tiempo más significativa.
+    return $string ? implode(', ', $string) . ' ago' : 'just now';  // Construir la cadena final.
 }
 
 include './includes/header.php';

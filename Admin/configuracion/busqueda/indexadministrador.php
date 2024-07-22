@@ -28,13 +28,13 @@ $searchTerm = isset($_GET['search']) ? $_GET['search'] : '';
         <div class="page-title">
             <h1>Lista de Administradores</h1>
         </div>
-        
+
         <!-- Example DataTable for Dashboard Demo-->
         <div class="card mb-4">
             <div class="card-header">Administradores</div>
             <div class="card-body">
                 <!-- Formulario de búsqueda -->
-               
+
 
                 <table id="datatablesSimple">
                     <thead>
@@ -59,20 +59,19 @@ $searchTerm = isset($_GET['search']) ? $_GET['search'] : '';
                         <?php
                         try {
                             // Construir la consulta SQL con el término de búsqueda
-                            $sql = "SELECT ID_ADMINISTRADOR, NOMBRE_ADMIN, APELLIDO_ADMIN, CELULAR_ADMIN
-                                    FROM tab_administradores";
-                            
+                            $sql = "SELECT ID_ADMINISTRADOR, NOMBRE_ADMIN, APELLIDO_ADMIN, CELULAR_ADMIN FROM tab_administradores";
+
                             if ($searchTerm) {
                                 $sql .= " WHERE NOMBRE_ADMIN LIKE :searchTerm OR APELLIDO_ADMIN LIKE :searchTerm OR CELULAR_ADMIN LIKE :searchTerm";
                             }
-                            
+
                             $stmt = $conn->prepare($sql);
-                            
+
                             if ($searchTerm) {
                                 $searchTerm = '%' . $searchTerm . '%';
                                 $stmt->bindParam(':searchTerm', $searchTerm, PDO::PARAM_STR);
                             }
-                            
+
                             $stmt->execute();
                             $administradores = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -83,7 +82,7 @@ $searchTerm = isset($_GET['search']) ? $_GET['search'] : '';
                                 echo "<td>" . htmlspecialchars($administrador['NOMBRE_ADMIN']) . "</td>";
                                 echo "<td>" . htmlspecialchars($administrador['APELLIDO_ADMIN']) . "</td>";
                                 echo "<td>" . htmlspecialchars($administrador['CELULAR_ADMIN']) . "</td>";
-                                echo "<td><a href='../perfil/perfil_administrador.php?ID_ADMINISTRADOR=" . htmlspecialchars($administrador['ID_ADMINISTRADOR']) . "'>Ver Perfil</a></td>";
+                                echo "<td><a href='../perfil/perfil_administrador.php?ID_ADMINISTRADOR=" . htmlspecialchars($administrador['ID_ADMINISTRADOR']) . "'>Ver Perfil</a> | <a href='./eliminar_administrador.php?ID_ADMINISTRADOR=" . htmlspecialchars($administrador['ID_ADMINISTRADOR']) . "' onclick=\"return confirm('¿Estás seguro de que deseas eliminar este administrador?');\">Eliminar</a></td>";
                                 echo "</tr>";
                             }
                         } catch (PDOException $e) {
@@ -94,6 +93,7 @@ $searchTerm = isset($_GET['search']) ? $_GET['search'] : '';
                         $conn = null;
                         ?>
                     </tbody>
+
                 </table>
             </div>
         </div>

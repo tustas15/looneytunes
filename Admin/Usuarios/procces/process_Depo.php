@@ -56,6 +56,15 @@ try {
     // Confirmar la transacción
     $conn->commit();
 
+    // Registrar la actividad en el log
+    $evento = "Nuevo deportista registrado: " . $_POST['nombre_d'] . " " . $_POST['apellido_d'];
+    $ip = $_SERVER['REMOTE_ADDR'];
+    $tipo_evento = 'nuevo_usuario';  // Define el tipo de evento
+
+    $logQuery = "INSERT INTO tab_logs (ID_USUARIO, EVENTO, HORA_LOG, DIA_LOG, IP, TIPO_EVENTO) VALUES (?, ?, CURRENT_TIME(), CURRENT_DATE(), ?, ?)";
+    $logStmt = $conn->prepare($logQuery);
+    $logStmt->execute([$id_usuario, $evento, $ip, $tipo_evento]);
+
     // Redirigir a la página de éxito
     header("Location: ../crear_usuarios/crdeportista.php?message=success");
     exit();
