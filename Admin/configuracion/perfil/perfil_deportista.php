@@ -17,15 +17,17 @@ if (!isset($_GET['ID_DEPORTISTA'])) {
 
 $id_deportista = intval($_GET['ID_DEPORTISTA']);
 
-// Obtener datos del deportista
+// Obtener datos del deportista y las categorías disponibles
 try {
+    // Obtener datos del deportista
     $stmt = $conn->prepare("
         SELECT d.ID_DEPORTISTA, d.ID_USUARIO, u.USUARIO, d.NOMBRE_DEPO, d.APELLIDO_DEPO, d.FECHA_NACIMIENTO, d.CEDULA_DEPO, d.NUMERO_CELULAR, d.GENERO,
-               r.NOMBRE_REPRE, r.APELLIDO_REPRE, r.CEDULA_REPRE, r.CELULAR_REPRE
+               d.ID_CATEGORIA, c.CATEGORIA AS NOMBRE_CATEGORIA, r.NOMBRE_REPRE, r.APELLIDO_REPRE, r.CEDULA_REPRE, r.CELULAR_REPRE
         FROM tab_deportistas d
         INNER JOIN tab_usuarios u ON d.ID_USUARIO = u.ID_USUARIO
         LEFT JOIN tab_representantes_deportistas rd ON d.ID_DEPORTISTA = rd.ID_DEPORTISTA
         LEFT JOIN tab_representantes r ON rd.ID_REPRESENTANTE = r.ID_REPRESENTANTE
+        LEFT JOIN tab_categorias c ON d.ID_CATEGORIA = c.ID_CATEGORIA
         WHERE d.ID_DEPORTISTA = :id_deportista
     ");
     $stmt->bindParam(':id_deportista', $id_deportista, PDO::PARAM_INT);
@@ -36,6 +38,10 @@ try {
         echo "Deportista no encontrado.";
         exit();
     }
+
+    // Obtener las categorías disponibles
+    $categoriasStmt = $conn->query("SELECT ID_CATEGORIA, CATEGORIA FROM tab_categorias");
+    $categorias = $categoriasStmt->fetchAll(PDO::FETCH_ASSOC);
 
     $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
     $tipo_usuario = $_SESSION['tipo_usuario'];
@@ -51,6 +57,7 @@ try {
         $cedula_depo = $_POST['cedula_depo'];
         $numero_celular = $_POST['numero_celular'];
         $genero = $_POST['genero'];
+        $id_categoria = $_POST['id_categoria']; // Nuevo campo para la categoría
 
         try {
             $updateStmt = $conn->prepare("
@@ -60,7 +67,8 @@ try {
                     FECHA_NACIMIENTO = :fecha_nacimiento,
                     CEDULA_DEPO = :cedula_depo,
                     NUMERO_CELULAR = :numero_celular,
-                    GENERO = :genero
+                    GENERO = :genero,
+                    ID_CATEGORIA = :id_categoria
                 WHERE ID_DEPORTISTA = :id_deportista
             ");
             $updateStmt->bindParam(':nombre_depo', $nombre_depo, PDO::PARAM_STR);
@@ -69,6 +77,7 @@ try {
             $updateStmt->bindParam(':cedula_depo', $cedula_depo, PDO::PARAM_STR);
             $updateStmt->bindParam(':numero_celular', $numero_celular, PDO::PARAM_STR);
             $updateStmt->bindParam(':genero', $genero, PDO::PARAM_STR);
+            $updateStmt->bindParam(':id_categoria', $id_categoria, PDO::PARAM_INT);
             $updateStmt->bindParam(':id_deportista', $id_deportista, PDO::PARAM_INT);
             $updateStmt->execute();
 
@@ -134,8 +143,25 @@ try {
                             <div class="form-group">
                                 <label for="genero">Género</label>
                                 <select id="genero" name="genero" class="form-control" required>
-                                    <option value="M" <?php echo $deportista['GENERO'] === 'M' ? 'selected' : ''; ?>>Masculino</option>
-                                    <option value="F" <?php echo $deportista['GENERO'] === 'F' ? 'selected' : ''; ?>>Femenino</option>
+                                    <option value="Masculino" <?php echo $deportista['GENERO'] === 'Masculino' ? 'selected' : ''; ?>>Masculino</option>
+                                    <option value="Femenino" <?php echo $deportista['GENERO'] === 'Femenino' ? 'selected' : ''; ?>>Femenino</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Información de la Categoría -->
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_categoria">Categoría</label>
+                                <select id="id_categoria" name="id_categoria" class="form-control" required>
+                                    <?php foreach ($categorias as $categoria): ?>
+                                        <option value="<?php echo $categoria['ID_CATEGORIA']; ?>" <?php echo $deportista['ID_CATEGORIA'] === $categoria['ID_CATEGORIA'] ? 'selected' : ''; ?>>
+                                            <?php echo htmlspecialchars($categoria['CATEGORIA']); ?>
+                                        </option>
+                                    <?php endforeach; ?>
                                 </select>
                             </div>
                         </div>
@@ -147,13 +173,13 @@ try {
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="nombre_rep">Nombre del Representante</label>
-                                <input type="text" class="form-control" id="nombre_rep" value="<?php echo htmlspecialchars($deportista['NOMBRE_REP'] ?? ''); ?>" readonly>
+                                <input type="text" class="form-control" id="nombre_rep" value="<?php echo htmlspecialchars($deportista['NOMBRE_REPRE'] ?? ''); ?>" readonly>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="apellido_rep">Apellido del Representante</label>
-                                <input type="text" class="form-control" id="apellido_rep" value="<?php echo htmlspecialchars($deportista['APELLIDO_REP'] ?? ''); ?>" readonly>
+                                <input type="text" class="form-control" id="apellido_rep" value="<?php echo htmlspecialchars($deportista['APELLIDO_REPRE'] ?? ''); ?>" readonly>
                             </div>
                         </div>
                     </div>
@@ -161,13 +187,13 @@ try {
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="cedula_rep">Cédula del Representante</label>
-                                <input type="text" class="form-control" id="cedula_rep" value="<?php echo htmlspecialchars($deportista['CEDULA_REP'] ?? ''); ?>" readonly>
+                                <input type="text" class="form-control" id="cedula_rep" value="<?php echo htmlspecialchars($deportista['CEDULA_REPRE'] ?? ''); ?>" readonly>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="numero_celular_rep">Número de Celular del Representante</label>
-                                <input type="text" class="form-control" id="numero_celular_rep" value="<?php echo htmlspecialchars($deportista['NUMERO_CELULAR_REP'] ?? ''); ?>" readonly>
+                                <input type="text" class="form-control" id="numero_celular_rep" value="<?php echo htmlspecialchars($deportista['CELULAR_REPRE'] ?? ''); ?>" readonly>
                             </div>
                         </div>
                     </div>
