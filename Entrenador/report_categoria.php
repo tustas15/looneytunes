@@ -8,6 +8,8 @@ require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
 
 // Iniciar la sesión
 session_start();
+$nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
+$tipo_usuario = $_SESSION['tipo_usuario'];
 
 // Verificar que la conexión se estableció correctamente
 if ($conn === null) {
@@ -72,7 +74,7 @@ include './includes/header.php';
                                 <thead>
                                     <tr>
                                         <th>Nombre</th>
-                                        <th>Apellido</th>
+                                        
                                         <th>Representante</th>
                                         <th>Datos</th>
                                     </tr>
@@ -80,9 +82,8 @@ include './includes/header.php';
                                 <tbody>
                                     <?php foreach ($jugadores as $jugador): ?>
                                         <tr>
-                                            <td><?= htmlspecialchars($jugador['NOMBRE_DEPO']) ?></td>
-                                            <td><?= htmlspecialchars($jugador['APELLIDO_DEPO']) ?></td>
-                                            <td><?= htmlspecialchars($jugador['NOMBRE_REPRE']) ?></td>
+                                            <td><?= htmlspecialchars($jugador['NOMBRE_DEPO'] . ' ' . $jugador['APELLIDO_DEPO']) ?></td>
+                                            <td><?= htmlspecialchars($jugador['NOMBRE_REPRE']. ' ' . $jugador['APELLIDO_REPRE']) ?></td>
                                             <td>BOTON</td>
                                         </tr>
                                     <?php endforeach; ?>
