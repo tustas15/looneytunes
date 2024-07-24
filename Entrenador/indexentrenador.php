@@ -231,7 +231,7 @@ foreach ($tarjetas as $nombre => $config) :
                 </div>
             </div>
             <div class="card-footer d-flex align-items-center justify-content-between small">
-                <a class="text-white stretched-link" href="report_<?php echo strtolower(str_replace(' ', '_', $nombre)); ?>.php">View Report</a>
+                <a class="text-white stretched-link" href="report_categoria.php?categoria=<?php echo urlencode($nombre); ?>">View Report</a>
                 <div class="text-white"><i class="fas fa-angle-right"></i></div>
             </div>
         </div>
@@ -240,6 +240,9 @@ foreach ($tarjetas as $nombre => $config) :
     $counter++;
 endforeach;
 ?>
+
+
+
 
 
         </div>
@@ -366,86 +369,10 @@ endforeach;
                         </div>
                     </div>
                 </div>
-
-
-
-
             </div>
-            <div class="col-xxl-4 col-xl-6 mb-4">
-    <div class="card card-header-actions h-100">
-        <div class="card-header">
-            Deportistas
-        </div>
-        <div class="card-body">
-            <?php if (!empty($deportistas)) : ?>
-                <?php foreach ($deportistas as $deportista) : ?>
-                    <div class="d-flex align-items-center justify-content-between mb-4">
-                        <div class="d-flex align-items-center flex-shrink-0 me-3">
-                            <div class="avatar avatar-xl me-3 bg-gray-200">
-                                <img class="avatar-img img-fluid" src="assets/img/illustrations/profiles/profile-1.png" alt="" />
-                            </div>
-                            <div class="d-flex flex-column fw-bold">
-                                <a class="text-dark line-height-normal mb-1" href="#"><?php echo htmlspecialchars($deportista['NOMBRE_DEPO'] . ' ' . $deportista['APELLIDO_DEPO']); ?></a>
-                                <div class="small text-muted line-height-normal"><?php echo htmlspecialchars($deportista['categoria']); ?></div>
-                            </div>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-            <?php else : ?>
-                <p>No hay deportistas asignados.</p>
-            <?php endif; ?>
-        </div>
-    </div>
-</div>
-        </div>
-
-        <div class="card-header"><H3>LISTA DE DEPORTISTAS</H3></div>
-        <div class="card-body">
-            <table id="datatablesSimple" class="table table-striped table-bordered">
-                <thead>
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Apellido</th>
-                        <th>Cédula</th>
-                        <th>Detalles</th>
-                        <th>Acción</th>
-                    </tr>
-                </thead>
-                <tfoot>
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Apellido</th>
-                        <th>Cédula</th>
-                        <th>Detalles</th>
-                        <th>Acción</th>
-                    </tr>
-                </tfoot>
-                <tbody>
-                    <?php foreach ($deportistas as $deportista) : ?>
-                        <tr>
-                            <td><?= htmlspecialchars($deportista['NOMBRE_DEPO'], ENT_QUOTES) ?></td>
-                            <td><?= htmlspecialchars($deportista['APELLIDO_DEPO'], ENT_QUOTES) ?></td>
-                            <td><?= htmlspecialchars($deportista['CEDULA_DEPO'], ENT_QUOTES) ?></td>
-                            <td>
-                                <form method="post" action="./configuracion/tab_detalles.php">
-                                    <input type="hidden" name="cedula_depo" value="<?= htmlspecialchars($deportista['CEDULA_DEPO'], ENT_QUOTES) ?>">
-                                    <input type="submit" name="detalles" class="btn btn-primary btn-sm" value="Detalles">
-                                </form>
-                            </td>
-                            <td>
-                                <form method="post" action="">
-                                    <input type="hidden" name="cedula" value="<?= htmlspecialchars($deportista['CEDULA_DEPO'], ENT_QUOTES) ?>">
-                                    <input type="submit" name="delete" class="btn btn-danger btn-sm" value="Eliminar">
-                                </form>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
         </div>
     </div>
 </main>
-
 <?php
 include './includes/footer.php';
 ?>
