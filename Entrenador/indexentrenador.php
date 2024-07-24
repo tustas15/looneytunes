@@ -3,8 +3,6 @@
 require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
 
 date_default_timezone_set('America/Guayaquil'); // Ajusta a tu zona horaria
-echo "Hora actual del servidor: " . date('Y-m-d H:i:s');
-
 
 // Verificar que la conexión se estableció correctamente
 if ($conn === null) {
@@ -28,6 +26,7 @@ if (!isset($_SESSION['tipo_usuario'])) {
 
 $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
 $tipo_usuario = $_SESSION['tipo_usuario'];
+$categoria_entrenador = isset($_SESSION['entrenador_categoria']) ? $_SESSION['entrenador_categoria'] : 'No asignada';
 
 // Consulta para contar deportistas por categoría
 $sql_contar = "SELECT id_categoria, COUNT(*) as cantidad FROM tab_deportistas GROUP BY id_categoria";
@@ -51,6 +50,24 @@ if ($stmt_categorias) {
     while ($row = $stmt_categorias->fetch(PDO::FETCH_ASSOC)) {
         $categorias[$row['id_categoria']] = $row['categoria'];
     }
+}
+//
+
+try {
+    $id_usuario = $_SESSION['user_id'];
+    $stmt1 = $conn->prepare("SELECT tab_categorias.CATEGORIA 
+                             FROM tab_entrenadores 
+                             LEFT JOIN tab_entrenador_categoria ON tab_entrenadores.ID_ENTRENADOR = tab_entrenador_categoria.ID_ENTRENADOR 
+                             LEFT JOIN tab_categorias ON tab_entrenador_categoria.ID_CATEGORIA = tab_categorias.ID_CATEGORIA 
+                             WHERE tab_entrenadores.ID_USUARIO = :id_usuario");
+    $stmt1->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
+    $stmt1->execute();
+    $categorias_entrenador = $stmt1->fetchAll(PDO::FETCH_COLUMN);
+    $_SESSION['entrenador_categorias'] = $categorias_entrenador;
+} catch (PDOException $e) {
+    $_SESSION['error'] = "Error al cargar los entrenadores: " . $e->getMessage();
+    header('Location: error.php'); // Redirigir a una página de error
+    exit();
 }
 
 // Cargar deportistas desde la base de datos si la variable de sesión está vacía
@@ -144,20 +161,10 @@ function timeElapsedString($datetime, $full = false) {
 
 include './includes/header.php';
 ?>
-
 <main>
     <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
         <div class="container-xl px-4">
             <div class="page-header-content pt-4">
-                <!--<div class="row align-items-center justify-content-between">
-                    <div class="col-auto mt-4">
-                        <h1 class="page-header-title">
-                            <div class="page-header-icon"><i data-feather="activity"></i></div>
-                            Dashboard
-                        </h1>
-                        <div class="page-header-subtitle">Descripción general del panel y resumen de contenido</div>
-                    </div>
-                </div>-->
             </div>
         </div>
     </header>
@@ -189,47 +196,54 @@ include './includes/header.php';
             </div>
 
             <?php
-            $tarjetas = [
-                "MOSQUITOS" => ["color" => "bg-primary", "icon" => "users"],
-                "PRE MINI" => ["color" => "bg-warning", "icon" => "file-text"],
-                "MINI DAMAS" => ["color" => "bg-success", "icon" => "award"],
-                "MINI HOMBRES" => ["color" => "bg-danger", "icon" => "soccer-ball"],
-                "U13 DAMAS" => ["color" => "bg-info", "icon" => "users"],
-                "U13 HOMBRES" => ["color" => "bg-secondary", "icon" => "file-text"],
-                "U15 DAMAS" => ["color" => "bg-dark", "icon" => "award"],
-                "U15 HOMBRES" => ["color" => "bg-primary", "icon" => "soccer-ball"]
-            ];
+$tarjetas = [
+    "MOSQUITOS" => ["color" => "bg-primary", "icon" => "users"],
+    "PRE MINI" => ["color" => "bg-warning", "icon" => "users"],
+    "MINI DAMAS" => ["color" => "bg-success", "icon" => "users"],
+    "MINI HOMBRES" => ["color" => "bg-danger", "icon" => "users"],
+    "U13 DAMAS" => ["color" => "bg-info", "icon" => "users"],
+    "U13 HOMBRES" => ["color" => "bg-secondary", "icon" => "users"],
+    "U15 DAMAS" => ["color" => "bg-dark", "icon" => "users"],
+    "U15 HOMBRES" => ["color" => "bg-primary", "icon" => "users"]
+];
 
-            $counter = 0; // Para limitar el número de tarjetas a 8
+$categorias_entrenador = $_SESSION['entrenador_categorias'] ?? [];
+$counter = 0; // Para limitar el número de tarjetas a 8
 
-            foreach ($tarjetas as $nombre => $config) :
-                if ($counter >= 8) break; // Limitar a 8 tarjetas
-                $categoria_id = array_search($nombre, $categorias);
-                $cantidad = isset($categorias_count[$categoria_id]) ? $categorias_count[$categoria_id] : 0;
-            ?>
-                <div class="col-lg-6 col-xl-3 mb-4">
-                    <div class="card <?php echo $config['color']; ?> text-white h-100">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div class="me-3">
-                                    <div class="text-white-75 small"><?php echo $nombre; ?></div>
-                                    <div class="text-lg fw-bold number" data-role="<?php echo strtolower(str_replace(' ', '_', $nombre)); ?>">
-                                        <?php echo $cantidad; ?>
-                                    </div>
-                                </div>
-                                <i class="feather-xl text-white-50" data-feather="<?php echo $config['icon']; ?>"></i>
-                            </div>
-                        </div>
-                        <div class="card-footer d-flex align-items-center justify-content-between small">
-                            <a class="text-white stretched-link" href="report_<?php echo strtolower(str_replace(' ', '_', $nombre)); ?>.php">View Report</a>
-                            <div class="text-white"><i class="fas fa-angle-right"></i></div>
+foreach ($tarjetas as $nombre => $config) :
+    if (!in_array($nombre, $categorias_entrenador)) continue; // Mostrar solo las categorías del entrenador
+    if ($counter >= 8) break; // Limitar a 8 tarjetas
+    $categoria_id = array_search($nombre, $categorias);
+    $cantidad = isset($categorias_count[$categoria_id]) ? $categorias_count[$categoria_id] : 0;
+?>
+    <div class="col-lg-6 col-xl-3 mb-4">
+        <div class="card <?php echo $config['color']; ?> text-white h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="me-3">
+                        <div class="text-white-75 small"><?php echo $nombre; ?></div>
+                        <div class="text-lg fw-bold number" data-role="<?php echo strtolower(str_replace(' ', '_', $nombre)); ?>">
+                            <?php echo $cantidad; ?>
                         </div>
                     </div>
+                    <i class="feather-xl text-white-50" data-feather="<?php echo $config['icon']; ?>"></i>
                 </div>
-            <?php
-                $counter++;
-            endforeach;
-            ?>
+            </div>
+            <div class="card-footer d-flex align-items-center justify-content-between small">
+                <a class="text-white stretched-link" href="report_categoria.php?categoria=<?php echo urlencode($nombre); ?>">Ver listado</a>
+                <div class="text-white"><i class="fas fa-angle-right"></i></div>
+            </div>
+        </div>
+    </div>
+<?php
+    $counter++;
+endforeach;
+?>
+
+
+
+
+
         </div>
         <!-- CARDS 2 -->
         <div class="row">
@@ -354,86 +368,10 @@ include './includes/header.php';
                         </div>
                     </div>
                 </div>
-
-
-
-
             </div>
-            <div class="col-xxl-4 col-xl-6 mb-4">
-    <div class="card card-header-actions h-100">
-        <div class="card-header">
-            Deportistas
-        </div>
-        <div class="card-body">
-            <?php if (!empty($deportistas)) : ?>
-                <?php foreach ($deportistas as $deportista) : ?>
-                    <div class="d-flex align-items-center justify-content-between mb-4">
-                        <div class="d-flex align-items-center flex-shrink-0 me-3">
-                            <div class="avatar avatar-xl me-3 bg-gray-200">
-                                <img class="avatar-img img-fluid" src="assets/img/illustrations/profiles/profile-1.png" alt="" />
-                            </div>
-                            <div class="d-flex flex-column fw-bold">
-                                <a class="text-dark line-height-normal mb-1" href="#"><?php echo htmlspecialchars($deportista['NOMBRE_DEPO'] . ' ' . $deportista['APELLIDO_DEPO']); ?></a>
-                                <div class="small text-muted line-height-normal"><?php echo htmlspecialchars($deportista['categoria']); ?></div>
-                            </div>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-            <?php else : ?>
-                <p>No hay deportistas asignados.</p>
-            <?php endif; ?>
-        </div>
-    </div>
-</div>
-        </div>
-
-        <div class="card-header"><H3>LISTA DE DEPORTISTAS</H3></div>
-        <div class="card-body">
-            <table id="datatablesSimple" class="table table-striped table-bordered">
-                <thead>
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Apellido</th>
-                        <th>Cédula</th>
-                        <th>Detalles</th>
-                        <th>Acción</th>
-                    </tr>
-                </thead>
-                <tfoot>
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Apellido</th>
-                        <th>Cédula</th>
-                        <th>Detalles</th>
-                        <th>Acción</th>
-                    </tr>
-                </tfoot>
-                <tbody>
-                    <?php foreach ($deportistas as $deportista) : ?>
-                        <tr>
-                            <td><?= htmlspecialchars($deportista['NOMBRE_DEPO'], ENT_QUOTES) ?></td>
-                            <td><?= htmlspecialchars($deportista['APELLIDO_DEPO'], ENT_QUOTES) ?></td>
-                            <td><?= htmlspecialchars($deportista['CEDULA_DEPO'], ENT_QUOTES) ?></td>
-                            <td>
-                                <form method="post" action="./configuracion/tab_detalles.php">
-                                    <input type="hidden" name="cedula_depo" value="<?= htmlspecialchars($deportista['CEDULA_DEPO'], ENT_QUOTES) ?>">
-                                    <input type="submit" name="detalles" class="btn btn-primary btn-sm" value="Detalles">
-                                </form>
-                            </td>
-                            <td>
-                                <form method="post" action="">
-                                    <input type="hidden" name="cedula" value="<?= htmlspecialchars($deportista['CEDULA_DEPO'], ENT_QUOTES) ?>">
-                                    <input type="submit" name="delete" class="btn btn-danger btn-sm" value="Eliminar">
-                                </form>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
         </div>
     </div>
 </main>
-
 <?php
 include './includes/footer.php';
 ?>

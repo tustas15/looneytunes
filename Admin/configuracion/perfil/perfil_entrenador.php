@@ -17,13 +17,16 @@ if (!isset($_GET['ID_USUARIO'])) {
 
 $id_usuario = intval($_GET['ID_USUARIO']);
 
-// Obtener datos del entrenador
 try {
+    // Obtener datos del entrenador y las categorías asociadas
     $stmt = $conn->prepare("
-        SELECT e.ID_ENTRENADOR, e.ID_USUARIO, u.USUARIO, e.NOMBRE_ENTRE, e.APELLIDO_ENTRE, e.EXPERIENCIA_ENTRE, e.CELULAR_ENTRE, e.CORREO_ENTRE
+        SELECT e.ID_ENTRENADOR, e.ID_USUARIO, u.USUARIO, e.NOMBRE_ENTRE, e.APELLIDO_ENTRE, e.EXPERIENCIA_ENTRE, e.CELULAR_ENTRE, e.CORREO_ENTRE, GROUP_CONCAT(c.ID_CATEGORIA) AS categorias
         FROM tab_entrenadores e
         INNER JOIN tab_usuarios u ON e.ID_USUARIO = u.ID_USUARIO
+        LEFT JOIN tab_entrenador_categoria ec ON e.ID_ENTRENADOR = ec.ID_ENTRENADOR
+        LEFT JOIN tab_categorias c ON ec.ID_CATEGORIA = c.ID_CATEGORIA
         WHERE e.ID_USUARIO = :id_usuario
+        GROUP BY e.ID_ENTRENADOR
     ");
     $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
     $stmt->execute();
@@ -39,6 +42,10 @@ try {
     $tipo_usuario = $_SESSION['tipo_usuario'];
     $usuario = isset($_SESSION['usuario']) ? $_SESSION['usuario'] : 'Usuario';
 
+    // Obtener todas las categorías disponibles
+    $categoriesStmt = $conn->query("SELECT * FROM tab_categorias");
+    $categorias = $categoriesStmt->fetchAll(PDO::FETCH_ASSOC);
+
     include '/xampp/htdocs/looneytunes/admin/includespro/header.php';
 
     // Manejar el formulario de edición
@@ -48,6 +55,7 @@ try {
         $experiencia_entre = $_POST['experiencia_entre'];
         $celular_entre = $_POST['celular_entre'];
         $correo_entre = $_POST['correo_entre'];
+        $categorias_seleccionadas = $_POST['categorias'] ?? [];
 
         try {
             $updateStmt = $conn->prepare("
@@ -66,6 +74,19 @@ try {
             $updateStmt->bindParam(':correo_entre', $correo_entre, PDO::PARAM_STR);
             $updateStmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
             $updateStmt->execute();
+
+            // Actualizar categorías
+            $deleteCategoriesStmt = $conn->prepare("DELETE FROM tab_entrenador_categoria WHERE ID_ENTRENADOR = :id_entrenador");
+            $deleteCategoriesStmt->bindParam(':id_entrenador', $entrenador['ID_ENTRENADOR'], PDO::PARAM_INT);
+            $deleteCategoriesStmt->execute();
+
+            $insertCategoryStmt = $conn->prepare("INSERT INTO tab_entrenador_categoria (ID_ENTRENADOR, ID_CATEGORIA) VALUES (:id_entrenador, :id_categoria)");
+
+            foreach ($categorias_seleccionadas as $id_categoria) {
+                $insertCategoryStmt->bindParam(':id_entrenador', $entrenador['ID_ENTRENADOR'], PDO::PARAM_INT);
+                $insertCategoryStmt->bindParam(':id_categoria', $id_categoria, PDO::PARAM_INT);
+                $insertCategoryStmt->execute();
+            }
 
             echo "<div class='alert alert-success' role='alert'>Perfil actualizado exitosamente.</div>";
 
@@ -126,6 +147,21 @@ try {
                             </div>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="categorias">Categorías</label>
+                                <select multiple class="form-control" id="categorias" name="categorias[]">
+                                    <?php foreach ($categorias as $categoria): ?>
+                                        <option value="<?php echo $categoria['ID_CATEGORIA']; ?>"
+                                            <?php if (in_array($categoria['ID_CATEGORIA'], explode(',', $entrenador['categorias']))) echo 'selected'; ?>>
+                                            <?php echo htmlspecialchars($categoria['CATEGORIA']); ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
                     <div class="row mt-4">
                         <div class="col-md-12 d-flex justify-content-between">
                             <button type="submit" class="btn btn-primary">Actualizar</button>
@@ -136,7 +172,6 @@ try {
             </div>
         </div>
 
-        
     </div>
 </main>
 

@@ -13,13 +13,44 @@ if (!isset($_SESSION['tipo_usuario'])) {
     exit();
 }
 
+// Obtener el ID del usuario logueado
+$loggedUserId = $_SESSION['user_id'];
+
+// Verificar si se ha solicitado eliminar un administrador
+if (isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['ID_ADMINISTRADOR'])) {
+    $idAdministrador = $_GET['ID_ADMINISTRADOR'];
+
+    try {
+        // Comprobar si el usuario logueado está eliminando su propio perfil
+        if ($idAdministrador == $loggedUserId) {
+            // Cerrar la sesión del usuario
+            session_destroy();
+            header("Location: ../Public/login.php?mensaje=perfil_eliminado");
+            exit();
+        }
+
+        // Proceder con la eliminación del perfil
+        $sql = "DELETE FROM tab_administradores WHERE ID_ADMINISTRADOR = :idAdministrador";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':idAdministrador', $idAdministrador, PDO::PARAM_INT);
+
+        if ($stmt->execute()) {
+            header("Location: indexadministrador.php?mensaje=eliminado");
+            exit();
+        } else {
+            echo "Error al eliminar el administrador.";
+        }
+    } catch (PDOException $e) {
+        echo "Error: " . $e->getMessage();
+    }
+}
+
+// Obtener el término de búsqueda si se ha enviado
+$searchTerm = isset($_GET['search']) ? $_GET['search'] : '';
 $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
 $tipo_usuario = $_SESSION['tipo_usuario'];
 $usuario = isset($_SESSION['usuario']) ? $_SESSION['usuario'] : 'Usuario';
 include '/xampp/htdocs/looneytunes/admin/includespro/header.php';
-
-// Obtener el término de búsqueda si se ha enviado
-$searchTerm = isset($_GET['search']) ? $_GET['search'] : '';
 ?>
 
 <main>
@@ -82,18 +113,20 @@ $searchTerm = isset($_GET['search']) ? $_GET['search'] : '';
                                 echo "<td>" . htmlspecialchars($administrador['NOMBRE_ADMIN']) . "</td>";
                                 echo "<td>" . htmlspecialchars($administrador['APELLIDO_ADMIN']) . "</td>";
                                 echo "<td>" . htmlspecialchars($administrador['CELULAR_ADMIN']) . "</td>";
-                                echo "<td><a href='../perfil/perfil_administrador.php?ID_ADMINISTRADOR=" . htmlspecialchars($administrador['ID_ADMINISTRADOR']) . "'>Ver Perfil</a> | <a href='./eliminar_administrador.php?ID_ADMINISTRADOR=" . htmlspecialchars($administrador['ID_ADMINISTRADOR']) . "' onclick=\"return confirm('¿Estás seguro de que deseas eliminar este administrador?');\">Eliminar</a></td>";
+                                echo "<td>
+                                        <a href='../perfil/perfil_administrador.php?ID_ADMINISTRADOR=" . htmlspecialchars($administrador['ID_ADMINISTRADOR']) . "'>Ver Perfil</a> | 
+                                        <a href='indexadministrador.php?action=delete&ID_ADMINISTRADOR=" . htmlspecialchars($administrador['ID_ADMINISTRADOR']) . "' onclick=\"return confirm('¿Estás seguro de que deseas eliminar este administrador?');\">Eliminar</a>
+                                      </td>";
                                 echo "</tr>";
                             }
                         } catch (PDOException $e) {
-                            echo "<tr><td colspan='8'>Error: " . $e->getMessage() . "</td></tr>";
+                            echo "<tr><td colspan='5'>Error: " . $e->getMessage() . "</td></tr>";
                         }
 
                         // Cierre de la conexión
                         $conn = null;
                         ?>
                     </tbody>
-
                 </table>
             </div>
         </div>
