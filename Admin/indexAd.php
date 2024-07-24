@@ -33,6 +33,34 @@ try {
     echo "Error al ejecutar la consulta: " . $e->getMessage();
 }
 
+// Procesar formulario de creación de categoría
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['crear_categoria'])) {
+    try {
+        $nuevaCategoria = $_POST['nueva_categoria'];
+        $sql = "INSERT INTO tab_categorias (CATEGORIA) VALUES (?)";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([$nuevaCategoria]);
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit();
+    } catch (PDOException $e) {
+        echo "Error al crear la categoría: " . $e->getMessage();
+    }
+}
+
+// Procesar formulario de eliminación de categoría
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['eliminar_categoria'])) {
+    try {
+        $idCategoria = $_POST['id_categoria'];
+        $sql = "DELETE FROM tab_categorias WHERE ID_CATEGORIA = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([$idCategoria]);
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit();
+    } catch (PDOException $e) {
+        echo "Error al eliminar la categoría: " . $e->getMessage();
+    }
+}
+
 try {
     // Consulta SQL
     $sql = "SELECT
@@ -265,25 +293,21 @@ include './includespro/header.php';
                     </div>
                 </div>
             </div>
-            <!-- Categorias -->
+            <!-- Categorías -->
             <div class="col-xxl-4 col-xl-6 mb-4">
                 <div class="card card-header-actions h-100">
                     <div class="card-header">
-                        Categorias del Club
+                        Categorías del Club
                         <div class="dropdown no-caret">
                             <button class="btn btn-transparent-dark btn-icon dropdown-toggle" id="dropdownMenuButton" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="text-gray-500" data-feather="more-vertical"></i></button>
                             <div class="dropdown-menu dropdown-menu-end animated--fade-in-up" aria-labelledby="dropdownMenuButton">
-                                <a class="dropdown-item">
-                                    <div class="dropdown-item-icon"><i class="text-gray-500" data-feather="list"></i></div>
-                                    Administrar Categorias
-                                </a>
-                                <a class="dropdown-item">
+                                <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#crearCategoriaModal">
                                     <div class="dropdown-item-icon"><i class="text-gray-500" data-feather="plus-circle"></i></div>
-                                    Agregar Categorias
+                                    Agregar Categoría
                                 </a>
-                                <a class="dropdown-item">
+                                <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#eliminarCategoriaModal">
                                     <div class="dropdown-item-icon"><i class="text-gray-500" data-feather="minus-circle"></i></div>
-                                    Eliminar Categorias
+                                    Eliminar Categoría
                                 </a>
                             </div>
                         </div>
@@ -294,20 +318,68 @@ include './includespro/header.php';
                                 <?php echo htmlspecialchars($categoria['CATEGORIA']); ?>
                                 <span class="float-end fw-bold"><?php echo $categoria['num_deportistas']; ?></span>
                             </h4>
-                            <div class="progress mb-4">
-                                <div class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
                         <?php endforeach; ?>
                     </div>
                     <div class="card-footer position-relative">
                         <div class="d-flex align-items-center justify-content-between small text-body">
-                            <a class="stretched-link text-body" href="#!">Revisar Categoiras</a>
+                            <a class="stretched-link text-body" href="./configuracion/revisar_categorias.php">Revisar Categorías</a>
                             <i class="fas fa-angle-right"></i>
                         </div>
                     </div>
                 </div>
             </div>
 
+            <!-- Modal Crear Categoría -->
+            <div class="modal fade" id="crearCategoriaModal" tabindex="-1" aria-labelledby="crearCategoriaModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="crearCategoriaModalLabel">Agregar Nueva Categoría</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form method="post" action="">
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <label for="nueva_categoria" class="form-label">Nombre de la Categoría</label>
+                                    <input type="text" class="form-control" id="nueva_categoria" name="nueva_categoria" required>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                <button type="submit" name="crear_categoria" class="btn btn-primary">Crear Categoría</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Eliminar Categoría -->
+            <div class="modal fade" id="eliminarCategoriaModal" tabindex="-1" aria-labelledby="eliminarCategoriaModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="eliminarCategoriaModalLabel">Eliminar Categoría</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form method="post" action="">
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <label for="id_categoria" class="form-label">Seleccionar Categoría</label>
+                                    <select class="form-select" id="id_categoria" name="id_categoria" required>
+                                        <?php foreach ($categorias as $categoria) : ?>
+                                            <option value="<?php echo $categoria['ID_CATEGORIA']; ?>"><?php echo htmlspecialchars($categoria['CATEGORIA']); ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                <button type="submit" name="eliminar_categoria" class="btn btn-danger">Eliminar Categoría</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
         <!-- Example Colored Cards for Dashboard Demo-->
         <div class="row">
