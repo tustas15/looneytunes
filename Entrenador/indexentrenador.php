@@ -231,7 +231,7 @@ foreach ($tarjetas as $nombre => $config) :
                 </div>
             </div>
             <div class="card-footer d-flex align-items-center justify-content-between small">
-                <a class="text-white stretched-link" href="report_categoria.php?categoria=<?php echo urlencode($nombre); ?>">View Report</a>
+                <a class="text-white stretched-link" href="report_categoria.php?categoria=<?php echo urlencode($nombre); ?>">Ver listado</a>
                 <div class="text-white"><i class="fas fa-angle-right"></i></div>
             </div>
         </div>

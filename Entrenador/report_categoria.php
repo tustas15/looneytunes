@@ -28,11 +28,21 @@ if (empty($nombre_categoria)) {
 }
 
 try {
-    // Ajustamos la consulta SQL para usar los nombres correctos de las columnas
-    $stmt = $conn->prepare("SELECT tab_deportistas.NOMBRE_DEPO, tab_deportistas.APELLIDO_DEPO 
-                            FROM tab_deportistas 
-                            INNER JOIN tab_categorias ON tab_deportistas.ID_CATEGORIA = tab_categorias.ID_CATEGORIA 
-                            WHERE tab_categorias.CATEGORIA = :categoria");
+    $stmt = $conn->prepare("
+        SELECT 
+            tab_deportistas.*,
+            tab_representantes.*
+        FROM 
+            tab_deportistas
+        INNER JOIN 
+            tab_categorias ON tab_deportistas.ID_CATEGORIA = tab_categorias.ID_CATEGORIA
+        LEFT JOIN 
+            tab_representantes_deportistas ON tab_deportistas.ID_DEPORTISTA = tab_representantes_deportistas.ID_DEPORTISTA
+        LEFT JOIN 
+            tab_representantes ON tab_representantes_deportistas.ID_REPRESENTANTE = tab_representantes.ID_REPRESENTANTE
+        WHERE 
+            tab_categorias.CATEGORIA = :categoria
+    ");
     $stmt->bindParam(':categoria', $nombre_categoria, PDO::PARAM_STR);
     $stmt->execute();
     $jugadores = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -63,6 +73,8 @@ include './includes/header.php';
                                     <tr>
                                         <th>Nombre</th>
                                         <th>Apellido</th>
+                                        <th>Representante</th>
+                                        <th>Datos</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -70,6 +82,8 @@ include './includes/header.php';
                                         <tr>
                                             <td><?= htmlspecialchars($jugador['NOMBRE_DEPO']) ?></td>
                                             <td><?= htmlspecialchars($jugador['APELLIDO_DEPO']) ?></td>
+                                            <td><?= htmlspecialchars($jugador['NOMBRE_REPRE']) ?></td>
+                                            <td>BOTON</td>
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
