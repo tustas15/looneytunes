@@ -316,8 +316,30 @@ include './includespro/header.php';
                         <?php foreach ($categorias as $categoria) : ?>
                             <h4 class="small">
                                 <?php echo htmlspecialchars($categoria['CATEGORIA']); ?>
-                                <span class="float-end fw-bold"><?php echo $categoria['num_deportistas']; ?></span>
+                                <span class="float-end fw-bold"><?php echo $categoria['num_deportistas']; ?> / 20</span>
                             </h4>
+                            <div class="progress mb-4">
+                                <div class="progress-bar 
+                                    <?php 
+                                    $percentage = ($categoria['num_deportistas'] / 20) * 100; 
+                                    // Puedes cambiar los colores aquí
+                                    if ($percentage <= 25) {
+                                        echo 'bg-danger'; // Rojo para <= 25%
+                                    } elseif ($percentage <= 50) {
+                                        echo 'bg-warning'; // Amarillo para <= 50%
+                                    } elseif ($percentage <= 75) {
+                                        echo 'bg-info'; // Azul para <= 75%
+                                    } else {
+                                        echo 'bg-success'; // Verde para > 75%
+                                    }
+                                    ?>" 
+                                    role="progressbar" 
+                                    style="width: <?php echo $percentage; ?>%" 
+                                    aria-valuenow="<?php echo $categoria['num_deportistas']; ?>" 
+                                    aria-valuemin="0" 
+                                    aria-valuemax="20">
+                                </div>
+                            </div>
                         <?php endforeach; ?>
                     </div>
                     <div class="card-footer position-relative">
