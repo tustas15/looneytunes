@@ -20,15 +20,31 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
 
 $usuario = isset($_SESSION['usuario']) ? $_SESSION['usuario'] : 'Usuario';
 
+// Parámetros para la paginación
+$categoriasPorPagina = 6;
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$offset = ($page - 1) * $categoriasPorPagina;
+
 try {
     // Consulta SQL para obtener las categorías y el número de deportistas por categoría
     $sql = "SELECT c.ID_CATEGORIA, c.CATEGORIA, COUNT(d.ID_DEPORTISTA) AS num_deportistas
             FROM tab_categorias c
             LEFT JOIN tab_deportistas d ON c.ID_CATEGORIA = d.ID_CATEGORIA
-            GROUP BY c.ID_CATEGORIA, c.CATEGORIA";
+            GROUP BY c.ID_CATEGORIA, c.CATEGORIA
+            LIMIT :limit OFFSET :offset";
     $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':limit', $categoriasPorPagina, PDO::PARAM_INT);
+    $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
     $stmt->execute();
     $categorias = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Consulta para obtener el total de categorías
+    $totalCategoriasQuery = "SELECT COUNT(*) as total FROM tab_categorias";
+    $stmtTotalCategorias = $conn->prepare($totalCategoriasQuery);
+    $stmtTotalCategorias->execute();
+    $totalCategorias = $stmtTotalCategorias->fetch(PDO::FETCH_ASSOC)['total'];
+    $totalPages = ceil($totalCategorias / $categoriasPorPagina);
+
 } catch (PDOException $e) {
     echo "Error al ejecutar la consulta: " . $e->getMessage();
 }
