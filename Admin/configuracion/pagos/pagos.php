@@ -23,242 +23,138 @@ include '../../Includespro/header.php';
     <link href="https://cdn.datatables.net/buttons/2.0.1/css/buttons.bootstrap5.min.css" rel="stylesheet">
 </head>
 
-<body id="page-top">
-
-    <!-- Page Heading -->
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">Gestión de Pagos</h1>
-
-    </div>
-
-    <div class="card shadow mb-4">
-        <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Registrar Nuevo Pago</h6>
-        </div>
-        <div class="card-body">
-            <form id="formulario-pago" method="POST">
-                <div class="form-group">
-                    <label for="cedula">Cédula del Representante:</label>
-                    <input type="text" class="form-control" id="cedula" name="cedula" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="nombre_representante">Nombre del Representante:</label>
-                    <input type="text" class="form-control" id="nombre_representante" name="nombre_representante" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="tipo_pago">Método de Pago:</label>
-                    <select class="form-control" id="tipo_pago" name="tipo_pago" onchange="toggleFields(this.value)" required>
-                        <option value="">Seleccione...</option>
-                        <option value="efectivo">Efectivo</option>
-                        <option value="transferencia">Transferencia</option>
-                    </select>
-                </div>
-
-                <div id="efectivoFields" style="display:none;">
-                    <div class="form-group">
-                        <label for="nombre_deportista_efectivo">Nombre del Deportista:</label>
-                        <input type="text" class="form-control" id="nombre_deportista_efectivo" name="nombre_deportista_efectivo">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="motivo_efectivo">Motivo:</label>
-                        <input type="text" class="form-control" id="motivo_efectivo" name="motivo_efectivo">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="monto_efectivo">Monto:</label>
-                        <input type="number" step="0.01" class="form-control" id="monto_efectivo" name="monto_efectivo">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="fecha_efectivo">Fecha:</label>
-                        <input type="date" class="form-control fecha-actual" id="fecha_efectivo" name="fecha_efectivo">
-                    </div>
-                </div>
-
-                <div id="transferenciaFields" style="display:none;">
-                    <div class="form-group">
-                        <label for="nombre_deportista_transferencia">Nombre del Deportista:</label>
-                        <input type="text" class="form-control" id="nombre_deportista_transferencia" name="nombre_deportista_transferencia">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="motivo_transferencia">Motivo:</label>
-                        <input type="text" class="form-control" id="motivo_transferencia" name="motivo_transferencia">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="banco">Nombre del Banco:</label>
-                        <select class="form-control" id="banco" name="banco">
-                            <option value="">Seleccione un banco...</option>
-                            <option value="Pichincha">Pichincha</option>
-                            <option value="Austro">Austro</option>
-                            <option value="Pacifico">Pacífico</option>
-                            <option value="Produbanco">Produbanco</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="monto_transferencia">Monto:</label>
-                        <input type="number" step="0.01" class="form-control" id="monto_transferencia" name="monto_transferencia">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="fecha_transferencia">Fecha:</label>
-                        <input type="date" class="form-control fecha-actual" id="fecha_transferencia" name="fecha_transferencia">
-                    </div>
-                </div>
-
-                <button type="submit" class="btn btn-primary" id="btn-registrar">Registrar Pago</button>
-            </form>
-
-            <div id="mensaje-confirmacion" class="alert alert-success mt-3" style="display: none;">
-                Pago registrado correctamente
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Pagos</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>Gestión de Pagos</h2>
+        <form id="formulario-pago">
+        <div class="mb-3">
+    <label for="apellido_representante" class="form-label">Apellido del Representante</label>
+    <select id="apellido_representante" class="form-select" required>
+        <option value="">Seleccionar</option>
+    </select>
+</div>
+            <div class="mb-3">
+                <label for="nombre_representante" class="form-label">Nombre del Representante</label>
+                <input type="text" class="form-control" id="nombre_representante" readonly>
             </div>
-        </div>
-    </div>
-
-    <div class="card shadow mb-4">
-        <div id="historial_pagos">
-            <div class="card-header py-3">
+            <div class="mb-3">
+                <label for="deportista" class="form-label">Deportista</label>
+                <select id="deportista" class="form-select" required>
+                    <option value="">Seleccionar</option>
+                </select>
             </div>
-        </div>
+            <div class="mb-3">
+                <label for="cedula_deportista" class="form-label">Cédula del Deportista</label>
+                <input type="text" class="form-control" id="cedula_deportista" readonly>
+            </div>
+            <div class="mb-3">
+                <label for="tipo_pago" class="form-label">Tipo de Pago</label>
+                <select id="tipo_pago" class="form-select" required>
+                    <option value="">Seleccionar</option>
+                    <option value="efectivo">Efectivo</option>
+                    <option value="transferencia">Transferencia</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Registrar Pago</button>
+        </form>
     </div>
 
-    </div>
-    <!-- /.container-fluid -->
-
-    </div>
-    <!-- End of Main Content -->
-
-    <!-- Footer -->
-    
-    <!-- End of Footer -->
-
-    </div>
-    <!-- End of Content Wrapper -->
-
-    </div>
-    <!-- End of Page Wrapper -->
-
-    <!-- Scroll to Top Button-->
-    <a class="scroll-to-top rounded" href="#page-top">
-        <i class="fas fa-angle-up"></i>
-    </a>
-
-    <!-- jQuery y Bootstrap -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Core plugin JavaScript-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
-
-    <!-- Custom scripts for all pages-->
-    <script src="js/sb-admin-2.min.js"></script>
-
-    <!-- DataTables y botones -->
-    <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.11.3/js/dataTables.bootstrap5.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.0.1/js/dataTables.buttons.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.bootstrap5.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.6.0/jszip.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.html5.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.print.min.js"></script>
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        function toggleFields(paymentType) {
-            const efectivoFields = document.getElementById('efectivoFields');
-            const transferenciaFields = document.getElementById('transferenciaFields');
-            if (paymentType === 'efectivo') {
-                efectivoFields.style.display = 'block';
-                transferenciaFields.style.display = 'none';
-            } else if (paymentType === 'transferencia') {
-                efectivoFields.style.display = 'none';
-                transferenciaFields.style.display = 'block';
+       $(document).ready(function() {
+    // Cargar apellidos de representantes
+    $.ajax({
+        url: 'get_representantes.php',
+        method: 'GET',
+        dataType: 'json',
+        success: function(data) {
+            if (data.length > 0) {
+                console.log("Representantes cargados:", data); // Depuración
+                data.forEach(function(representante) {
+                    $('#apellido_representante').append(`<option value="${representante.ID_REPRESENTANTE}">${representante.APELLIDO_REPRE}</option>`);
+                });
             } else {
-                efectivoFields.style.display = 'none';
-                transferenciaFields.style.display = 'none';
+                console.log("No se encontraron representantes");
             }
-            setFechaActual();
+        },
+        error: function(xhr, status, error) {
+            console.error("Error al cargar representantes:", status, error);
         }
+    });
 
-        $(document).ready(function() {
-            // Cargar historial de pagos al iniciar la página
-            cargarHistorialPagos();
-
-            // Función para cargar el historial de pagos
-            function cargarHistorialPagos() {
-                $.ajax({
-                    type: 'GET',
-                    url: 'historial_pagos.php',
-                    success: function(response) {
-                        $('#historial_pagos').html(response);
-                        initDataTable();
-                    },
-                    error: function(xhr, status, error) {
-                        console.error("Error al cargar el historial de pagos:", status, error);
-                        $('#historial_pagos').html("Error al cargar el historial de pagos.");
-                    }
-                });
-            }
-
-            /* Función para inicializar DataTable
-            function initDataTable() {
-                if ($.fn.DataTable.isDataTable('#tabla_pagos')) {
-                    $('#tabla_pagos').DataTable().destroy();
+    // Cuando se selecciona un apellido
+    $('#apellido_representante').on('change', function() {
+        var id_representante = $(this).val();
+        if (id_representante) {
+            // Cargar nombre del representante
+            $.ajax({
+                url: 'get_nombre_representante.php',
+                method: 'GET',
+                data: { id_representante: id_representante },
+                dataType: 'json',
+                success: function(data) {
+                    console.log("Nombre del representante cargado:", data); // Depuración
+                    $('#nombre_representante').val(data.NOMBRE_REPRE);
                 }
-                $('#tabla_pagos').DataTable({
-                    language: {
-                        url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
-                    },
-                    dom: 'Bfrtip',
-                    buttons: [
-                        'copy', 'csv', 'excel', 'pdf', 'print'
-                    ],
-                    responsive: true
-                });
-            }*/
-            // Manejar el evento de submit del formulario
-            $('#formulario-pago').submit(function(event) {
-                event.preventDefault();
-
-                $.ajax({
-                    type: 'POST',
-                    url: 'procesar_pago.php',
-                    data: $(this).serialize(),
-                    success: function(response) {
-                        $('#mensaje-confirmacion').show().delay(3000).fadeOut();
-                        $('#formulario-pago')[0].reset();
-                        cargarHistorialPagos();
-                    },
-                    error: function(xhr, status, error) {
-                        console.error("Error al procesar el pago:", status, error);
-                        alert("Error al procesar el pago. Por favor, intenta de nuevo.");
-                    }
-                });
             });
 
-            // Función para establecer la fecha actual en los campos de fecha
-            function setFechaActual() {
-                var today = new Date();
-                var dd = String(today.getDate()).padStart(2, '0');
-                var mm = String(today.getMonth() + 1).padStart(2, '0'); //Enero es 0!
-                var yyyy = today.getFullYear();
-
-                today = yyyy + '-' + mm + '-' + dd;
-                $('.fecha-actual').val(today);
-            }
-
-            // Llamar a la función cuando se carga la página
-            setFechaActual();
-
-            // Llamar a la función cada vez que se cambia el tipo de pago
-            $('#tipo_pago').change(function() {
-                setFechaActual();
+            // Cargar deportistas asociados
+            $.ajax({
+                url: 'get_deportistas.php',
+                method: 'GET',
+                data: { id_representante: id_representante },
+                dataType: 'json',
+                success: function(data) {
+                    console.log("Deportistas cargados:", data); // Depuración
+                    $('#deportista').empty().append('<option value="">Seleccionar</option>');
+                    data.forEach(function(deportista) {
+                        $('#deportista').append(`<option value="${deportista.ID_DEPORTISTA}">${deportista.NOMBRE_DEPO} ${deportista.APELLIDO_DEPO}</option>`);
+                    });
+                }
             });
-        });
+        } else {
+            $('#nombre_representante').val('');
+            $('#deportista').empty().append('<option value="">Seleccionar</option>');
+            $('#cedula_deportista').val('');
+        }
+    });
+
+    // Cuando se selecciona un deportista
+    $('#deportista').on('change', function() {
+        var id_deportista = $(this).val();
+        if (id_deportista) {
+            $.ajax({
+                url: 'get_cedula_deportista.php',
+                method: 'GET',
+                data: { id_deportista: id_deportista },
+                dataType: 'json',
+                success: function(data) {
+                    console.log("Cédula del deportista cargada:", data); // Depuración
+                    $('#cedula_deportista').val(data.CEDULA_DEPO);
+                }
+            });
+        } else {
+            $('#cedula_deportista').val('');
+        }
+    });
+
+    // Manejar el envío del formulario
+    $('#formulario-pago').submit(function(event) {
+        event.preventDefault();
+        // Aquí puedes agregar la lógica para procesar el pago
+        console.log('Formulario enviado');
+    });
+});
+
     </script>
+</body>
+</html>
 
 <?php include '../../Includespro/footer.php'; ?>
