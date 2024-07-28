@@ -35,14 +35,10 @@ include '../../Includespro/header.php';
         <h2>Gestión de Pagos</h2>
         <form id="formulario-pago">
             <div class="mb-3">
-                <label for="apellido_representante" class="form-label">Apellido del Representante</label>
+                <label for="apellido_representante" class="form-label">Representante</label>
                 <select id="apellido_representante" class="form-select" required>
                     <option value="">Seleccionar</option>
                 </select>
-            </div>
-            <div class="mb-3">
-                <label for="nombre_representante" class="form-label">Nombre del Representante</label>
-                <input type="text" class="form-control" id="nombre_representante" readonly>
             </div>
             <div class="mb-3">
                 <label for="cedula_representante" class="form-label">Cédula del Representante</label>
@@ -81,7 +77,7 @@ include '../../Includespro/header.php';
                 success: function(data) {
                     if (data.length > 0) {
                         data.forEach(function(representante) {
-                            $('#apellido_representante').append(`<option value="${representante.ID_REPRESENTANTE}" data-deportista="${representante.ID_DEPORTISTA}">${representante.APELLIDO_REPRE}</option>`);
+                            $('#apellido_representante').append(`<option value="${representante.ID_REPRESENTANTE}" data-deportista="${representante.ID_DEPORTISTA}">${representante.APELLIDO_REPRE} ${representante.NOMBRE_REPRE}</option>`);
                         });
                     } else {
                         console.log("No se encontraron representantes");
@@ -92,19 +88,18 @@ include '../../Includespro/header.php';
                 }
             });
 
-            // Cuando se selecciona un apellido
+            // Cuando se selecciona un representante
             $('#apellido_representante').on('change', function() {
                 var id_representante = $(this).val();
                 var id_deportista = $(this).find(':selected').data('deportista');
                 if (id_representante) {
-                    // Cargar nombre y cédula del representante
+                    // Cargar cédula del representante
                     $.ajax({
                         url: 'get_nombre_representante.php',
                         method: 'GET',
                         data: { id_representante: id_representante },
                         dataType: 'json',
                         success: function(data) {
-                            $('#nombre_representante').val(data.NOMBRE_REPRE);
                             $('#cedula_representante').val(data.CEDULA_REPRE);
                         }
                     });
@@ -118,14 +113,13 @@ include '../../Includespro/header.php';
                         success: function(data) {
                             $('#deportista').empty().append('<option value="">Seleccionar</option>');
                             data.forEach(function(deportista) {
-                                $('#deportista').append(`<option value="${deportista.ID_DEPORTISTA}">${deportista.NOMBRE_DEPO} ${deportista.APELLIDO_DEPO}</option>`);
+                                $('#deportista').append(`<option value="${deportista.ID_DEPORTISTA}">${deportista.APELLIDO_DEPO} ${deportista.NOMBRE_DEPO}</option>`);
                             });
                             // Seleccionar automáticamente el deportista asociado
                             $('#deportista').val(id_deportista).change();
                         }
                     });
                 } else {
-                    $('#nombre_representante').val('');
                     $('#cedula_representante').val('');
                     $('#deportista').empty().append('<option value="">Seleccionar</option>');
                     $('#cedula_deportista').val('');
@@ -160,6 +154,5 @@ include '../../Includespro/header.php';
     </script>
 </body>
 </html>
-
 
 <?php include '../../Includespro/footer.php'; ?>

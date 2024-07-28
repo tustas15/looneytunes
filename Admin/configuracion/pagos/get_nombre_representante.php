@@ -1,5 +1,4 @@
 <?php
-// get_nombre_representante.php
 require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
 
 $id_representante = $_GET['id_representante'];
