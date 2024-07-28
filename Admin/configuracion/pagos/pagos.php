@@ -34,15 +34,19 @@ include '../../Includespro/header.php';
     <div class="container mt-5">
         <h2>Gestión de Pagos</h2>
         <form id="formulario-pago">
-        <div class="mb-3">
-    <label for="apellido_representante" class="form-label">Apellido del Representante</label>
-    <select id="apellido_representante" class="form-select" required>
-        <option value="">Seleccionar</option>
-    </select>
-</div>
+            <div class="mb-3">
+                <label for="apellido_representante" class="form-label">Apellido del Representante</label>
+                <select id="apellido_representante" class="form-select" required>
+                    <option value="">Seleccionar</option>
+                </select>
+            </div>
             <div class="mb-3">
                 <label for="nombre_representante" class="form-label">Nombre del Representante</label>
                 <input type="text" class="form-control" id="nombre_representante" readonly>
+            </div>
+            <div class="mb-3">
+                <label for="cedula_representante" class="form-label">Cédula del Representante</label>
+                <input type="text" class="form-control" id="cedula_representante" readonly>
             </div>
             <div class="mb-3">
                 <label for="deportista" class="form-label">Deportista</label>
@@ -68,93 +72,94 @@ include '../../Includespro/header.php';
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-       $(document).ready(function() {
-    // Cargar apellidos de representantes
-    $.ajax({
-        url: 'get_representantes.php',
-        method: 'GET',
-        dataType: 'json',
-        success: function(data) {
-            if (data.length > 0) {
-                console.log("Representantes cargados:", data); // Depuración
-                data.forEach(function(representante) {
-                    $('#apellido_representante').append(`<option value="${representante.ID_REPRESENTANTE}">${representante.APELLIDO_REPRE}</option>`);
-                });
-            } else {
-                console.log("No se encontraron representantes");
-            }
-        },
-        error: function(xhr, status, error) {
-            console.error("Error al cargar representantes:", status, error);
-        }
-    });
-
-    // Cuando se selecciona un apellido
-    $('#apellido_representante').on('change', function() {
-        var id_representante = $(this).val();
-        if (id_representante) {
-            // Cargar nombre del representante
+        $(document).ready(function() {
+            // Cargar apellidos de representantes
             $.ajax({
-                url: 'get_nombre_representante.php',
+                url: 'get_representantes.php',
                 method: 'GET',
-                data: { id_representante: id_representante },
                 dataType: 'json',
                 success: function(data) {
-                    console.log("Nombre del representante cargado:", data); // Depuración
-                    $('#nombre_representante').val(data.NOMBRE_REPRE);
+                    if (data.length > 0) {
+                        data.forEach(function(representante) {
+                            $('#apellido_representante').append(`<option value="${representante.ID_REPRESENTANTE}" data-deportista="${representante.ID_DEPORTISTA}">${representante.APELLIDO_REPRE}</option>`);
+                        });
+                    } else {
+                        console.log("No se encontraron representantes");
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error al cargar representantes:", status, error);
                 }
             });
 
-            // Cargar deportistas asociados
-            $.ajax({
-                url: 'get_deportistas.php',
-                method: 'GET',
-                data: { id_representante: id_representante },
-                dataType: 'json',
-                success: function(data) {
-                    console.log("Deportistas cargados:", data); // Depuración
-                    $('#deportista').empty().append('<option value="">Seleccionar</option>');
-                    data.forEach(function(deportista) {
-                        $('#deportista').append(`<option value="${deportista.ID_DEPORTISTA}">${deportista.NOMBRE_DEPO} ${deportista.APELLIDO_DEPO}</option>`);
+            // Cuando se selecciona un apellido
+            $('#apellido_representante').on('change', function() {
+                var id_representante = $(this).val();
+                var id_deportista = $(this).find(':selected').data('deportista');
+                if (id_representante) {
+                    // Cargar nombre y cédula del representante
+                    $.ajax({
+                        url: 'get_nombre_representante.php',
+                        method: 'GET',
+                        data: { id_representante: id_representante },
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#nombre_representante').val(data.NOMBRE_REPRE);
+                            $('#cedula_representante').val(data.CEDULA_REPRE);
+                        }
                     });
+
+                    // Cargar deportistas asociados y seleccionar el deportista automáticamente
+                    $.ajax({
+                        url: 'get_deportistas.php',
+                        method: 'GET',
+                        data: { id_representante: id_representante },
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#deportista').empty().append('<option value="">Seleccionar</option>');
+                            data.forEach(function(deportista) {
+                                $('#deportista').append(`<option value="${deportista.ID_DEPORTISTA}">${deportista.NOMBRE_DEPO} ${deportista.APELLIDO_DEPO}</option>`);
+                            });
+                            // Seleccionar automáticamente el deportista asociado
+                            $('#deportista').val(id_deportista).change();
+                        }
+                    });
+                } else {
+                    $('#nombre_representante').val('');
+                    $('#cedula_representante').val('');
+                    $('#deportista').empty().append('<option value="">Seleccionar</option>');
+                    $('#cedula_deportista').val('');
                 }
             });
-        } else {
-            $('#nombre_representante').val('');
-            $('#deportista').empty().append('<option value="">Seleccionar</option>');
-            $('#cedula_deportista').val('');
-        }
-    });
 
-    // Cuando se selecciona un deportista
-    $('#deportista').on('change', function() {
-        var id_deportista = $(this).val();
-        if (id_deportista) {
-            $.ajax({
-                url: 'get_cedula_deportista.php',
-                method: 'GET',
-                data: { id_deportista: id_deportista },
-                dataType: 'json',
-                success: function(data) {
-                    console.log("Cédula del deportista cargada:", data); // Depuración
-                    $('#cedula_deportista').val(data.CEDULA_DEPO);
+            // Cuando se selecciona un deportista
+            $('#deportista').on('change', function() {
+                var id_deportista = $(this).val();
+                if (id_deportista) {
+                    $.ajax({
+                        url: 'get_cedula_deportista.php',
+                        method: 'GET',
+                        data: { id_deportista: id_deportista },
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#cedula_deportista').val(data.CEDULA_DEPO);
+                        }
+                    });
+                } else {
+                    $('#cedula_deportista').val('');
                 }
             });
-        } else {
-            $('#cedula_deportista').val('');
-        }
-    });
 
-    // Manejar el envío del formulario
-    $('#formulario-pago').submit(function(event) {
-        event.preventDefault();
-        // Aquí puedes agregar la lógica para procesar el pago
-        console.log('Formulario enviado');
-    });
-});
-
+            // Manejar el envío del formulario
+            $('#formulario-pago').submit(function(event) {
+                event.preventDefault();
+                // Aquí puedes agregar la lógica para procesar el pago
+                console.log('Formulario enviado');
+            });
+        });
     </script>
 </body>
 </html>
+
 
 <?php include '../../Includespro/footer.php'; ?>
