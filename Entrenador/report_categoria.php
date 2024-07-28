@@ -75,12 +75,7 @@ include './includes/header.php';
                             <table class="table table-striped">
                                 <thead>
                                     <tr>
-<<<<<<< HEAD
                                         <th>Deportista</th>
-=======
-                                        <th>Nombre</th>
-                                        
->>>>>>> 0a721159c4970c2142fea30fb9f65a320f96ca06
                                         <th>Representante</th>
                                         <th>Datos</th>
                                         <th>Ingresar</th>
@@ -89,7 +84,6 @@ include './includes/header.php';
                                 <tbody>
                                     <?php foreach ($jugadores as $jugador): ?>
                                         <tr>
-<<<<<<< HEAD
                                             <td><?= htmlspecialchars($jugador['NOMBRE_DEPO'] . ' ' .  $jugador['APELLIDO_DEPO']) ?></td>
                                             <td><?= htmlspecialchars($jugador['NOMBRE_REPRE'] . ' ' . $jugador['APELLIDO_REPRE']) ?></td>
                                             <td>
@@ -98,11 +92,6 @@ include './includes/header.php';
                                             <td>
                                                 <a href="ingresar_detalle.php?id=<?= $jugador['ID_DEPORTISTA'] ?>" class="btn btn-success">Ingresar</a>
                                             </td>
-=======
-                                            <td><?= htmlspecialchars($jugador['NOMBRE_DEPO'] . ' ' . $jugador['APELLIDO_DEPO']) ?></td>
-                                            <td><?= htmlspecialchars($jugador['NOMBRE_REPRE']. ' ' . $jugador['APELLIDO_REPRE']) ?></td>
-                                            <td>BOTON</td>
->>>>>>> 0a721159c4970c2142fea30fb9f65a320f96ca06
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
