@@ -1,25 +1,40 @@
 <?php
+// Habilitar la visualización de errores para depuración
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+// Incluir el archivo de conexión a la base de datos
 require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
+
+// Iniciar la sesión
 session_start();
 
-if (!isset($_SESSION['user_id'])) {
-    exit('Unauthorized');
+// Verificar que la conexión se estableció correctamente
+if ($conn === null) {
+    die("Error de conexión a la base de datos.");
 }
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['id_detalle'])) {
-    $id_detalle = $_POST['id_detalle'];
-    
-    try {
-        $sql = "DELETE FROM tab_detalles WHERE ID_DETALLE = :id_detalle";
-        $stmt = $conn->prepare($sql);
-        $stmt->bindParam(':id_detalle', $id_detalle, PDO::PARAM_INT);
-        $stmt->execute();
+// Verificar que el usuario está logueado
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../Public/login.php");
+    exit();
+}
 
-        echo 'success';
-    } catch (Exception $e) {
-        echo 'error';
-    }
-} else {
-    echo 'invalid request';
+// Obtener y sanitizar el ID del detalle a eliminar
+$id_detalle = isset($_GET['id']) ? filter_var($_GET['id'], FILTER_VALIDATE_INT) : 0;
+
+if ($id_detalle <= 0) {
+    die("No se especificó un ID de detalle válido.");
+}
+
+try {
+    $stmt = $conn->prepare("DELETE FROM tab_detalles WHERE ID_DETALLE = :id");
+    $stmt->bindParam(':id', $id_detalle, PDO::PARAM_INT);
+    $stmt->execute();
+
+    header("Location: detalles_deportista.php?id=" . $_GET['deportista_id']);
+    exit();
+} catch (PDOException $e) {
+    die("Error al eliminar el detalle: " . $e->getMessage());
 }
 ?>
