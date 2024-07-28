@@ -14,6 +14,8 @@ if ($conn === null) {
     die("Error de conexión a la base de datos.");
 }
 
+$nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
+$tipo_usuario = $_SESSION['tipo_usuario'];
 // Comprobamos si el usuario está logueado
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../Public/login.php");
@@ -58,7 +60,7 @@ include './includes/header.php';
     <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
         <div class="container-xl px-4">
             <div class="page-header-content pt-4">
-                <h1 class="text-white">Jugadores de la categoría: <?= htmlspecialchars($nombre_categoria) ?></h1>
+                <h1 class="text-white">Deportistas de la categoría: <?= htmlspecialchars($nombre_categoria) ?></h1>
             </div>
         </div>
     </header>
@@ -71,19 +73,23 @@ include './includes/header.php';
                             <table class="table table-striped">
                                 <thead>
                                     <tr>
-                                        <th>Nombre</th>
-                                        <th>Apellido</th>
+                                        <th>Deportista</th>
                                         <th>Representante</th>
                                         <th>Datos</th>
+                                        <th>Ingresar</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php foreach ($jugadores as $jugador): ?>
                                         <tr>
-                                            <td><?= htmlspecialchars($jugador['NOMBRE_DEPO']) ?></td>
-                                            <td><?= htmlspecialchars($jugador['APELLIDO_DEPO']) ?></td>
-                                            <td><?= htmlspecialchars($jugador['NOMBRE_REPRE']) ?></td>
-                                            <td>BOTON</td>
+                                            <td><?= htmlspecialchars($jugador['NOMBRE_DEPO'] . ' ' .  $jugador['APELLIDO_DEPO']) ?></td>
+                                            <td><?= htmlspecialchars($jugador['NOMBRE_REPRE'] . ' ' . $jugador['APELLIDO_REPRE']) ?></td>
+                                            <td>
+                                                <a href="detalle_deportista.php?id=<?= $jugador['ID_DEPORTISTA'] ?>" class="btn btn-primary">Datos</a>
+                                            </td>
+                                            <td>
+                                                <a href="ingresar_detalle.php?id=<?= $jugador['ID_DEPORTISTA'] ?>" class="btn btn-success">Ingresar</a>
+                                            </td>
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
@@ -97,6 +103,7 @@ include './includes/header.php';
         </div>
     </div>
 </main>
+
 
 <?php
 // Incluir el pie de página
