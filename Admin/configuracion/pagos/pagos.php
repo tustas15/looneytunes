@@ -55,19 +55,108 @@ include '../../Includespro/header.php';
                 <input type="text" class="form-control" id="cedula_deportista" readonly>
             </div>
             <div class="mb-3">
-                <label for="tipo_pago" class="form-label">Tipo de Pago</label>
+            <label for="tipo_pago" class="form-label">Tipo de Pago</label>
                 <select id="tipo_pago" class="form-select" required>
                     <option value="">Seleccionar</option>
                     <option value="efectivo">Efectivo</option>
                     <option value="transferencia">Transferencia</option>
                 </select>
             </div>
+
+            <!-- Campos adicionales para efectivo -->
+            <div id="campos-efectivo" class="d-none">
+                <div class="mb-3">
+                    <label for="fecha_pago_efectivo" class="form-label">Fecha de Pago</label>
+                    <input type="date" class="form-control" id="fecha_pago_efectivo" value="<?= date('Y-m-d'); ?>">
+                </div>
+                <div class="mb-3">
+                    <label for="monto_efectivo" class="form-label">Monto</label>
+                    <input type="number" class="form-control" id="monto_efectivo">
+                </div>
+                <div class="mb-3">
+                    <label for="motivo_efectivo" class="form-label">Motivo</label>
+                    <input type="text" class="form-control" id="motivo_efectivo">
+                </div>
+                <div class="mb-3">
+                    <label for="mes_efectivo" class="form-label">Mes de Pago</label>
+                    <select id="mes_efectivo" class="form-select">
+                        <?php
+                        $meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+                        $mes_actual = date('n') - 1;
+                        foreach ($meses as $index => $mes) {
+                            $selected = ($index == $mes_actual) ? "selected" : "";
+                            echo "<option value='$mes' $selected>$mes</option>";
+                        }
+                        ?>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="anio_efectivo" class="form-label">Año</label>
+                    <input type="number" class="form-control" id="anio_efectivo" value="<?= date('Y'); ?>">
+                </div>
+            </div>
+
+            <!-- Campos adicionales para transferencia -->
+            <div id="campos-transferencia" class="d-none">
+                <div class="mb-3">
+                    <label for="banco_transferencia" class="form-label">Banco</label>
+                    <select id="banco_transferencia" class="form-select">
+                        <option value="Pichincha">Pichincha</option>
+                        <option value="Produbanco">Produbanco</option>
+                        <option value="Otro">Otro</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="fecha_pago_transferencia" class="form-label">Fecha de Pago</label>
+                    <input type="date" class="form-control" id="fecha_pago_transferencia" value="<?= date('Y-m-d'); ?>">
+                </div>
+                <div class="mb-3">
+                    <label for="monto_transferencia" class="form-label">Monto</label>
+                    <input type="number" class="form-control" id="monto_transferencia">
+                </div>
+                <div class="mb-3">
+                    <label for="motivo_transferencia" class="form-label">Motivo</label>
+                    <input type="text" class="form-control" id="motivo_transferencia">
+                </div>
+                <div class="mb-3">
+                    <label for="mes_transferencia" class="form-label">Mes de Pago</label>
+                    <select id="mes_transferencia" class="form-select">
+                        <?php
+                        foreach ($meses as $index => $mes) {
+                            $selected = ($index == $mes_actual) ? "selected" : "";
+                            echo "<option value='$mes' $selected>$mes</option>";
+                        }
+                        ?>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="anio_transferencia" class="form-label">Año</label>
+                    <input type="number" class="form-control" id="anio_transferencia" value="<?= date('Y'); ?>">
+                </div>
+            </div>
+
             <button type="submit" class="btn btn-primary">Registrar Pago</button>
         </form>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
+        $(document).ready(function() {
+            // Función para mostrar campos adicionales según tipo de pago
+            $('#tipo_pago').on('change', function() {
+                var tipoPago = $(this).val();
+                if (tipoPago === 'efectivo') {
+                    $('#campos-efectivo').removeClass('d-none');
+                    $('#campos-transferencia').addClass('d-none');
+                } else if (tipoPago === 'transferencia') {
+                    $('#campos-efectivo').addClass('d-none');
+                    $('#campos-transferencia').removeClass('d-none');
+                } else {
+                    $('#campos-efectivo').addClass('d-none');
+                    $('#campos-transferencia').addClass('d-none');
+                }
+            });
+        })
         $(document).ready(function() {
             // Cargar apellidos de representantes
             $.ajax({

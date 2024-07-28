@@ -243,6 +243,9 @@
                                 <a class="nav-link" href="/looneytunes/admin/configuracion/pagos/pagos.php">
                                     Pago
                                 </a>
+                                <a class="nav-link" href="/looneytunes/admin/configuracion/reportesp/reportes_pagos.php">
+                                    Reportes de pagos
+                                </a>
                             </nav>
                         </div>
                         <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseFlows" aria-expanded="false" aria-controls="collapseFlows">
