@@ -107,7 +107,7 @@ include './includes/header.php';
                         if ($deportista):
                         ?>
                             <h2><?= htmlspecialchars($deportista['NOMBRE_DEPO'] . ' ' . $deportista['APELLIDO_DEPO']) ?></h2>
-                            <p><strong>Categoria:</strong> <?= htmlspecialchars($deportista['CATEGORIA']) ?></p>
+                            <p><?= htmlspecialchars($deportista['CATEGORIA']) ?></p>
                             <table id="detallesTable" class="table table-striped">
                                 <thead>
                                     <tr>
