@@ -35,14 +35,10 @@ include '../../Includespro/header.php';
         <h2>Gestión de Pagos</h2>
         <form id="formulario-pago">
             <div class="mb-3">
-                <label for="apellido_representante" class="form-label">Apellido del Representante</label>
+                <label for="apellido_representante" class="form-label">Representante</label>
                 <select id="apellido_representante" class="form-select" required>
                     <option value="">Seleccionar</option>
                 </select>
-            </div>
-            <div class="mb-3">
-                <label for="nombre_representante" class="form-label">Nombre del Representante</label>
-                <input type="text" class="form-control" id="nombre_representante" readonly>
             </div>
             <div class="mb-3">
                 <label for="cedula_representante" class="form-label">Cédula del Representante</label>
@@ -59,19 +55,108 @@ include '../../Includespro/header.php';
                 <input type="text" class="form-control" id="cedula_deportista" readonly>
             </div>
             <div class="mb-3">
-                <label for="tipo_pago" class="form-label">Tipo de Pago</label>
+            <label for="tipo_pago" class="form-label">Tipo de Pago</label>
                 <select id="tipo_pago" class="form-select" required>
                     <option value="">Seleccionar</option>
                     <option value="efectivo">Efectivo</option>
                     <option value="transferencia">Transferencia</option>
                 </select>
             </div>
+
+            <!-- Campos adicionales para efectivo -->
+            <div id="campos-efectivo" class="d-none">
+                <div class="mb-3">
+                    <label for="fecha_pago_efectivo" class="form-label">Fecha de Pago</label>
+                    <input type="date" class="form-control" id="fecha_pago_efectivo" value="<?= date('Y-m-d'); ?>">
+                </div>
+                <div class="mb-3">
+                    <label for="monto_efectivo" class="form-label">Monto</label>
+                    <input type="number" class="form-control" id="monto_efectivo">
+                </div>
+                <div class="mb-3">
+                    <label for="motivo_efectivo" class="form-label">Motivo</label>
+                    <input type="text" class="form-control" id="motivo_efectivo">
+                </div>
+                <div class="mb-3">
+                    <label for="mes_efectivo" class="form-label">Mes de Pago</label>
+                    <select id="mes_efectivo" class="form-select">
+                        <?php
+                        $meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+                        $mes_actual = date('n') - 1;
+                        foreach ($meses as $index => $mes) {
+                            $selected = ($index == $mes_actual) ? "selected" : "";
+                            echo "<option value='$mes' $selected>$mes</option>";
+                        }
+                        ?>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="anio_efectivo" class="form-label">Año</label>
+                    <input type="number" class="form-control" id="anio_efectivo" value="<?= date('Y'); ?>">
+                </div>
+            </div>
+
+            <!-- Campos adicionales para transferencia -->
+            <div id="campos-transferencia" class="d-none">
+                <div class="mb-3">
+                    <label for="banco_transferencia" class="form-label">Banco</label>
+                    <select id="banco_transferencia" class="form-select">
+                        <option value="Pichincha">Pichincha</option>
+                        <option value="Produbanco">Produbanco</option>
+                        <option value="Otro">Otro</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="fecha_pago_transferencia" class="form-label">Fecha de Pago</label>
+                    <input type="date" class="form-control" id="fecha_pago_transferencia" value="<?= date('Y-m-d'); ?>">
+                </div>
+                <div class="mb-3">
+                    <label for="monto_transferencia" class="form-label">Monto</label>
+                    <input type="number" class="form-control" id="monto_transferencia">
+                </div>
+                <div class="mb-3">
+                    <label for="motivo_transferencia" class="form-label">Motivo</label>
+                    <input type="text" class="form-control" id="motivo_transferencia">
+                </div>
+                <div class="mb-3">
+                    <label for="mes_transferencia" class="form-label">Mes de Pago</label>
+                    <select id="mes_transferencia" class="form-select">
+                        <?php
+                        foreach ($meses as $index => $mes) {
+                            $selected = ($index == $mes_actual) ? "selected" : "";
+                            echo "<option value='$mes' $selected>$mes</option>";
+                        }
+                        ?>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="anio_transferencia" class="form-label">Año</label>
+                    <input type="number" class="form-control" id="anio_transferencia" value="<?= date('Y'); ?>">
+                </div>
+            </div>
+
             <button type="submit" class="btn btn-primary">Registrar Pago</button>
         </form>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
+        $(document).ready(function() {
+            // Función para mostrar campos adicionales según tipo de pago
+            $('#tipo_pago').on('change', function() {
+                var tipoPago = $(this).val();
+                if (tipoPago === 'efectivo') {
+                    $('#campos-efectivo').removeClass('d-none');
+                    $('#campos-transferencia').addClass('d-none');
+                } else if (tipoPago === 'transferencia') {
+                    $('#campos-efectivo').addClass('d-none');
+                    $('#campos-transferencia').removeClass('d-none');
+                } else {
+                    $('#campos-efectivo').addClass('d-none');
+                    $('#campos-transferencia').addClass('d-none');
+                }
+            });
+        })
         $(document).ready(function() {
             // Cargar apellidos de representantes
             $.ajax({
@@ -81,7 +166,7 @@ include '../../Includespro/header.php';
                 success: function(data) {
                     if (data.length > 0) {
                         data.forEach(function(representante) {
-                            $('#apellido_representante').append(`<option value="${representante.ID_REPRESENTANTE}" data-deportista="${representante.ID_DEPORTISTA}">${representante.APELLIDO_REPRE}</option>`);
+                            $('#apellido_representante').append(`<option value="${representante.ID_REPRESENTANTE}" data-deportista="${representante.ID_DEPORTISTA}">${representante.APELLIDO_REPRE} ${representante.NOMBRE_REPRE}</option>`);
                         });
                     } else {
                         console.log("No se encontraron representantes");
@@ -92,19 +177,18 @@ include '../../Includespro/header.php';
                 }
             });
 
-            // Cuando se selecciona un apellido
+            // Cuando se selecciona un representante
             $('#apellido_representante').on('change', function() {
                 var id_representante = $(this).val();
                 var id_deportista = $(this).find(':selected').data('deportista');
                 if (id_representante) {
-                    // Cargar nombre y cédula del representante
+                    // Cargar cédula del representante
                     $.ajax({
                         url: 'get_nombre_representante.php',
                         method: 'GET',
                         data: { id_representante: id_representante },
                         dataType: 'json',
                         success: function(data) {
-                            $('#nombre_representante').val(data.NOMBRE_REPRE);
                             $('#cedula_representante').val(data.CEDULA_REPRE);
                         }
                     });
@@ -118,14 +202,13 @@ include '../../Includespro/header.php';
                         success: function(data) {
                             $('#deportista').empty().append('<option value="">Seleccionar</option>');
                             data.forEach(function(deportista) {
-                                $('#deportista').append(`<option value="${deportista.ID_DEPORTISTA}">${deportista.NOMBRE_DEPO} ${deportista.APELLIDO_DEPO}</option>`);
+                                $('#deportista').append(`<option value="${deportista.ID_DEPORTISTA}">${deportista.APELLIDO_DEPO} ${deportista.NOMBRE_DEPO}</option>`);
                             });
                             // Seleccionar automáticamente el deportista asociado
                             $('#deportista').val(id_deportista).change();
                         }
                     });
                 } else {
-                    $('#nombre_representante').val('');
                     $('#cedula_representante').val('');
                     $('#deportista').empty().append('<option value="">Seleccionar</option>');
                     $('#cedula_deportista').val('');
@@ -160,6 +243,5 @@ include '../../Includespro/header.php';
     </script>
 </body>
 </html>
-
 
 <?php include '../../Includespro/footer.php'; ?>
