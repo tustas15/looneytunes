@@ -3,7 +3,6 @@
 require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
 
 date_default_timezone_set('America/Guayaquil'); // Ajusta a tu zona horaria
-echo "Hora actual del servidor: " . date('Y-m-d H:i:s');
 
 // Verificar que la conexión se estableció correctamente
 if ($conn === null) {
@@ -199,13 +198,13 @@ include './includes/header.php';
             <?php
 $tarjetas = [
     "MOSQUITOS" => ["color" => "bg-primary", "icon" => "users"],
-    "PRE MINI" => ["color" => "bg-warning", "icon" => "file-text"],
-    "MINI DAMAS" => ["color" => "bg-success", "icon" => "award"],
-    "MINI HOMBRES" => ["color" => "bg-danger", "icon" => "soccer-ball"],
+    "PRE MINI" => ["color" => "bg-warning", "icon" => "users"],
+    "MINI DAMAS" => ["color" => "bg-success", "icon" => "users"],
+    "MINI HOMBRES" => ["color" => "bg-danger", "icon" => "users"],
     "U13 DAMAS" => ["color" => "bg-info", "icon" => "users"],
-    "U13 HOMBRES" => ["color" => "bg-secondary", "icon" => "file-text"],
-    "U15 DAMAS" => ["color" => "bg-dark", "icon" => "award"],
-    "U15 HOMBRES" => ["color" => "bg-primary", "icon" => "soccer-ball"]
+    "U13 HOMBRES" => ["color" => "bg-secondary", "icon" => "users"],
+    "U15 DAMAS" => ["color" => "bg-dark", "icon" => "users"],
+    "U15 HOMBRES" => ["color" => "bg-primary", "icon" => "users"]
 ];
 
 $categorias_entrenador = $_SESSION['entrenador_categorias'] ?? [];

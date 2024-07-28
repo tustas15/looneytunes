@@ -113,13 +113,15 @@ if (isset($_GET['message'])) {
                                                 <option value="">Seleccionar el representante asociado al deportista</option>
                                                 <?php
                                                 // Conexión a la base de datos
-                                                $stmt = $conn->prepare("SELECT u.ID_USUARIO, u.USUARIO FROM tab_usuarios u
-                                                            INNER JOIN tab_usu_tipo ut ON u.ID_USUARIO = ut.ID_USUARIO
-                                                            WHERE ut.ID_TIPO = 3");
+                                                $stmt = $conn->prepare("
+                                                    SELECT r.ID_REPRESENTANTE, r.NOMBRE_REPRE, r.APELLIDO_REPRE 
+                                                    FROM tab_representantes r
+                                                    LEFT JOIN tab_usu_tipo ut ON r.ID_REPRESENTANTE = ut.ID_USUARIO AND ut.ID_TIPO = 3
+                                                ");
                                                 $stmt->execute();
                                                 $representantes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                 foreach ($representantes as $representante) {
-                                                    echo "<option value='" . $representante['ID_USUARIO'] . "'>" . htmlspecialchars($representante['USUARIO']) . "</option>";
+                                                    echo "<option value='" . $representante['ID_REPRESENTANTE'] . "'>" . htmlspecialchars($representante['NOMBRE_REPRE'] . ' ' . $representante['APELLIDO_REPRE']) . "</option>";
                                                 }
                                                 ?>
                                             </select>
@@ -133,6 +135,10 @@ if (isset($_GET['message'])) {
                         </div>
                     </div>
                 </div>
-                </main>
+            </main>
         </div>
-        <?php include_once('/xampp/htdocs/looneytunes/admin/includespro/footer.php'); ?>
+    </div>
+    <?php include_once('/xampp/htdocs/looneytunes/admin/includespro/footer.php'); ?>
+</body>
+
+</html>
