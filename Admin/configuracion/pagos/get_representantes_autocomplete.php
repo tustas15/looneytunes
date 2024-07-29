@@ -1,6 +1,35 @@
 <?php
 require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
 
+try {
+    $pdo = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    if (isset($_POST['query'])) {
+        $query = $_POST['query'];
+        $stmt = $pdo->prepare("SELECT APELLIDO_REPRE, NOMBRE_REPRE FROM tab_representantes WHERE APELLIDO_REPRE LIKE :query LIMIT 10");
+        $stmt->execute(['query' => $query . '%']);
+
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        if ($result) {
+            foreach ($result as $row) {
+                echo '<li class="list-group-item list-group-item-action">' . $row['APELLIDO_REPRE'] . ' ' . $row['NOMBRE_REPRE'] . '</li>';
+            }
+        } else {
+            echo '<li class="list-group-item">No se encontraron resultados</li>';
+        }
+    }
+} catch (PDOException $e) {
+    echo "Connection failed: " . $e->getMessage();
+}
+?>
+
+
+
+
+
+
 $term = $_GET['term'];
 
 try {
