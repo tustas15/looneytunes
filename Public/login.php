@@ -77,7 +77,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.28.0/feather.min.js" crossorigin="anonymous"></script>
     <style>
         body.bg-primary {
-            background-image: url('../Assets/img/looney.jpg');
+            background-image: url('../Assets/img/looney.webp');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
