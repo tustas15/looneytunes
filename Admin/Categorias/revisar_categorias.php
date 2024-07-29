@@ -69,6 +69,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->execute();
                 header("Location: categorias_deportistas.php");
                 exit();
+
+                // logs
             }
 
             if ($accion === 'eliminar_categoria') {
@@ -79,6 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->execute();
                 header("Location: categorias_deportistas.php");
                 exit();
+                //logs
             }
 
             if ($accion === 'agregar_deportista') {
@@ -93,6 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->execute();
                 header("Location: categorias_deportistas.php");
                 exit();
+                //logs
             }
 
             if ($accion === 'eliminar_deportista') {
@@ -103,6 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->execute();
                 header("Location: categorias_deportistas.php");
                 exit();
+                //logs
             }
         }
     } catch (PDOException $e) {

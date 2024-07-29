@@ -35,6 +35,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['eliminar_categoria'])
 $sql = "SELECT ID_CATEGORIA, CATEGORIA FROM tab_categorias";
 $stmt = $conn->query($sql);
 $categorias = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Logs
 ?>
 <!DOCTYPE html>
 <html lang="es">
