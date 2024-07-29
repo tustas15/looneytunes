@@ -21,6 +21,10 @@ include '../../Includespro/header.php';
     <!-- DataTables CSS -->
     <link href="https://cdn.datatables.net/1.11.3/css/dataTables.bootstrap5.min.css" rel="stylesheet">
     <link href="https://cdn.datatables.net/buttons/2.0.1/css/buttons.bootstrap5.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+
 </head>
 
 <!DOCTYPE html>
@@ -29,6 +33,8 @@ include '../../Includespro/header.php';
     <meta charset="UTF-8">
     <title>Gestión de Pagos</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 </head>
 <body>
     <div class="container mt-5">
@@ -157,7 +163,8 @@ include '../../Includespro/header.php';
                 }
             });
         })
-        $(document).ready(function() {
+        
+       
             // Cargar apellidos de representantes
             $.ajax({
                 url: 'get_representantes.php',
