@@ -44,7 +44,6 @@ try {
     $stmtTotalCategorias->execute();
     $totalCategorias = $stmtTotalCategorias->fetch(PDO::FETCH_ASSOC)['total'];
     $totalPages = ceil($totalCategorias / $categoriasPorPagina);
-
 } catch (PDOException $e) {
     echo "Error al ejecutar la consulta: " . $e->getMessage();
 }
@@ -170,6 +169,64 @@ function timeElapsedString($datetime, $full = false)
 
     if (!$full) $string = array_slice($string, 0, 1);  // Si $full es false, solo mostrar la unidad de tiempo más significativa.
     return $string ? implode(', ', $string) . ' ago' : 'just now';  // Construir la cadena final.
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $reportType = $_POST['report_type'];
+    $reportDate = $_POST['report_date'];
+
+    try {
+        switch ($reportType) {
+            case 'administradores':
+                $sql = "SELECT * FROM tab_administradores WHERE DATE(fecha_registro) = :report_date";
+                break;
+            case 'entrenadores':
+                $sql = "SELECT * FROM tab_entrenadores WHERE DATE(fecha_registro) = :report_date";
+                break;
+            case 'representantes':
+                $sql = "SELECT * FROM tab_representantes WHERE DATE(fecha_registro) = :report_date";
+                break;
+            case 'deportistas':
+                $sql = "SELECT * FROM tab_deportistas WHERE DATE(fecha_registro) = :report_date";
+                break;
+            default:
+                throw new Exception("Tipo de informe no válido");
+        }
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':report_date', $reportDate, PDO::PARAM_STR);
+        $stmt->execute();
+        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Generar el informe (esto puede ser exportado a CSV, PDF, etc.)
+        // Por ahora, vamos a mostrar los resultados como una tabla en la misma página
+
+        echo "<h2>Informe de $reportType para la fecha $reportDate</h2>";
+        echo "<table class='table'>";
+        echo "<thead><tr>";
+
+        foreach ($results[0] as $key => $value) {
+            echo "<th>$key</th>";
+        }
+
+        echo "</tr></thead><tbody>";
+
+        foreach ($results as $row) {
+            echo "<tr>";
+            foreach ($row as $value) {
+                echo "<td>$value</td>";
+            }
+            echo "</tr>";
+        }
+
+        echo "</tbody></table>";
+    } catch (Exception $e) {
+        echo "Error al generar el informe: " . $e->getMessage();
+    }
+
+    $conn = null;
+} else {
+    echo "Método de solicitud no válido.";
 }
 
 include './includespro/header.php';
@@ -336,8 +393,8 @@ include './includespro/header.php';
                             </h4>
                             <div class="progress mb-4">
                                 <div class="progress-bar 
-                                    <?php 
-                                    $percentage = ($categoria['num_deportistas'] / 20) * 100; 
+                                    <?php
+                                    $percentage = ($categoria['num_deportistas'] / 20) * 100;
                                     // Puedes cambiar los colores aquí
                                     if ($percentage <= 25) {
                                         echo 'bg-danger'; // Rojo para <= 25%
@@ -348,12 +405,7 @@ include './includespro/header.php';
                                     } else {
                                         echo 'bg-success'; // Verde para > 75%
                                     }
-                                    ?>" 
-                                    role="progressbar" 
-                                    style="width: <?php echo $percentage; ?>%" 
-                                    aria-valuenow="<?php echo $categoria['num_deportistas']; ?>" 
-                                    aria-valuemin="0" 
-                                    aria-valuemax="20">
+                                    ?>" role="progressbar" style="width: <?php echo $percentage; ?>%" aria-valuenow="<?php echo $categoria['num_deportistas']; ?>" aria-valuemin="0" aria-valuemax="20">
                                 </div>
                             </div>
                         <?php endforeach; ?>
@@ -543,7 +595,41 @@ include './includespro/header.php';
                     <div class="text-center px-0 px-lg-5">
                         <h5>¡Nuevos informes están aquí! ¡Genera informes personalizados ahora!</h5>
                         <p class="mb-4">Nuestro nuevo sistema de generación de informes ya está en línea. Puede comenzar a crear informes personalizados para cualquier documento disponible en su cuenta.</p>
-                        <a class="btn btn-primary p-3" href="#!">Empezar</a>
+                        <button type="button" class="btn btn-primary p-3" data-bs-toggle="modal" data-bs-target="#reportModal">
+                            Empezar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- Modal -->
+        <div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="reportModalLabel">Generar Informe</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="reportForm" method="POST" action="generate_report.php">
+                            <div class="mb-3">
+                                <label for="reportType" class="form-label">Tipo de Informe</label>
+                                <select class="form-select" id="reportType" name="report_type" required>
+                                    <option value="">Seleccione...</option>
+                                    <option value="administradores">Administradores</option>
+                                    <option value="entrenadores">Entrenadores</option>
+                                    <option value="representantes">Representantes</option>
+                                    <option value="deportistas">Deportistas</option>
+                                </select>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                <button type="submit" class="btn btn-primary">Generar</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
