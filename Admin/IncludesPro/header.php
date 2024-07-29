@@ -270,6 +270,17 @@
                                         <a class="nav-link" href="/looneytunes/admin/usuarios/crear_usuarios/crdeportista.php">Deportista</a>
                                     </nav>
                                 </div>
+                                <!-- Añadido Categorías-->
+                                <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#flowsCollapseCategorias" aria-expanded="false" aria-controls="flowsCollapseCategorias">
+                                    Categorías
+                                    <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                                </a>
+                                <div class="collapse" id="flowsCollapseCategorias" data-bs-parent="#accordionSidenavFlowsMenu">
+                                    <nav class="sidenav-menu-nested nav">
+                                        <a class="nav-link" href="/looneytunes/admin/categorias/categorias.php">Crear/Eliminar Categorías</a>
+                                        <a class="nav-link" href="/looneytunes/admin/categorias/revisar_categorias.php">Lista Categorías</a>
+                                    </nav>
+                                </div>
                             </nav>
                         </div>
 

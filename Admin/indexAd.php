@@ -355,7 +355,7 @@ include './includespro/header.php';
                     </div>
                     <div class="card-footer position-relative">
                         <div class="d-flex align-items-center justify-content-between small text-body">
-                            <a class="stretched-link text-body" href="./configuracion/revisar_categorias.php">Revisar Categorías</a>
+                            <a class="stretched-link text-body" href="./categorias/revisar_categorias.php">Revisar Categorías</a>
                             <i class="fas fa-angle-right"></i>
                         </div>
                     </div>
