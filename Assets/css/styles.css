@@ -20513,3 +20513,10 @@ pre[class*=language-] {
 .token.variable {
   color: #ff6666;
 }
+
+body.bg-primary {
+  background-image: url('../Assets/img/looney.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}

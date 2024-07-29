@@ -101,13 +101,16 @@ include './includes/header.php';
                 <div class="card h-100">
                     <div class="card-body">
                         <?php
-                        // Reejecutar la consulta para obtener todos los registros nuevamente
                         $stmt->execute();
                         $deportista = $stmt->fetch(PDO::FETCH_ASSOC);
                         if ($deportista):
+                            $fecha_nacimiento = new DateTime($deportista['FECHA_NACIMIENTO']);
+                            $hoy = new DateTime();
+                            $edad = $hoy->diff($fecha_nacimiento)->y;
                         ?>
-                            <h2><?= htmlspecialchars($deportista['NOMBRE_DEPO'] . ' ' . $deportista['APELLIDO_DEPO']) ?></h2>
-                            <p><strong>Categoria:</strong> <?= htmlspecialchars($deportista['CATEGORIA']) ?></p>
+                            <h2><?= htmlspecialchars($deportista['NOMBRE_DEPO'] . ' ' . $deportista['APELLIDO_DEPO']) . ' (' . $edad . ' años)' ?></h2>
+                            <p><?= htmlspecialchars($deportista['CATEGORIA']) ?></p>
+                            <p><?= htmlspecialchars($deportista['CEDULA_DEPO'])?></p>
                             <table id="detallesTable" class="table table-striped">
                                 <thead>
                                     <tr>

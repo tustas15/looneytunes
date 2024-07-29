@@ -30,12 +30,14 @@
         <a class="navbar-brand pe-3 ps-4 ps-lg-2" href="/looneytunes/index.php">Dashboard</a>
         <!-- Navbar Search Input-->
         <!-- * * Note: * * Visible only on and above the lg breakpoint-->
+        <!--
         <form class="form-inline me-auto d-none d-lg-block me-3">
             <div class="input-group input-group-joined input-group-solid">
                 <input class="form-control pe-0" type="search" placeholder="Search" aria-label="Search" />
                 <div class="input-group-text"><i data-feather="search"></i></div>
             </div>
         </form>
+        -->
         <!-- Navbar Items-->
         <ul class="navbar-nav align-items-center ms-auto">
             <!-- Documentation Dropdown-->
