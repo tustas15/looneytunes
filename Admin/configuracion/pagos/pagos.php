@@ -47,14 +47,6 @@ include '../../Includespro/header.php';
                 </select>
             </div>
             <div class="mb-3">
-                <label for="apellido" class="form-label">Apellido:</label>
-                <input type="text" class="form-control" id="apellido" name="apellido">
-                <div id="suggestions" class="list-group mt-2"></div>
-            <!---<div class="mb-3">
-                <label for="apellido_representante" class="form-label">Apellido del Representante</label>
-                <input type="text" id="apellido_representante" class="form-control" required>
-            </div>----->
-            <div class="mb-3">
                 <label for="cedula_representante" class="form-label">Cédula del Representante</label>
                 <input type="text" class="form-control" id="cedula_representante" readonly>
             </div>
@@ -171,60 +163,8 @@ include '../../Includespro/header.php';
                 }
             });
         })
-        <script>
-        $(document).ready(function() {
-            $('#apellido').on('keyup', function() {
-                let query = $(this).val();
-
-                if (query.length >= 3) {
-                    $.ajax({
-                        url: 'get_representantes_autocomplete.php',
-                        method: 'POST',
-                        data: { query: query },
-                        success: function(data) {
-                            $('#suggestions').fadeIn();
-                            $('#suggestions').html(data);
-                        }
-                    });
-                } else {
-                    $('#suggestions').fadeOut();
-                }
-            });
-
-            $(document).on('click', 'li', function() {
-                $('#apellido').val($(this).text());
-                $('#suggestions').fadeOut();
-            });
-        });
-    </script>
-        $(document).ready(function() {
-            //autocompletar 
-           /* $('#apellido_representante').autocomplete({
-                source: function(request, response) {
-                    $.ajax({
-                        url: 'get_representantes_autocomplete.php',
-                        method: 'GET',
-                        data: { term: request.term },
-                        dataType: 'json',
-                        success: function(data) {
-                            response($.map(data, function(item) {
-                                return {
-                                    label: item.APELLIDO_REPRE + " " + item.NOMBRE_REPRE,
-                                    value: item.APELLIDO_REPRE,
-                                    id: item.ID_REPRESENTANTE,
-                                    deportista_id: item.ID_DEPORTISTA
-                                };
-                            }));
-                        }
-                    });
-                },
-                minLength: 3,
-                select: function(event, ui) {
-                    var id_representante = ui.item.id;
-                    var id_deportista = ui.item.deportista_id;
-                }
-            });*/
-
+        
+       
             // Cargar apellidos de representantes
             $.ajax({
                 url: 'get_representantes.php',
