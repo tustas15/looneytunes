@@ -70,31 +70,6 @@ try {
     exit();
 }
 
-// Cargar deportistas desde la base de datos si la variable de sesión está vacía
-try {
-    $id_usuario = $_SESSION['user_id'];
-    $stmt = $conn->prepare("SELECT TAB_TEMP_DEPORTISTAS.*, tab_categorias.categoria 
-                            FROM TAB_TEMP_DEPORTISTAS 
-                            LEFT JOIN tab_deportistas ON TAB_TEMP_DEPORTISTAS.ID_DEPORTISTA = tab_deportistas.id_deportista 
-                            LEFT JOIN tab_categorias ON tab_deportistas.ID_CATEGORIA = tab_categorias.id_categoria 
-                            WHERE TAB_TEMP_DEPORTISTAS.ID_USUARIO = :id_usuario");
-    $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
-    $stmt->execute();
-    $_SESSION['deportistas'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
-    $_SESSION['error'] = "Error al cargar los deportistas: " . $e->getMessage();
-    header('Location: error.php'); // Redirigir a una página de error
-    exit();
-}
-
-// Manejar la eliminación de deportistas
-if (isset($_POST['delete'])) {
-    include './configuracion/eliminar_deportista.php'; // Mover la lógica de eliminación a un archivo separado
-}
-
-// Obtener la lista de deportistas de la sesión
-$deportistas = $_SESSION['deportistas'] ?? [];
-
 // Obtener logs de actividad
 try {
     $idUsuario = $_SESSION['user_id'];
