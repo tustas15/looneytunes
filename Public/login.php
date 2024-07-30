@@ -5,6 +5,7 @@ require '../Admin/configuracion/conexion.php';
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $usuario = filter_input(INPUT_POST, 'usuario', FILTER_SANITIZE_STRING);
     $password = filter_input(INPUT_POST, 'pass', FILTER_SANITIZE_STRING);
+    $remember = isset($_POST['remember']) ? true : false;
 
     // Obtener la dirección IP del usuario
     $ip = $_SERVER['REMOTE_ADDR'];
@@ -31,6 +32,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $_SESSION['user_id'] = $user['ID_USUARIO'];
                 $_SESSION['nombre'] = $user['USUARIO'];
                 $_SESSION['tipo_usuario'] = $user['ID_TIPO'];
+
+                // Manejo de la cookie "Recordar contraseña"
+                if ($remember) {
+                    setcookie('usuario', $usuario, time() + (86400 * 30), "/"); // 30 días
+                    setcookie('pass', $password, time() + (86400 * 30), "/"); // 30 días
+                } else {
+                    // Eliminar las cookies si existen
+                    if (isset($_COOKIE['usuario'])) {
+                        setcookie('usuario', '', time() - 3600, "/");
+                    }
+                    if (isset($_COOKIE['pass'])) {
+                        setcookie('pass', '', time() - 3600, "/");
+                    }
+                }
 
                 // Redirige al usuario según su tipo
                 switch ($user['ID_TIPO']) {
@@ -60,6 +75,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo "Error: " . $e->getMessage();
     }
 }
+
+// Rellenar el formulario con cookies si existen
+$storedUsuario = isset($_COOKIE['usuario']) ? $_COOKIE['usuario'] : '';
+$storedPass = isset($_COOKIE['pass']) ? $_COOKIE['pass'] : '';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -77,7 +96,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.28.0/feather.min.js" crossorigin="anonymous"></script>
     <style>
         body.bg-primary {
-            background-image: url('../Assets/img/looney.jpg');
+            background-image: url('../Assets/img/looney.webp');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -92,43 +111,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div class="container-xl px-4">
                     <div class="row justify-content-center">
                         <div class="col-lg-5">
-                            <!-- Basic login form-->
                             <div class="card shadow-lg border-0 rounded-lg mt-5">
                                 <div class="card-header justify-content-center">
                                     <h3 class="fw-light my-4">Login</h3>
                                 </div>
                                 <div class="card-body">
-                                    <!-- Login form-->
                                     <form method="POST" action="">
-                                        <!-- Form Group (username)-->
                                         <div class="mb-3">
                                             <label class="small mb-1" for="inputUsername">Nombre de Usuario</label>
-                                            <input class="form-control" id="inputUsername" name="usuario" type="text" placeholder="Ingrese su nombre de usuario" />
+                                            <input class="form-control" id="inputUsername" name="usuario" type="text" placeholder="Ingrese su nombre de usuario" value="<?= htmlspecialchars($storedUsuario) ?>" />
                                         </div>
-                                        <!-- Form Group (password)-->
                                         <div class="mb-3">
                                             <label class="small mb-1" for="inputPassword">Contraseña</label>
-                                            <input class="form-control" id="inputPassword" name="pass" type="password" placeholder="Ingrese su contraseña" />
+                                            <input class="form-control" id="inputPassword" name="pass" type="password" placeholder="Ingrese su contraseña" value="<?= htmlspecialchars($storedPass) ?>" />
                                         </div>
-                                        <!-- Form Group (remember password checkbox)-->
                                         <div class="mb-3">
                                             <div class="form-check">
-                                                <input class="form-check-input" id="rememberPasswordCheck" type="checkbox" value="" />
+                                                <input class="form-check-input" id="rememberPasswordCheck" name="remember" type="checkbox" value="1" />
                                                 <label class="form-check-label" for="rememberPasswordCheck">Recordar contraseña</label>
                                             </div>
                                         </div>
-                                        <!-- Form Group (login box)-->
                                         <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
                                             <a class="small" href="auth-password-basic.html">¿Olvidaste tu contraseña?</a>
                                             <button class="btn btn-primary" type="submit">Iniciar sesión</button>
                                         </div>
                                     </form>
                                 </div>
-                                <!-- Registrar a usuarios aleatorios
-                                <div class="card-footer text-center">
-                                    <div class="small"><a href="auth-register-basic.html">¿Necesitas una cuenta? ¡Regístrate!</a></div>
-                                </div> 
-                                -->
+                                <!-- ... (el resto de tu código) ... -->
                             </div>
                         </div>
                     </div>
@@ -141,10 +150,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <div class="row">
                         <div class="col-md-6 small">Copyright &copy; Looney Tunes <span id="currentYear"></span></div>
                         <div class="col-md-6 text-md-end small">
-                    <a href="../Public/Privacy_Policy.php">Privacy Policy</a>
-                    &middot;
-                    <a href="../Public/terms_condition.php">Terms &amp; Conditions</a>
-                </div>
+                            <a href="../Public/Privacy_Policy.php">Privacy Policy</a>
+                            &middot;
+                            <a href="../Public/terms_condition.php">Terms &amp; Conditions</a>
+                        </div>
                     </div>
                 </div>
             </footer>
@@ -156,5 +165,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     <script src="../Assets/js/scripts.js"></script>
 </body>
-
 </html>

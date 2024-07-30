@@ -21,7 +21,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
 $usuario = isset($_SESSION['usuario']) ? $_SESSION['usuario'] : 'Usuario';
 
 // Parámetros para la paginación
-$categoriasPorPagina = 6;
+$categoriasPorPagina = 8;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $categoriasPorPagina;
 
@@ -99,7 +99,7 @@ try {
 // Obtener logs de actividad
 try {
     $idUsuario = $_SESSION['user_id'];
-    $logsPerPage = 10;  // Número de logs por página
+    $logsPerPage = 13;  // Número de logs por página
     $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;  // Página actual
     $offset = ($page - 1) * $logsPerPage;
 
@@ -171,63 +171,6 @@ function timeElapsedString($datetime, $full = false)
     return $string ? implode(', ', $string) . ' ago' : 'just now';  // Construir la cadena final.
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $reportType = $_POST['report_type'];
-    $reportDate = $_POST['report_date'];
-
-    try {
-        switch ($reportType) {
-            case 'administradores':
-                $sql = "SELECT * FROM tab_administradores WHERE DATE(fecha_registro) = :report_date";
-                break;
-            case 'entrenadores':
-                $sql = "SELECT * FROM tab_entrenadores WHERE DATE(fecha_registro) = :report_date";
-                break;
-            case 'representantes':
-                $sql = "SELECT * FROM tab_representantes WHERE DATE(fecha_registro) = :report_date";
-                break;
-            case 'deportistas':
-                $sql = "SELECT * FROM tab_deportistas WHERE DATE(fecha_registro) = :report_date";
-                break;
-            default:
-                throw new Exception("Tipo de informe no válido");
-        }
-
-        $stmt = $conn->prepare($sql);
-        $stmt->bindParam(':report_date', $reportDate, PDO::PARAM_STR);
-        $stmt->execute();
-        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        // Generar el informe (esto puede ser exportado a CSV, PDF, etc.)
-        // Por ahora, vamos a mostrar los resultados como una tabla en la misma página
-
-        echo "<h2>Informe de $reportType para la fecha $reportDate</h2>";
-        echo "<table class='table'>";
-        echo "<thead><tr>";
-
-        foreach ($results[0] as $key => $value) {
-            echo "<th>$key</th>";
-        }
-
-        echo "</tr></thead><tbody>";
-
-        foreach ($results as $row) {
-            echo "<tr>";
-            foreach ($row as $value) {
-                echo "<td>$value</td>";
-            }
-            echo "</tr>";
-        }
-
-        echo "</tbody></table>";
-    } catch (Exception $e) {
-        echo "Error al generar el informe: " . $e->getMessage();
-    }
-
-    $conn = null;
-} else {
-    echo "Método de solicitud no válido.";
-}
 
 include './includespro/header.php';
 ?>
@@ -412,7 +355,7 @@ include './includespro/header.php';
                     </div>
                     <div class="card-footer position-relative">
                         <div class="d-flex align-items-center justify-content-between small text-body">
-                            <a class="stretched-link text-body" href="./configuracion/revisar_categorias.php">Revisar Categorías</a>
+                            <a class="stretched-link text-body" href="./categorias/revisar_categorias.php">Revisar Categorías</a>
                             <i class="fas fa-angle-right"></i>
                         </div>
                     </div>
@@ -635,6 +578,7 @@ include './includespro/header.php';
             </div>
         </div>
 
-        <?php
-        include './includespro/footer.php';
-        ?>
+</main>
+<?php
+include './includespro/footer.php';
+?>
