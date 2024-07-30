@@ -104,27 +104,24 @@ $categorias = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 </div>
                                 <div class="card-footer bg-transparent px-5 py-4">
                                     <div class="small text-center">
-                                        <form action="categorias.php" method="post">
-                                            <!-- Form Group (selección de categoría para eliminar)-->
-                                            <div class="mb-3">
-                                                <label class="small mb-1" for="id_categoria">Seleccionar Categoría</label>
-                                                <select class="form-control" id="id_categoria" name="id_categoria" required>
-                                                    <option value="">Seleccione una categoría</option>
-                                                    <?php foreach ($categorias as $categoria) : ?>
-                                                        <option value="<?php echo htmlspecialchars($categoria['ID_CATEGORIA']); ?>">
-                                                            <?php echo htmlspecialchars($categoria['CATEGORIA']); ?>
-                                                        </option>
-                                                    <?php endforeach; ?>
-                                                </select>
-                                            </div>
-                                            <!-- Form Group (delete category submit)-->
-                                            <button class="btn btn-danger btn-block" type="submit" name="eliminar_categoria">Eliminar Categoría</button>
-                                        </form>
+                                        <div class="mb-3">
+                                            <label class="small mb-1" for="id_categoria">Seleccionar Categoría</label>
+                                            <select class="form-control" id="id_categoria" name="id_categoria" required>
+                                                <option value="">Seleccione una categoría</option>
+                                                <?php foreach ($categorias as $categoria) : ?>
+                                                    <option value="<?php echo htmlspecialchars($categoria['ID_CATEGORIA']); ?>" data-nombre="<?php echo htmlspecialchars($categoria['CATEGORIA']); ?>">
+                                                        <?php echo htmlspecialchars($categoria['CATEGORIA']); ?>
+                                                    </option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                        </div>
+                                        <button class="btn btn-danger btn-block" type="button" onclick="confirmDelete()">Eliminar Categoría</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
                     <!-- Botón de volver -->
                     <div class="row justify-content-center mt-4">
                         <div class="col-md-8 text-center">
@@ -133,9 +130,46 @@ $categorias = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     </div>
                 </div>
             </main>
+            <!-- Modal de confirmación de eliminación -->
+            <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="confirmDeleteModalLabel">Confirmar Eliminación</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            ¿Está seguro de que desea eliminar la categoría "<span id="categoryName"></span>"?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <form id="deleteCategoryForm" method="POST" action="categorias.php">
+                                <input type="hidden" name="id_categoria" id="deleteCategoryId">
+                                <button type="submit" name="eliminar_categoria" class="btn btn-danger">Eliminar</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                function confirmDelete() {
+                    var select = document.getElementById('id_categoria');
+                    var option = select.options[select.selectedIndex];
+                    var categoryName = option.getAttribute('data-nombre');
+                    var categoryId = option.value;
+
+                    if (!categoryId) {
+                        alert("Seleccione una categoría para eliminar.");
+                        return;
+                    }
+
+                    document.getElementById('categoryName').textContent = categoryName;
+                    document.getElementById('deleteCategoryId').value = categoryId;
+                    var confirmDeleteModal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
+                    confirmDeleteModal.show();
+                }
+            </script>
         </div>
         <?php include_once('/xampp/htdocs/looneytunes/admin/includespro/footer.php'); ?>
     </div>
-</body>
-
-</html>
