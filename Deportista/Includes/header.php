@@ -1,3 +1,7 @@
+<?php
+$nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
+$tipo_usuario = $_SESSION['tipo_usuario'];
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -186,7 +190,7 @@
                         </div>
                     </h6>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="/looneytunes/Admin/configuracion/perfil/perfil_deportista.php">
+                    <a class="dropdown-item" href="/looneytunes/Public/profile.php">
                         <div class="dropdown-item-icon"><i data-feather="settings"></i></div>
                         Cuenta
                     </a>

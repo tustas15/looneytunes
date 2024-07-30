@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once('../Admin/configuracion/conexion.php');
+include '/xampp/htdocs/looneytunes/deportista/includes/header.php'; // Incluye el encabezado
 
 // Verificar si el usuario ha iniciado sesión
 if (!isset($_SESSION['user_id'])) {
@@ -10,23 +11,23 @@ if (!isset($_SESSION['user_id'])) {
 
 // Obtener el ID del usuario logueado
 $id_usuario_logueado = $_SESSION['user_id'];
-$tipo_usuario = $_SESSION['tipo_usuario']; // 'admin', 'entrenador', 'representante'
+$tipo_usuario = $_SESSION['tipo_usuario']; // 'admin', 'entrenador', 'representante', 'deportista'
 
 // Obtener el ID del usuario cuyo perfil se debe mostrar (si está presente en la URL)
 $id_perfil = isset($_GET['id']) ? intval($_GET['id']) : $id_usuario_logueado;
 
 // Inicializar las variables
-$nombre = $apellido = $telefono = $experiencia = $correo = $direccion = $cedula = $nombre_depo = $apellido_depo = $fecha_nacimiento_depo = $cedula_depo = $numero_celular_depo = $genero_depo = '';
+$nombre = $apellido = $telefono = $experiencia = $correo = $direccion = $cedula = '';
 $deportistas = [];
 
+// Verificar permisos y obtener datos
 try {
     // Conexión a la base de datos
     $conn = new PDO("mysql:host=$server;port=$port;dbname=$db", $user, $pass);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // Verificar si el usuario tiene permiso para ver el perfil solicitado
+    // Verificar permisos de acceso
     $puede_ver_perfil = false;
-
     if ($tipo_usuario === 1) {
         // El administrador puede ver todos los perfiles
         $puede_ver_perfil = true;
@@ -51,60 +52,39 @@ try {
     }
 
     if (!$puede_ver_perfil) {
-        // Redirigir a una página de error o mostrar un mensaje de acceso denegado
         echo "Acceso denegado.";
         exit();
     }
 
     // Obtener los datos del usuario basado en el ID del perfil
     if ($tipo_usuario === 1) {
-        // Consultar los datos del administrador
-        $stmt = $conn->prepare("SELECT * FROM tab_administradores WHERE ID_USUARIO = :id_usuario");
-        $stmt->bindParam(':id_usuario', $id_perfil, PDO::PARAM_INT);
-        $stmt->execute();
-        $admin = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if ($admin) {
-            $nombre = htmlspecialchars($admin['NOMBRE_ADMIN']);
-            $apellido = htmlspecialchars($admin['APELLIDO_ADMIN']);
-            $telefono = htmlspecialchars($admin['CELULAR_ADMIN']);
-        }
+        $stmt = $conn->prepare("SELECT ID_USUARIO, NOMBRE_ADMIN AS NOMBRE, APELLIDO_ADMIN AS APELLIDO, CELULAR_ADMIN AS CELULAR FROM tab_administradores WHERE ID_USUARIO = :id_usuario");
     } elseif ($tipo_usuario === 2) {
-        // Consultar los datos del entrenador
-        $stmt = $conn->prepare("SELECT * FROM tab_entrenadores WHERE ID_USUARIO = :id_usuario");
-        $stmt->bindParam(':id_usuario', $id_perfil, PDO::PARAM_INT);
-        $stmt->execute();
-        $entrenador = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if ($entrenador) {
-            $nombre = htmlspecialchars($entrenador['NOMBRE_ENTRE']);
-            $apellido = htmlspecialchars($entrenador['APELLIDO_ENTRE']);
-            $telefono = htmlspecialchars($entrenador['CELULAR_ENTRE']);
-            $experiencia = htmlspecialchars($entrenador['EXPERIENCIA_ENTRE']);
-            $correo = htmlspecialchars($entrenador['CORREO_ENTRE']);
-            $direccion = htmlspecialchars($entrenador['DIRECCION_ENTRE']);
-        }
+        $stmt = $conn->prepare("SELECT ID_USUARIO, NOMBRE_ENTRE AS NOMBRE, APELLIDO_ENTRE AS APELLIDO, CELULAR_ENTRE AS CELULAR, EXPERIENCIA_ENTRE AS EXPERIENCIA, CORREO_ENTRE AS CORREO, DIRECCION_ENTRE AS DIRECCION, CEDULA_ENTRE AS CEDULA FROM tab_entrenadores WHERE ID_USUARIO = :id_usuario");
     } elseif ($tipo_usuario === 3) {
-        // Consultar los datos del representante
-        $stmt = $conn->prepare("SELECT * FROM tab_representantes WHERE ID_USUARIO = :id_usuario");
-        $stmt->bindParam(':id_usuario', $id_perfil, PDO::PARAM_INT);
-        $stmt->execute();
-        $representante = $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmt = $conn->prepare("SELECT ID_USUARIO, NOMBRE_REPRE AS NOMBRE, APELLIDO_REPRE AS APELLIDO, CELULAR_REPRE AS CELULAR, CORREO_REPRE AS CORREO, DIRECCION_REPRE AS DIRECCION, CEDULA_REPRE AS CEDULA FROM tab_representantes WHERE ID_USUARIO = :id_usuario");
+    } elseif ($tipo_usuario === 4) {
+        $stmt = $conn->prepare("SELECT ID_USUARIO, NOMBRE_DEPO AS NOMBRE, APELLIDO_DEPO AS APELLIDO, CEDULA_DEPO AS CEDULA, NUMERO_CELULAR AS CELULAR FROM tab_deportistas WHERE ID_USUARIO = :id_usuario");
+    }
 
-        if ($representante) {
-            $nombre = htmlspecialchars($representante['NOMBRE_REPRE']);
-            $apellido = htmlspecialchars($representante['APELLIDO_REPRE']);
-            $telefono = htmlspecialchars($representante['CELULAR_REPRE']);
-            $correo = htmlspecialchars($representante['CORREO_REPRE']);
-            $direccion = htmlspecialchars($representante['DIRECCION_REPRE']);
-            $cedula = htmlspecialchars($representante['CEDULA_REPRE']);
+    $stmt->bindParam(':id_usuario', $id_perfil, PDO::PARAM_INT);
+    $stmt->execute();
+    $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            // Obtener los deportistas asociados al representante
-            $deportistas_stmt = $conn->prepare("SELECT * FROM tab_representantes_deportistas INNER JOIN tab_deportistas ON tab_representantes_deportistas.ID_DEPORTISTA = tab_deportistas.ID_DEPORTISTA WHERE tab_representantes_deportistas.ID_REPRESENTANTE = :id_representante");
-            $deportistas_stmt->bindParam(':id_representante', $id_perfil, PDO::PARAM_INT);
-            $deportistas_stmt->execute();
-            $deportistas = $deportistas_stmt->fetchAll(PDO::FETCH_ASSOC);
-        }
+    // Asignar valores
+    $nombre = isset($usuario['NOMBRE']) ? htmlspecialchars($usuario['NOMBRE']) : '';
+    $apellido = isset($usuario['APELLIDO']) ? htmlspecialchars($usuario['APELLIDO']) : '';
+    $telefono = isset($usuario['CELULAR']) ? htmlspecialchars($usuario['CELULAR']) : '';
+    $correo = isset($usuario['CORREO']) ? htmlspecialchars($usuario['CORREO']) : '';
+    $direccion = isset($usuario['DIRECCION']) ? htmlspecialchars($usuario['DIRECCION']) : '';
+    $cedula = isset($usuario['CEDULA']) ? htmlspecialchars($usuario['CEDULA']) : '';
+
+    // Obtener los deportistas asociados al representante
+    if ($tipo_usuario === 3) {
+        $deportistas_stmt = $conn->prepare("SELECT * FROM tab_representantes_deportistas INNER JOIN tab_deportistas ON tab_representantes_deportistas.ID_DEPORTISTA = tab_deportistas.ID_DEPORTISTA WHERE tab_representantes_deportistas.ID_REPRESENTANTE = :id_representante");
+        $deportistas_stmt->bindParam(':id_representante', $id_perfil, PDO::PARAM_INT);
+        $deportistas_stmt->execute();
+        $deportistas = $deportistas_stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     // Manejar la actualización del perfil
@@ -150,171 +130,105 @@ try {
 
         // Actualizar la contraseña
         if (!empty($nuevo_password)) {
-            $hash_password = password_hash($nuevo_password, PASSWORD_DEFAULT);
-            $update_password_stmt = $conn->prepare("UPDATE tab_usuarios SET CLAVE_USUARIO = :password WHERE ID_USUARIO = :id_usuario");
-            $update_password_stmt->bindParam(':password', $hash_password, PDO::PARAM_STR);
+            $hashed_password = password_hash($nuevo_password, PASSWORD_BCRYPT);
+            $update_password_stmt = $conn->prepare("UPDATE tab_usuarios SET PASSWORD_USUARIO = :password WHERE ID_USUARIO = :id_usuario");
+            $update_password_stmt->bindParam(':password', $hashed_password, PDO::PARAM_STR);
             $update_password_stmt->bindParam(':id_usuario', $id_usuario_logueado, PDO::PARAM_INT);
             $update_password_stmt->execute();
         }
 
-        // Redirigir después de la actualización
-        header("Location: profile.php?id=$id_perfil");
-        exit();
-    }
-
-    // Manejar la selección del perfil del deportista por parte del representante
-    if ($tipo_usuario === 3 && isset($_GET['id_deportista'])) {
-        $id_deportista = intval($_GET['id_deportista']);
-        $deportista_stmt = $conn->prepare("SELECT * FROM tab_deportistas WHERE ID_DEPORTISTA = :id_deportista");
-        $deportista_stmt->bindParam(':id_deportista', $id_deportista, PDO::PARAM_INT);
-        $deportista_stmt->execute();
-        $deportista = $deportista_stmt->fetch(PDO::FETCH_ASSOC);
-
-        if ($deportista) {
-            $nombre_depo = htmlspecialchars($deportista['NOMBRE_DEPO']);
-            $apellido_depo = htmlspecialchars($deportista['APELLIDO_DEPO']);
-            $fecha_nacimiento_depo = htmlspecialchars($deportista['FECHA_NACIMIENTO_DEPO']);
-            $cedula_depo = htmlspecialchars($deportista['CEDULA_DEPO']);
-            $numero_celular_depo = htmlspecialchars($deportista['NUMERO_CELULAR_DEPO']);
-            $genero_depo = htmlspecialchars($deportista['GENERO_DEPO']);
-        }
+        echo "Perfil actualizado con éxito.";
     }
 } catch (PDOException $e) {
     echo "Error: " . $e->getMessage();
 }
+
+// Cierre de la conexión
 $conn = null;
-include('./includes/header.php');
 ?>
 
-<div id="layoutSidenav_content">
-    <main>
-        <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
-            <div class="container-xl px-4">
-                <div class="page-header-content pt-4">
-                    <div class="row align-items-center justify-content-between">
-                        <div class="col-auto mt-4">
-                            <h1 class="page-header-title">
-                                <div class="page-header-icon"><i data-feather="user"></i></div>
-                                Account Settings - Profile
-                            </h1>
+<main>
+    <div class="container-xl px-4 mt-4">
+        <!-- Page title -->
+        <div class="page-title">
+            <h1>Perfil de Usuario</h1>
+        </div>
+
+        <!-- Profile Details -->
+        <div class="card mb-4">
+            <div class="card-header">Detalles del Usuario</div>
+            <div class="card-body">
+                <form method="POST" action="">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="nombre">Nombre</label>
+                                <input type="text" class="form-control" id="nombre" name="nombre" value="<?php echo htmlspecialchars($nombre); ?>" required>
+                            </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </header>
-        <div class="container-xl px-4 mt-n10">
-            <div class="row">
-                <div class="col-xl-4">
-                    <!-- Profile picture card-->
-                    <div class="card mb-4 mb-xl-0">
-                        <div class="card-header">Profile Picture</div>
-                        <div class="card-body text-center">
-                            <!-- Profile picture image-->
-                            <img class="img-account-profile rounded-circle mb-2" src="../Assets/img/illustrations/profiles/profile-1.png" alt="" />
-                            <!-- Profile picture help block-->
-                            <div class="small font-italic text-muted mb-4">JPG or PNG no larger than 5 MB</div>
-                            <!-- Profile picture upload button-->
-                            <button class="btn btn-primary" type="button">Upload new image</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-8">
-                    <!-- Account details card-->
-                    <div class="card mb-4">
-                        <div class="card-header">Account Details</div>
-                        <div class="card-body">
-                            <form method="POST" action="profile.php?id=<?php echo $id_perfil; ?>">
-                                <div class="row gx-3 mb-3">
-                                    <div class="col-md-6">
-                                        <label class="small mb-1" for="inputNombre">Nombre</label>
-                                        <input class="form-control" id="inputNombre" type="text" name="nombre" placeholder="Ingrese su nombre" value="<?php echo $nombre; ?>">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="small mb-1" for="inputApellido">Apellido</label>
-                                        <input class="form-control" id="inputApellido" type="text" name="apellido" placeholder="Ingrese su apellido" value="<?php echo $apellido; ?>">
-                                    </div>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="small mb-1" for="inputTelefono">Teléfono</label>
-                                    <input class="form-control" id="inputTelefono" type="text" name="telefono" placeholder="Ingrese su número de teléfono" value="<?php echo $telefono; ?>">
-                                </div>
-                                <?php if ($tipo_usuario === 2) : ?>
-                                    <div class="mb-3">
-                                        <label class="small mb-1" for="inputExperiencia">Experiencia</label>
-                                        <input class="form-control" id="inputExperiencia" type="text" name="experiencia" placeholder="Ingrese su experiencia" value="<?php echo htmlspecialchars($experiencia); ?>">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="small mb-1" for="inputDireccion">Dirección</label>
-                                        <input class="form-control" id="inputDireccion" type="text" name="direccion" placeholder="Ingrese su dirección" value="<?php echo htmlspecialchars($direccion); ?>">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="small mb-1" for="inputEmail">Correo electrónico</label>
-                                        <input class="form-control" id="inputEmail" type="email" name="email" placeholder="Ingrese su correo electrónico" value="<?php echo htmlspecialchars($correo); ?>">
-                                    </div>
-                                <?php elseif ($tipo_usuario === 3) : ?>
-                                    <div class="mb-3">
-                                        <label class="small mb-1" for="inputDireccion">Dirección</label>
-                                        <input class="form-control" id="inputDireccion" type="text" name="direccion" placeholder="Ingrese su dirección" value="<?php echo htmlspecialchars($direccion); ?>">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="small mb-1" for="inputEmail">Correo electrónico</label>
-                                        <input class="form-control" id="inputEmail" type="email" name="email" placeholder="Ingrese su correo electrónico" value="<?php echo htmlspecialchars($correo); ?>">
-                                    </div>
-                                <?php endif; ?>
-                                <?php if ($tipo_usuario !== 1 && $id_perfil === $id_usuario_logueado) : ?>
-                                    <div class="mb-3">
-                                        <label class="small mb-1" for="inputPassword">Contraseña</label>
-                                        <input class="form-control" id="inputPassword" type="password" name="password" placeholder="Ingrese su nueva contraseña (opcional)">
-                                    </div>
-                                <?php endif; ?>
-                                <?php if ($id_perfil === $id_usuario_logueado) : ?>
-                                    <button class="btn btn-primary" type="submit">Guardar cambios</button>
-                                <?php endif; ?>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <?php if ($tipo_usuario === 3 && $id_perfil === $id_usuario_logueado) : ?>
-                <div class="row">
-                    <div class="col-xl-12">
-                        <div class="card mb-4">
-                            <div class="card-header">Deportistas Asociados</div>
-                            <div class="card-body">
-                                <form method="GET" action="profile.php?id=<?php echo $id_perfil; ?>">
-                                    <div class="mb-3">
-                                        <label class="small mb-1" for="selectDeportista">Seleccionar Deportista</label>
-                                        <select class="form-control" id="selectDeportista" name="id_deportista">
-                                            <option value="">Seleccione un deportista</option>
-                                            <?php foreach ($deportistas as $deportista) : ?>
-                                                <option value="<?php echo $deportista['ID_DEPORTISTA']; ?>">
-                                                    <?php echo htmlspecialchars($deportista['NOMBRE_DEPO'] . ' ' . $deportista['APELLIDO_DEPO']); ?>
-                                                </option>
-                                            <?php endforeach; ?>
-                                        </select>
-                                    </div>
-                                    <button class="btn btn-primary" type="submit">Ver perfil del deportista</button>
-                                </form>
-                                <?php if ($nombre_depo) : ?>
-                                    <hr />
-                                    <h5>Perfil del Deportista</h5>
-                                    <p><b>Nombre:</b> <?php echo htmlspecialchars($nombre_depo); ?></p>
-                                    <p><b>Apellido:</b> <?php echo htmlspecialchars($apellido_depo); ?></p>
-                                    <p><b>Fecha de Nacimiento:</b> <?php echo htmlspecialchars($fecha_nacimiento_depo); ?></p>
-                                    <p><b>Cédula:</b> <?php echo htmlspecialchars($cedula_depo); ?></p>
-                                    <p><b>Teléfono:</b> <?php echo htmlspecialchars($numero_celular_depo); ?></p>
-                                    <p><b>Género:</b> <?php echo htmlspecialchars($genero_depo); ?></p>
-                                <?php endif; ?>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="apellido">Apellido</label>
+                                <input type="text" class="form-control" id="apellido" name="apellido" value="<?php echo htmlspecialchars($apellido); ?>" required>
                             </div>
                         </div>
                     </div>
-                </div>
-            <?php endif; ?>
-        </div>
-    </main>
-    <?php include('./includes/footer.php'); ?>
-</div>
-</div>
-</body>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="telefono">Teléfono</label>
+                                <input type="text" class="form-control" id="telefono" name="telefono" value="<?php echo htmlspecialchars($telefono); ?>" required>
+                            </div>
+                        </div>
+                    </div>
+                    <?php if ($tipo_usuario === 2 || $tipo_usuario === 3): ?>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="correo">Correo Electrónico</label>
+                                    <input type="email" class="form-control" id="correo" name="email" value="<?php echo htmlspecialchars($correo); ?>" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="direccion">Dirección</label>
+                                    <input type="text" class="form-control" id="direccion" name="direccion" value="<?php echo htmlspecialchars($direccion); ?>" required>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endif; ?>
 
-</html>
+                    <?php if ($tipo_usuario === 2): ?>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="experiencia">Experiencia</label>
+                                    <input type="text" class="form-control" id="experiencia" name="experiencia" value="<?php echo htmlspecialchars($experiencia); ?>" required>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="password">Nueva Contraseña (opcional)</label>
+                                <input type="password" class="form-control" id="password" name="password">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-md-12 d-flex justify-content-between">
+                            <button type="submit" class="btn btn-primary">Actualizar</button>
+                            <a href="../index.php" class="btn btn-secondary">Volver a la Lista</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+
+<?php
+include_once('/xampp/htdocs/looneytunes/deportista/includes/footer.php'); // Incluye el pie de página
+?>
