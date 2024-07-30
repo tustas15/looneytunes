@@ -28,9 +28,14 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
 include './includes/header.php';
 ?>
 <main>
-    <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
+<header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
         <div class="container-xl px-4">
             <div class="page-header-content pt-4">
+                <div class="row align-items-center justify-content-between">
+                    <div class="col-auto mt-4">
+                        
+                    </div>
+                </div>
             </div>
         </div>
     </header>
@@ -68,71 +73,69 @@ include './includes/header.php';
                 // Obtener el ID del deportista que ha iniciado sesión
                 $id_usuario = $_SESSION['user_id'];
 
-// Consulta SQL para obtener los detalles del deportista
-$sql = "SELECT d.* FROM tab_detalles d
+                // Consulta SQL para obtener los detalles del deportista
+                $sql = "SELECT d.* FROM tab_detalles d
         INNER JOIN tab_deportistas dep ON d.ID_DEPORTISTA = dep.ID_DEPORTISTA
         WHERE dep.ID_USUARIO = :id_usuario
         ORDER BY d.FECHA_INGRESO DESC";
 
-$stmt = $conn->prepare($sql);
-$stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
-$stmt->execute();
+                $stmt = $conn->prepare($sql);
+                $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
+                $stmt->execute();
 
-// Verificar si se encontraron resultados
-if ($stmt->rowCount() > 0) {
-    echo '<div class="card mb-4">';
-    echo '<div class="card-body">';
-    echo '<div class="table-responsive">';
-    echo '<table class="table table-bordered" width="100%" cellspacing="0">';
-    echo '<thead><tr><th>Fecha de Ingreso</th><th>Número de Camisa</th><th>Altura</th><th>Peso</th><th>IMC</th></tr></thead>';
-    echo '<tbody>';
+                // Verificar si se encontraron resultados
+                if ($stmt->rowCount() > 0) {
+                    echo '<div class="card mb-4">';
+                    echo '<div class="card-body">';
+                    echo '<div class="table-responsive">';
+                    echo '<table class="table table-bordered" width="100%" cellspacing="0">';
+                    echo '<thead><tr><th>Fecha de Ingreso</th><th>Número de Camisa</th><th>Altura</th><th>Peso</th><th>IMC</th></tr></thead>';
+                    echo '<tbody>';
 
-    $imc_data = array();
-    
-    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        $altura = floatval($row['ALTURA']) / 100; // Convertir cm a m
-        $peso = floatval($row['PESO']);
-        $imc = $peso / ($altura * $altura);
-        $imc = round($imc, 2);
+                    $imc_data = array();
 
-        echo '<tr>';
-        echo '<td>' . htmlspecialchars($row['FECHA_INGRESO']) . '</td>';
-        echo '<td>' . htmlspecialchars($row['NUMERO_CAMISA']) . '</td>';
-        echo '<td>' . htmlspecialchars($row['ALTURA']) . '</td>';
-        echo '<td>' . htmlspecialchars($row['PESO']) . '</td>';
-        echo '<td>' . $imc . '</td>';
-        echo '</tr>';
+                    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                        $altura = floatval($row['ALTURA']) / 100; // Convertir cm a m
+                        $peso = floatval($row['PESO']);
+                        $imc = $peso / ($altura * $altura);
+                        $imc = round($imc, 2);
 
-        $imc_data[] = array(
-            'fecha' => $row['FECHA_INGRESO'],
-            'imc' => $imc
-        );
+                        echo '<tr>';
+                        echo '<td>' . htmlspecialchars($row['FECHA_INGRESO']) . '</td>';
+                        echo '<td>' . htmlspecialchars($row['NUMERO_CAMISA']) . '</td>';
+                        echo '<td>' . htmlspecialchars($row['ALTURA']) . '</td>';
+                        echo '<td>' . htmlspecialchars($row['PESO']) . '</td>';
+                        echo '<td>' . $imc . '</td>';
+                        echo '</tr>';
 
-    }
-    
-    echo '</tbody></table>';
-    echo '</div>';
-    echo '</div>';
-    echo '</div>';
+                        $imc_data[] = array(
+                            'fecha' => $row['FECHA_INGRESO'],
+                            'imc' => $imc
+                        );
+                    }
 
-    // Modal para la gráfica
-    echo '<div class="modal fade" id="imcModal" tabindex="-1" aria-labelledby="imcModalLabel" aria-hidden="true">';
-    echo '<div class="modal-dialog modal-lg">';
-    echo '<div class="modal-content">';
-    echo '<div class="modal-header">';
-    echo '<h5 class="modal-title" id="imcModalLabel">Gráfica de IMC</h5>';
-    echo '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>';
-    echo '</div>';
-    echo '<div class="modal-body">';
-    echo '<canvas id="imcChart"></canvas>';
-    echo '</div>';
-    echo '</div>';
-    echo '</div>';
-    echo '</div>';
+                    echo '</tbody></table>';
+                    echo '</div>';
+                    echo '</div>';
+                    echo '</div>';
 
-} else {
-    echo '<div class="alert alert-info">No se encontraron detalles para este deportista.</div>';
-}
+                    // Modal para la gráfica
+                    echo '<div class="modal fade" id="imcModal" tabindex="-1" aria-labelledby="imcModalLabel" aria-hidden="true">';
+                    echo '<div class="modal-dialog modal-lg">';
+                    echo '<div class="modal-content">';
+                    echo '<div class="modal-header">';
+                    echo '<h5 class="modal-title" id="imcModalLabel">Gráfica de IMC</h5>';
+                    echo '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>';
+                    echo '</div>';
+                    echo '<div class="modal-body">';
+                    echo '<canvas id="imcChart"></canvas>';
+                    echo '</div>';
+                    echo '</div>';
+                    echo '</div>';
+                    echo '</div>';
+                } else {
+                    echo '<div class="alert alert-info">No se encontraron detalles para este deportista.</div>';
+                }
                 ?>
             </div>
         </div>
@@ -142,39 +145,3 @@ if ($stmt->rowCount() > 0) {
 <?php
 include './includes/footer.php';
 ?>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    var ctx = document.getElementById('imcChart').getContext('2d');
-    var imcData = <?php echo json_encode($imc_data); ?>;
-    
-    var labels = imcData.map(function(item) { return item.fecha; });
-    var data = imcData.map(function(item) { return item.imc; });
-    
-    var chart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'IMC',
-                data: data,
-                borderColor: 'rgb(75, 192, 192)',
-                tension: 0.1
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                y: {
-                    beginAtZero: false
-                }
-            }
-        }
-    });
-});
-</script>
-

@@ -30,7 +30,7 @@
         <a class="navbar-brand pe-3 ps-4 ps-lg-2" href="/looneytunes/index.php">Dashboard</a>
         <!-- Navbar Search Input-->
         <!-- * * Note: * * Visible only on and above the lg breakpoint-->
-         <!--
+        <!--
         <form class="form-inline me-auto d-none d-lg-block me-3">
             <div class="input-group input-group-joined input-group-solid">
                 <input class="form-control pe-0" type="search" placeholder="Search" aria-label="Search" />
@@ -232,18 +232,18 @@
                         <div class="sidenav-menu-heading">Interfaz</div>
                         <!-- Sidenav Accordion (Pages)-->
                         <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
-    <div class="nav-link-icon"><i class="fas fa-fw fa-chart-area"></i></div>
-    Gráfica
-    <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-</a>
-<div class="collapse" id="collapsePages" aria-labelledby="headingTwo" data-bs-parent="#accordionSidenav">
-    <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPagesMenu">
-        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#imcModal">
-            IMC
-        </a>
-    </nav>
-</div>
+                            <div class="nav-link-icon"><i class="fas fa-fw fa-chart-area"></i></div>
+                            Gráfica
+                            <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                        </a>
+                        <div class="collapse" id="collapsePages" aria-labelledby="headingTwo" data-bs-parent="#accordionSidenav">
+                            <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPagesMenu">
+                                <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#imcModal">
+                                    IMC
+                                </a>
+                            </nav>
                         </div>
+                    </div>
                 </div>
                 <!-- Modal para Subir Backup -->
                 <div class="modal fade" id="uploadBackupModal" tabindex="-1" aria-labelledby="uploadBackupModalLabel" aria-hidden="true">
