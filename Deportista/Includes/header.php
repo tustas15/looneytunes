@@ -186,7 +186,7 @@
                         </div>
                     </h6>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="/looneytunes/Public/profile.php">
+                    <a class="dropdown-item" href="/looneytunes/Admin/configuracion/perfil/perfil_deportista.php">
                         <div class="dropdown-item-icon"><i data-feather="settings"></i></div>
                         Cuenta
                     </a>

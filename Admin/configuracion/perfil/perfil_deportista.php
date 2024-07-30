@@ -10,7 +10,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 // Obtener el ID_DEPORTISTA desde la URL
-if (!isset($_GET['ID_DEPORTISTA'])) {
+if (!isset($_GET['ID_DEPORTISTA']) || empty($_GET['ID_DEPORTISTA'])) {
     echo "ID_DEPORTISTA no definido.";
     exit();
 }
@@ -42,10 +42,6 @@ try {
     // Obtener las categorías disponibles
     $categoriasStmt = $conn->query("SELECT ID_CATEGORIA, CATEGORIA FROM tab_categorias");
     $categorias = $categoriasStmt->fetchAll(PDO::FETCH_ASSOC);
-
-    $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
-    $tipo_usuario = $_SESSION['tipo_usuario'];
-    $usuario = isset($_SESSION['usuario']) ? $_SESSION['usuario'] : 'Usuario';
 
     include '/xampp/htdocs/looneytunes/admin/includespro/header.php';
 
@@ -158,7 +154,7 @@ try {
                                 <label for="id_categoria">Categoría</label>
                                 <select id="id_categoria" name="id_categoria" class="form-control" required>
                                     <?php foreach ($categorias as $categoria): ?>
-                                        <option value="<?php echo $categoria['ID_CATEGORIA']; ?>" <?php echo $deportista['ID_CATEGORIA'] === $categoria['ID_CATEGORIA'] ? 'selected' : ''; ?>>
+                                        <option value="<?php echo htmlspecialchars($categoria['ID_CATEGORIA']); ?>" <?php echo $deportista['ID_CATEGORIA'] == $categoria['ID_CATEGORIA'] ? 'selected' : ''; ?>>
                                             <?php echo htmlspecialchars($categoria['CATEGORIA']); ?>
                                         </option>
                                     <?php endforeach; ?>
@@ -167,48 +163,12 @@ try {
                         </div>
                     </div>
 
-                    <!-- Información del Representante -->
-                    <hr>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="nombre_rep">Nombre del Representante</label>
-                                <input type="text" class="form-control" id="nombre_rep" value="<?php echo htmlspecialchars($deportista['NOMBRE_REPRE'] ?? ''); ?>" readonly>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="apellido_rep">Apellido del Representante</label>
-                                <input type="text" class="form-control" id="apellido_rep" value="<?php echo htmlspecialchars($deportista['APELLIDO_REPRE'] ?? ''); ?>" readonly>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="cedula_rep">Cédula del Representante</label>
-                                <input type="text" class="form-control" id="cedula_rep" value="<?php echo htmlspecialchars($deportista['CEDULA_REPRE'] ?? ''); ?>" readonly>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="numero_celular_rep">Número de Celular del Representante</label>
-                                <input type="text" class="form-control" id="numero_celular_rep" value="<?php echo htmlspecialchars($deportista['CELULAR_REPRE'] ?? ''); ?>" readonly>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row mt-4">
-                        <div class="col-md-12 d-flex justify-content-between">
-                            <button type="submit" class="btn btn-primary">Actualizar</button>
-                            <a href="/looneytunes/admin/configuracion/busqueda/indexdeportista.php" class="btn btn-primary">Volver a la Lista</a>
-                        </div>
-                    </div>
+                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
                 </form>
             </div>
         </div>
     </div>
 </main>
-
 <?php
     include_once('/xampp/htdocs/looneytunes/admin/includespro/footer.php');
 } catch (PDOException $e) {

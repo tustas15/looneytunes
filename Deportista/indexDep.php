@@ -28,12 +28,11 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
 include './includes/header.php';
 ?>
 <main>
-<header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
+    <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
         <div class="container-xl px-4">
             <div class="page-header-content pt-4">
                 <div class="row align-items-center justify-content-between">
                     <div class="col-auto mt-4">
-                        
                     </div>
                 </div>
             </div>
@@ -145,3 +144,39 @@ include './includes/header.php';
 <?php
 include './includes/footer.php';
 ?>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var ctx = document.getElementById('imcChart').getContext('2d');
+        var imcData = <?php echo json_encode($imc_data); ?>;
+
+        var labels = imcData.map(function(item) {
+            return item.fecha;
+        });
+        var data = imcData.map(function(item) {
+            return item.imc;
+        });
+
+        var chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'IMC',
+                    data: data,
+                    borderColor: 'rgb(75, 192, 192)',
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: false
+                    }
+                }
+            }
+        });
+    });
+</script>
