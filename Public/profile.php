@@ -1,7 +1,6 @@
 <?php
 session_start();
 require_once('../Admin/configuracion/conexion.php');
-include '/xampp/htdocs/looneytunes/deportista/includes/header.php'; // Incluye el encabezado
 
 // Verificar si el usuario ha iniciado sesión
 if (!isset($_SESSION['user_id'])) {
@@ -20,7 +19,26 @@ $id_perfil = isset($_GET['id']) ? intval($_GET['id']) : $id_usuario_logueado;
 $nombre = $apellido = $telefono = $experiencia = $correo = $direccion = $cedula = '';
 $deportistas = [];
 
-// Verificar permisos y obtener datos
+// Determinar el archivo de encabezado según el tipo de usuario
+switch ($tipo_usuario) {
+    case 1:
+        include '/xampp/htdocs/looneytunes/admin/includespro/header.php';
+        break;
+    case 2:
+        include '/xampp/htdocs/looneytunes/entrenador/includes/header.php';
+        break;
+    case 3:
+        include '/xampp/htdocs/looneytunes/representante/includes/header.php';
+        break;
+    case 4:
+        include '/xampp/htdocs/looneytunes/deportista/includes/header.php';
+        break;
+    default:
+        echo "Tipo de usuario desconocido.";
+        exit();
+}
+
+// Obtener datos del usuario
 try {
     // Conexión a la base de datos
     $conn = new PDO("mysql:host=$server;port=$port;dbname=$db", $user, $pass);
@@ -29,10 +47,8 @@ try {
     // Verificar permisos de acceso
     $puede_ver_perfil = false;
     if ($tipo_usuario === 1) {
-        // El administrador puede ver todos los perfiles
         $puede_ver_perfil = true;
     } elseif ($tipo_usuario === 3) {
-        // El representante puede ver su propio perfil y los perfiles de los deportistas que tiene asignados
         if ($id_perfil === $id_usuario_logueado) {
             $puede_ver_perfil = true;
         } else {
@@ -45,7 +61,6 @@ try {
             }
         }
     } else {
-        // Los entrenadores solo pueden ver su propio perfil
         if ($id_perfil === $id_usuario_logueado) {
             $puede_ver_perfil = true;
         }
@@ -130,8 +145,8 @@ try {
 
         // Actualizar la contraseña
         if (!empty($nuevo_password)) {
-            $hashed_password = password_hash($nuevo_password, PASSWORD_BCRYPT);
-            $update_password_stmt = $conn->prepare("UPDATE tab_usuarios SET PASSWORD_USUARIO = :password WHERE ID_USUARIO = :id_usuario");
+            $hashed_password = password_hash($nuevo_password, PASSWORD_DEFAULT);
+            $update_password_stmt = $conn->prepare("UPDATE tab_usuarios SET CLAVE_USUARIO = :password WHERE ID_USUARIO = :id_usuario");
             $update_password_stmt->bindParam(':password', $hashed_password, PDO::PARAM_STR);
             $update_password_stmt->bindParam(':id_usuario', $id_usuario_logueado, PDO::PARAM_INT);
             $update_password_stmt->execute();
@@ -230,5 +245,22 @@ $conn = null;
 </main>
 
 <?php
-include_once('/xampp/htdocs/looneytunes/deportista/includes/footer.php'); // Incluye el pie de página
+// Incluir el pie de página según el tipo de usuario
+switch ($tipo_usuario) {
+    case 1:
+        include '/xampp/htdocs/looneytunes/admin/includespro/footer.php';
+        break;
+    case 2:
+        include '/xampp/htdocs/looneytunes/entrenador/includes/footer.php';
+        break;
+    case 3:
+        include '/xampp/htdocs/looneytunes/representante/includes/footer.php';
+        break;
+    case 4:
+        include '/xampp/htdocs/looneytunes/deportista/includes/footer.php';
+        break;
+    default:
+        echo "Tipo de usuario desconocido.";
+        exit();
+}
 ?>
