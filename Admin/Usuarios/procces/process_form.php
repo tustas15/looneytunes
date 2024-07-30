@@ -47,21 +47,24 @@ try {
     // Ejecutar la consulta
     $stmt->execute();
 
-    // Insertar en tab_entre_categoria para asociar al entrenador con la categoría
-    $stmt = $conn->prepare('INSERT INTO tab_entre_categoria (id_usuario, id_categoria) VALUES (:id_usuario, :id_categoria)');
-    $stmt->bindParam(':id_usuario', $id_usuario);
+    // Obtener el ID del entrenador recién insertado
+    $id_entrenador = $conn->lastInsertId();
+
+    // Insertar en tab_entrenador_categoria para asociar al entrenador con la categoría
+    $stmt = $conn->prepare('INSERT INTO tab_entrenador_categoria (ID_ENTRENADOR, id_categoria) VALUES (:id_entrenador, :id_categoria)');
+    $stmt->bindParam(':id_entrenador', $id_entrenador);
     $stmt->bindParam(':id_categoria', $_POST['categoria']);
     $stmt->execute();
 
     // Registrar el evento
-    $id_usuario = $_SESSION['id_usuario'];
+    $id_usuario_log = $_SESSION['id_usuario'];
     $evento = "Creación de cuenta de entrenador";
     $ip = $_SERVER['REMOTE_ADDR'];
     $tipo_evento = "Registro";
 
     $logQuery = "INSERT INTO tab_logs (ID_USUARIO, EVENTO, HORA_LOG, DIA_LOG, IP, TIPO_EVENTO) VALUES (?, ?, CURRENT_TIME(), CURRENT_DATE(), ?, ?)";
     $logStmt = $conn->prepare($logQuery);
-    $logStmt->execute([$id_usuario, $evento, $ip, $tipo_evento]);
+    $logStmt->execute([$id_usuario_log, $evento, $ip, $tipo_evento]);
 
     // Confirmar la transacción
     $conn->commit();
