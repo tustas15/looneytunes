@@ -2,6 +2,8 @@
 session_start();
 require '../Admin/configuracion/conexion.php';
 
+date_default_timezone_set('America/Guayaquil'); // Ajusta a tu zona horaria
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $usuario = filter_input(INPUT_POST, 'usuario', FILTER_SANITIZE_STRING);
     $password = filter_input(INPUT_POST, 'pass', FILTER_SANITIZE_STRING);
@@ -11,17 +13,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $ip = $_SERVER['REMOTE_ADDR'];
 
     try {
-        $stmt = $conn->prepare("SELECT u.ID_USUARIO, u.USUARIO, u.PASS, t.ID_TIPO, t.TIPO 
-                                FROM tab_usuarios u 
-                                INNER JOIN tab_usu_tipo ut ON u.ID_USUARIO = ut.ID_USUARIO
-                                INNER JOIN tab_tipo_usuario t ON ut.ID_TIPO = t.ID_TIPO
-                                WHERE u.USUARIO = :usuario;");
+        // Verificar si el usuario está bloqueado
+        $stmt = $conn->prepare("SELECT ID_USUARIO, USUARIO, PASS, intentos_fallidos, bloqueado_hasta FROM tab_usuarios WHERE USUARIO = :usuario");
         $stmt->bindParam(':usuario', $usuario);
         $stmt->execute();
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($user) {
+            $current_time = new DateTime();
+            if ($user['bloqueado_hasta'] && new DateTime($user['bloqueado_hasta']) > $current_time) {
+                echo "El usuario está bloqueado hasta " . $user['bloqueado_hasta'];
+                exit;
+            }
+
             if (password_verify($password, $user['PASS'])) {
+                // Contraseña correcta, resetear intentos fallidos y desbloquear usuario
+                $stmt = $conn->prepare("UPDATE tab_usuarios SET intentos_fallidos = 0, bloqueado_hasta = NULL WHERE ID_USUARIO = :id");
+                $stmt->bindParam(':id', $user['ID_USUARIO']);
+                $stmt->execute();
+
                 // Registra la actividad de inicio de sesión en la base de datos
                 $evento = "Se ha iniciado una nueva sesión";
                 $query = "INSERT INTO tab_logs (ID_USUARIO, EVENTO, HORA_LOG, DIA_LOG, IP) VALUES (?, ?, CURRENT_TIME(), CURRENT_DATE(), ?)";
@@ -31,7 +41,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 // Establece las variables de sesión
                 $_SESSION['user_id'] = $user['ID_USUARIO'];
                 $_SESSION['nombre'] = $user['USUARIO'];
-                $_SESSION['tipo_usuario'] = $user['ID_TIPO'];
+
+                // Obtener el tipo de usuario
+                $stmt = $conn->prepare("SELECT t.ID_TIPO FROM tab_usu_tipo ut INNER JOIN tab_tipo_usuario t ON ut.ID_TIPO = t.ID_TIPO WHERE ut.ID_USUARIO = :id");
+                $stmt->bindParam(':id', $user['ID_USUARIO']);
+                $stmt->execute();
+                $tipo_usuario = $stmt->fetchColumn();
+                $_SESSION['tipo_usuario'] = $tipo_usuario;
 
                 // Manejo de la cookie "Recordar contraseña"
                 if ($remember) {
@@ -48,7 +64,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 }
 
                 // Redirige al usuario según su tipo
-                switch ($user['ID_TIPO']) {
+                switch ($tipo_usuario) {
                     case 1: // Administrador
                         header("Location: ../admin/indexAd.php?id=" . $user['ID_USUARIO']);
                         break;
@@ -66,7 +82,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         exit();
                 }
             } else {
-                echo "Contraseña incorrecta.";
+                // Contraseña incorrecta, incrementar intentos fallidos
+                $intentos_fallidos = $user['intentos_fallidos'] + 1;
+                if ($intentos_fallidos >= 3) {
+                    // Bloquear usuario por 15 minutos
+                    $bloqueado_hasta = $current_time->modify('+15 minutes')->format('Y-m-d H:i:s');
+                    $stmt = $conn->prepare("UPDATE tab_usuarios SET intentos_fallidos = :intentos, bloqueado_hasta = :bloqueado WHERE ID_USUARIO = :id");
+                    $stmt->bindParam(':intentos', $intentos_fallidos);
+                    $stmt->bindParam(':bloqueado', $bloqueado_hasta);
+                    $stmt->bindParam(':id', $user['ID_USUARIO']);
+                    $stmt->execute();
+                    echo "Usuario bloqueado por 15 minutos debido a múltiples intentos fallidos.";
+                } else {
+                    // Actualizar intentos fallidos
+                    $stmt = $conn->prepare("UPDATE tab_usuarios SET intentos_fallidos = :intentos WHERE ID_USUARIO = :id");
+                    $stmt->bindParam(':intentos', $intentos_fallidos);
+                    $stmt->bindParam(':id', $user['ID_USUARIO']);
+                    $stmt->execute();
+                    echo "Contraseña incorrecta. Intentos fallidos: $intentos_fallidos.";
+                }
             }
         } else {
             echo "Usuario no encontrado.";
@@ -82,7 +116,6 @@ $storedPass = isset($_COOKIE['pass']) ? $_COOKIE['pass'] : '';
 ?>
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -103,7 +136,6 @@ $storedPass = isset($_COOKIE['pass']) ? $_COOKIE['pass'] : '';
         }
     </style>
 </head>
-
 <body class="bg-primary">
     <div id="layoutAuthentication">
         <div id="layoutAuthentication_content">
