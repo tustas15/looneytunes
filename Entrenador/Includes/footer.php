@@ -70,6 +70,183 @@ $(document).ready(function() {
 <script src="/looneytunes/Assets/js/datatables/datatables-simple-demo.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/litepicker/dist/bundle.js" crossorigin="anonymous"></script>
 <script src="/looneytunes/Assets/js/litepicker.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var ingresarModal = new bootstrap.Modal(document.getElementById('ingresarModal'));
+    
+    function handleIngresarClick(e) {
+        e.preventDefault();
+        var deportistaId = this.getAttribute('data-id');
+        document.getElementById('deportistaId').value = deportistaId;
+        
+        // Establecer la fecha actual en el campo de fecha de ingreso
+        var fechaActual = new Date().toISOString().split('T')[0];
+        document.getElementById('fechaIngreso').value = fechaActual;
+        
+        ingresarModal.show();
+    }
+
+    document.querySelectorAll('.btn-ingresar').forEach(function(button) {
+        button.addEventListener('click', handleIngresarClick);
+    });
+
+    document.querySelector('.btn-close').addEventListener('click', function() {
+        ingresarModal.hide();
+    });
+
+    document.getElementById('ingresarModal').addEventListener('hidden.bs.modal', function () {
+        document.getElementById('detallesForm').reset();
+        document.body.classList.remove('modal-open');
+        document.querySelector('.modal-backdrop')?.remove();
+    });
+
+    document.getElementById('guardarDetalles').addEventListener('click', function() {
+        var form = document.getElementById('detallesForm');
+        var formData = new FormData(form);
+
+        fetch('guardar_detalles.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                alert('Detalles guardados con éxito');
+                ingresarModal.hide();
+            } else {
+                alert('Error al guardar los detalles: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Ocurrió un error al guardar los detalles');
+        })
+        .finally(() => {
+            ingresarModal.hide();
+            document.body.classList.remove('modal-open');
+            document.querySelector('.modal-backdrop')?.remove();
+        });
+    });
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var ingresarModal = new bootstrap.Modal(document.getElementById('ingresarModal'));
+    
+    document.querySelectorAll('.btn-ingresar').forEach(function(button) {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            var deportistaId = this.getAttribute('data-id');
+            document.getElementById('deportistaId').value = deportistaId;
+            ingresarModal.show();
+        });
+    });
+
+    document.getElementById('guardarDetalles').addEventListener('click', function() {
+        var form = document.getElementById('detallesForm');
+        var formData = new FormData(form);
+
+        fetch('guardar_detalles.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Detalles guardados con éxito');
+                ingresarModal.hide();
+            } else {
+                alert('Error al guardar los detalles: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Ocurrió un error al guardar los detalles');
+        });
+    });
+});
+
+
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var ingresarModal = new bootstrap.Modal(document.getElementById('ingresarModal'));
+    var informesModal = new bootstrap.Modal(document.getElementById('informesModal'));
+    
+    document.querySelectorAll('.btn-ingresar').forEach(function(button) {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            var deportistaId = this.getAttribute('data-id');
+            document.getElementById('deportistaId').value = deportistaId;
+            ingresarModal.show();
+        });
+    });
+
+    document.getElementById('guardarDetalles').addEventListener('click', function() {
+        var form = document.getElementById('detallesForm');
+        var formData = new FormData(form);
+
+        fetch('guardar_detalles.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Detalles guardados con éxito');
+                ingresarModal.hide();
+            } else {
+                alert('Error al guardar los detalles: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Ocurrió un error al guardar los detalles');
+        });
+    });
+
+    document.querySelectorAll('.btn-informes').forEach(function(button) {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            var deportistaId = this.getAttribute('data-id');
+            var representanteId = this.getAttribute('data-representante');
+            document.getElementById('informeDeportistaId').value = deportistaId;
+            document.getElementById('informeRepresentanteId').value = representanteId;
+            informesModal.show();
+        });
+    });
+
+    document.getElementById('enviarInforme').addEventListener('click', function() {
+        var form = document.getElementById('informeForm');
+        var formData = new FormData(form);
+
+        fetch('enviar_informe.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Informe enviado con éxito');
+                informesModal.hide();
+            } else {
+                alert('Error al enviar el informe: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Ocurrió un error al enviar el informe');
+        });
+    });
+});
+</script>
+
 </body>
 
 </html>
