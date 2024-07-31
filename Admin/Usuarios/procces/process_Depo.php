@@ -47,9 +47,11 @@ try {
     // Aquí, el id_usuario de tab_deportistas es el mismo que id_usuario de tab_usuarios
     // No necesitamos obtener el último ID insertado, ya que es el mismo id_usuario
 
-    // Insertar en tab_deportistas_representantes
+    $id_deportista = $conn->lastInsertId(); // Obtener el id_deportista generado
+
+    // Insertar en tab_representantes_deportistas
     $stmt = $conn->prepare('INSERT INTO tab_representantes_deportistas (id_deportista, id_representante) VALUES (:id_deportista, :id_representante)');
-    $stmt->bindParam(':id_deportista', $id_usuario);
+    $stmt->bindParam(':id_deportista', $id_deportista);
     $stmt->bindParam(':id_representante', $_POST['representante']);
     $stmt->execute();
 

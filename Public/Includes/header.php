@@ -88,3 +88,4 @@ $usuario = isset($_SESSION['usuario']) ? htmlspecialchars($_SESSION['usuario'], 
                 </div>
             </nav>
         </div>
+        <div id="layoutSidenav_content">

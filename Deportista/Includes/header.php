@@ -2,9 +2,8 @@
 $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
 $tipo_usuario = $_SESSION['tipo_usuario'];
 ?>
-
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 
 <head>
     <meta charset="utf-8" />
@@ -48,7 +47,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
             <!-- Documentation Dropdown-->
             <li class="nav-item dropdown no-caret d-none d-md-block me-3">
                 <a class="nav-link dropdown-toggle" id="navbarDropdownDocs" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <div class="fw-500">Base de datos</div>
+                    <div class="fw-500">Documentation</div>
                     <i class="fas fa-chevron-right dropdown-arrow"></i>
                 </a>
                 <div class="dropdown-menu dropdown-menu-end py-0 me-sm-n15 me-lg-0 o-hidden animated--fade-in-up" aria-labelledby="navbarDropdownDocs">
@@ -60,11 +59,20 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                         </div>
                     </a>
                     <div class="dropdown-divider m-0"></div>
-                    <a class="dropdown-item py-3" href="javascript:void(0);" data-toggle="modal" data-target="#uploadBackupModal">
-                        <div class="icon-stack bg-primary-soft text-primary me-4"><i class="fas fa-upload"></i></div>
+                    <a class="dropdown-item py-3" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#uploadBackupModal">
+                        <div class="icon-stack bg-primary-soft text-primary me-4"><i data-feather="upload"></i></div>
                         <div>
                             <div class="small text-gray-500">Subir Respaldo</div>
                             Haz click para subir el respaldo del sistema
+                        </div>
+                    </a>
+
+                    <div class="dropdown-divider m-0"></div>
+                    <a class="dropdown-item py-3" href="https://docs.startbootstrap.com/sb-admin-pro/changelog" target="_blank">
+                        <div class="icon-stack bg-primary-soft text-primary me-4"><i data-feather="file-text"></i></div>
+                        <div>
+                            <div class="small text-gray-500">Changelog</div>
+                            Updates and changes
                         </div>
                     </a>
                 </div>
@@ -228,70 +236,42 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                         <div class="sidenav-menu-heading">Interfaz</div>
                         <!-- Sidenav Accordion (Pages)-->
                         <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
-                            <div class="nav-link-icon"><i class="fas fa-fw fa-cog"></i></div>
-                            Componentes
+                            <div class="nav-link-icon"><i class="fas fa-fw fa-chart-area"></i></div>
+                            Gráfica
                             <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                         </a>
-                        <div class="collapse" id="collapsePages" data-bs-parent="#accordionSidenav">
+                        <div class="collapse" id="collapsePages" aria-labelledby="headingTwo" data-bs-parent="#accordionSidenav">
                             <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPagesMenu">
-                                <!-- Nested Sidenav Accordion (Pages -> Account)-->
-                                <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#pagesCollapseAccount" aria-expanded="false" aria-controls="pagesCollapseAccount">
-                                    Perfiles
-                                    <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                                </a>
-                                <div class="collapse" id="pagesCollapseAccount" data-bs-parent="#accordionSidenavPagesMenu">
-                                    <nav class="sidenav-menu-nested nav">
-                                        <a class="nav-link" href="/looneytunes/admin/configuracion/busqueda/indexadministrador.php">Administradores</a>
-                                        <a class="nav-link" href="/looneytunes/admin/configuracion/busqueda/indexentrenador.php">Entrenadores</a>
-                                        <a class="nav-link" href="/looneytunes/admin/configuracion/busqueda/indexrepresentante.php">Representantes</a>
-                                        <a class="nav-link" href="/looneytunes/admin/configuracion/busqueda/indexdeportista.php">Deportistas</a>
-                                    </nav>
-                                </div>
-                                <a class="nav-link" href="/looneytunes/admin/configuracion/pagos/pagos.php">
-                                    Pago
-                                </a>
-                                <a class="nav-link" href="/looneytunes/admin/configuracion/reportesp/reportes_pagos.php">
-                                    Reportes de pagos
+                                <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#imcModal">
+                                    IMC
                                 </a>
                             </nav>
                         </div>
-                        <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseFlows" aria-expanded="false" aria-controls="collapseFlows">
-                            <div class="nav-link-icon"><i class="fas fa-fw fa-wrench"></i></div>
-                            Utilidades
-                            <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                        </a>
-                        <div class="collapse" id="collapseFlows" data-bs-parent="#accordionSidenav">
-                            <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavFlowsMenu">
-                                <!-- Nested Sidenav Accordion (Flows -> Crear Usuarios)-->
-                                <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#flowsCollapseCrearUsuarios" aria-expanded="false" aria-controls="flowsCollapseCrearUsuarios">
-                                    Crear Usuarios
-                                    <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                                </a>
-                                <div class="collapse" id="flowsCollapseCrearUsuarios" data-bs-parent="#accordionSidenavFlowsMenu">
-                                    <nav class="sidenav-menu-nested nav">
-                                        <a class="nav-link" href="/looneytunes/admin/usuarios/crear_usuarios/cradmin.php">Administrador</a>
-                                        <a class="nav-link" href="/looneytunes/admin/usuarios/crear_usuarios/crentrenador.php">Entrenador</a>
-                                        <a class="nav-link" href="/looneytunes/admin/usuarios/crear_usuarios/crrepresentante.php">Representante</a>
-                                        <a class="nav-link" href="/looneytunes/admin/usuarios/crear_usuarios/crdeportista.php">Deportista</a>
-                                    </nav>
-                                </div>
-                                <!-- Añadido Categorías-->
-                                <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#flowsCollapseCategorias" aria-expanded="false" aria-controls="flowsCollapseCategorias">
-                                    Categorías
-                                    <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                                </a>
-                                <div class="collapse" id="flowsCollapseCategorias" data-bs-parent="#accordionSidenavFlowsMenu">
-                                    <nav class="sidenav-menu-nested nav">
-                                        <a class="nav-link" href="/looneytunes/admin/categorias/categorias.php">Crear/Eliminar Categorías</a>
-                                        <a class="nav-link" href="/looneytunes/admin/categorias/revisar_categorias.php">Lista Categorías</a>
-                                    </nav>
-                                </div>
-                            </nav>
-                        </div>
-
                     </div>
                 </div>
-
+                <!-- Modal para Subir Backup -->
+                <div class="modal fade" id="uploadBackupModal" tabindex="-1" aria-labelledby="uploadBackupModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="uploadBackupModalLabel">Subir Respaldo</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <form id="uploadBackupForm" action="/looneytunes/Uploads/uploadBackup.php" method="POST" enctype="multipart/form-data">
+                                <div class="modal-body">
+                                    <div class="mb-3">
+                                        <label for="backupFile" class="form-label">Selecciona el archivo de respaldo</label>
+                                        <input type="file" class="form-control" id="backupFile" name="backupFile" required>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                    <button type="submit" class="btn btn-primary">Subir</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
                 <!-- Sidenav Footer -->
                 <div class="sidenav-footer">
                     <div class="sidenav-footer-content">
