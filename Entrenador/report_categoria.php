@@ -16,8 +16,6 @@ if ($conn === null) {
     die("Error de conexión a la base de datos.");
 }
 
-$nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
-$tipo_usuario = $_SESSION['tipo_usuario'];
 // Comprobamos si el usuario está logueado
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../Public/login.php");
@@ -79,6 +77,7 @@ include './includes/header.php';
                                         <th>Representante</th>
                                         <th>Datos</th>
                                         <th>Ingresar</th>
+                                        <th>Informes</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -90,7 +89,10 @@ include './includes/header.php';
                                                 <a href="detalle_deportista.php?id=<?= $jugador['ID_DEPORTISTA'] ?>" class="btn btn-primary">Datos</a>
                                             </td>
                                             <td>
-                                                <a href="ingresar_detalle.php?id=<?= $jugador['ID_DEPORTISTA'] ?>" class="btn btn-success">Ingresar</a>
+                                                <a href="#" class="btn btn-success btn-ingresar" data-id="<?= $jugador['ID_DEPORTISTA'] ?>">Ingresar</a>
+                                            </td>
+                                            <td>
+                                                <a href="#" class="btn btn-info btn-informes" data-id="<?= $jugador['ID_DEPORTISTA'] ?>" data-representante="<?= $jugador['ID_REPRESENTANTE'] ?>">Informes</a>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>
@@ -104,7 +106,71 @@ include './includes/header.php';
             </div>
         </div>
     </div>
+
+    <!-- Modal para ingresar detalles -->
+    <div class="modal fade" id="ingresarModal" tabindex="-1" aria-labelledby="ingresarModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ingresarModalLabel">Ingresar Detalles</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="detallesForm">
+                        <input type="hidden" id="deportistaId" name="deportistaId">
+                        <div class="mb-3">
+                            <label for="numeroCamisa" class="form-label">Número de Camisa</label>
+                            <input type="text" class="form-control" id="numeroCamisa" name="numeroCamisa" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="altura" class="form-label">Altura</label>
+                            <input type="text" class="form-control" id="altura" name="altura" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="peso" class="form-label">Peso</label>
+                            <input type="text" class="form-control" id="peso" name="peso" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="fechaIngreso" class="form-label">Fecha de Ingreso</label>
+                            <input type="date" class="form-control" id="fechaIngreso" name="fechaIngreso" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" id="guardarDetalles">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para ingresar informes -->
+    <div class="modal fade" id="informesModal" tabindex="-1" aria-labelledby="informesModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="informesModalLabel">Ingresar Informe</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="informeForm">
+                        <input type="hidden" id="informeDeportistaId" name="deportistaId">
+                        <input type="hidden" id="informeRepresentanteId" name="representanteId">
+                        <div class="mb-3">
+                            <label for="informe" class="form-label">Informe</label>
+                            <textarea class="form-control" id="informe" name="informe" rows="4" required></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" id="enviarInforme">Enviar Informe</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </main>
+
 
 
 <?php
