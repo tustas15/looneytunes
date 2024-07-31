@@ -6,7 +6,6 @@ require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
 $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
 include '../../Includespro/header.php';
 ?>
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -137,8 +136,10 @@ include '../../Includespro/header.php';
                         <input type="number" class="form-control" id="anio_transferencia" value="<?= date('Y'); ?>" required>
                     </div>
                 </div>
-
                 <button type="submit" class="btn btn-primary">Registrar Pago</button>
+                <?php include "historial_pagos.php"?>
+
+                
             </form>
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -257,31 +258,48 @@ include '../../Includespro/header.php';
                 }
             });
             $(document).ready(function() {
-
-
-
                 // Manejar el envío del formulario
-                $('#formulario-pago').submit(function(event) {
-                    event.preventDefault();
-                    var formData = new FormData(this);
+$('#formulario-pago').submit(function(event) {
+    event.preventDefault();
+    var formData = new FormData(this);
 
-                    // Agregar los campos de transferencia si es necesario
-                    if ($('#tipo_pago').val() === 'transferencia') {
-                        formData.append('banco_destino', $('#banco_destino').val());
-                        formData.append('entidad_financiera', $('#entidad_financiera').val());
-                        formData.append('comprobante', $('#comprobante')[0].files[0]);
-                    }
+    // Agregar los campos adicionales según el tipo de pago
+    if ($('#tipo_pago').val() === 'efectivo') {
+        formData.append('fecha_pago', $('#fecha_pago_efectivo').val());
+        formData.append('motivo', $('#motivo_efectivo').val());
+        formData.append('monto', $('#monto_efectivo').val());
+        formData.append('mes', $('#mes_efectivo').val());
+        formData.append('anio', $('#anio_efectivo').val());
+    } else if ($('#tipo_pago').val() === 'transferencia') {
+        formData.append('banco_destino', $('#banco_destino').val());
+        formData.append('entidad_financiera', $('#entidad_financiera').val());
+        formData.append('fecha_pago', $('#fecha_pago_transferencia').val());
+        formData.append('motivo', $('#motivo_transferencia').val());
+        formData.append('monto', $('#monto_transferencia').val());
+        formData.append('mes', $('#mes_transferencia').val());
+        formData.append('anio', $('#anio_transferencia').val());
+    }
 
-                    // Aquí puedes agregar la lógica para procesar el pago
-                    // Por ejemplo, enviar formData a través de AJAX a un script PHP que maneje el registro del pago
-                    console.log('Formulario enviado');
-                });
-            });
-            // Manejar el envío del formulario
-            $('#formulario-pago').submit(function(event) {
-                event.preventDefault();
-                // Aquí puedes agregar la lógica para procesar el pago
-                console.log('Formulario enviado');
+    $.ajax({
+        url: 'procesar_pagos.php',
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            if (response.success) {
+                alert('Pago registrado correctamente');
+                // Opcional: limpiar el formulario o redirigir a otra página
+                $('#formulario-pago')[0].reset();
+            } else {
+                alert('Error al registrar el pago: ' + response.message);
+            }
+        },
+        error: function() {
+            alert('Error al procesar la solicitud');
+        }
+    });
+});
             });
         });
     </script>
