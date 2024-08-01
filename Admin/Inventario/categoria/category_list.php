@@ -16,7 +16,7 @@ $usuario = isset($_SESSION['usuario']) ? $_SESSION['usuario'] : 'Usuario';
 
 <div class="container pb-6 pt-6">
     <?php
-        require_once "./main.php";
+        require_once "../main.php";
 
         // Eliminar categoria
         if (isset($_GET['category_id_del'])) {

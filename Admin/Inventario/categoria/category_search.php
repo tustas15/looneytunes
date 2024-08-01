@@ -16,10 +16,10 @@ $usuario = isset($_SESSION['usuario']) ? $_SESSION['usuario'] : 'Usuario';
 
 <div class="container pb-6 pt-6">
     <?php
-        require_once "./main.php";
+        require_once "../main.php";
 
         if(isset($_POST['modulo_buscador'])){
-            require_once "./buscador.php";
+            require_once "../buscador.php";
         }
 
         if(!isset($_SESSION['busqueda_categoria']) && empty($_SESSION['busqueda_categoria'])){
