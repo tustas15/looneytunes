@@ -303,15 +303,15 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                         <div class="collapse" id="collapseLayoutsCategories" data-bs-parent="#accordionSidenav">
                             <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavLayoutCategories">
                                 <!-- Nested Sidenav Accordion (Categorías -> Nueva)-->
-                                <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseLayoutSidenavVariations" aria-expanded="false" aria-controls="collapseLayoutSidenavVariations">
+                                <a class="nav-link collapsed" href="/looneytunes/Admin/inventario/category_new.php">
                                     Nueva
                                 </a>
                                 <!-- Nested Sidenav Accordion (Categorías -> Lista)-->
-                                <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseLayoutContainers" aria-expanded="false" aria-controls="collapseLayoutContainers">
+                                <a class="nav-link collapsed" href="/looneytunes/Admin/inventario/category_list.php"    >
                                     Lista
                                 </a>
                                 <!-- Nested Sidenav Accordion (Categorías -> Buscar)-->
-                                <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseLayoutsPageHeaders" aria-expanded="false" aria-controls="collapseLayoutsPageHeaders">
+                                <a class="nav-link collapsed" href="/looneytunes/Admin/inventario/category_search.php">
                                     Buscar
                                 </a>
                             </nav>

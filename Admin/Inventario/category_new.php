@@ -1,3 +1,14 @@
+<?php
+// Asegúrate de iniciar la sesión al principio del archivo
+session_start();
+require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
+include '/xampp/htdocs/looneytunes/admin/includespro/header.php';
+
+date_default_timezone_set('America/Guayaquil'); // Ajusta a tu zona horaria
+
+$usuario = isset($_SESSION['usuario']) ? $_SESSION['usuario'] : 'Usuario';
+
+?>
 <div class="container is-fluid mb-6">
 	<h1 class="title">Categorías</h1>
 	<h2 class="subtitle">Nueva categoría</h2>
@@ -7,7 +18,7 @@
 
 	<div class="form-rest mb-6 mt-6"></div>
 
-	<form action="./php/categoria_guardar.php" method="POST" class="FormularioAjax" autocomplete="off" >
+	<form action="./categoria_guardar.php" method="POST" class="FormularioAjax" autocomplete="off" >
 		<div class="columns">
 		  	<div class="column">
 		    	<div class="control">
@@ -27,3 +38,6 @@
 		</p>
 	</form>
 </div>
+<?php
+include '/xampp/htdocs/looneytunes/admin/includespro/footer.php';
+?>

@@ -2,12 +2,12 @@
 	require_once "main.php";
 
 	/*== Almacenando id ==*/
-    $id=limpiar_cadena($_POST['categoria_id']);
+    $id=limpiar_cadena($_POST['id_categoria']);
 
 
     /*== Verificando categoria ==*/
 	$check_categoria=conexion();
-	$check_categoria=$check_categoria->query("SELECT * FROM categoria WHERE categoria_id='$id'");
+	$check_categoria=$check_categoria->query("SELECT * FROM tab_categorias WHERE id_categoria='$id'");
 
     if($check_categoria->rowCount()<=0){
     	echo '
@@ -66,7 +66,7 @@
     /*== Verificando nombre ==*/
     if($nombre!=$datos['categoria_nombre']){
 	    $check_nombre=conexion();
-	    $check_nombre=$check_nombre->query("SELECT categoria_nombre FROM categoria WHERE categoria_nombre='$nombre'");
+	    $check_nombre=$check_nombre->query("SELECT categoria_nombre FROM tab_categorias WHERE categoria_nombre='$nombre'");
 	    if($check_nombre->rowCount()>0){
 	        echo '
 	            <div class="notification is-danger is-light">
@@ -82,7 +82,7 @@
 
     /*== Actualizar datos ==*/
     $actualizar_categoria=conexion();
-    $actualizar_categoria=$actualizar_categoria->prepare("UPDATE categoria SET categoria_nombre=:nombre,categoria_ubicacion=:ubicacion WHERE categoria_id=:id");
+    $actualizar_categoria=$actualizar_categoria->prepare("UPDATE tab_categorias SET categoria_nombre=:nombre,categoria_ubicacion=:ubicacion WHERE id_categoria=:id");
 
     $marcadores=[
         ":nombre"=>$nombre,
