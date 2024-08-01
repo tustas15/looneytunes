@@ -1,7 +1,7 @@
 <?php
 	require_once "../inc/session_start.php";
 
-	require_once "main.php";
+	require_once "../main.php";
 
 	/*== Almacenando datos ==*/
 	$codigo=limpiar_cadena($_POST['producto_codigo']);
@@ -68,7 +68,7 @@
 
     /*== Verificando codigo ==*/
     $check_codigo=conexion();
-    $check_codigo=$check_codigo->query("SELECT producto_codigo FROM producto WHERE producto_codigo='$codigo'");
+    $check_codigo=$check_codigo->query("SELECT producto_codigo FROM tab_productos WHERE producto_codigo='$codigo'");
     if($check_codigo->rowCount()>0){
         echo '
             <div class="notification is-danger is-light">
@@ -83,7 +83,7 @@
 
     /*== Verificando nombre ==*/
     $check_nombre=conexion();
-    $check_nombre=$check_nombre->query("SELECT producto_nombre FROM producto WHERE producto_nombre='$nombre'");
+    $check_nombre=$check_nombre->query("SELECT producto_nombre FROM tab_productos WHERE producto_nombre='$nombre'");
     if($check_nombre->rowCount()>0){
         echo '
             <div class="notification is-danger is-light">
@@ -98,7 +98,7 @@
 
     /*== Verificando categoria ==*/
     $check_categoria=conexion();
-    $check_categoria=$check_categoria->query("SELECT categoria_id FROM categoria WHERE categoria_id='$categoria'");
+    $check_categoria=$check_categoria->query("SELECT id_producto_categoria FROM tab_producto_categoria WHERE id_producto_categoria='$categoria'");
     if($check_categoria->rowCount()<=0){
         echo '
             <div class="notification is-danger is-light">
@@ -112,7 +112,7 @@
 
 
     /* Directorios de imagenes */
-	$img_dir='../img/producto/';
+	$img_dir='/xampp/htdocs/looneytunes/img/producto/';
 
 
 	/*== Comprobando si se ha seleccionado una imagen ==*/
@@ -192,7 +192,7 @@
 
 	/*== Guardando datos ==*/
     $guardar_producto=conexion();
-    $guardar_producto=$guardar_producto->prepare("INSERT INTO producto(producto_codigo,producto_nombre,producto_precio,producto_stock,producto_foto,categoria_id,usuario_id) VALUES(:codigo,:nombre,:precio,:stock,:foto,:categoria,:usuario)");
+    $guardar_producto=$guardar_producto->prepare("INSERT INTO tab_productos(producto_codigo,producto_nombre,producto_precio,producto_stock,producto_foto,id_producto_categoria,id_usuario) VALUES(:codigo,:nombre,:precio,:stock,:foto,:categoria,:usuario)");
 
     $marcadores=[
         ":codigo"=>$codigo,

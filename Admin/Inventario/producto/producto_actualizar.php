@@ -1,13 +1,13 @@
 <?php
-	require_once "main.php";
+	require_once "../main.php";
 
 	/*== Almacenando id ==*/
-    $id=limpiar_cadena($_POST['producto_id']);
+    $id=limpiar_cadena($_POST['id_producto']);
 
 
     /*== Verificando producto ==*/
 	$check_producto=conexion();
-	$check_producto=$check_producto->query("SELECT * FROM producto WHERE producto_id='$id'");
+	$check_producto=$check_producto->query("SELECT * FROM tab_productos WHERE id_producto='$id'");
 
     if($check_producto->rowCount()<=0){
     	echo '
@@ -89,7 +89,7 @@
     /*== Verificando codigo ==*/
     if($codigo!=$datos['producto_codigo']){
 	    $check_codigo=conexion();
-	    $check_codigo=$check_codigo->query("SELECT producto_codigo FROM producto WHERE producto_codigo='$codigo'");
+	    $check_codigo=$check_codigo->query("SELECT producto_codigo FROM tab_productos WHERE producto_codigo='$codigo'");
 	    if($check_codigo->rowCount()>0){
 	        echo '
 	            <div class="notification is-danger is-light">
@@ -106,7 +106,7 @@
     /*== Verificando nombre ==*/
     if($nombre!=$datos['producto_nombre']){
 	    $check_nombre=conexion();
-	    $check_nombre=$check_nombre->query("SELECT producto_nombre FROM producto WHERE producto_nombre='$nombre'");
+	    $check_nombre=$check_nombre->query("SELECT producto_nombre FROM tab_productos WHERE producto_nombre='$nombre'");
 	    if($check_nombre->rowCount()>0){
 	        echo '
 	            <div class="notification is-danger is-light">
@@ -121,9 +121,9 @@
 
 
     /*== Verificando categoria ==*/
-    if($categoria!=$datos['categoria_id']){
+    if($categoria!=$datos['id_producto_categoria']){
 	    $check_categoria=conexion();
-	    $check_categoria=$check_categoria->query("SELECT categoria_id FROM categoria WHERE categoria_id='$categoria'");
+	    $check_categoria=$check_categoria->query("SELECT id_producto_categoria FROM tab_productos WHERE id_producto_categoria='$categoria'");
 	    if($check_categoria->rowCount()<=0){
 	        echo '
 	            <div class="notification is-danger is-light">
@@ -139,7 +139,7 @@
 
     /*== Actualizando datos ==*/
     $actualizar_producto=conexion();
-    $actualizar_producto=$actualizar_producto->prepare("UPDATE producto SET producto_codigo=:codigo,producto_nombre=:nombre,producto_precio=:precio,producto_stock=:stock,categoria_id=:categoria WHERE producto_id=:id");
+    $actualizar_producto=$actualizar_producto->prepare("UPDATE tab_productos SET producto_codigo=:codigo,producto_nombre=:nombre,producto_precio=:precio,producto_stock=:stock,id_producto_categoria=:categoria WHERE id_producto=:id");
 
     $marcadores=[
         ":codigo"=>$codigo,

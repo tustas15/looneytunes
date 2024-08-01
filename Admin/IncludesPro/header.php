@@ -326,19 +326,19 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                         <div class="collapse" id="collapseLayoutsProducts" data-bs-parent="#accordionSidenav">
                             <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavLayoutProducts">
                                 <!-- Nested Sidenav Accordion (Productos -> Nuevo)-->
-                                <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseLayoutSidenavVariationsProducts" aria-expanded="false" aria-controls="collapseLayoutSidenavVariationsProducts">
+                                <a class="nav-link collapsed" href="/looneytunes/Admin/inventario/producto/product_new.php">
                                     Nuevo
                                 </a>
                                 <!-- Nested Sidenav Accordion (Productos -> Lista)-->
-                                <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseLayoutContainersProducts" aria-expanded="false" aria-controls="collapseLayoutContainersProducts">
+                                <a class="nav-link collapsed" href="/looneytunes/Admin/inventario/producto/product_list.php">
                                     Lista
                                 </a>
                                 <!-- Nested Sidenav Accordion (Productos -> Por categorías)-->
-                                <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseLayoutsPageHeadersProducts" aria-expanded="false" aria-controls="collapseLayoutsPageHeadersProducts">
+                                <a class="nav-link collapsed" href="/looneytunes/Admin/inventario/producto/product_category.php">
                                     Por categorías
                                 </a>
                                 <!-- Nested Sidenav Accordion (Productos -> Buscar)-->
-                                <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseLayoutsStarterTemplatesProducts" aria-expanded="false" aria-controls="collapseLayoutsStarterTemplatesProducts">
+                                <a class="nav-link collapsed" href="/looneytunes/Admin/inventario/producto/product_search.php">
                                     Buscar  
                                 </a>
                             </nav>

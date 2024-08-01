@@ -1,3 +1,14 @@
+<?php
+// Asegúrate de iniciar la sesión al principio del archivo
+session_start();
+require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
+include '/xampp/htdocs/looneytunes/admin/includespro/header.php';
+
+date_default_timezone_set('America/Guayaquil'); // Ajusta a tu zona horaria
+
+$usuario = isset($_SESSION['usuario']) ? $_SESSION['usuario'] : 'Usuario';
+
+?>
 <div class="container is-fluid mb-6">
 	<h1 class="title">Productos</h1>
 	<h2 class="subtitle">Buscar producto</h2>
@@ -5,10 +16,10 @@
 
 <div class="container pb-6 pt-6">
     <?php
-        require_once "./php/main.php";
+        require_once "../main.php";
 
         if(isset($_POST['modulo_buscador'])){
-            require_once "./php/buscador.php";
+            require_once "../buscador.php";
         }
 
         if(!isset($_SESSION['busqueda_producto']) && empty($_SESSION['busqueda_producto'])){
@@ -43,7 +54,7 @@
     <?php
             # Eliminar producto #
             if(isset($_GET['product_id_del'])){
-                require_once "./php/producto_eliminar.php";
+                require_once "./producto_eliminar.php";
             }
 
             if(!isset($_GET['page'])){
@@ -55,7 +66,7 @@
                 }
             }
 
-            $categoria_id = (isset($_GET['category_id'])) ? $_GET['category_id'] : 0;
+            $categoria_id = (isset($_GET['id_categoria'])) ? $_GET['id_categoria'] : 0;
 
             $pagina=limpiar_cadena($pagina);
             $url="index.php?vista=product_search&page="; /* <== */
@@ -63,7 +74,10 @@
             $busqueda=$_SESSION['busqueda_producto']; /* <== */
 
             # Paginador producto #
-            require_once "./php/producto_lista.php";
+            require_once "./producto_lista.php";
         } 
     ?>
 </div>
+<?php
+include '/xampp/htdocs/looneytunes/admin/includespro/footer.php';
+?>
