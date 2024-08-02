@@ -2,7 +2,7 @@
 $inicio = ($pagina > 0) ? (($pagina * $registros) - $registros) : 0;
 $tabla = "";
 
-$campos = "tab_productos.id_producto, tab_productos.producto_codigo, tab_productos.producto_nombre, tab_productos.producto_precio, tab_productos.producto_stock, tab_productos.producto_foto, tab_productos.id_categoria_producto, tab_productos.id_usuario, tab_producto_categoria.id_categoria_producto, tab_producto_categoria.categoria_nombre, tab_usuarios.id_usuario, tab_usuarios.usuario_nombre, tab_usuarios.usuario_apellido";
+$campos = "tab_productos.id_producto, tab_productos.producto_codigo, tab_productos.producto_nombre, tab_productos.producto_precio, tab_productos.producto_stock, tab_productos.producto_foto, tab_productos.id_categoria_producto, tab_productos.id_usuario, tab_producto_categoria.id_categoria_producto, tab_producto_categoria.categoria_nombre, tab_usuarios.id_usuario, tab_usuarios.usuario";
 
 $conexion = conexion();
 
@@ -16,7 +16,7 @@ if (isset($busqueda) && $busqueda != "") {
 
 	$consulta_total = "SELECT COUNT(id_producto) FROM tab_productos 
 						   WHERE producto_codigo LIKE '%$busqueda%' OR producto_nombre LIKE '%$busqueda%'";
-} elseif ($id_categoria_producto > 0) {
+} elseif ($categoria_id > 0) {
 	$consulta_datos = "SELECT $campos FROM tab_productos 
 						   INNER JOIN tab_producto_categoria ON tab_productos.id_categoria_producto = tab_producto_categoria.id_categoria_producto 
 						   INNER JOIN tab_usuarios ON tab_productos.id_usuario = tab_usuarios.id_usuario 
@@ -63,7 +63,7 @@ if ($total >= 1 && $pagina <= $Npaginas) {
 						<div class="content">
 						  <p>
 							<strong>' . $contador . ' - ' . $rows['producto_nombre'] . '</strong><br>
-							<strong>CODIGO:</strong> ' . $rows['producto_codigo'] . ', <strong>PRECIO:</strong> $' . $rows['producto_precio'] . ', <strong>STOCK:</strong> ' . $rows['producto_stock'] . ', <strong>CATEGORIA:</strong> ' . $rows['categoria_nombre'] . ', <strong>REGISTRADO POR:</strong> ' . $rows['usuario_nombre'] . ' ' . $rows['usuario_apellido'] . '
+							<strong>CODIGO:</strong> ' . $rows['producto_codigo'] . ', <strong>PRECIO:</strong> $' . $rows['producto_precio'] . ', <strong>STOCK:</strong> ' . $rows['producto_stock'] . ', <strong>CATEGORIA:</strong> ' . $rows['categoria_nombre'] . ', <strong>REGISTRADO POR:</strong> ' . $rows['usuario'] . ' ' . $rows['usuario_apellido'] . '
 						  </p>
 						</div>
 						<div class="has-text-right">
