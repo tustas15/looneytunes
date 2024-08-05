@@ -2,17 +2,15 @@
 $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
 $tipo_usuario = $_SESSION['tipo_usuario'];
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>Dashboard </title>
+    <title>Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/litepicker/dist/css/litepicker.css" rel="stylesheet" />
     <link href="/looneytunes/Assets/css/styles.css" rel="stylesheet" />
@@ -23,8 +21,8 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
     <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.28.0/feather.min.js" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </head>
-
 <body class="nav-fixed">
+
     <nav class="topnav navbar navbar-expand shadow justify-content-between justify-content-sm-start navbar-light bg-white" id="sidenavAccordion">
         <!-- Sidenav Toggle Button-->
         <button class="btn btn-icon btn-transparent-dark order-1 order-lg-0 me-2 ms-lg-2 me-lg-0" id="sidebarToggle"><i data-feather="menu"></i></button>
@@ -32,7 +30,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
         <!-- * * Tip * * You can use text or an image for your navbar brand.-->
         <!-- * * * * * * When using an image, we recommend the SVG format.-->
         <!-- * * * * * * Dimensions: Maximum height: 32px, maximum width: 240px-->
-        <a class="navbar-brand pe-3 ps-4 ps-lg-2" href="/looneytunes/index.php">Dashboard</a>
+        <a class="navbar-brand pe-3 ps-4 ps-lg-2" href="/looneytunes/indexad.php">Dashboard</a>
         <!-- Navbar Search Input-->
         <!-- * * Note: * * Visible only on and above the lg breakpoint-->
         <!--
@@ -75,14 +73,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
             <li class="nav-item dropdown no-caret me-3 d-lg-none">
                 <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="searchDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i data-feather="search"></i></a>
                 <!-- Dropdown - Search-->
-                <div class="dropdown-menu dropdown-menu-end p-3 shadow animated--fade-in-up" aria-labelledby="searchDropdown">
-                    <form class="form-inline me-auto w-100">
-                        <div class="input-group input-group-joined input-group-solid">
-                            <input class="form-control pe-0" type="text" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2" />
-                            <div class="input-group-text"><i data-feather="search"></i></div>
-                        </div>
-                    </form>
-                </div>
+                
             </li>
             <!-- Alerts Dropdown-->
             <li class="nav-item dropdown no-caret d-none d-sm-block me-3 dropdown-notifications">
@@ -307,7 +298,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                                     Nueva
                                 </a>
                                 <!-- Nested Sidenav Accordion (Categorías -> Lista)-->
-                                <a class="nav-link collapsed" href="/looneytunes/Admin/inventario/categoria/category_list.php"    >
+                                <a class="nav-link collapsed" href="/looneytunes/Admin/inventario/categoria/category_list.php">
                                     Lista
                                 </a>
                                 <!-- Nested Sidenav Accordion (Categorías -> Buscar)-->
@@ -339,7 +330,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                                 </a>
                                 <!-- Nested Sidenav Accordion (Productos -> Buscar)-->
                                 <a class="nav-link collapsed" href="/looneytunes/Admin/inventario/producto/product_search.php">
-                                    Buscar  
+                                    Buscar
                                 </a>
                             </nav>
                         </div>

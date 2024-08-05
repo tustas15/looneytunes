@@ -69,6 +69,5 @@ $usuario = isset($_SESSION['usuario']) ? $_SESSION['usuario'] : 'Usuario';
             </div>
         </form>
     </div>
-	</main>
-    <?php include '/xampp/htdocs/looneytunes/admin/includespro/footer.php'; ?>
-
+</main>
+<?php include '/xampp/htdocs/looneytunes/admin/includespro/footer.php'; ?>

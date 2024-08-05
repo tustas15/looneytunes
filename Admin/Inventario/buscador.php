@@ -1,62 +1,69 @@
 <?php
-	$modulo_buscador=limpiar_cadena($_POST['modulo_buscador']);
+// Iniciar el búfer de salida para evitar errores de encabezado
+ob_start();
 
-	$modulos=["usuario","categoria","producto"];
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 
-	if(in_array($modulo_buscador, $modulos)){
-		
-		$modulos_url=[
-			"usuario"=>"user_search",
-			"categoria"=>"category_search",
-			"producto"=>"product_search"
-		];
+require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
 
-		$modulos_url=$modulos_url[$modulo_buscador];
+$modulo_buscador = limpiar_cadena($_POST['modulo_buscador']);
+$modulos = ["usuario", "categoria", "producto"];
 
-		$modulo_buscador="busqueda_".$modulo_buscador;
+if (in_array($modulo_buscador, $modulos)) {
+    $modulos_url = [
+        "usuario" => "user_search.php",
+        "categoria" => "category_search.php",
+        "producto" => "product_search.php"
+    ];
 
+    $modulos_url = $modulos_url[$modulo_buscador];
+    $modulo_buscador = "busqueda_" . $modulo_buscador;
 
-		# Iniciar busqueda #
-		if(isset($_POST['txt_buscador'])){
+    // Iniciar búsqueda
+    if (isset($_POST['txt_buscador'])) {
+        $txt = limpiar_cadena($_POST['txt_buscador']);
 
-			$txt=limpiar_cadena($_POST['txt_buscador']);
+        if ($txt == "") {
+            echo '
+                <div class="notification is-danger is-light">
+                    <strong>¡Ocurrió un error inesperado!</strong><br>
+                    Introduce el término de búsqueda
+                </div>
+            ';
+        } else {
+            if (verificar_datos("[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ ]{1,30}", $txt)) {
+                echo '
+                    <div class="notification is-danger is-light">
+                        <strong>¡Ocurrió un error inesperado!</strong><br>
+                        El término de búsqueda no coincide con el formato solicitado
+                    </div>
+                ';
+            } else {
+                $_SESSION[$modulo_buscador] = $txt;
+                header("Location: " . $modulos_url, true, 303);
+                ob_end_flush(); // Asegúrate de enviar el contenido del búfer y desactivar el búfer
+                exit();
+            }
+        }
+    }
 
-			if($txt==""){
-				echo '
-		            <div class="notification is-danger is-light">
-		                <strong>¡Ocurrio un error inesperado!</strong><br>
-		                Introduce el termino de busqueda
-		            </div>
-		        ';
-			}else{
-				if(verificar_datos("[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ ]{1,30}",$txt)){
-			        echo '
-			            <div class="notification is-danger is-light">
-			                <strong>¡Ocurrio un error inesperado!</strong><br>
-			                El termino de busqueda no coincide con el formato solicitado
-			            </div>
-			        ';
-			    }else{
-			    	$_SESSION[$modulo_buscador]=$txt;
-			    	header("Location: indexad.php?vista=$modulos_url",true,303); 
- 					exit();  
-			    }
-			}
-		}
+    // Eliminar búsqueda
+    if (isset($_POST['eliminar_buscador'])) {
+        unset($_SESSION[$modulo_buscador]);
+        header("Location: " . $modulos_url, true, 303);
+        ob_end_flush(); // Asegúrate de enviar el contenido del búfer y desactivar el búfer
+        exit();
+    }
+} else {
+    echo '
+        <div class="notification is-danger is-light">
+            <strong>¡Ocurrió un error inesperado!</strong><br>
+            No podemos procesar la petición
+        </div>
+    ';
+}
 
-
-		# Eliminar busqueda #
-		if(isset($_POST['eliminar_buscador'])){
-			unset($_SESSION[$modulo_buscador]);
-			header("Location: indexad.php?vista=$modulos_url",true,303); 
- 			exit();
-		}
-
-	}else{
-		echo '
-            <div class="notification is-danger is-light">
-                <strong>¡Ocurrio un error inesperado!</strong><br>
-                No podemos procesar la peticion
-            </div>
-        ';
-	}
+ob_end_flush(); // Asegúrate de enviar el contenido del búfer y desactivar el búfer
+?>
