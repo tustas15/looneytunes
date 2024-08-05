@@ -226,6 +226,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
 
                         <!-- Sidenav Heading (App Views)-->
                         <div class="sidenav-menu-heading">Interfaz</div>
+
                         <!-- Sidenav Accordion (Pages)-->
                         <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
                             <div class="nav-link-icon"><i class="fas fa-fw fa-cog"></i></div>
@@ -255,6 +256,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                                 </a>
                             </nav>
                         </div>
+
                         <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseFlows" aria-expanded="false" aria-controls="collapseFlows">
                             <div class="nav-link-icon"><i class="fas fa-fw fa-wrench"></i></div>
                             Utilidades
@@ -288,6 +290,60 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                                 </div>
                             </nav>
                         </div>
+
+                        <!-- Sidenav Heading (UI Toolkit)-->
+                        <div class="sidenav-menu-heading">INVENTARIO</div>
+
+                        <!-- Sidenav Accordion (Categorías)-->
+                        <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseLayoutsCategories" aria-expanded="false" aria-controls="collapseLayoutsCategories">
+                            <div class="nav-link-icon"><i data-feather="layout"></i></div>
+                            Categorías
+                            <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                        </a>
+                        <div class="collapse" id="collapseLayoutsCategories" data-bs-parent="#accordionSidenav">
+                            <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavLayoutCategories">
+                                <!-- Nested Sidenav Accordion (Categorías -> Nueva)-->
+                                <a class="nav-link collapsed" href="/looneytunes/Admin/inventario/categoria/category_new.php">
+                                    Nueva
+                                </a>
+                                <!-- Nested Sidenav Accordion (Categorías -> Lista)-->
+                                <a class="nav-link collapsed" href="/looneytunes/Admin/inventario/categoria/category_list.php"    >
+                                    Lista
+                                </a>
+                                <!-- Nested Sidenav Accordion (Categorías -> Buscar)-->
+                                <a class="nav-link collapsed" href="/looneytunes/Admin/inventario/categoria/category_search.php">
+                                    Buscar
+                                </a>
+                            </nav>
+                        </div>
+
+                        <!-- Sidenav Accordion (Productos)-->
+                        <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseLayoutsProducts" aria-expanded="false" aria-controls="collapseLayoutsProducts">
+                            <div class="nav-link-icon"><i data-feather="layout"></i></div>
+                            Productos
+                            <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                        </a>
+                        <div class="collapse" id="collapseLayoutsProducts" data-bs-parent="#accordionSidenav">
+                            <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavLayoutProducts">
+                                <!-- Nested Sidenav Accordion (Productos -> Nuevo)-->
+                                <a class="nav-link collapsed" href="/looneytunes/Admin/inventario/producto/product_new.php">
+                                    Nuevo
+                                </a>
+                                <!-- Nested Sidenav Accordion (Productos -> Lista)-->
+                                <a class="nav-link collapsed" href="/looneytunes/Admin/inventario/producto/product_list.php">
+                                    Lista
+                                </a>
+                                <!-- Nested Sidenav Accordion (Productos -> Por categorías)-->
+                                <a class="nav-link collapsed" href="/looneytunes/Admin/inventario/producto/product_category.php">
+                                    Por categorías
+                                </a>
+                                <!-- Nested Sidenav Accordion (Productos -> Buscar)-->
+                                <a class="nav-link collapsed" href="/looneytunes/Admin/inventario/producto/product_search.php">
+                                    Buscar  
+                                </a>
+                            </nav>
+                        </div>
+
 
                     </div>
                 </div>

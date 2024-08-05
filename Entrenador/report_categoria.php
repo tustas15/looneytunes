@@ -171,9 +171,48 @@ include './includes/header.php';
     </div>
 </main>
 
-
-
 <?php
 // Incluir el pie de página
 include './includes/footer.php';
 ?>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Manejar el clic en el botón "Informes"
+    document.querySelectorAll('.btn-informes').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const deportistaId = this.getAttribute('data-id');
+            const representanteId = this.getAttribute('data-representante');
+            document.getElementById('informeDeportistaId').value = deportistaId;
+            document.getElementById('informeRepresentanteId').value = representanteId;
+            new bootstrap.Modal(document.getElementById('informesModal')).show();
+        });
+    });
+
+    // Manejar el envío del formulario de informes
+    document.getElementById('enviarInforme').addEventListener('click', function() {
+        const form = document.getElementById('informeForm');
+        const formData = new FormData(form);
+
+        fetch('enviar_informe.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(data.message);
+                document.getElementById('informesModal').querySelector('.btn-close').click();
+                form.reset();
+            } else {
+                alert('Error: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Ocurrió un error al enviar el informe.');
+        });
+    });
+});
+</script>

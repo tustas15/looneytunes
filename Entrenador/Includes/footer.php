@@ -176,55 +176,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    var ingresarModal = new bootstrap.Modal(document.getElementById('ingresarModal'));
-    var informesModal = new bootstrap.Modal(document.getElementById('informesModal'));
-    
-    document.querySelectorAll('.btn-ingresar').forEach(function(button) {
+    // Manejar el clic en el botón "Informes"
+    document.querySelectorAll('.btn-informes').forEach(button => {
         button.addEventListener('click', function(e) {
             e.preventDefault();
-            var deportistaId = this.getAttribute('data-id');
-            document.getElementById('deportistaId').value = deportistaId;
-            ingresarModal.show();
-        });
-    });
-
-    document.getElementById('guardarDetalles').addEventListener('click', function() {
-        var form = document.getElementById('detallesForm');
-        var formData = new FormData(form);
-
-        fetch('guardar_detalles.php', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Detalles guardados con éxito');
-                ingresarModal.hide();
-            } else {
-                alert('Error al guardar los detalles: ' + data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Ocurrió un error al guardar los detalles');
-        });
-    });
-
-    document.querySelectorAll('.btn-informes').forEach(function(button) {
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
-            var deportistaId = this.getAttribute('data-id');
-            var representanteId = this.getAttribute('data-representante');
+            const deportistaId = this.getAttribute('data-id');
+            const representanteId = this.getAttribute('data-representante');
             document.getElementById('informeDeportistaId').value = deportistaId;
             document.getElementById('informeRepresentanteId').value = representanteId;
-            informesModal.show();
+            new bootstrap.Modal(document.getElementById('informesModal')).show();
         });
     });
 
+    // Manejar el envío del formulario de informes
     document.getElementById('enviarInforme').addEventListener('click', function() {
-        var form = document.getElementById('informeForm');
-        var formData = new FormData(form);
+        const form = document.getElementById('informeForm');
+        const formData = new FormData(form);
 
         fetch('enviar_informe.php', {
             method: 'POST',
@@ -233,20 +200,20 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert('Informe enviado con éxito');
-                informesModal.hide();
+                alert(data.message);
+                document.getElementById('informesModal').querySelector('.btn-close').click();
+                form.reset();
             } else {
-                alert('Error al enviar el informe: ' + data.message);
+                alert('Error: ' + data.message);
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Ocurrió un error al enviar el informe');
+            alert('Ocurrió un error al enviar el informe.');
         });
     });
 });
 </script>
-
 </body>
 
 </html>
