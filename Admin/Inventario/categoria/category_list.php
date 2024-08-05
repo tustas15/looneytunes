@@ -7,18 +7,19 @@ include '/xampp/htdocs/looneytunes/admin/includespro/header.php';
 date_default_timezone_set('America/Guayaquil'); // Ajusta a tu zona horaria
 
 $usuario = isset($_SESSION['usuario']) ? $_SESSION['usuario'] : 'Usuario';
-
 ?>
-<div class="container is-fluid mb-6">
-    <h1 class="title">Categorías</h1>
-    <h2 class="subtitle">Lista de categoría</h2>
-</div>
 
-<div class="container pb-6 pt-6">
-    <?php
+<main>
+    <div class="container mb-6 mt-5">
+        <h1 class="title">Categorías</h1>
+        <h2 class="subtitle">Lista de categorías</h2>
+    </div>
+
+    <div class="container pb-6 pt-6">
+        <?php
         require_once "../main.php";
 
-        // Eliminar categoria
+        // Eliminar categoría
         if (isset($_GET['category_id_del'])) {
             require_once "./categoria_eliminar.php";
         }
@@ -26,7 +27,7 @@ $usuario = isset($_SESSION['usuario']) ? $_SESSION['usuario'] : 'Usuario';
         if (!isset($_GET['page'])) {
             $pagina = 1;
         } else {
-            $pagina = (int) $_GET['page'];
+            $pagina = (int)$_GET['page'];
             if ($pagina <= 1) {
                 $pagina = 1;
             }
@@ -37,10 +38,9 @@ $usuario = isset($_SESSION['usuario']) ? $_SESSION['usuario'] : 'Usuario';
         $registros = 15;
         $busqueda = "";
 
-        // Paginador categoria
+        // Paginador categoría
         require_once "./categoria_lista.php";
-    ?>
-</div>
-<?php
-include '/xampp/htdocs/looneytunes/admin/includespro/footer.php';
-?>
+        ?>
+    </div>
+</main>
+<?php include '/xampp/htdocs/looneytunes/admin/includespro/footer.php'; ?>

@@ -2,87 +2,79 @@
 // Asegúrate de iniciar la sesión al principio del archivo
 session_start();
 require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
+require_once('../main.php');
 include '/xampp/htdocs/looneytunes/admin/includespro/header.php';
 
 date_default_timezone_set('America/Guayaquil'); // Ajusta a tu zona horaria
 
 $usuario = isset($_SESSION['usuario']) ? $_SESSION['usuario'] : 'Usuario';
+?>
 
-?><div class="container is-fluid mb-6">
-    <h1 class="title">Productos</h1>
-    <h2 class="subtitle">Lista de productos por categoría</h2>
-</div>
+<main class="container my-5">
+    <div class="mb-6">
+        <h1 class="title">Productos</h1>
+        <h2 class="subtitle">Lista de productos por categoría</h2>
+    </div>
 
-<div class="container pb-6 pt-6">
-    <?php
-        require_once "../main.php";
-    ?>
-    <div class="columns">
-        <div class="column is-one-third">
-            <h2 class="title has-text-centered">Categorías</h2>
+    <div class="row">
+        <div class="col-md-4">
+            <h2 class="title text-center">Categorías</h2>
             <?php
-                $categorias=conexion();
-                $categorias=$categorias->query("SELECT * FROM tab_producto_categoria");
-                if($categorias->rowCount()>0){
-                    $categorias=$categorias->fetchAll();
-                    foreach($categorias as $row){
-                        echo '<a href="index.php?vista=product_category&category_id='.$row['id_categoria_producto'].'" class="button is-link is-inverted is-fullwidth">'.$row['categoria_nombre'].'</a>';
+                $conexion = conexion();
+                $categorias = $conexion->query("SELECT * FROM tab_producto_categoria");
+                if ($categorias->rowCount() > 0) {
+                    $categorias = $categorias->fetchAll();
+                    foreach ($categorias as $row) {
+                        echo '<a href="index.php?vista=product_category&category_id=' . $row['id_categoria_producto'] . '" class="btn btn-link btn-block mb-2">' . $row['categoria_nombre'] . '</a>';
                     }
-                }else{
-                    echo '<p class="has-text-centered" >No hay categorías registradas</p>';
+                } else {
+                    echo '<p class="text-center">No hay categorías registradas</p>';
                 }
-                $categorias=null;
+                $conexion = null;
             ?>
         </div>
-        <div class="column">
+
+        <div class="col-md-8">
             <?php
-                $categoria_id = (isset($_GET['category_id'])) ? $_GET['category_id'] : 0;
+                $categoria_id = isset($_GET['category_id']) ? $_GET['category_id'] : 0;
 
-                /*== Verificando categoria ==*/
-                $check_categoria=conexion();
-                $check_categoria=$check_categoria->query("SELECT * FROM tab_producto_categoria WHERE id_categoria_producto='$categoria_id'");
+                // Verificando categoría
+                $conexion = conexion();
+                $check_categoria = $conexion->query("SELECT * FROM tab_producto_categoria WHERE id_categoria_producto='$categoria_id'");
 
-                if($check_categoria->rowCount()>0){
-
-                    $check_categoria=$check_categoria->fetch();
+                if ($check_categoria->rowCount() > 0) {
+                    $check_categoria = $check_categoria->fetch();
 
                     echo '
-                        <h2 class="title has-text-centered">'.$check_categoria['categoria_nombre'].'</h2>
-                        <p class="has-text-centered pb-6" >'.$check_categoria['categoria_ubicacion'].'</p>
+                        <h2 class="title text-center">' . $check_categoria['categoria_nombre'] . '</h2>
+                        <p class="text-center pb-6">' . $check_categoria['categoria_ubicacion'] . '</p>
                     ';
 
-                    require_once "../main.php";
-
-                    # Eliminar producto #
-                    if(isset($_GET['product_id_del'])){
+                    // Eliminar producto
+                    if (isset($_GET['product_id_del'])) {
                         require_once "./producto_eliminar.php";
                     }
 
-                    if(!isset($_GET['page'])){
-                        $pagina=1;
-                    }else{
-                        $pagina=(int) $_GET['page'];
-                        if($pagina<=1){
-                            $pagina=1;
-                        }
-                    }
+                    $pagina = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+                    $pagina = $pagina <= 1 ? 1 : $pagina;
 
-                    $pagina=limpiar_cadena($pagina);
-                    $url="index.php?vista=product_category&category_id=$categoria_id&page="; /* <== */
-                    $registros=15;
-                    $busqueda="";
+                    $pagina = limpiar_cadena($pagina);
+                    $url = "index.php?vista=product_category&category_id=$categoria_id&page="; // URL para la paginación
+                    $registros = 15; // Número de registros por página
+                    $busqueda = ""; // Búsqueda (por ahora vacío)
 
-                    # Paginador producto #
+                    // Paginador producto
                     require_once "./producto_lista.php";
 
-                }else{
-                    echo '<h2 class="has-text-centered title" >Seleccione una categoría para empezar</h2>';
+                } else {
+                    echo '<h2 class="text-center title">Seleccione una categoría para empezar</h2>';
                 }
-                $check_categoria=null;
+                $conexion = null;
             ?>
         </div>
     </div>
-</div>
+</main>
+
 <?php
 include '/xampp/htdocs/looneytunes/admin/includespro/footer.php';
 ?>
