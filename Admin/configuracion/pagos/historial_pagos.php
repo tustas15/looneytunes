@@ -1,103 +1,115 @@
 <?php
+// Incluir archivo de conexión a la base de datos
 require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
 
-$sql = "SELECT p.id_pago, r.APELLIDO_REPRE, r.NOMBRE_REPRE, r.CEDULA_REPRE, 
-               d.APELLIDO_DEPO, d.NOMBRE_DEPO, d.CEDULA_DEPO, 
-               p.tipo_pago, p.fecha, p.motivo, p.monto, 
-               pd.mes, pd.anio, b.nombre as banco_nombre, pd.entidad_financiera
+try {
+    // Consulta SQL para obtener el historial de pagos
+    $sql = "
+        SELECT p.ID_PAGO, r.nombre_repre, r.apellido_repre, d.nombre_depo, d.apellido_depo, p.FECHA, p.TIPO_PAGO, p.MONTO, p.MOTIVO
         FROM tab_pagos p
-        JOIN tab_representantes r ON p.id_representante = r.ID_REPRESENTANTE
-        JOIN tab_deportistas d ON p.id_deportista = d.ID_DEPORTISTA
-        LEFT JOIN tab_pago_detalle pd ON p.id_pago = pd.id_pago
-        LEFT JOIN tab_bancos b ON pd.banco_destino = b.id
-        ORDER BY p.fecha DESC";
+        INNER JOIN tab_representantes r ON p.ID_REPRESENTANTE = r.ID_REPRESENTANTE
+        INNER JOIN tab_deportistas d ON p.ID_DEPORTISTA = d.ID_DEPORTISTA
+        ORDER BY p.FECHA DESC
+    ";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute();
+    $pagos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-$result = $conn->query($sql);
+    // Generar el HTML para el historial de pagos
+    if ($stmt->rowCount() > 0) {
+        echo '<div class="card shadow mb-4">';
+        echo '<div class="card-header py-3">';
+        echo '<h6 class="m-0 font-weight-bold text-primary">Historial de Pagos</h6>';
+        echo '</div>';
+        echo '<div class="card-body">';
+        echo '<div class="table-responsive">';
+        echo '<table id="tabla_pagos" class="table table-bordered" width="100%" cellspacing="0">';
+        echo '<thead>';
+        echo '<tr>';
+        echo '<th>Representante</th>';
+        echo '<th>Deportista</th>';
+        echo '<th>Fecha</th>';
+        echo '<th>Tipo de Pago</th>';
+        echo '<th>Monto</th>';
+        echo '<th>Motivo</th>';
+        echo '<th>Acciones</th>';
+        echo '</tr>';
+        echo '</thead>';
+        echo '<tbody>';
+        foreach ($pagos as $pago) {
+            echo '<tr>';
+            echo '<td>' . htmlspecialchars($pago['nombre_repre'] . ' ' . $pago['apellido_repre']) . '</td>';
+            echo '<td>' . htmlspecialchars($pago['nombre_depo'] . ' ' . $pago['apellido_depo']) . '</td>';
+            echo '<td>' . htmlspecialchars(date('d/m/Y', strtotime($pago['FECHA']))) . '</td>';  // Formatear la fecha
+            echo '<td>' . htmlspecialchars($pago['TIPO_PAGO']) . '</td>';
+            echo '<td>$' . number_format($pago['MONTO'], 2) . '</td>';
+            echo '<td>' . htmlspecialchars($pago['MOTIVO']) . '</td>';
+            echo '<td>
+                    <a href="editar.php?id=' . $pago['ID_PAGO'] . '" class="btn btn-primary btn-sm">Actualizar</a>
+                    <a href="eliminar.php?id=' . $pago['ID_PAGO'] . '" class="btn btn-danger btn-sm">Eliminar</a>
+                  </td>';
+            echo '</tr>';
+        }
+        echo '</tbody>';
+        echo '</table>';
+        echo '</div>';
+        echo '</div>';
+        echo '</div>';
+
+        // Inicializar DataTables
+        echo '<script>';
+        echo '$(document).ready(function() {';
+        echo '$("#tabla_pagos").DataTable({';
+        echo '    "language": {';
+        echo '        "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"';
+        echo '    },';
+        echo '    "dom": "Bfrtip",';
+        echo '    "buttons": [';
+        echo '        {';
+        echo '            extend: "copy",';
+        echo '            exportOptions: {';
+        echo '                columns: ":not(.no-export)"';
+        echo '            }';
+        echo '        },';
+        echo '        {';
+        echo '            extend: "csv",';
+        echo '            exportOptions: {';
+        echo '                columns: ":not(.no-export)"';
+        echo '            }';
+        echo '        },';
+        echo '        {';
+        echo '            extend: "excel",';
+        echo '            exportOptions: {';
+        echo '                columns: ":not(.no-export)"';
+        echo '            }';
+        echo '        },';
+        echo '        {';
+        echo '            extend: "pdf",';
+        echo '            exportOptions: {';
+        echo '                columns: ":not(.no-export)"';
+        echo '            }';
+        echo '        },';
+        echo '        {';
+        echo '            extend: "print",';
+        echo '            exportOptions: {';
+        echo '                columns: ":not(.no-export)"';
+        echo '            }';
+        echo '        }';
+        echo '    ],';
+        echo '    "responsive": true,';
+        echo '    "columnDefs": [';
+        echo '        {';
+        echo '            "targets": -1,';  // Asumiendo que la columna de acciones es la última
+        echo '            "className": "no-export"';
+        echo '        }';
+        echo '    ]';
+        echo '});';
+        echo '});';
+        echo '</script>';
+    } else {
+        echo '<div class="alert alert-info" role="alert">No se encontraron pagos.</div>';
+    }
+} catch (PDOException $e) {
+    echo '<div class="alert alert-danger" role="alert">Error al obtener los pagos: ' . $e->getMessage() . '</div>';
+}
 ?>
-
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Historial de Pagos</title>
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/dataTables.bootstrap5.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.7.1/css/buttons.bootstrap5.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-    <div class="container mt-5">
-        <h2>Historial de Pagos</h2>
-        <table id="historialPagos" class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Representante</th>
-                    <th>Cédula Representante</th>
-                    <th>Deportista</th>
-                    <th>Cédula Deportista</th>
-                    <th>Tipo Pago</th>
-                    <th>Fecha</th>
-                    <th>Monto</th>
-                    <th>Motivo</th>
-                    <th>Banco</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php while($row = $result->fetch(PDO::FETCH_ASSOC)): ?>
-                <tr>
-                    <td><?php echo $row['APELLIDO_REPRE'] . ' ' . $row['NOMBRE_REPRE']; ?></td>
-                    <td><?php echo $row['CEDULA_REPRE']; ?></td>
-                    <td><?php echo $row['APELLIDO_DEPO'] . ' ' . $row['NOMBRE_DEPO']; ?></td>
-                    <td><?php echo $row['CEDULA_DEPO']; ?></td>
-                    <td><?php echo ucfirst($row['tipo_pago']); ?></td>
-                    <td><?php echo $row['fecha']; ?></td>
-                    <td><?php echo $row['mes'] . '-' . $row['anio']; ?></td>
-                    <td><?php echo $row['motivo']; ?></td>
-                    <td><?php echo '$' . number_format($row['monto'], 2); ?></td>
-                    <td><?php echo $row['banco_nombre']; ?></td>
-                    <td>
-                        <button class="btn btn-sm btn-primary" onclick="generarComprobante(<?php echo $row['id_pago']; ?>)">Generar</button>
-                        <button class="btn btn-sm btn-warning" onclick="editarPago(<?php echo $row['id_pago']; ?>)">Editar</button>
-                        <button class="btn btn-sm btn-danger" onclick="eliminarPago(<?php echo $row['id_pago']; ?>)">Eliminar</button>
-                    </td>
-                </tr>
-                <?php endwhile; ?>
-            </tbody>
-        </table>
-    </div>
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap5.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.7.1/js/dataTables.buttons.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.bootstrap5.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.html5.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.print.min.js"></script>
-
-    <script>
-        $(document).ready(function() {
-            $('#historialPagos').DataTable({
-                dom: 'Bfrtip',
-                buttons: [
-                    'copy', 'csv', 'excel', 'pdf', 'print'
-                ]
-            });
-        });
-
-        function generarComprobante(idPago) {
-            // Implementar la generación del comprobante
-        }
-
-        function editarPago(idPago) {
-            // Implementar la edición del pago
-        }
-
-        function eliminarPago(idPago) {
-            // Implementar la eliminación del pago
-        }
-    </script>
-</body>
-</html>

@@ -1,6 +1,6 @@
 <?php
 // Incluir archivo de conexión a la base de datos
-require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
+require_once('../Admin/configuracion/conexion.php');
 
 // Verificar si se recibieron datos del formulario
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -11,7 +11,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $motivo = '';
     $monto = '';
     $fecha = '';
-    $banco = '';
 
     // Dependiendo del tipo de pago, asignar los valores correspondientes
     if ($tipo_pago === 'efectivo') {
@@ -48,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 :tipo_pago,
                 :monto,
                 :motivo,
-                :banco
+            
             )
         ";
         $stmt_insert = $conn->prepare($sql_insert);
@@ -58,7 +57,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt_insert->bindParam(':tipo_pago', $tipo_pago);
         $stmt_insert->bindParam(':monto', $monto);
         $stmt_insert->bindParam(':motivo', $motivo);
-        $stmt_insert->bindParam(':banco', $banco);
         $stmt_insert->execute();
 
         // Confirmar la transacción
@@ -66,25 +64,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         // Llamar a historial_pagos.php para actualizar la tabla de pagos
         include 'historial_pagos.php';
-
-        // Llamar a index.php en la carpeta whatsapp para enviar mensaje de WhatsApp
-        $data = array(
-            'nombre' => $nombre_representante,
-            'valor' => $monto
-        );
-        $options = array(
-            'http' => array(
-                'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
-                'method'  => 'POST',
-                'content' => http_build_query($data),
-            ),
-        );
-        $context  = stream_context_create($options);
-        $result = file_get_contents('http://localhost/looneytunes/admin/configuracion/whatsapp/index.php', false, $context);
-        if ($result === FALSE) {
-            /* Handle error */
-            echo 'Error al enviar mensaje de WhatsApp';
-        }
     } catch (PDOException $e) {
         // Si hay algún error, hacer rollback y mostrar el mensaje de error
         $conn->rollback();
