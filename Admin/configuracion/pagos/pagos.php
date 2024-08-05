@@ -6,10 +6,12 @@ require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
 $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
 include '../../Includespro/header.php';
 ?>
+<!DOCTYPE html>
+<html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Gestión de Pagos</title>
     <!-- Custom fonts for this template-->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,300,400,600,700,800,900" rel="stylesheet">
@@ -18,18 +20,19 @@ include '../../Includespro/header.php';
     <!-- DataTables CSS -->
     <link href="https://cdn.datatables.net/1.11.3/css/dataTables.bootstrap5.min.css" rel="stylesheet">
     <link href="https://cdn.datatables.net/buttons/2.0.1/css/buttons.bootstrap5.min.css" rel="stylesheet">
+</head>
 
-<body>
-    <div class="container mt-5">
-        <h2>Gestión de Pagos</h2>
-        <?php
-        $mensaje = isset($_GET['mensaje']) ? $_GET['mensaje'] : '';
-        if ($mensaje) {
-            echo '<div class="alert alert-success mt-3">' . htmlspecialchars($mensaje) . '</div>';
-        } ?>
-        <form id="formulario-pago" action="registrar_pago.php" method="post" enctype="multipart/form-data">
-
-            <form id="formulario-pago">
+<body id="page-top">
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-end mb-4">
+        <a href="../configuracion/respaldo/downloadFile.php" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Generar Respaldo</a>
+    </div>
+    <form id="formulario-pago" action="procesar_pagos.php" method="post" enctype="multipart/form-data">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Registrar Nuevo Pago</h6>
+            </div>
+            <div class="card-body">
                 <div class="mb-3">
                     <label for="apellido_representante" class="form-label">Representante</label>
                     <select id="apellido_representante" class="form-select" required>
@@ -58,6 +61,7 @@ include '../../Includespro/header.php';
                         <option value="transferencia">Transferencia</option>
                     </select>
                 </div>
+
                 <!-- Campos adicionales para efectivo -->
                 <div id="campos-efectivo" class="d-none">
                     <div class="mb-3">
@@ -72,7 +76,6 @@ include '../../Includespro/header.php';
                         <label for="monto_efectivo" class="form-label">Monto</label>
                         <input type="number" class="form-control" id="monto_efectivo">
                     </div>
-
                     <div class="mb-3">
                         <label for="mes_efectivo" class="form-label">Mes de Pago</label>
                         <select id="mes_efectivo" class="form-select">
@@ -137,175 +140,40 @@ include '../../Includespro/header.php';
                     </div>
                 </div>
                 <button type="submit" class="btn btn-primary">Registrar Pago</button>
-                <?php include "historial_pagos.php"?>
-
-                
-            </form>
+            </div>
+        </div>
+    </form>
+    <div id="mensaje-confirmacion" class="alert alert-success mt-3" style="display: none;">
+        Pago registrado correctamente
     </div>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            // Función para mostrar campos adicionales según tipo de pago
-            $('#tipo_pago').on('change', function() {
-                var tipoPago = $(this).val();
-                if (tipoPago === 'efectivo') {
-                    $('#campos-efectivo').removeClass('d-none');
-                    $('#campos-transferencia').addClass('d-none');
-                } else if (tipoPago === 'transferencia') {
-                    $('#campos-efectivo').addClass('d-none');
-                    $('#campos-transferencia').removeClass('d-none');
-                } else {
-                    $('#campos-efectivo').addClass('d-none');
-                    $('#campos-transferencia').addClass('d-none');
-                }
-            });
-        });
-        // Cargar bancos
-        $.ajax({
-            url: 'get_bancos.php',
-            method: 'GET',
-            dataType: 'json',
-            success: function(data) {
-                if (data.length > 0) {
-                    data.forEach(function(banco) {
-                        $('#banco_destino').append(`<option value="${banco.id}">${banco.nombre}</option>`);
-                    });
-                } else {
-                    console.log("No se encontraron bancos activos");
-                }
-            },
-        });
+    <div class="card shadow mb-4">
+        <div id="historial_pagos">
+        <div class="card-header py-3">
+            </div>
+        </div>
+    </div>
+    <?php include '../../Includespro/footer.php'; ?>
+    <!-- jQuery y Bootstrap -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
 
-        $(document).ready(function() {
-            // Cargar apellidos de representantes
-            $.ajax({
-                url: 'get_representantes.php',
-                method: 'GET',
-                dataType: 'json',
-                success: function(data) {
-                    if (data.length > 0) {
-                        data.forEach(function(representante) {
-                            $('#apellido_representante').append(`<option value="${representante.ID_REPRESENTANTE}" data-deportista="${representante.ID_DEPORTISTA}">${representante.APELLIDO_REPRE} ${representante.NOMBRE_REPRE}</option>`);
-                        });
-                    } else {
-                        console.log("No se encontraron representantes");
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error("Error al cargar representantes:", status, error);
-                }
-            });
+    <!-- Core plugin JavaScript-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
 
-            // Cuando se selecciona un representante
-            $('#apellido_representante').on('change', function() {
-                var id_representante = $(this).val();
-                var id_deportista = $(this).find(':selected').data('deportista');
-                if (id_representante) {
-                    // Cargar cédula del representante
-                    $.ajax({
-                        url: 'get_nombre_representante.php',
-                        method: 'GET',
-                        data: {
-                            id_representante: id_representante
-                        },
-                        dataType: 'json',
-                        success: function(data) {
-                            $('#cedula_representante').val(data.CEDULA_REPRE);
-                        }
-                    });
+    <!-- Custom scripts for all pages-->
+    <script src="js/sb-admin-2.min.js"></script>
 
-                    // Cargar deportistas asociados y seleccionar el deportista automáticamente
-                    $.ajax({
-                        url: 'get_deportistas.php',
-                        method: 'GET',
-                        data: {
-                            id_representante: id_representante
-                        },
-                        dataType: 'json',
-                        success: function(data) {
-                            $('#deportista').empty().append('<option value="">Seleccionar</option>');
-                            data.forEach(function(deportista) {
-                                $('#deportista').append(`<option value="${deportista.ID_DEPORTISTA}">${deportista.APELLIDO_DEPO} ${deportista.NOMBRE_DEPO}</option>`);
-                            });
-                            // Seleccionar automáticamente el deportista asociado
-                            $('#deportista').val(id_deportista).change();
-                        }
-                    });
-                } else {
-                    $('#cedula_representante').val('');
-                    $('#deportista').empty().append('<option value="">Seleccionar</option>');
-                    $('#cedula_deportista').val('');
-                }
-            });
+    <!-- DataTables y botones -->
+    <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.3/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.0.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.bootstrap5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.6.0/jszip.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.print.min.js"></script>
 
-            // Cuando se selecciona un deportista
-            $('#deportista').on('change', function() {
-                var id_deportista = $(this).val();
-                if (id_deportista) {
-                    $.ajax({
-                        url: 'get_cedula_deportista.php',
-                        method: 'GET',
-                        data: {
-                            id_deportista: id_deportista
-                        },
-                        dataType: 'json',
-                        success: function(data) {
-                            $('#cedula_deportista').val(data.CEDULA_DEPO);
-                        }
-                    });
-                } else {
-                    $('#cedula_deportista').val('');
-                }
-            });
-            $(document).ready(function() {
-                // Manejar el envío del formulario
-$('#formulario-pago').submit(function(event) {
-    event.preventDefault();
-    var formData = new FormData(this);
-
-    // Agregar los campos adicionales según el tipo de pago
-    if ($('#tipo_pago').val() === 'efectivo') {
-        formData.append('fecha_pago', $('#fecha_pago_efectivo').val());
-        formData.append('motivo', $('#motivo_efectivo').val());
-        formData.append('monto', $('#monto_efectivo').val());
-        formData.append('mes', $('#mes_efectivo').val());
-        formData.append('anio', $('#anio_efectivo').val());
-    } else if ($('#tipo_pago').val() === 'transferencia') {
-        formData.append('banco_destino', $('#banco_destino').val());
-        formData.append('entidad_financiera', $('#entidad_financiera').val());
-        formData.append('fecha_pago', $('#fecha_pago_transferencia').val());
-        formData.append('motivo', $('#motivo_transferencia').val());
-        formData.append('monto', $('#monto_transferencia').val());
-        formData.append('mes', $('#mes_transferencia').val());
-        formData.append('anio', $('#anio_transferencia').val());
-    }
-
-    $.ajax({
-        url: 'procesar_pagos.php',
-        type: 'POST',
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function(response) {
-            if (response.success) {
-                alert('Pago registrado correctamente');
-                // Opcional: limpiar el formulario o redirigir a otra página
-                $('#formulario-pago')[0].reset();
-            } else {
-                alert('Error al registrar el pago: ' + response.message);
-            }
-        },
-        error: function() {
-            alert('Error al procesar la solicitud');
-        }
-    });
-});
-            });
-        });
-    </script>
+        <!-- Script para la gestión de pagos -->
+        <script src="gestionar_pagos.js"></script>
+        
 </body>
-
-
 </html>
-
-<?php include '../../Includespro/footer.php'; ?>
