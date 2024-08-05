@@ -29,9 +29,10 @@ try {
     $categorias = $stmtCategorias->fetchAll(PDO::FETCH_ASSOC);
 
     // Consulta SQL para obtener los deportistas por categoría
-    $sqlDeportistas = "SELECT d.ID_DEPORTISTA, d.ID_CATEGORIA, d.nombre_depo AS deportista_nombre, d.apellido_depo AS deportista_apellido, c.CATEGORIA AS categoria_nombre
+    $sqlDeportistas = "SELECT d.ID_DEPORTISTA, cd.ID_CATEGORIA, d.NOMBRE_DEPO AS deportista_nombre, d.APELLIDO_DEPO AS deportista_apellido, c.CATEGORIA AS categoria_nombre
                        FROM tab_deportistas d
-                       JOIN tab_categorias c ON d.ID_CATEGORIA = c.ID_CATEGORIA";
+                       JOIN tab_categoria_deportista cd ON d.ID_DEPORTISTA = cd.ID_DEPORTISTA
+                       JOIN tab_categorias c ON cd.ID_CATEGORIA = c.ID_CATEGORIA";
     $stmtDeportistas = $conn->prepare($sqlDeportistas);
     $stmtDeportistas->execute();
     $deportistas = $stmtDeportistas->fetchAll(PDO::FETCH_ASSOC);
@@ -47,6 +48,7 @@ try {
     }
 } catch (PDOException $e) {
     echo "Error al ejecutar la consulta: " . $e->getMessage();
+    exit();
 }
 
 // Cierra la conexión a la base de datos
@@ -69,8 +71,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->execute();
                 header("Location: categorias_deportistas.php");
                 exit();
-
-                // logs
             }
 
             if ($accion === 'eliminar_categoria') {
@@ -81,14 +81,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->execute();
                 header("Location: categorias_deportistas.php");
                 exit();
-                //logs
             }
 
             if ($accion === 'agregar_deportista') {
                 $nombre_depo = $_POST['nombre_depo'];
                 $apellido_depo = $_POST['apellido_depo'];
                 $id_categoria = $_POST['id_categoria'];
-                $sql = "INSERT INTO tab_deportistas (nombre_depo, apellido_depo, ID_CATEGORIA) VALUES (:nombre_depo, :apellido_depo, :id_categoria)";
+                $sql = "INSERT INTO tab_deportistas (NOMBRE_DEPO, APELLIDO_DEPO, ID_CATEGORIA) VALUES (:nombre_depo, :apellido_depo, :id_categoria)";
                 $stmt = $conn->prepare($sql);
                 $stmt->bindParam(':nombre_depo', $nombre_depo);
                 $stmt->bindParam(':apellido_depo', $apellido_depo);
@@ -96,7 +95,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->execute();
                 header("Location: categorias_deportistas.php");
                 exit();
-                //logs
             }
 
             if ($accion === 'eliminar_deportista') {
@@ -107,7 +105,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->execute();
                 header("Location: categorias_deportistas.php");
                 exit();
-                //logs
             }
         }
     } catch (PDOException $e) {

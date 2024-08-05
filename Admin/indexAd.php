@@ -27,9 +27,9 @@ $offset = ($page - 1) * $categoriasPorPagina;
 
 try {
     // Consulta SQL para obtener las categorías y el número de deportistas por categoría
-    $sql = "SELECT c.ID_CATEGORIA, c.CATEGORIA, COUNT(d.ID_DEPORTISTA) AS num_deportistas
+    $sql = "SELECT c.ID_CATEGORIA, c.CATEGORIA, COUNT(cd.id_deportista) AS num_deportistas
             FROM tab_categorias c
-            LEFT JOIN tab_deportistas d ON c.ID_CATEGORIA = d.ID_CATEGORIA
+            LEFT JOIN tab_categoria_deportista cd ON c.ID_CATEGORIA = cd.id_categoria
             GROUP BY c.ID_CATEGORIA, c.CATEGORIA
             LIMIT :limit OFFSET :offset";
     $stmt = $conn->prepare($sql);
@@ -37,6 +37,10 @@ try {
     $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
     $stmt->execute();
     $categorias = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    if ($categorias === false) {
+        throw new Exception("Error al obtener las categorías.");
+    }
 
     // Consulta para obtener el total de categorías
     $totalCategoriasQuery = "SELECT COUNT(*) as total FROM tab_categorias";
@@ -46,6 +50,7 @@ try {
     $totalPages = ceil($totalCategorias / $categoriasPorPagina);
 } catch (PDOException $e) {
     echo "Error al ejecutar la consulta: " . $e->getMessage();
+    exit();
 }
 
 // Procesar formulario de creación de categoría
@@ -66,18 +71,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['crear_categoria'])) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['eliminar_categoria'])) {
     try {
         $idCategoria = $_POST['id_categoria'];
-        $sql = "DELETE FROM tab_categorias WHERE ID_CATEGORIA = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->execute([$idCategoria]);
-        header("Location: " . $_SERVER['PHP_SELF']);
-        exit();
+        
+        // Consulta para verificar el número de deportistas asociados
+        $verificarDeportistasQuery = "SELECT COUNT(*) as num_deportistas FROM tab_categoria_deportista WHERE id_categoria = ?";
+        $stmtVerificar = $conn->prepare($verificarDeportistasQuery);
+        $stmtVerificar->execute([$idCategoria]);
+        $numDeportistas = $stmtVerificar->fetch(PDO::FETCH_ASSOC)['num_deportistas'];
+
+        if ($numDeportistas > 0) {
+            // Si hay deportistas, no se puede eliminar la categoría
+            $mensajeError = "No se puede eliminar la categoría porque tiene deportistas asociados.";
+        } else {
+            // Si no hay deportistas, se puede eliminar la categoría
+            $sql = "DELETE FROM tab_categorias WHERE ID_CATEGORIA = ?";
+            $stmt = $conn->prepare($sql);
+            $stmt->execute([$idCategoria]);
+            header("Location: " . $_SERVER['PHP_SELF']);
+            exit();
+        }
     } catch (PDOException $e) {
         echo "Error al eliminar la categoría: " . $e->getMessage();
     }
 }
 
 try {
-    // Consulta SQL
+    // Consulta SQL para obtener conteo de usuarios
     $sql = "SELECT
             (SELECT COUNT(*) FROM tab_administradores) AS administradores,
             (SELECT COUNT(*) FROM tab_entrenadores) AS entrenadores,
@@ -94,6 +112,7 @@ try {
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     echo "Error al ejecutar la consulta: " . $e->getMessage();
+    exit();
 }
 
 // Obtener logs de actividad
@@ -137,7 +156,6 @@ try {
 
 $conn = null;
 
-
 // Función para calcular el tiempo transcurrido en formato legible
 function timeElapsedString($datetime, $full = false)
 {
@@ -170,7 +188,6 @@ function timeElapsedString($datetime, $full = false)
     if (!$full) $string = array_slice($string, 0, 1);  // Si $full es false, solo mostrar la unidad de tiempo más significativa.
     return $string ? implode(', ', $string) . ' ago' : 'just now';  // Construir la cadena final.
 }
-
 
 include './includespro/header.php';
 ?>
@@ -329,29 +346,36 @@ include './includespro/header.php';
                         </div>
                     </div>
                     <div class="card-body">
-                        <?php foreach ($categorias as $categoria) : ?>
-                            <h4 class="small">
-                                <?php echo htmlspecialchars($categoria['CATEGORIA']); ?>
-                                <span class="float-end fw-bold"><?php echo $categoria['num_deportistas']; ?> / 20</span>
-                            </h4>
-                            <div class="progress mb-4">
-                                <div class="progress-bar 
-                                    <?php
-                                    $percentage = ($categoria['num_deportistas'] / 20) * 100;
-                                    // Puedes cambiar los colores aquí
-                                    if ($percentage <= 25) {
-                                        echo 'bg-danger'; // Rojo para <= 25%
-                                    } elseif ($percentage <= 50) {
-                                        echo 'bg-warning'; // Amarillo para <= 50%
-                                    } elseif ($percentage <= 75) {
-                                        echo 'bg-info'; // Azul para <= 75%
-                                    } else {
-                                        echo 'bg-success'; // Verde para > 75%
-                                    }
-                                    ?>" role="progressbar" style="width: <?php echo $percentage; ?>%" aria-valuenow="<?php echo $categoria['num_deportistas']; ?>" aria-valuemin="0" aria-valuemax="20">
+                        <?php
+                        if (isset($categorias) && is_array($categorias) && !empty($categorias)) {
+                            foreach ($categorias as $categoria) : ?>
+                                <h4 class="small">
+                                    <?php echo htmlspecialchars($categoria['CATEGORIA']); ?>
+                                    <span class="float-end fw-bold"><?php echo $categoria['num_deportistas']; ?> / 20</span>
+                                </h4>
+                                <div class="progress mb-4">
+                                    <div class="progress-bar 
+                                        <?php
+                                        $percentage = ($categoria['num_deportistas'] / 20) * 100;
+                                        // Puedes cambiar los colores aquí
+                                        if ($percentage <= 25) {
+                                            echo 'bg-danger'; // Rojo para <= 25%
+                                        } elseif ($percentage <= 50) {
+                                            echo 'bg-warning'; // Amarillo para <= 50%
+                                        } elseif ($percentage <= 75) {
+                                            echo 'bg-info'; // Azul para <= 75%
+                                        } else {
+                                            echo 'bg-success'; // Verde para > 75%
+                                        }
+                                        ?>" role="progressbar" style="width: <?php echo $percentage; ?>%" aria-valuenow="<?php echo $categoria['num_deportistas']; ?>" aria-valuemin="0" aria-valuemax="20">
+                                    </div>
                                 </div>
-                            </div>
-                        <?php endforeach; ?>
+                        <?php
+                            endforeach;
+                        } else {
+                            echo "<p>No se encontraron categorías.</p>";
+                        }
+                        ?>
                     </div>
                     <div class="card-footer position-relative">
                         <div class="d-flex align-items-center justify-content-between small text-body">
@@ -404,6 +428,11 @@ include './includespro/header.php';
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
+                                <?php if (isset($mensajeError)) : ?>
+                                    <div class="alert alert-danger" role="alert">
+                                        <?php echo htmlspecialchars($mensajeError); ?>
+                                    </div>
+                                <?php endif; ?>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
