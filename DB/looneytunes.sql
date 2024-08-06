@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 05-08-2024 a las 23:24:57
+-- Tiempo de generación: 06-08-2024 a las 18:17:10
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -50,22 +50,23 @@ INSERT INTO `tab_administradores` (`ID_ADMINISTRADOR`, `ID_USUARIO`, `NOMBRE_ADM
 
 CREATE TABLE `tab_categorias` (
   `ID_CATEGORIA` int(11) NOT NULL,
-  `CATEGORIA` varchar(30) NOT NULL
+  `CATEGORIA` varchar(30) NOT NULL,
+  `LIMITE_DEPORTISTAS` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `tab_categorias`
 --
 
-INSERT INTO `tab_categorias` (`ID_CATEGORIA`, `CATEGORIA`) VALUES
-(1, 'MOSQUITOS'),
-(2, 'PRE MINI'),
-(3, 'MINI DAMAS'),
-(4, 'MINI HOMBRES'),
-(5, 'U13 DAMAS'),
-(6, 'U13 HOMBRES'),
-(8, 'U15 HOMBRES'),
-(12, 'U15 DAMAS');
+INSERT INTO `tab_categorias` (`ID_CATEGORIA`, `CATEGORIA`, `LIMITE_DEPORTISTAS`) VALUES
+(1, 'MOSQUITOS', NULL),
+(2, 'PRE MINI', NULL),
+(3, 'MINI DAMAS', NULL),
+(4, 'MINI HOMBRES', NULL),
+(5, 'U13 DAMAS', NULL),
+(6, 'U13 HOMBRES', NULL),
+(8, 'U15 HOMBRES', NULL),
+(12, 'U15 DAMAS', NULL);
 
 -- --------------------------------------------------------
 
@@ -183,8 +184,7 @@ CREATE TABLE `tab_entrenador_categoria` (
 --
 
 INSERT INTO `tab_entrenador_categoria` (`ID_ENTRENADOR`, `ID_CATEGORIA`) VALUES
-(2, 1),
-(6, 1);
+(2, 1);
 
 -- --------------------------------------------------------
 
