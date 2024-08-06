@@ -70,6 +70,7 @@ $(document).ready(function() {
 <script src="/looneytunes/Assets/js/datatables/datatables-simple-demo.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/litepicker/dist/bundle.js" crossorigin="anonymous"></script>
 <script src="/looneytunes/Assets/js/litepicker.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     var ingresarModal = new bootstrap.Modal(document.getElementById('ingresarModal'));
@@ -122,10 +123,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert('Error al guardar los detalles: ' + data.message);
             }
         })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Ocurrió un error al guardar los detalles');
-        })
         .finally(() => {
             ingresarModal.hide();
             document.body.classList.remove('modal-open');
@@ -136,48 +133,8 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    var ingresarModal = new bootstrap.Modal(document.getElementById('ingresarModal'));
-    
-    document.querySelectorAll('.btn-ingresar').forEach(function(button) {
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
-            var deportistaId = this.getAttribute('data-id');
-            document.getElementById('deportistaId').value = deportistaId;
-            ingresarModal.show();
-        });
-    });
-
-    document.getElementById('guardarDetalles').addEventListener('click', function() {
-        var form = document.getElementById('detallesForm');
-        var formData = new FormData(form);
-
-        fetch('guardar_detalles.php', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Detalles guardados con éxito');
-                ingresarModal.hide();
-            } else {
-                alert('Error al guardar los detalles: ' + data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Ocurrió un error al guardar los detalles');
-        });
-    });
-});
-
-
-</script>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
     // Manejar el clic en el botón "Informes"
-    document.querySelectorAll('.btn-informes').forEach(button => {
+    document.querySelectorAll('.btn-infosrmes').forEach(button => {
         button.addEventListener('click', function(e) {
             e.preventDefault();
             const deportistaId = this.getAttribute('data-id');
@@ -210,6 +167,11 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(error => {
             console.error('Error:', error);
             alert('Ocurrió un error al enviar el informe.');
+        });
+        .finally(() => {
+            ingresarModal.hide();
+            document.body.classList.remove('modal-open');
+            document.querySelector('.modal-backdrop')?.remove();
         });
     });
 });

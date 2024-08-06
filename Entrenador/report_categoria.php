@@ -23,7 +23,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 // Obtener y sanitizar el nombre de la categoría
-$nombre_categoria = isset($_GET['categoria']) ? filter_var($_GET['categoria'], FILTER_SANITIZE_STRING) : '';
+$nombre_categoria = isset($_GET['categoria']) ? htmlspecialchars($_GET['categoria'], ENT_QUOTES, 'UTF-8') : '';
 
 if (empty($nombre_categoria)) {
     die("No se especificó una categoría válida.");
@@ -112,7 +112,7 @@ include './includes/header.php';
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="ingresarModalLabel">Ingresar Detalles</h5>
+                    <h5 class="modal-title" id="ingresarModalLabel">Ingresar Detalles de <?= htmlspecialchars($jugador['NOMBRE_DEPO'] . ' ' .  $jugador['APELLIDO_DEPO']) ?></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
