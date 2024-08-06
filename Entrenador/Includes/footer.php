@@ -101,34 +101,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelector('.modal-backdrop')?.remove();
     });
 
-    document.getElementById('guardarDetalles').addEventListener('click', function() {
-        var form = document.getElementById('detallesForm');
-        var formData = new FormData(form);
-
-        fetch('guardar_detalles.php', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.success) {
-                alert('Detalles guardados con éxito');
-                ingresarModal.hide();
-            } else {
-                alert('Error al guardar los detalles: ' + data.message);
-            }
-        })
-        .finally(() => {
-            ingresarModal.hide();
-            document.body.classList.remove('modal-open');
-            document.querySelector('.modal-backdrop')?.remove();
-        });
-    });
+    
 });
 </script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -171,12 +144,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 $('#informesModal').modal('hide');
                 $('#informe').val('');
             } else {
-                alert('Error: ' + response.message);
                 console.error('Error al guardar el informe:', response.message);
             }
         },
         error: function(jqXHR, textStatus, errorThrown) {
-            alert('Error en la solicitud AJAX');
             console.error('Error AJAX:', textStatus, errorThrown);
         }
     });
@@ -211,7 +182,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 fechaIngreso: fechaIngreso
             },
             success: function(response) {
-                alert('Detalles guardados con éxito');
                 $('#ingresarModal').modal('hide');
                 // Limpiar los campos del formulario
                 $('#detallesForm')[0].reset();

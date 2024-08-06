@@ -81,6 +81,7 @@ include './includes/header.php';
                                             <th>Fecha</th>
                                             <th>Observación</th>
                                             <th>Representante</th>
+                                            <th>Acciones</th> <!-- Nueva columna para el botón de eliminación -->
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -89,6 +90,12 @@ include './includes/header.php';
                                                 <td><?= htmlspecialchars(date('d/m/Y', strtotime($observacion['fecha_creacion']))) ?></td>
                                                 <td><?= nl2br(htmlspecialchars($observacion['informe'])) ?></td>
                                                 <td><?= htmlspecialchars($observacion['NOMBRE_REPRE'] . ' ' . $observacion['APELLIDO_REPRE']) ?></td>
+                                                <td>
+                                                    <form method="POST" action="eliminar_informe.php" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este informe?');">
+                                                        <input type="hidden" name="id_informe" value="<?= htmlspecialchars($observacion['id_informe']) ?>">
+                                                        <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                                                    </form>
+                                                </td>
                                             </tr>
                                         <?php endforeach; ?>
                                     </tbody>

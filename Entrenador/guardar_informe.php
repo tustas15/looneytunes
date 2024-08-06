@@ -3,7 +3,7 @@ session_start();
 require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
 
 if (!isset($_SESSION['user_id'])) {
-    die(json_encode(['success' => false, 'message' => 'Usuario no autorizado']));
+    die(); // Termina el script silenciosamente si el usuario no está autorizado
 }
 
 $deportistaId = $_POST['deportistaId'];
@@ -32,8 +32,9 @@ try {
     $stmt->bindParam(':informe', $informe, PDO::PARAM_STR);
     $stmt->execute();
 
-    echo json_encode(['success' => true, 'message' => 'Informe guardado con éxito']);
+    // Mensaje de éxito eliminado
 } catch (Exception $e) {
     error_log("Error al guardar el informe: " . $e->getMessage());
-    echo json_encode(['success' => false, 'message' => 'Error al guardar el informe: ' . $e->getMessage()]);
+    // Mensaje de error eliminado
 }
+?>

@@ -133,7 +133,7 @@ include './includes/header.php';
                     echo '</div>';
                     echo '</div>';
                 } else {
-                    echo '<div class="alert alert-info">No se encontraron detalles para este deportista.</div>';
+                    echo '<div class="alert alert-info">No se encontraron detalles</div>';
                 }
                 ?>
             </div>
