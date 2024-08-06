@@ -130,13 +130,13 @@ include './includes/header.php';
                                         if (!empty($deportista['ALTURA']) && !empty($deportista['PESO'])) {
                                             $altura_m = $deportista['ALTURA'] / 100;
                                             $imc = $deportista['PESO'] / ($altura_m * $altura_m);
-                                            echo "<tr>";
+                                            echo "<tr data-id='" . htmlspecialchars($deportista['ID_DETALLE']) . "'>";
                                             echo "<td>" . htmlspecialchars($deportista['FECHA_INGRESO']) . "</td>";
                                             echo "<td>" . htmlspecialchars($deportista['NUMERO_CAMISA']) . "</td>";
                                             echo "<td>" . htmlspecialchars($deportista['ALTURA']) . "</td>";
                                             echo "<td>" . htmlspecialchars($deportista['PESO']) . "</td>";
                                             echo "<td>" . number_format($imc, 2) . "</td>";
-                                            echo "<td><button class='btn btn-danger btn-sm' onclick='eliminarDetalle(" . htmlspecialchars($deportista['ID_DETALLE']) . ")'>Eliminar</button></td>";
+                                            echo "<td><button class='btn btn-danger btn-sm' onclick='eliminarDetalle(" . htmlspecialchars($deportista['ID_DETALLE']) . ", " . $id_deportista . ")'>Eliminar</button></td>";
                                             echo "</tr>";
                                         }
                                     }
@@ -171,10 +171,51 @@ include './includes/footer.php';
 <script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap4.min.js"></script>
 
 <script>
-function eliminarDetalle(idDetalle) {
+function eliminarDetalle(idDetalle, idDeportista) {
     if (confirm("¿Estás seguro de que deseas eliminar este detalle?")) {
-        window.location.href = 'eliminar_detalle.php?id=' + idDetalle;
+        $.ajax({
+            url: 'eliminar_detalle.php',
+            type: 'POST',
+            data: { id: idDetalle, deportista_id: idDeportista },
+            success: function(response) {
+                if (response === 'success') {
+                    // Eliminar la fila de la tabla
+                    $(`#detallesTable tr[data-id="${idDetalle}"]`).remove();
+                    
+                    // Actualizar la gráfica
+                    actualizarGrafica(idDeportista);
+                } else {
+                    alert('Error al eliminar el detalle');
+                }
+            },
+            error: function() {
+                alert('Error en la solicitud AJAX');
+            }
+        });
     }
+}
+
+function actualizarGrafica(idDeportista) {
+    $.ajax({
+        url: window.location.href,
+        type: 'GET',
+        data: { id: idDeportista },
+        success: function(response) {
+            var parser = new DOMParser();
+            var doc = parser.parseFromString(response, 'text/html');
+            var newDataPoints = JSON.parse(doc.getElementById('jsonDataPoints').textContent);
+            
+            var labels = newDataPoints.map(function(dp) { return dp.fecha_ingreso; });
+            var data = newDataPoints.map(function(dp) { return dp.imc; });
+
+            imcChart.data.labels = labels;
+            imcChart.data.datasets[0].data = data;
+            imcChart.update();
+        },
+        error: function() {
+            console.error('Error al actualizar la gráfica');
+        }
+    });
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -225,3 +266,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+
+<!-- Agregar este elemento oculto para almacenar los datos de la gráfica -->
+<script id="jsonDataPoints" type="application/json"><?php echo $jsonDataPoints; ?></script>
