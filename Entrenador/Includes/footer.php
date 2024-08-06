@@ -101,81 +101,96 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelector('.modal-backdrop')?.remove();
     });
 
-    document.getElementById('guardarDetalles').addEventListener('click', function() {
-        var form = document.getElementById('detallesForm');
-        var formData = new FormData(form);
-
-        fetch('guardar_detalles.php', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.success) {
-                alert('Detalles guardados con éxito');
-                ingresarModal.hide();
-            } else {
-                alert('Error al guardar los detalles: ' + data.message);
-            }
-        })
-        .finally(() => {
-            ingresarModal.hide();
-            document.body.classList.remove('modal-open');
-            document.querySelector('.modal-backdrop')?.remove();
-        });
-    });
+    
 });
 </script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Manejar el clic en el botón "Informes"
-    document.querySelectorAll('.btn-infosrmes').forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
-            const deportistaId = this.getAttribute('data-id');
-            const representanteId = this.getAttribute('data-representante');
-            document.getElementById('informeDeportistaId').value = deportistaId;
-            document.getElementById('informeRepresentanteId').value = representanteId;
-            new bootstrap.Modal(document.getElementById('informesModal')).show();
-        });
+
+    // Manejador para el botón de informes
+    $('.btn-informes').click(function(e) {
+        console.log('Botón informes clickeado');
+        e.preventDefault();
+        var deportistaId = $(this).data('id');
+        var representanteId = $(this).data('representante');
+        var nombreDeportista = $(this).data('nombre');
+        console.log('Deportista ID:', deportistaId, 'Representante ID:', representanteId, 'Nombre:', nombreDeportista);
+        $('#informeDeportistaId').val(deportistaId);
+        $('#informeRepresentanteId').val(representanteId);
+        $('#nombreDeportista').text(nombreDeportista);
+        $('#informesModal').modal('show');
     });
 
-    // Manejar el envío del formulario de informes
-    document.getElementById('enviarInforme').addEventListener('click', function() {
-        const form = document.getElementById('informeForm');
-        const formData = new FormData(form);
+    // Manejador para enviar el informe
+    $('#enviarInforme').click(function() {
+    var deportistaId = $('#informeDeportistaId').val();
+    var representanteId = $('#informeRepresentanteId').val();
+    var informe = $('#informe').val();
 
-        fetch('enviar_informe.php', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert(data.message);
-                document.getElementById('informesModal').querySelector('.btn-close').click();
-                form.reset();
+    $.ajax({
+        url: 'guardar_informe.php',
+        method: 'POST',
+        data: {
+            deportistaId: deportistaId,
+            representanteId: representanteId,
+            informe: informe
+        },
+        dataType: 'json',
+        success: function(response) {
+            if (response.success) {
+                alert(response.message);
+                $('#informesModal').modal('hide');
+                $('#informe').val('');
             } else {
-                alert('Error: ' + data.message);
+                console.error('Error al guardar el informe:', response.message);
             }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Ocurrió un error al enviar el informe.');
-        });
-        .finally(() => {
-            ingresarModal.hide();
-            document.body.classList.remove('modal-open');
-            document.querySelector('.modal-backdrop')?.remove();
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.error('Error AJAX:', textStatus, errorThrown);
+        }
+    });
+});
+
+    // Manejador para el botón de ingresar detalles
+    $('.btn-ingresar').on('click', function(e) {
+        e.preventDefault();
+        var deportistaId = $(this).data('id');
+        var nombreDeportista = $(this).data('nombre');
+        $('#deportistaId').val(deportistaId);
+        $('#nombreDeportistaIngreso').text(nombreDeportista);
+        $('#ingresarModal').modal('show');
+    });
+
+    // Manejador para guardar los detalles
+    $('#guardarDetalles').click(function() {
+        var deportistaId = $('#deportistaId').val();
+        var numeroCamisa = $('#numeroCamisa').val();
+        var altura = $('#altura').val();
+        var peso = $('#peso').val();
+        var fechaIngreso = $('#fechaIngreso').val();
+
+        $.ajax({
+            url: 'guardar_detalles.php',
+            method: 'POST',
+            data: {
+                deportistaId: deportistaId,
+                numeroCamisa: numeroCamisa,
+                altura: altura,
+                peso: peso,
+                fechaIngreso: fechaIngreso
+            },
+            success: function(response) {
+                $('#ingresarModal').modal('hide');
+                // Limpiar los campos del formulario
+                $('#detallesForm')[0].reset();
+            },
+            error: function() {
+                alert('Error al guardar los detalles');
+            }
         });
     });
 });
 </script>
 </body>
-
-</html>
