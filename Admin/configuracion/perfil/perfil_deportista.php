@@ -21,14 +21,17 @@ $id_deportista = intval($_GET['ID_DEPORTISTA']);
 try {
     // Obtener datos del deportista
     $stmt = $conn->prepare("
-        SELECT d.ID_DEPORTISTA, d.ID_USUARIO, u.USUARIO, d.NOMBRE_DEPO, d.APELLIDO_DEPO, d.FECHA_NACIMIENTO, d.CEDULA_DEPO, d.NUMERO_CELULAR, d.GENERO,
-               d.ID_CATEGORIA, c.CATEGORIA AS NOMBRE_CATEGORIA, r.NOMBRE_REPRE, r.APELLIDO_REPRE, r.CEDULA_REPRE, r.CELULAR_REPRE
-        FROM tab_deportistas d
-        INNER JOIN tab_usuarios u ON d.ID_USUARIO = u.ID_USUARIO
-        LEFT JOIN tab_representantes_deportistas rd ON d.ID_DEPORTISTA = rd.ID_DEPORTISTA
-        LEFT JOIN tab_representantes r ON rd.ID_REPRESENTANTE = r.ID_REPRESENTANTE
-        LEFT JOIN tab_categorias c ON d.ID_CATEGORIA = c.ID_CATEGORIA
-        WHERE d.ID_DEPORTISTA = :id_deportista
+        SELECT d.ID_DEPORTISTA, d.ID_USUARIO, u.USUARIO, d.NOMBRE_DEPO, d.APELLIDO_DEPO, 
+       d.FECHA_NACIMIENTO, d.CEDULA_DEPO, d.NUMERO_CELULAR, d.GENERO,
+       cd.ID_CATEGORIA, c.CATEGORIA AS NOMBRE_CATEGORIA, 
+       r.NOMBRE_REPRE, r.APELLIDO_REPRE, r.CEDULA_REPRE, r.CELULAR_REPRE
+FROM tab_deportistas d
+INNER JOIN tab_usuarios u ON d.ID_USUARIO = u.ID_USUARIO
+LEFT JOIN tab_representantes_deportistas rd ON d.ID_DEPORTISTA = rd.ID_DEPORTISTA
+LEFT JOIN tab_representantes r ON rd.ID_REPRESENTANTE = r.ID_REPRESENTANTE
+LEFT JOIN tab_categoria_deportista cd ON d.ID_DEPORTISTA = cd.ID_DEPORTISTA
+LEFT JOIN tab_categorias c ON cd.ID_CATEGORIA = c.ID_CATEGORIA
+WHERE d.ID_DEPORTISTA = :id_deportista
     ");
     $stmt->bindParam(':id_deportista', $id_deportista, PDO::PARAM_INT);
     $stmt->execute();
