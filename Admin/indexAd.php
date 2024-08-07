@@ -428,7 +428,6 @@ include './includespro/header.php';
                 </div>
             </div>
 
-
             <!-- Modal Crear Categoría -->
             <div class="modal fade" id="crearCategoriaModal" tabindex="-1" aria-labelledby="crearCategoriaModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
@@ -649,8 +648,6 @@ include './includespro/header.php';
                 </div>
             </div>
 
-
-
             <!-- Modal -->
             <div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
@@ -660,7 +657,7 @@ include './includespro/header.php';
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <form id="reportForm" method="POST" action="generate_report.php">
+                            <form id="reportForm" method="POST" action="./configuracion/generate_report.php">
                                 <div class="mb-3">
                                     <label for="reportType" class="form-label">Tipo de Informe</label>
                                     <select class="form-select" id="reportType" name="report_type" required>
@@ -669,6 +666,16 @@ include './includespro/header.php';
                                         <option value="entrenadores">Entrenadores</option>
                                         <option value="representantes">Representantes</option>
                                         <option value="deportistas">Deportistas</option>
+                                        <option value="inventario">Inventario</option>
+                                        <option value="categorias">Categorías Deportistas</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="reportFormat" class="form-label">Formato de Informe</label>
+                                    <select class="form-select" id="reportFormat" name="report_format" required>
+                                        <option value="">Seleccione...</option>
+                                        <option value="csv">CSV</option>
+                                        <option value="pdf">PDF</option>
                                     </select>
                                 </div>
                                 <div class="modal-footer">
@@ -681,7 +688,6 @@ include './includespro/header.php';
                 </div>
             </div>
 
-</main>
-<?php
-include './includespro/footer.php';
-?>
+            <?php
+            include './includespro/footer.php';
+            ?>
