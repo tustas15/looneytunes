@@ -37,7 +37,9 @@ try {
         FROM 
             tab_deportistas
         INNER JOIN 
-            tab_categorias ON tab_deportistas.ID_CATEGORIA = tab_categorias.ID_CATEGORIA
+            tab_categoria_deportista ON tab_deportistas.ID_DEPORTISTA = tab_categoria_deportista.ID_DEPORTISTA
+        LEFT JOIN
+            tab_categorias ON tab_categoria_deportista.ID_CATEGORIA = tab_categorias.ID_CATEGORIA
         LEFT JOIN 
             tab_representantes_deportistas ON tab_deportistas.ID_DEPORTISTA = tab_representantes_deportistas.ID_DEPORTISTA
         LEFT JOIN 

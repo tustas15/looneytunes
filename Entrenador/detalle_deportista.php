@@ -50,7 +50,9 @@ try {
         LEFT JOIN 
             tab_detalles ON tab_deportistas.ID_DEPORTISTA = tab_detalles.ID_DEPORTISTA
         LEFT JOIN
-            tab_categorias ON tab_deportistas.ID_CATEGORIA = tab_categorias.ID_CATEGORIA
+            tab_categoria_deportista ON tab_deportistas.ID_DEPORTISTA = tab_categoria_deportista.ID_DEPORTISTA
+        LEFT JOIN
+            tab_categorias ON tab_categoria_deportista.ID_CATEGORIA = tab_categorias.ID_CATEGORIA
         WHERE 
             tab_deportistas.ID_DEPORTISTA = :id
         ORDER BY 

@@ -29,7 +29,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
 $categoria_entrenador = isset($_SESSION['entrenador_categoria']) ? $_SESSION['entrenador_categoria'] : 'No asignada';
 
 // Consulta para contar deportistas por categoría
-$sql_contar = "SELECT id_categoria, COUNT(*) as cantidad FROM tab_deportistas GROUP BY id_categoria";
+$sql_contar = "SELECT id_categoria, COUNT(*) as cantidad FROM tab_categoria_deportista GROUP BY id_categoria";
 $stmt_contar = $conn->query($sql_contar);
 
 $categorias_count = array();
