@@ -125,7 +125,7 @@ $categorias = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <!-- Botón de volver -->
                     <div class="row justify-content-center mt-4">
                         <div class="col-md-8 text-center">
-                            <a class="btn btn-secondary" href="ruta/de/tu/pagina/principal.php">Volver</a> <!-- Cambia la ruta según sea necesario -->
+                            <a class="btn btn-secondary" href="../indexAd.php">Volver</a> <!-- Cambia la ruta según sea necesario -->
                         </div>
                     </div>
                 </div>

@@ -17,7 +17,6 @@ if (!isset($_SESSION['tipo_usuario'])) {
 
 $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
 $tipo_usuario = $_SESSION['tipo_usuario'];
-
 $usuario = isset($_SESSION['usuario']) ? $_SESSION['usuario'] : 'Usuario';
 
 // Parámetros para la paginación
@@ -27,16 +26,20 @@ $offset = ($page - 1) * $categoriasPorPagina;
 
 try {
     // Consulta SQL para obtener las categorías y el número de deportistas por categoría
-    $sql = "SELECT c.ID_CATEGORIA, c.CATEGORIA, COUNT(d.ID_DEPORTISTA) AS num_deportistas
+    $sql = "SELECT c.ID_CATEGORIA, c.CATEGORIA, c.LIMITE_DEPORTISTAS, COUNT(cd.id_deportista) AS num_deportistas
             FROM tab_categorias c
-            LEFT JOIN tab_deportistas d ON c.ID_CATEGORIA = d.ID_CATEGORIA
-            GROUP BY c.ID_CATEGORIA, c.CATEGORIA
+            LEFT JOIN tab_categoria_deportista cd ON c.ID_CATEGORIA = cd.id_categoria
+            GROUP BY c.ID_CATEGORIA, c.CATEGORIA, c.LIMITE_DEPORTISTAS
             LIMIT :limit OFFSET :offset";
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(':limit', $categoriasPorPagina, PDO::PARAM_INT);
     $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
     $stmt->execute();
     $categorias = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    if ($categorias === false) {
+        throw new Exception("Error al obtener las categorías.");
+    }
 
     // Consulta para obtener el total de categorías
     $totalCategoriasQuery = "SELECT COUNT(*) as total FROM tab_categorias";
@@ -46,6 +49,7 @@ try {
     $totalPages = ceil($totalCategorias / $categoriasPorPagina);
 } catch (PDOException $e) {
     echo "Error al ejecutar la consulta: " . $e->getMessage();
+    exit();
 }
 
 // Procesar formulario de creación de categoría
@@ -66,18 +70,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['crear_categoria'])) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['eliminar_categoria'])) {
     try {
         $idCategoria = $_POST['id_categoria'];
-        $sql = "DELETE FROM tab_categorias WHERE ID_CATEGORIA = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->execute([$idCategoria]);
-        header("Location: " . $_SERVER['PHP_SELF']);
-        exit();
+
+        // Consulta para verificar el número de deportistas asociados
+        $verificarDeportistasQuery = "SELECT COUNT(*) as num_deportistas FROM tab_categoria_deportista WHERE id_categoria = ?";
+        $stmtVerificar = $conn->prepare($verificarDeportistasQuery);
+        $stmtVerificar->execute([$idCategoria]);
+        $numDeportistas = $stmtVerificar->fetch(PDO::FETCH_ASSOC)['num_deportistas'];
+
+        if ($numDeportistas > 0) {
+            // Si hay deportistas, no se puede eliminar la categoría
+            $mensajeError = "No se puede eliminar la categoría porque tiene deportistas asociados.";
+        } else {
+            // Si no hay deportistas, se puede eliminar la categoría
+            $sql = "DELETE FROM tab_categorias WHERE ID_CATEGORIA = ?";
+            $stmt = $conn->prepare($sql);
+            $stmt->execute([$idCategoria]);
+            header("Location: " . $_SERVER['PHP_SELF']);
+            exit();
+        }
     } catch (PDOException $e) {
         echo "Error al eliminar la categoría: " . $e->getMessage();
     }
 }
 
+// Procesar formulario para modificar el límite de deportistas
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['modificar_limite'])) {
+    try {
+        $idCategoria = $_POST['categoria_limite'];
+        $nuevoLimite = $_POST['nuevo_limite'];
+
+        // Consulta para actualizar el límite de deportistas
+        $sql = "UPDATE tab_categorias SET LIMITE_DEPORTISTAS = ? WHERE ID_CATEGORIA = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([$nuevoLimite, $idCategoria]);
+
+        // Redirigir a la misma página para evitar resubida de formulario
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit();
+    } catch (PDOException $e) {
+        echo "Error al actualizar el límite de deportistas: " . $e->getMessage();
+    }
+}
 try {
-    // Consulta SQL
+    // Consulta SQL para obtener conteo de usuarios
     $sql = "SELECT
             (SELECT COUNT(*) FROM tab_administradores) AS administradores,
             (SELECT COUNT(*) FROM tab_entrenadores) AS entrenadores,
@@ -94,6 +129,7 @@ try {
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     echo "Error al ejecutar la consulta: " . $e->getMessage();
+    exit();
 }
 
 // Obtener logs de actividad
@@ -137,7 +173,6 @@ try {
 
 $conn = null;
 
-
 // Función para calcular el tiempo transcurrido en formato legible
 function timeElapsedString($datetime, $full = false)
 {
@@ -158,19 +193,34 @@ function timeElapsedString($datetime, $full = false)
         'i' => 'minuto',
         's' => 'segundo',
     ];
-    // Iterar sobre la matriz para construir la cadena de texto con las diferencias de tiempo.
+
+    // Crear una matriz que asocia cada unidad de tiempo con su nombre en plural.
+    $stringPlural = [
+        'y' => 'años',
+        'm' => 'meses',
+        'w' => 'semanas',
+        'd' => 'días',
+        'h' => 'horas',
+        'i' => 'minutos',
+        's' => 'segundos',
+    ];
+
+    // Recorrer cada unidad de tiempo en la matriz.
     foreach ($string as $k => &$v) {
+        // Si la diferencia para esta unidad de tiempo es diferente de cero,
+        // guardar el nombre en singular o plural según corresponda.
         if ($diff->$k) {
-            $v = $diff->$k . ' ' . $v . ($diff->$k > 1 ? 's' : '');  // Añadir la cantidad y pluralizar si es necesario.
+            $v = $diff->$k . ' ' . ($diff->$k > 1 ? $stringPlural[$k] : $v);
         } else {
-            unset($string[$k]);  // Eliminar la unidad de tiempo si no hay diferencia en esa unidad.
+            // Si la diferencia es cero, eliminar la entrada de la matriz.
+            unset($string[$k]);
         }
     }
 
-    if (!$full) $string = array_slice($string, 0, 1);  // Si $full es false, solo mostrar la unidad de tiempo más significativa.
-    return $string ? implode(', ', $string) . ' ago' : 'just now';  // Construir la cadena final.
+    // Devolver la diferencia de tiempo formateada.
+    if (!$full) $string = array_slice($string, 0, 1);
+    return $string ? 'hace ' . implode(', ', $string) : 'justo ahora';
 }
-
 
 include './includespro/header.php';
 ?>
@@ -315,43 +365,59 @@ include './includespro/header.php';
                     <div class="card-header">
                         Categorías del Club
                         <div class="dropdown no-caret">
-                            <button class="btn btn-transparent-dark btn-icon dropdown-toggle" id="dropdownMenuButton" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="text-gray-500" data-feather="more-vertical"></i></button>
+                            <button class="btn btn-transparent-dark btn-icon dropdown-toggle" id="dropdownMenuButton" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="text-gray-500" data-feather="more-vertical"></i>
+                            </button>
                             <div class="dropdown-menu dropdown-menu-end animated--fade-in-up" aria-labelledby="dropdownMenuButton">
                                 <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#crearCategoriaModal">
                                     <div class="dropdown-item-icon"><i class="text-gray-500" data-feather="plus-circle"></i></div>
                                     Agregar Categoría
                                 </a>
                                 <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#eliminarCategoriaModal">
-                                    <div class="dropdown-item-icon"><i class="text-gray-500" data-feather="minus-circle"></i></div>
+                                    <div class="dropdown-item-icon"><i class="text-gray-500" data-feather="trash"></i></div>
                                     Eliminar Categoría
+                                </a>
+                                <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#modificarLimiteModal">
+                                    <div class="dropdown-item-icon"><i class="text-gray-500" data-feather="edit"></i></div>
+                                    Establecer límite
                                 </a>
                             </div>
                         </div>
                     </div>
                     <div class="card-body">
-                        <?php foreach ($categorias as $categoria) : ?>
-                            <h4 class="small">
-                                <?php echo htmlspecialchars($categoria['CATEGORIA']); ?>
-                                <span class="float-end fw-bold"><?php echo $categoria['num_deportistas']; ?> / 20</span>
-                            </h4>
-                            <div class="progress mb-4">
-                                <div class="progress-bar 
-                                    <?php
-                                    $percentage = ($categoria['num_deportistas'] / 20) * 100;
-                                    // Puedes cambiar los colores aquí
-                                    if ($percentage <= 25) {
-                                        echo 'bg-danger'; // Rojo para <= 25%
-                                    } elseif ($percentage <= 50) {
-                                        echo 'bg-warning'; // Amarillo para <= 50%
-                                    } elseif ($percentage <= 75) {
-                                        echo 'bg-info'; // Azul para <= 75%
-                                    } else {
-                                        echo 'bg-success'; // Verde para > 75%
-                                    }
-                                    ?>" role="progressbar" style="width: <?php echo $percentage; ?>%" aria-valuenow="<?php echo $categoria['num_deportistas']; ?>" aria-valuemin="0" aria-valuemax="20">
+                        <?php if (isset($categorias) && is_array($categorias) && !empty($categorias)) : ?>
+                            <?php foreach ($categorias as $categoria) :
+                                // Verifica si el límite de deportistas existe y es mayor que 0
+                                $limite = isset($categoria['LIMITE_DEPORTISTAS']) && $categoria['LIMITE_DEPORTISTAS'] > 0 ? $categoria['LIMITE_DEPORTISTAS'] : 20;
+                                $numDeportistas = isset($categoria['num_deportistas']) ? $categoria['num_deportistas'] : 0;
+
+                                // Evita la división por cero
+                                $percentage = ($limite > 0) ? ($numDeportistas / $limite) * 100 : 0;
+                            ?>
+                                <h4 class="small">
+                                    <?php echo htmlspecialchars($categoria['CATEGORIA']); ?>
+                                    <span class="float-end fw-bold"><?php echo $numDeportistas; ?> / <?php echo $limite; ?></span>
+                                </h4>
+                                <div class="progress mb-4">
+                                    <div class="progress-bar 
+                            <?php
+                                // Cambia el color de la barra en función del porcentaje
+                                if ($percentage <= 25) {
+                                    echo 'bg-danger'; // Rojo para <= 25%
+                                } elseif ($percentage <= 50) {
+                                    echo 'bg-warning'; // Amarillo para <= 50%
+                                } elseif ($percentage <= 75) {
+                                    echo 'bg-info'; // Azul para <= 75%
+                                } else {
+                                    echo 'bg-success'; // Verde para > 75%
+                                }
+                            ?>" role="progressbar" style="width: <?php echo $percentage; ?>%;" aria-valuenow="<?php echo $numDeportistas; ?>" aria-valuemin="0" aria-valuemax="<?php echo $limite; ?>">
+                                    </div>
                                 </div>
-                            </div>
-                        <?php endforeach; ?>
+                            <?php endforeach; ?>
+                        <?php else : ?>
+                            <p>No se encontraron categorías.</p>
+                        <?php endif; ?>
                     </div>
                     <div class="card-footer position-relative">
                         <div class="d-flex align-items-center justify-content-between small text-body">
@@ -361,6 +427,7 @@ include './includespro/header.php';
                     </div>
                 </div>
             </div>
+
 
             <!-- Modal Crear Categoría -->
             <div class="modal fade" id="crearCategoriaModal" tabindex="-1" aria-labelledby="crearCategoriaModalLabel" aria-hidden="true">
@@ -404,6 +471,11 @@ include './includespro/header.php';
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
+                                <?php if (isset($mensajeError)) : ?>
+                                    <div class="alert alert-danger" role="alert">
+                                        <?php echo htmlspecialchars($mensajeError); ?>
+                                    </div>
+                                <?php endif; ?>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -413,170 +485,201 @@ include './includespro/header.php';
                     </div>
                 </div>
             </div>
-        </div>
-        <!-- Example Colored Cards for Dashboard Demo-->
-        <div class="row">
-            <div class="col-lg-6 col-xl-3 mb-4">
-                <div class="card bg-primary text-white h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="me-3">
-                                <div class="text-white-75 small">Administradores</div>
-                                <div class="text-lg fw-bold number" data-role="administradores"><?php echo $result['administradores']; ?></div>
-                            </div>
-                            <i class="feather-xl text-white-50" data-feather="user"></i>
-                        </div>
-                    </div>
-                    <div class="card-footer d-flex align-items-center justify-content-between small">
-                        <a class="text-white stretched-link" href="../Admin/configuracion/busqueda/indexadministrador.php">View Report</a>
-                        <div class="text-white"><i class="fas fa-angle-right"></i></div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6 col-xl-3 mb-4">
-                <div class="card bg-warning text-white h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="me-3">
-                                <div class="text-white-75 small">Entrenadores</div>
-                                <div class="text-lg fw-bold number" data-role="entrenadores"><?php echo $result['entrenadores']; ?></div>
-                            </div>
-                            <i class="feather-xl text-white-50" data-feather="clipboard"></i>
-                        </div>
-                    </div>
-                    <div class="card-footer d-flex align-items-center justify-content-between small">
-                        <a class="text-white stretched-link" href="../Admin/configuracion/busqueda/indexentrenador.php">View Report</a>
-                        <div class="text-white"><i class="fas fa-angle-right"></i></div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6 col-xl-3 mb-4">
-                <div class="card bg-success text-white h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="me-3">
-                                <div class="text-white-75 small">Representantes</div>
-                                <div class="text-lg fw-bold number" data-role="representantes"><?php echo $result['representantes']; ?></div>
-                            </div>
-                            <i class="feather-xl text-white-50" data-feather="check-square"></i>
-                        </div>
-                    </div>
-                    <div class="card-footer d-flex align-items-center justify-content-between small">
-                        <a class="text-white stretched-link" href="../Admin/configuracion/busqueda/indexrepresentante.php">View Tasks</a>
-                        <div class="text-white"><i class="fas fa-angle-right"></i></div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6 col-xl-3 mb-4">
-                <div class="card bg-danger text-white h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="me-3">
-                                <div class="text-white-75 small">Deportistas</div>
-                                <div class="text-lg fw-bold number" data-role="deportistas"><?php echo $result['deportistas']; ?></div>
-                            </div>
-                            <i class="feather-xl text-white-50" data-feather="dribbble"></i>
-                        </div>
-                    </div>
-                    <div class="card-footer d-flex align-items-center justify-content-between small">
-                        <a class="text-white stretched-link" href="../Admin/configuracion/busqueda/indexdeportista.php">View Requests</a>
-                        <div class="text-white"><i class="fas fa-angle-right"></i></div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <!-- Example Charts for Dashboard Demo-->
-        <div class="row">
-            <div class="col-xl-6 mb-4">
-                <div class="card card-header-actions h-100">
-                    <div class="card-header">
-                        Desgloce de Ganancias
-                        <div class="dropdown no-caret">
-                            <button class="btn btn-transparent-dark btn-icon dropdown-toggle" id="areaChartDropdownExample" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="text-gray-500" data-feather="more-vertical"></i></button>
-                            <div class="dropdown-menu dropdown-menu-end animated--fade-in-up" aria-labelledby="areaChartDropdownExample">
-                                <a class="dropdown-item" href="#!">Last 12 Months</a>
-                                <a class="dropdown-item" href="#!">Last 30 Days</a>
-                                <a class="dropdown-item" href="#!">Last 7 Days</a>
-                                <a class="dropdown-item" href="#!">This Month</a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#!">Custom Range</a>
-                            </div>
+            <!-- Modal Modificar Límite de Deportistas -->
+            <div class="modal fade" id="modificarLimiteModal" tabindex="-1" aria-labelledby="modificarLimiteModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modificarLimiteModalLabel">Modificar Límite de Deportistas</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="chart-area"><canvas id="myAreaChart" width="100%" height="30"></canvas></div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xl-6 mb-4">
-                <div class="card card-header-actions h-100">
-                    <div class="card-header">
-                        Ganancia Mensual
-                        <div class="dropdown no-caret">
-                            <button class="btn btn-transparent-dark btn-icon dropdown-toggle" id="areaChartDropdownExample" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="text-gray-500" data-feather="more-vertical"></i></button>
-                            <div class="dropdown-menu dropdown-menu-end animated--fade-in-up" aria-labelledby="areaChartDropdownExample">
-                                <a class="dropdown-item" href="#!">Last 12 Months</a>
-                                <a class="dropdown-item" href="#!">Last 30 Days</a>
-                                <a class="dropdown-item" href="#!">Last 7 Days</a>
-                                <a class="dropdown-item" href="#!">This Month</a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#!">Custom Range</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="chart-bar"><canvas id="myBarChart" width="100%" height="30"></canvas></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="card mb-4">
-            <div class="card-body py-5">
-                <div class="d-flex flex-column justify-content-center">
-                    <img class="img-fluid mb-4" src="../assets/img/illustrations/data-report.svg" alt="" style="height: 10rem" />
-                    <div class="text-center px-0 px-lg-5">
-                        <h5>¡Nuevos informes están aquí! ¡Genera informes personalizados ahora!</h5>
-                        <p class="mb-4">Nuestro nuevo sistema de generación de informes ya está en línea. Puede comenzar a crear informes personalizados para cualquier documento disponible en su cuenta.</p>
-                        <button type="button" class="btn btn-primary p-3" data-bs-toggle="modal" data-bs-target="#reportModal">
-                            Empezar
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-
-        <!-- Modal -->
-        <div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="reportModalLabel">Generar Informe</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="reportForm" method="POST" action="generate_report.php">
-                            <div class="mb-3">
-                                <label for="reportType" class="form-label">Tipo de Informe</label>
-                                <select class="form-select" id="reportType" name="report_type" required>
-                                    <option value="">Seleccione...</option>
-                                    <option value="administradores">Administradores</option>
-                                    <option value="entrenadores">Entrenadores</option>
-                                    <option value="representantes">Representantes</option>
-                                    <option value="deportistas">Deportistas</option>
-                                </select>
+                        <form method="post" action="">
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <label for="categoria_limite" class="form-label">Seleccionar Categoría</label>
+                                    <select class="form-select" id="categoria_limite" name="categoria_limite" required>
+                                        <?php foreach ($categorias as $categoria) : ?>
+                                            <option value="<?php echo $categoria['ID_CATEGORIA']; ?>"><?php echo htmlspecialchars($categoria['CATEGORIA']); ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="nuevo_limite" class="form-label">Nuevo Límite de Deportistas</label>
+                                    <input type="number" class="form-control" id="nuevo_limite" name="nuevo_limite" min="1" required>
+                                </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                                <button type="submit" class="btn btn-primary">Generar</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                <button type="submit" name="modificar_limite" class="btn btn-primary">Modificar Límite</button>
                             </div>
                         </form>
                     </div>
                 </div>
             </div>
-        </div>
+            <!-- Example Colored Cards for Dashboard Demo-->
+            <div class="row">
+                <div class="col-lg-6 col-xl-3 mb-4">
+                    <div class="card bg-primary text-white h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="me-3">
+                                    <div class="text-white-75 small">Administradores</div>
+                                    <div class="text-lg fw-bold number" data-role="administradores"><?php echo $result['administradores']; ?></div>
+                                </div>
+                                <i class="feather-xl text-white-50" data-feather="user"></i>
+                            </div>
+                        </div>
+                        <div class="card-footer d-flex align-items-center justify-content-between small">
+                            <a class="text-white stretched-link" href="../Admin/configuracion/busqueda/indexadministrador.php">View Report</a>
+                            <div class="text-white"><i class="fas fa-angle-right"></i></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-xl-3 mb-4">
+                    <div class="card bg-warning text-white h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="me-3">
+                                    <div class="text-white-75 small">Entrenadores</div>
+                                    <div class="text-lg fw-bold number" data-role="entrenadores"><?php echo $result['entrenadores']; ?></div>
+                                </div>
+                                <i class="feather-xl text-white-50" data-feather="clipboard"></i>
+                            </div>
+                        </div>
+                        <div class="card-footer d-flex align-items-center justify-content-between small">
+                            <a class="text-white stretched-link" href="../Admin/configuracion/busqueda/indexentrenador.php">View Report</a>
+                            <div class="text-white"><i class="fas fa-angle-right"></i></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-xl-3 mb-4">
+                    <div class="card bg-success text-white h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="me-3">
+                                    <div class="text-white-75 small">Representantes</div>
+                                    <div class="text-lg fw-bold number" data-role="representantes"><?php echo $result['representantes']; ?></div>
+                                </div>
+                                <i class="feather-xl text-white-50" data-feather="check-square"></i>
+                            </div>
+                        </div>
+                        <div class="card-footer d-flex align-items-center justify-content-between small">
+                            <a class="text-white stretched-link" href="../Admin/configuracion/busqueda/indexrepresentante.php">View Tasks</a>
+                            <div class="text-white"><i class="fas fa-angle-right"></i></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-xl-3 mb-4">
+                    <div class="card bg-danger text-white h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="me-3">
+                                    <div class="text-white-75 small">Deportistas</div>
+                                    <div class="text-lg fw-bold number" data-role="deportistas"><?php echo $result['deportistas']; ?></div>
+                                </div>
+                                <i class="feather-xl text-white-50" data-feather="dribbble"></i>
+                            </div>
+                        </div>
+                        <div class="card-footer d-flex align-items-center justify-content-between small">
+                            <a class="text-white stretched-link" href="../Admin/configuracion/busqueda/indexdeportista.php">View Requests</a>
+                            <div class="text-white"><i class="fas fa-angle-right"></i></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Example Charts for Dashboard Demo-->
+            <div class="row">
+                <div class="col-xl-6 mb-4">
+                    <div class="card card-header-actions h-100">
+                        <div class="card-header">
+                            Desgloce de Ganancias
+                            <div class="dropdown no-caret">
+                                <button class="btn btn-transparent-dark btn-icon dropdown-toggle" id="areaChartDropdownExample" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="text-gray-500" data-feather="more-vertical"></i></button>
+                                <div class="dropdown-menu dropdown-menu-end animated--fade-in-up" aria-labelledby="areaChartDropdownExample">
+                                    <a class="dropdown-item" href="#!">Last 12 Months</a>
+                                    <a class="dropdown-item" href="#!">Last 30 Days</a>
+                                    <a class="dropdown-item" href="#!">Last 7 Days</a>
+                                    <a class="dropdown-item" href="#!">This Month</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="#!">Custom Range</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-area"><canvas id="myAreaChart" width="100%" height="30"></canvas></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 mb-4">
+                    <div class="card card-header-actions h-100">
+                        <div class="card-header">
+                            Ganancia Mensual
+                            <div class="dropdown no-caret">
+                                <button class="btn btn-transparent-dark btn-icon dropdown-toggle" id="areaChartDropdownExample" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="text-gray-500" data-feather="more-vertical"></i></button>
+                                <div class="dropdown-menu dropdown-menu-end animated--fade-in-up" aria-labelledby="areaChartDropdownExample">
+                                    <a class="dropdown-item" href="#!">Last 12 Months</a>
+                                    <a class="dropdown-item" href="#!">Last 30 Days</a>
+                                    <a class="dropdown-item" href="#!">Last 7 Days</a>
+                                    <a class="dropdown-item" href="#!">This Month</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="#!">Custom Range</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-bar"><canvas id="myBarChart" width="100%" height="30"></canvas></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card mb-4">
+                <div class="card-body py-5">
+                    <div class="d-flex flex-column justify-content-center">
+                        <img class="img-fluid mb-4" src="../assets/img/illustrations/data-report.svg" alt="" style="height: 10rem" />
+                        <div class="text-center px-0 px-lg-5">
+                            <h5>¡Nuevos informes están aquí! ¡Genera informes personalizados ahora!</h5>
+                            <p class="mb-4">Nuestro nuevo sistema de generación de informes ya está en línea. Puede comenzar a crear informes personalizados para cualquier documento disponible en su cuenta.</p>
+                            <button type="button" class="btn btn-primary p-3" data-bs-toggle="modal" data-bs-target="#reportModal">
+                                Empezar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <!-- Modal -->
+            <div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="reportModalLabel">Generar Informe</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="reportForm" method="POST" action="generate_report.php">
+                                <div class="mb-3">
+                                    <label for="reportType" class="form-label">Tipo de Informe</label>
+                                    <select class="form-select" id="reportType" name="report_type" required>
+                                        <option value="">Seleccione...</option>
+                                        <option value="administradores">Administradores</option>
+                                        <option value="entrenadores">Entrenadores</option>
+                                        <option value="representantes">Representantes</option>
+                                        <option value="deportistas">Deportistas</option>
+                                    </select>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                    <button type="submit" class="btn btn-primary">Generar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
 </main>
 <?php

@@ -1,26 +1,3 @@
-<?php
-$nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
-$tipo_usuario = $_SESSION['tipo_usuario'];
-?>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <meta name="description" content="" />
-    <meta name="author" content="" />
-    <title>Dashboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" />
-    <link href="https://cdn.jsdelivr.net/npm/litepicker/dist/css/litepicker.css" rel="stylesheet" />
-    <link href="/looneytunes/Assets/css/styles.css" rel="stylesheet" />
-    <link rel="icon" type="image/x-icon" href="/looneytunes/AssetsFree/img/logo.png" />
-    <!-- Bootstrap CSS -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    <script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.28.0/feather.min.js" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-</head>
 <body class="nav-fixed">
 
     <nav class="topnav navbar navbar-expand shadow justify-content-between justify-content-sm-start navbar-light bg-white" id="sidenavAccordion">
@@ -298,11 +275,11 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                                     Nueva
                                 </a>
                                 <!-- Nested Sidenav Accordion (Categorías -> Lista)-->
-                                <a class="nav-link collapsed" href="/looneytunes/Admin/inventario/categoria/category_list.php">
+                                <a class="nav-link collapsed" href="/looneytunes/Admin/inventario/index.php?vista=category_list">
                                     Lista
                                 </a>
                                 <!-- Nested Sidenav Accordion (Categorías -> Buscar)-->
-                                <a class="nav-link collapsed" href="/looneytunes/Admin/inventario/categoria/category_search.php">
+                                <a class="nav-link collapsed" href="/looneytunes/Admin/inventario/index.php?vista=category_search">
                                     Buscar
                                 </a>
                             </nav>

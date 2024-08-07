@@ -31,8 +31,8 @@ try {
     $stmt->execute();
 
     // Preparar la consulta SQL para insertar los datos en tab_deportistas
-    $stmt = $conn->prepare('INSERT INTO tab_deportistas (id_usuario, NOMBRE_DEPO, APELLIDO_DEPO, FECHA_NACIMIENTO, CEDULA_DEPO, NUMERO_CELULAR, GENERO, ID_CATEGORIA) 
-    VALUES (:id_usuario, :NOMBRE_DEPO, :APELLIDO_DEPO, :FECHA_NACIMIENTO, :CEDULA_DEPO, :NUMERO_CELULAR, :GENERO, :ID_CATEGORIA)');
+    $stmt = $conn->prepare('INSERT INTO tab_deportistas (id_usuario, NOMBRE_DEPO, APELLIDO_DEPO, FECHA_NACIMIENTO, CEDULA_DEPO, NUMERO_CELULAR, GENERO) 
+    VALUES (:id_usuario, :NOMBRE_DEPO, :APELLIDO_DEPO, :FECHA_NACIMIENTO, :CEDULA_DEPO, :NUMERO_CELULAR, :GENERO)');
     $stmt->bindParam(':id_usuario', $id_usuario);
     $stmt->bindParam(':NOMBRE_DEPO', $_POST['nombre_d']);
     $stmt->bindParam(':APELLIDO_DEPO', $_POST['apellido_d']);
@@ -40,14 +40,16 @@ try {
     $stmt->bindParam(':CEDULA_DEPO', $_POST['cedula_d']);
     $stmt->bindParam(':NUMERO_CELULAR', $_POST['celular_d']);
     $stmt->bindParam(':GENERO', $_POST['genero']);
-    $stmt->bindParam(':ID_CATEGORIA', $_POST['categoria_d']);
     
     $stmt->execute();
 
-    // Aquí, el id_usuario de tab_deportistas es el mismo que id_usuario de tab_usuarios
-    // No necesitamos obtener el último ID insertado, ya que es el mismo id_usuario
-
     $id_deportista = $conn->lastInsertId(); // Obtener el id_deportista generado
+
+    // Insertar en la nueva tabla categoria_deportista
+    $stmt = $conn->prepare('INSERT INTO tab_categoria_deportista (id_categoria, id_deportista) VALUES (:id_categoria, :id_deportista)');
+    $stmt->bindParam(':id_categoria', $_POST['categoria_d']);
+    $stmt->bindParam(':id_deportista', $id_deportista);
+    $stmt->execute();
 
     // Insertar en tab_representantes_deportistas
     $stmt = $conn->prepare('INSERT INTO tab_representantes_deportistas (id_deportista, id_representante) VALUES (:id_deportista, :id_representante)');

@@ -1,6 +1,6 @@
 <?php
 session_start();
-require '../Admin/configuracion/conexion.php';
+require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
 
 date_default_timezone_set('America/Guayaquil'); // Ajusta a tu zona horaria
 
@@ -116,6 +116,7 @@ $storedPass = isset($_COOKIE['pass']) ? $_COOKIE['pass'] : '';
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -136,6 +137,7 @@ $storedPass = isset($_COOKIE['pass']) ? $_COOKIE['pass'] : '';
         }
     </style>
 </head>
+
 <body class="bg-primary">
     <div id="layoutAuthentication">
         <div id="layoutAuthentication_content">
@@ -169,7 +171,6 @@ $storedPass = isset($_COOKIE['pass']) ? $_COOKIE['pass'] : '';
                                         </div>
                                     </form>
                                 </div>
-                                <!-- ... (el resto de tu código) ... -->
                             </div>
                         </div>
                     </div>
@@ -197,4 +198,5 @@ $storedPass = isset($_COOKIE['pass']) ? $_COOKIE['pass'] : '';
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     <script src="../Assets/js/scripts.js"></script>
 </body>
+
 </html>

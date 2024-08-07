@@ -21,10 +21,11 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 // Obtener y sanitizar el ID del detalle a eliminar
-$id_detalle = isset($_GET['id']) ? filter_var($_GET['id'], FILTER_VALIDATE_INT) : 0;
+$id_detalle = isset($_POST['id']) ? filter_var($_POST['id'], FILTER_VALIDATE_INT) : 0;
 
 if ($id_detalle <= 0) {
-    die("No se especificó un ID de detalle válido.");
+    echo "error";
+    exit;
 }
 
 try {
@@ -32,9 +33,10 @@ try {
     $stmt->bindParam(':id', $id_detalle, PDO::PARAM_INT);
     $stmt->execute();
 
-    header("Location: detalles_deportista.php?id=" . $_GET['deportista_id']);
-    exit();
+    echo "success";
+    exit;
 } catch (PDOException $e) {
-    die("Error al eliminar el detalle: " . $e->getMessage());
+    echo "error";
+    exit;
 }
 ?>
