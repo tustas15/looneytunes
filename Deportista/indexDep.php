@@ -24,6 +24,25 @@ if (!isset($_SESSION['tipo_usuario'])) {
 
 $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
 $tipo_usuario = $_SESSION['tipo_usuario'];
+$id_usuario = $_SESSION['user_id'];
+
+// Obtenemos el ID_DEPORTISTA del usuario actual
+$query_deportista = "SELECT ID_DEPORTISTA FROM tab_deportistas WHERE ID_USUARIO = ?";
+$stmt_deportista = $conn->prepare($query_deportista);
+$stmt_deportista->execute([$id_usuario]);
+$deportista = $stmt_deportista->fetch(PDO::FETCH_ASSOC);
+
+if ($deportista) {
+    $id_deportista = $deportista['ID_DEPORTISTA'];
+
+    // Obtenemos los informes del deportista
+    $query_informes = "SELECT * FROM tab_informes WHERE id_deportista = ? ORDER BY fecha_creacion DESC LIMIT 5";
+    $stmt_informes = $conn->prepare($query_informes);
+    $stmt_informes->execute([$id_deportista]);
+    $informes = $stmt_informes->fetchAll(PDO::FETCH_ASSOC);
+} else {
+    $informes = [];
+}
 
 include './includes/header.php';
 ?>
