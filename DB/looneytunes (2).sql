@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 07-08-2024 a las 17:16:59
+-- Tiempo de generación: 07-08-2024 a las 17:23:28
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -50,22 +50,45 @@ INSERT INTO `tab_administradores` (`ID_ADMINISTRADOR`, `ID_USUARIO`, `NOMBRE_ADM
 
 CREATE TABLE `tab_categorias` (
   `ID_CATEGORIA` int(11) NOT NULL,
-  `CATEGORIA` varchar(30) NOT NULL
+  `CATEGORIA` varchar(30) NOT NULL,
+  `LIMITE_DEPORTISTAS` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `tab_categorias`
 --
 
-INSERT INTO `tab_categorias` (`ID_CATEGORIA`, `CATEGORIA`) VALUES
-(1, 'MOSQUITOS'),
-(2, 'PRE MINI'),
-(3, 'MINI DAMAS'),
-(4, 'MINI HOMBRES'),
-(5, 'U13 DAMAS'),
-(6, 'U13 HOMBRES'),
-(8, 'U15 HOMBRES'),
-(10, 'U15 DAMAS');
+INSERT INTO `tab_categorias` (`ID_CATEGORIA`, `CATEGORIA`, `LIMITE_DEPORTISTAS`) VALUES
+(1, 'MOSQUITOS', 5),
+(2, 'PRE MINI', 5),
+(3, 'MINI DAMAS', 5),
+(4, 'MINI HOMBRES', 5),
+(5, 'U13 DAMAS', NULL),
+(6, 'U13 HOMBRES', NULL),
+(8, 'U15 HOMBRES', NULL),
+(12, 'U15 DAMAS', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `tab_categoria_deportista`
+--
+
+CREATE TABLE `tab_categoria_deportista` (
+  `ID_CATEGORIA` int(11) NOT NULL,
+  `ID_DEPORTISTA` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `tab_categoria_deportista`
+--
+
+INSERT INTO `tab_categoria_deportista` (`ID_CATEGORIA`, `ID_DEPORTISTA`) VALUES
+(1, 12),
+(2, 8),
+(4, 10),
+(8, 11),
+(8, 16);
 
 -- --------------------------------------------------------
 
@@ -81,20 +104,19 @@ CREATE TABLE `tab_deportistas` (
   `FECHA_NACIMIENTO` date DEFAULT NULL,
   `CEDULA_DEPO` varchar(10) DEFAULT NULL,
   `NUMERO_CELULAR` varchar(10) DEFAULT NULL,
-  `GENERO` varchar(20) DEFAULT NULL,
-  `ID_CATEGORIA` int(11) DEFAULT NULL
+  `GENERO` varchar(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `tab_deportistas`
 --
 
-INSERT INTO `tab_deportistas` (`ID_DEPORTISTA`, `ID_USUARIO`, `NOMBRE_DEPO`, `APELLIDO_DEPO`, `FECHA_NACIMIENTO`, `CEDULA_DEPO`, `NUMERO_CELULAR`, `GENERO`, `ID_CATEGORIA`) VALUES
-(8, 25, 'Samia', 'Delacruz', '2003-06-26', '1001001004', '0912365478', 'Femenino', 1),
-(10, 27, 'Brandon', 'Alvarez', '2003-08-26', '1001001001', '0987654322', 'Masculino', 4),
-(11, 28, 'Pablo', 'Chasi', '2002-03-06', '1001001002', '0912345678', 'Masculino', 8),
-(12, 29, 'Luis', 'Andrade', '2003-03-26', '1001001003', '0912365748', 'Masculino', 1),
-(16, 50, 'Francisco', 'Vilatuña', '2006-01-26', '1005415003', '0963060020', 'Masculino', 8);
+INSERT INTO `tab_deportistas` (`ID_DEPORTISTA`, `ID_USUARIO`, `NOMBRE_DEPO`, `APELLIDO_DEPO`, `FECHA_NACIMIENTO`, `CEDULA_DEPO`, `NUMERO_CELULAR`, `GENERO`) VALUES
+(8, 25, 'Samia', 'Delacruz', '2003-06-26', '1001001004', '0912365478', 'Femenino'),
+(10, 27, 'Brandon', 'Alvarez', '2003-08-26', '1001001001', '0987654322', 'Masculino'),
+(11, 28, 'Pablo', 'Chasi', '2002-03-06', '1001001002', '0912345678', 'Masculino'),
+(12, 29, 'Luis', 'Andrade', '2003-03-26', '1001001003', '0912365748', 'Masculino'),
+(16, 50, 'Francisco', 'Vilatuña', '2006-01-26', '1005415003', '0963060020', 'Masculino');
 
 -- --------------------------------------------------------
 
@@ -162,8 +184,7 @@ CREATE TABLE `tab_entrenador_categoria` (
 --
 
 INSERT INTO `tab_entrenador_categoria` (`ID_ENTRENADOR`, `ID_CATEGORIA`) VALUES
-(2, 1),
-(6, 1);
+(2, 1);
 
 -- --------------------------------------------------------
 
@@ -185,7 +206,7 @@ CREATE TABLE `tab_informes` (
 --
 
 INSERT INTO `tab_informes` (`id_informe`, `id_deportista`, `id_representante`, `id_entrenador`, `informe`, `fecha_creacion`) VALUES
-(16, 8, 3, 2, 'Sin uniforme', '2024-08-07 15:14:32');
+(16, 8, 3, 2, 'Sin uniforme', '2024-08-07 20:14:32');
 
 -- --------------------------------------------------------
 
@@ -208,10 +229,8 @@ CREATE TABLE `tab_logs` (
 --
 
 INSERT INTO `tab_logs` (`ID_LOG`, `ID_USUARIO`, `EVENTO`, `HORA_LOG`, `DIA_LOG`, `IP`, `TIPO_EVENTO`) VALUES
-(261, 16, 'Se ha iniciado una nueva sesión', '10:06:10', '2024-08-07', '::1', 'inicio_sesion'),
-(262, 16, 'Se ha iniciado una nueva sesión', '10:12:47', '2024-08-07', '::1', 'inicio_sesion'),
-(263, 16, 'Cierre de sesión', '10:14:39', '2024-08-07', '::1', 'cierre_sesion'),
-(264, 25, 'Se ha iniciado una nueva sesión', '10:14:45', '2024-08-07', '::1', 'inicio_sesion');
+(279, 17, 'Cierre de sesión', '10:08:36', '2024-08-07', '::1', 'cierre_sesion'),
+(280, 17, 'Se ha iniciado una nueva sesión', '10:08:38', '2024-08-07', '::1', 'inicio_sesion');
 
 -- --------------------------------------------------------
 
@@ -236,6 +255,43 @@ CREATE TABLE `tab_pagos` (
 
 INSERT INTO `tab_pagos` (`ID_PAGO`, `ID_REPRESENTANTE`, `ID_DEPORTISTA`, `TIPO_PAGO`, `MONTO`, `FECHA`, `BANCO`, `MOTIVO`) VALUES
 (2, 3, 10, 'transferencia', 78.00, '2024-07-11', 'Pichincha', 'asa');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `tab_productos`
+--
+
+CREATE TABLE `tab_productos` (
+  `id_producto` int(20) NOT NULL,
+  `producto_codigo` varchar(70) NOT NULL,
+  `producto_nombre` varchar(70) NOT NULL,
+  `producto_precio` decimal(30,2) NOT NULL,
+  `producto_stock` int(25) NOT NULL,
+  `producto_foto` varchar(500) NOT NULL,
+  `id_categoria_producto` int(7) NOT NULL,
+  `ID_USUARIO` int(10) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `tab_producto_categoria`
+--
+
+CREATE TABLE `tab_producto_categoria` (
+  `id_categoria_producto` int(7) NOT NULL,
+  `categoria_nombre` varchar(50) NOT NULL,
+  `categoria_ubicacion` varchar(150) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `tab_producto_categoria`
+--
+
+INSERT INTO `tab_producto_categoria` (`id_categoria_producto`, `categoria_nombre`, `categoria_ubicacion`) VALUES
+(1, 'Balones', 'Ibarra'),
+(2, 'Indumentaria', 'Otavalo');
 
 -- --------------------------------------------------------
 
@@ -419,12 +475,18 @@ ALTER TABLE `tab_categorias`
   ADD PRIMARY KEY (`ID_CATEGORIA`);
 
 --
+-- Indices de la tabla `tab_categoria_deportista`
+--
+ALTER TABLE `tab_categoria_deportista`
+  ADD PRIMARY KEY (`ID_CATEGORIA`,`ID_DEPORTISTA`),
+  ADD KEY `ID_DEPORTISTA` (`ID_DEPORTISTA`);
+
+--
 -- Indices de la tabla `tab_deportistas`
 --
 ALTER TABLE `tab_deportistas`
   ADD PRIMARY KEY (`ID_DEPORTISTA`),
-  ADD KEY `FK_REFERENCE_12` (`ID_USUARIO`),
-  ADD KEY `ID_CATEGORIA` (`ID_CATEGORIA`);
+  ADD KEY `FK_REFERENCE_12` (`ID_USUARIO`);
 
 --
 -- Indices de la tabla `tab_detalles`
@@ -449,15 +511,6 @@ ALTER TABLE `tab_entrenador_categoria`
   ADD KEY `ID_CATEGORIA` (`ID_CATEGORIA`);
 
 --
--- Indices de la tabla `tab_informes`
---
-ALTER TABLE `tab_informes`
-  ADD PRIMARY KEY (`id_informe`),
-  ADD KEY `id_deportista` (`id_deportista`),
-  ADD KEY `id_representante` (`id_representante`),
-  ADD KEY `id_entrenador` (`id_entrenador`);
-
---
 -- Indices de la tabla `tab_logs`
 --
 ALTER TABLE `tab_logs`
@@ -471,6 +524,20 @@ ALTER TABLE `tab_pagos`
   ADD PRIMARY KEY (`ID_PAGO`),
   ADD KEY `ID_REPRESENTANTE` (`ID_REPRESENTANTE`),
   ADD KEY `ID_DEPORTISTA` (`ID_DEPORTISTA`);
+
+--
+-- Indices de la tabla `tab_productos`
+--
+ALTER TABLE `tab_productos`
+  ADD PRIMARY KEY (`id_producto`),
+  ADD KEY `id_categoria_producto` (`id_categoria_producto`),
+  ADD KEY `ID_USUARIO` (`ID_USUARIO`);
+
+--
+-- Indices de la tabla `tab_producto_categoria`
+--
+ALTER TABLE `tab_producto_categoria`
+  ADD PRIMARY KEY (`id_categoria_producto`);
 
 --
 -- Indices de la tabla `tab_representantes`
@@ -534,7 +601,7 @@ ALTER TABLE `tab_administradores`
 -- AUTO_INCREMENT de la tabla `tab_categorias`
 --
 ALTER TABLE `tab_categorias`
-  MODIFY `ID_CATEGORIA` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `ID_CATEGORIA` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT de la tabla `tab_deportistas`
@@ -555,22 +622,28 @@ ALTER TABLE `tab_entrenadores`
   MODIFY `ID_ENTRENADOR` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
--- AUTO_INCREMENT de la tabla `tab_informes`
---
-ALTER TABLE `tab_informes`
-  MODIFY `id_informe` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
-
---
 -- AUTO_INCREMENT de la tabla `tab_logs`
 --
 ALTER TABLE `tab_logs`
-  MODIFY `ID_LOG` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=265;
+  MODIFY `ID_LOG` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=281;
 
 --
 -- AUTO_INCREMENT de la tabla `tab_pagos`
 --
 ALTER TABLE `tab_pagos`
   MODIFY `ID_PAGO` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT de la tabla `tab_productos`
+--
+ALTER TABLE `tab_productos`
+  MODIFY `id_producto` int(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `tab_producto_categoria`
+--
+ALTER TABLE `tab_producto_categoria`
+  MODIFY `id_categoria_producto` int(7) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `tab_representantes`
@@ -619,11 +692,17 @@ ALTER TABLE `tab_administradores`
   ADD CONSTRAINT `FK_REFERENCE_15` FOREIGN KEY (`ID_USUARIO`) REFERENCES `tab_usuarios` (`ID_USUARIO`);
 
 --
+-- Filtros para la tabla `tab_categoria_deportista`
+--
+ALTER TABLE `tab_categoria_deportista`
+  ADD CONSTRAINT `tab_categoria_deportista_ibfk_1` FOREIGN KEY (`ID_CATEGORIA`) REFERENCES `tab_categorias` (`ID_CATEGORIA`) ON DELETE CASCADE,
+  ADD CONSTRAINT `tab_categoria_deportista_ibfk_2` FOREIGN KEY (`ID_DEPORTISTA`) REFERENCES `tab_deportistas` (`ID_DEPORTISTA`) ON DELETE CASCADE;
+
+--
 -- Filtros para la tabla `tab_deportistas`
 --
 ALTER TABLE `tab_deportistas`
-  ADD CONSTRAINT `FK_REFERENCE_12` FOREIGN KEY (`ID_USUARIO`) REFERENCES `tab_usuarios` (`ID_USUARIO`),
-  ADD CONSTRAINT `tab_deportistas_ibfk_1` FOREIGN KEY (`ID_CATEGORIA`) REFERENCES `tab_categorias` (`ID_CATEGORIA`);
+  ADD CONSTRAINT `FK_REFERENCE_12` FOREIGN KEY (`ID_USUARIO`) REFERENCES `tab_usuarios` (`ID_USUARIO`);
 
 --
 -- Filtros para la tabla `tab_detalles`
@@ -646,14 +725,6 @@ ALTER TABLE `tab_entrenador_categoria`
   ADD CONSTRAINT `tab_entrenador_categoria_ibfk_2` FOREIGN KEY (`ID_CATEGORIA`) REFERENCES `tab_categorias` (`ID_CATEGORIA`);
 
 --
--- Filtros para la tabla `tab_informes`
---
-ALTER TABLE `tab_informes`
-  ADD CONSTRAINT `tab_informes_ibfk_1` FOREIGN KEY (`id_deportista`) REFERENCES `tab_deportistas` (`ID_DEPORTISTA`),
-  ADD CONSTRAINT `tab_informes_ibfk_2` FOREIGN KEY (`id_representante`) REFERENCES `tab_representantes` (`ID_REPRESENTANTE`),
-  ADD CONSTRAINT `tab_informes_ibfk_3` FOREIGN KEY (`id_entrenador`) REFERENCES `tab_entrenadores` (`ID_ENTRENADOR`);
-
---
 -- Filtros para la tabla `tab_logs`
 --
 ALTER TABLE `tab_logs`
@@ -665,6 +736,13 @@ ALTER TABLE `tab_logs`
 ALTER TABLE `tab_pagos`
   ADD CONSTRAINT `tab_pagos_ibfk_1` FOREIGN KEY (`ID_REPRESENTANTE`) REFERENCES `tab_representantes` (`ID_REPRESENTANTE`),
   ADD CONSTRAINT `tab_pagos_ibfk_2` FOREIGN KEY (`ID_DEPORTISTA`) REFERENCES `tab_deportistas` (`ID_DEPORTISTA`);
+
+--
+-- Filtros para la tabla `tab_productos`
+--
+ALTER TABLE `tab_productos`
+  ADD CONSTRAINT `tab_productos_ibfk_1` FOREIGN KEY (`id_categoria_producto`) REFERENCES `tab_producto_categoria` (`id_categoria_producto`),
+  ADD CONSTRAINT `tab_productos_ibfk_2` FOREIGN KEY (`ID_USUARIO`) REFERENCES `tab_usuarios` (`ID_USUARIO`);
 
 --
 -- Filtros para la tabla `tab_representantes`
