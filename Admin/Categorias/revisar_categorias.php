@@ -104,12 +104,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     exit();
 
                 case 'eliminar_deportista':
-                    $id_deportista = $_POST['id_deportista'];
-                    $id_categoria = $_POST['id_categoria'];
-                    $sql = "DELETE FROM tab_categoria_deportista WHERE ID_DEPORTISTA = :id_deportista AND ID_CATEGORIA = :id_categoria";
+                    $deportista_id = $_POST['deportista_id'];
+                    $categoria_id = $_POST['categoria_id'];
+
+                    // Depuración
+                    // echo 'Deportista ID: ' . htmlspecialchars($deportista_id);
+                    // echo 'Categoría ID: ' . htmlspecialchars($categoria_id);
+                    // exit();
+
+                    $sql = "DELETE FROM tab_categoria_deportista WHERE ID_DEPORTISTA = :deportista_id AND ID_CATEGORIA = :categoria_id";
                     $stmt = $conn->prepare($sql);
-                    $stmt->bindParam(':id_deportista', $id_deportista);
-                    $stmt->bindParam(':id_categoria', $id_categoria);
+                    $stmt->bindParam(':deportista_id', $deportista_id);
+                    $stmt->bindParam(':categoria_id', $categoria_id);
                     $stmt->execute();
                     header("Location: " . $_SERVER['PHP_SELF']);
                     exit();
@@ -127,11 +133,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 case 'eliminar_entrenador':
                     $id_entrenador = $_POST['id_entrenador'];
-                    $id_categoria = $_POST['id_categoria'];
+                    $id_categoria = $_POST['categoria_id'];
                     $sql = "DELETE FROM tab_entrenador_categoria WHERE ID_ENTRENADOR = :id_entrenador AND ID_CATEGORIA = :id_categoria";
                     $stmt = $conn->prepare($sql);
-                    $stmt->bindParam(':id_entrenador', $id_entrenador);
-                    $stmt->bindParam(':id_categoria', $id_categoria);
+                    $stmt->bindParam(':id_entrenador', $id_entrenador, PDO::PARAM_INT);
+                    $stmt->bindParam(':id_categoria', $id_categoria, PDO::PARAM_INT);
                     $stmt->execute();
                     header("Location: " . $_SERVER['PHP_SELF']);
                     exit();
@@ -143,6 +149,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $stmt = $conn->prepare($sql);
                     $stmt->bindParam(':nuevo_limite', $nuevo_limite);
                     $stmt->bindParam(':categoria_id', $categoria_id);
+                    $stmt->execute();
+                    header("Location: " . $_SERVER['PHP_SELF']);
+                    exit();
+
+                case 'reasignar_deportista':
+                    $id_deportista = $_POST['id_deportista'];
+                    $nueva_categoria = $_POST['nueva_categoria'];
+                    $sql = "UPDATE tab_categoria_deportista SET ID_CATEGORIA = :nueva_categoria WHERE ID_DEPORTISTA = :id_deportista";
+                    $stmt = $conn->prepare($sql);
+                    $stmt->bindParam(':id_deportista', $id_deportista);
+                    $stmt->bindParam(':nueva_categoria', $nueva_categoria);
                     $stmt->execute();
                     header("Location: " . $_SERVER['PHP_SELF']);
                     exit();
@@ -833,32 +850,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
 
                 <!-- Modal para eliminar entrenador -->
-                <div class="modal fade" id="deleteEntrenadorModal" tabindex="-1" aria-labelledby="deleteEntrenadorModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="deleteEntrenadorModalLabel">Eliminar Entrenador</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
-                                <div class="modal-body">
-                                    <input type="hidden" name="accion" value="eliminar_entrenador">
-                                    <input type="hidden" id="deleteEntrenadorModalCategoriaId" name="categoria_id">
-                                    <div class="mb-3">
-                                        <label for="entrenador" class="form-label">Selecciona Entrenador</label>
-                                        <select name="entrenador_id" id="entrenador" class="form-select" required>
-                                            <!-- Opciones llenadas por JavaScript -->
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                    <button type="submit" class="btn btn-danger">Eliminar</button>
-                                </div>
-                            </form>
-                        </div>
+<div class="modal fade" id="deleteEntrenadorModal" tabindex="-1" aria-labelledby="deleteEntrenadorModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteEntrenadorModalLabel">Eliminar Entrenador</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
+                <div class="modal-body">
+                    <input type="hidden" name="accion" value="eliminar_entrenador">
+                    <input type="hidden" id="deleteEntrenadorModalCategoriaId" name="categoria_id">
+                    <div class="mb-3">
+                        <label for="entrenador" class="form-label">Selecciona Entrenador</label>
+                        <select name="id_entrenador" id="entrenador" class="form-select" required>
+                            <!-- Opciones llenadas por JavaScript -->
+                        </select>
                     </div>
                 </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
                 <!-- Modal para eliminar -->
                 <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
@@ -893,7 +910,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                         // Modal para agregar deportista
                         var addDeportistaModal = document.getElementById('addDeportistaModal');
-
                         addDeportistaModal.addEventListener('show.bs.modal', function(event) {
                             var button = event.relatedTarget;
                             var categoriaId = button.getAttribute('data-categoria-id');
@@ -969,6 +985,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         selectEntrenador.appendChild(option);
                                     });
                                 });
+                        });
+
+                        //modal para eliminar entrenador
+                        var deleteEntrenadorModal = document.getElementById('deleteEntrenadorModal');
+                        deleteEntrenadorModal.addEventListener('show.bs.modal', function(event) {
+                            // Obtener el botón que abrió el modal
+                            var button = event.relatedTarget;
+                            // Extraer la información de los atributos de datos
+                            var categoriaId = button.getAttribute('data-categoria-id');
+
+                            // Actualizar el input hidden con la categoría ID
+                            var inputCategoriaId = deleteEntrenadorModal.querySelector('#deleteEntrenadorModalCategoriaId');
+                            inputCategoriaId.value = categoriaId;
+
+                            // Limpiar las opciones del select
+                            var selectEntrenador = deleteEntrenadorModal.querySelector('#entrenador');
+                            selectEntrenador.innerHTML = '';
+
+                            // Realizar una solicitud AJAX para obtener los entrenadores de la categoría
+                            var xhr = new XMLHttpRequest();
+                            xhr.open('GET', 'obtener_entrenadores.php?categoria_id=' + categoriaId, true);
+                            xhr.onload = function() {
+                                if (xhr.status === 200) {
+                                    var entrenadores = JSON.parse(xhr.responseText);
+                                    entrenadores.forEach(function(entrenador) {
+                                        var option = document.createElement('option');
+                                        option.value = entrenador.ID_ENTRENADOR;
+                                        option.textContent = entrenador.nombre_completo;
+                                        selectEntrenador.appendChild(option);
+                                    });
+                                } else {
+                                    console.error('Error al obtener los entrenadores.');
+                                }
+                            };
+                            xhr.send();
                         });
 
                         // Modal para eliminar categoría
