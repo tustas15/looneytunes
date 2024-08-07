@@ -23,7 +23,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 // Obtener y sanitizar el nombre de la categoría
-$nombre_categoria = isset($_GET['categoria']) ? filter_var($_GET['categoria'], FILTER_SANITIZE_STRING) : '';
+$nombre_categoria = isset($_GET['categoria']) ? htmlspecialchars($_GET['categoria'], ENT_QUOTES, 'UTF-8') : '';
 
 if (empty($nombre_categoria)) {
     die("No se especificó una categoría válida.");
@@ -76,8 +76,7 @@ include './includes/header.php';
                                         <th>Deportista</th>
                                         <th>Representante</th>
                                         <th>Datos</th>
-                                        <th>Ingresar</th>
-                                        <th>Informes</th>
+                                        <th>Observaciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -87,12 +86,11 @@ include './includes/header.php';
                                             <td><?= htmlspecialchars($jugador['NOMBRE_REPRE'] . ' ' . $jugador['APELLIDO_REPRE']) ?></td>
                                             <td>
                                                 <a href="detalle_deportista.php?id=<?= $jugador['ID_DEPORTISTA'] ?>" class="btn btn-primary">Datos</a>
+                                                <a href="#" class="btn btn-success btn-ingresar" data-id="<?= $jugador['ID_DEPORTISTA'] ?>" data-nombre="<?= htmlspecialchars($jugador['NOMBRE_DEPO'] . ' ' . $jugador['APELLIDO_DEPO']) ?>">Ingresar</a>
                                             </td>
                                             <td>
-                                                <a href="#" class="btn btn-success btn-ingresar" data-id="<?= $jugador['ID_DEPORTISTA'] ?>">Ingresar</a>
-                                            </td>
-                                            <td>
-                                                <a href="#" class="btn btn-info btn-informes" data-id="<?= $jugador['ID_DEPORTISTA'] ?>" data-representante="<?= $jugador['ID_REPRESENTANTE'] ?>">Informes</a>
+                                                <a href="observaciones_deportista.php?id=<?= $jugador['ID_DEPORTISTA'] ?>" class="btn btn-secondary">Observaciones</a>
+                                                <a href="#" class="btn btn-info btn-informes" data-id="<?= $jugador['ID_DEPORTISTA'] ?>" data-representante="<?= $jugador['ID_REPRESENTANTE'] ?>" data-nombre="<?= htmlspecialchars($jugador['NOMBRE_DEPO'] . ' ' . $jugador['APELLIDO_DEPO']) ?>">Ingresar</a>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>
@@ -111,10 +109,10 @@ include './includes/header.php';
     <div class="modal fade" id="ingresarModal" tabindex="-1" aria-labelledby="ingresarModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="ingresarModalLabel">Ingresar Detalles</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
+            <div class="modal-header">
+    <h5 class="modal-title" id="ingresarModalLabel">Ingresar Datos para <span id="nombreDeportistaIngreso"></span></h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
                 <div class="modal-body">
                     <form id="detallesForm">
                         <input type="hidden" id="deportistaId" name="deportistaId">
@@ -146,29 +144,29 @@ include './includes/header.php';
 
     <!-- Modal para ingresar informes -->
     <div class="modal fade" id="informesModal" tabindex="-1" aria-labelledby="informesModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="informesModalLabel">Ingresar Informe</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="informeForm">
-                        <input type="hidden" id="informeDeportistaId" name="deportistaId">
-                        <input type="hidden" id="informeRepresentanteId" name="representanteId">
-                        <div class="mb-3">
-                            <label for="informe" class="form-label">Informe</label>
-                            <textarea class="form-control" id="informe" name="informe" rows="4" required></textarea>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="button" class="btn btn-primary" id="enviarInforme">Enviar Informe</button>
-                </div>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="informesModalLabel">Ingresar Observacion para <span id="nombreDeportista"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="informeForm">
+                    <input type="hidden" id="informeDeportistaId" name="deportistaId">
+                    <input type="hidden" id="informeRepresentanteId" name="representanteId">
+                    <div class="mb-3">
+                        <label for="informe" class="form-label">Informe</label>
+                        <textarea class="form-control" id="informe" name="informe" rows="4" required></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" id="enviarInforme">Enviar</button>
             </div>
         </div>
     </div>
+</div>
 </main>
 
 <?php
@@ -176,43 +174,3 @@ include './includes/header.php';
 include './includes/footer.php';
 ?>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Manejar el clic en el botón "Informes"
-    document.querySelectorAll('.btn-informes').forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
-            const deportistaId = this.getAttribute('data-id');
-            const representanteId = this.getAttribute('data-representante');
-            document.getElementById('informeDeportistaId').value = deportistaId;
-            document.getElementById('informeRepresentanteId').value = representanteId;
-            new bootstrap.Modal(document.getElementById('informesModal')).show();
-        });
-    });
-
-    // Manejar el envío del formulario de informes
-    document.getElementById('enviarInforme').addEventListener('click', function() {
-        const form = document.getElementById('informeForm');
-        const formData = new FormData(form);
-
-        fetch('enviar_informe.php', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert(data.message);
-                document.getElementById('informesModal').querySelector('.btn-close').click();
-                form.reset();
-            } else {
-                alert('Error: ' + data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Ocurrió un error al enviar el informe.');
-        });
-    });
-});
-</script>
