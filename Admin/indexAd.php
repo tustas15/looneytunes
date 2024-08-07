@@ -530,7 +530,7 @@ include './includespro/header.php';
                             </div>
                         </div>
                         <div class="card-footer d-flex align-items-center justify-content-between small">
-                            <a class="text-white stretched-link" href="../Admin/configuracion/busqueda/indexadministrador.php">View Report</a>
+                            <a class="text-white stretched-link" href="../Admin/configuracion/busqueda/indexadministrador.php">Listado</a>
                             <div class="text-white"><i class="fas fa-angle-right"></i></div>
                         </div>
                     </div>
@@ -547,7 +547,7 @@ include './includespro/header.php';
                             </div>
                         </div>
                         <div class="card-footer d-flex align-items-center justify-content-between small">
-                            <a class="text-white stretched-link" href="../Admin/configuracion/busqueda/indexentrenador.php">View Report</a>
+                            <a class="text-white stretched-link" href="../Admin/configuracion/busqueda/indexentrenador.php">Listado</a>
                             <div class="text-white"><i class="fas fa-angle-right"></i></div>
                         </div>
                     </div>
@@ -564,7 +564,7 @@ include './includespro/header.php';
                             </div>
                         </div>
                         <div class="card-footer d-flex align-items-center justify-content-between small">
-                            <a class="text-white stretched-link" href="../Admin/configuracion/busqueda/indexrepresentante.php">View Tasks</a>
+                            <a class="text-white stretched-link" href="../Admin/configuracion/busqueda/indexrepresentante.php">Listado</a>
                             <div class="text-white"><i class="fas fa-angle-right"></i></div>
                         </div>
                     </div>
@@ -581,7 +581,7 @@ include './includespro/header.php';
                             </div>
                         </div>
                         <div class="card-footer d-flex align-items-center justify-content-between small">
-                            <a class="text-white stretched-link" href="../Admin/configuracion/busqueda/indexdeportista.php">View Requests</a>
+                            <a class="text-white stretched-link" href="../Admin/configuracion/busqueda/indexdeportista.php">Listado</a>
                             <div class="text-white"><i class="fas fa-angle-right"></i></div>
                         </div>
                     </div>
@@ -633,13 +633,15 @@ include './includespro/header.php';
                     </div>
                 </div>
             </div>
+
+            <!-- Tarjeta para generar Informes -->
             <div class="card mb-4">
                 <div class="card-body py-5">
                     <div class="d-flex flex-column justify-content-center">
                         <img class="img-fluid mb-4" src="../assets/img/illustrations/data-report.svg" alt="" style="height: 10rem" />
                         <div class="text-center px-0 px-lg-5">
-                            <h5>¡Nuevos informes están aquí! ¡Genera informes personalizados ahora!</h5>
-                            <p class="mb-4">Nuestro nuevo sistema de generación de informes ya está en línea. Puede comenzar a crear informes personalizados para cualquier documento disponible en su cuenta.</p>
+                            <h5>¡Genera Reportes ahora!</h5>
+                            <p class="mb-4">Nuestro sistema de generación de reportes ya está en línea. Puede comenzar a crear reportes personalizados para excel y pdf disponible en su cuenta.</p>
                             <button type="button" class="btn btn-primary p-3" data-bs-toggle="modal" data-bs-target="#reportModal">
                                 Empezar
                             </button>
