@@ -104,22 +104,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     exit();
 
                 case 'eliminar_deportista':
-                    $deportista_id = $_POST['deportista_id'];
-                    $categoria_id = $_POST['categoria_id'];
-
-                    // Depuración
-                    // echo 'Deportista ID: ' . htmlspecialchars($deportista_id);
-                    // echo 'Categoría ID: ' . htmlspecialchars($categoria_id);
-                    // exit();
-
-                    $sql = "DELETE FROM tab_categoria_deportista WHERE ID_DEPORTISTA = :deportista_id AND ID_CATEGORIA = :categoria_id";
+                    $id_deportista = $_POST['id_deportista'];
+                    $id_categoria = $_POST['id_categoria'];
+                    $sql = "DELETE FROM tab_categoria_deportista WHERE ID_DEPORTISTA = :id_deportista AND ID_CATEGORIA = :id_categoria";
                     $stmt = $conn->prepare($sql);
-                    $stmt->bindParam(':deportista_id', $deportista_id);
-                    $stmt->bindParam(':categoria_id', $categoria_id);
+                    $stmt->bindParam(':id_deportista', $id_deportista);
+                    $stmt->bindParam(':id_categoria', $id_categoria);
                     $stmt->execute();
                     header("Location: " . $_SERVER['PHP_SELF']);
                     exit();
-
 
                 case 'agregar_entrenador':
                     $id_entrenador = $_POST['id_entrenador'];
@@ -133,23 +126,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     exit();
 
                 case 'eliminar_entrenador':
-                    $entrenador_id = $_POST['entrenador_id'];
-                    $categoria_id = $_POST['categoria_id'];
-                    $sql = "DELETE FROM tab_entrenador_categoria WHERE ID_ENTRENADOR = :entrenador_id AND ID_CATEGORIA = :categoria_id";
+                    $id_entrenador = $_POST['id_entrenador'];
+                    $id_categoria = $_POST['id_categoria'];
+                    $sql = "DELETE FROM tab_entrenador_categoria WHERE ID_ENTRENADOR = :id_entrenador AND ID_CATEGORIA = :id_categoria";
                     $stmt = $conn->prepare($sql);
-                    $stmt->bindParam(':entrenador_id', $entrenador_id);
-                    $stmt->bindParam(':categoria_id', $categoria_id);
-                    $stmt->execute();
-                    header("Location: " . $_SERVER['PHP_SELF']);
-                    exit();
-
-                case 'reasignar_deportista':
-                    $id_deportista = $_POST['id_deportista'];
-                    $nueva_categoria = $_POST['nueva_categoria'];
-                    $sql = "UPDATE tab_categoria_deportista SET ID_CATEGORIA = :nueva_categoria WHERE ID_DEPORTISTA = :id_deportista";
-                    $stmt = $conn->prepare($sql);
-                    $stmt->bindParam(':id_deportista', $id_deportista);
-                    $stmt->bindParam(':nueva_categoria', $nueva_categoria);
+                    $stmt->bindParam(':id_entrenador', $id_entrenador);
+                    $stmt->bindParam(':id_categoria', $id_categoria);
                     $stmt->execute();
                     header("Location: " . $_SERVER['PHP_SELF']);
                     exit();
@@ -697,11 +679,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 </div>
                                 <div class="modal-body">
                                     <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
+                                        <input type="hidden" name="categoria_id" value="">
                                         <input type="hidden" name="accion" value="modificar_limite">
-                                        <input type="hidden" name="categoria_limite" value="<?php echo htmlspecialchars($categoria['ID_CATEGORIA']); ?>">
                                         <div class="mb-3">
                                             <label for="nuevo_limite" class="form-label">Nuevo Límite de Deportistas</label>
-                                            <input type="number" class="form-control" id="nuevo_limite" name="nuevo_limite" min="0" value="<?php echo htmlspecialchars($categoria['limite_deportistas']); ?>" required>
+                                            <input type="number" class="form-control" id="nuevo_limite" name="nuevo_limite" min="0" required>
                                         </div>
                                         <button type="submit" class="btn btn-primary">Guardar</button>
                                     </form>
@@ -736,6 +718,62 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                 </div>
 
+                <!-- Modal para agregar categoría -->
+                <div class="modal fade" id="crearCategoriaModal" tabindex="-1" aria-labelledby="crearCategoriaModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="crearCategoriaModalLabel">Agregar Categoría</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <form method="POST" action="">
+                                <div class="modal-body">
+                                    <div class="mb-3">
+                                        <label for="categoria" class="form-label">Nombre de la Categoría</label>
+                                        <input type="text" class="form-control" id="categoria" name="categoria" required>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                    <button type="submit" class="btn btn-primary">Guardar</button>
+                                </div>
+                                <input type="hidden" name="accion" value="agregar_categoria">
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal para eliminar categoría -->
+                <div class="modal fade" id="eliminarCategoriaModal" tabindex="-1" aria-labelledby="eliminarCategoriaModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="eliminarCategoriaModalLabel">Eliminar Categoría</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <form method="POST" action="">
+                                <div class="modal-body">
+                                    <div class="mb-3">
+                                        <label for="categoria_id" class="form-label">Seleccione la Categoría</label>
+                                        <select class="form-select" id="categoria_id" name="categoria_id" required>
+                                            <option value="">Seleccione una categoría</option>
+                                            <?php foreach ($categorias as $categoria) : ?>
+                                                <option value="<?php echo htmlspecialchars($categoria['ID_CATEGORIA']); ?>">
+                                                    <?php echo htmlspecialchars($categoria['CATEGORIA']); ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                                </div>
+                                <input type="hidden" name="accion" value="eliminar_categoria">
+                            </form>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- Modal para eliminar deportista -->
                 <div class="modal fade" id="eliminarDeportistaModal" tabindex="-1" role="dialog" aria-labelledby="eliminarDeportistaModalLabel" aria-hidden="true">
@@ -764,8 +802,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
                     </div>
                 </div>
-
-
 
                 <!-- Modal para agregar entrenador -->
                 <div class="modal fade" id="addEntrenadorModal" tabindex="-1" aria-labelledby="addEntrenadorModalLabel" aria-hidden="true">
@@ -846,6 +882,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <!-- Scripts para manejar los modales -->
                 <script>
                     document.addEventListener('DOMContentLoaded', function() {
+                        // Modal para establecer limite
+                        var modalEstablecerLimite = document.getElementById('modalEstablecerLimite');
+                        modalEstablecerLimite.addEventListener('show.bs.modal', function(event) {
+                            var button = event.relatedTarget;
+                            var categoriaId = button.getAttribute('data-categoria-id');
+                            var inputCategoriaId = modalEstablecerLimite.querySelector('input[name="categoria_id"]');
+                            inputCategoriaId.value = categoriaId;
+                        });
+
                         // Modal para agregar deportista
                         var addDeportistaModal = document.getElementById('addDeportistaModal');
 
@@ -936,8 +981,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         });
                     });
                 </script>
-
-
                 <?php include '/xampp/htdocs/looneytunes/admin/includespro/footer.php'; ?>
             </div>
         </div>
