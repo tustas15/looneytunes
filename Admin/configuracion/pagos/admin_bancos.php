@@ -10,7 +10,7 @@ if (!isset($_SESSION['es_admin']) || $_SESSION['es_admin'] != 1) {
 
 // Función para obtener todos los bancos
 function obtenerBancos($conn) {
-    $query = "SELECT * FROM tab_bancos ORDER BY nombre";
+    $query = "SELECT * FROM tab_bancos ORDER BY NOMBRE";
     $result = $conn->query($query);
     return $result->fetch_all(MYSQLI_ASSOC);
 }

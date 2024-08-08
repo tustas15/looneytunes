@@ -2,7 +2,7 @@
 $server = "localhost";
 $user = "root";
 $pass = "";
-$db = "looneytunes";  // Asegúrate de que este es el nombre correcto de tu base de datos
+$db = "looneytunes2";  // Asegúrate de que este es el nombre correcto de tu base de datos
 $port = 3306;  // Puerto de MySQL en XAMPP
 
 try {
