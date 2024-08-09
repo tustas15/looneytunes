@@ -37,35 +37,10 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                     <div class="fw-500">Documentation</div>
                     <i class="fas fa-chevron-right dropdown-arrow"></i>
                 </a>
-                <div class="dropdown-menu dropdown-menu-end py-0 me-sm-n15 me-lg-0 o-hidden animated--fade-in-up" aria-labelledby="navbarDropdownDocs">
-                    <a class="dropdown-item py-3" href="/looneytunes/Admin/configuracion/respaldo/downloadFile.php">
-                        <div class="icon-stack bg-primary-soft text-primary me-4"><i data-feather="database"></i></div>
-                        <div>
-                            <div class="small text-gray-500">Generar Respaldo</div>
-                            Haz click y descarga el respaldo del sistema
-                        </div>
-                    </a>
-                    <div class="dropdown-divider m-0"></div>
-                    <a class="dropdown-item py-3" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#uploadBackupModal">
-                        <div class="icon-stack bg-primary-soft text-primary me-4"><i data-feather="upload"></i></div>
-                        <div>
-                            <div class="small text-gray-500">Subir Respaldo</div>
-                            Haz click para subir el respaldo del sistema
-                        </div>
-                    </a>
-
-                    <div class="dropdown-divider m-0"></div>
-                    <a class="dropdown-item py-3" href="https://docs.startbootstrap.com/sb-admin-pro/changelog" target="_blank">
-                        <div class="icon-stack bg-primary-soft text-primary me-4"><i data-feather="file-text"></i></div>
-                        <div>
-                            <div class="small text-gray-500">Changelog</div>
-                            Updates and changes
-                        </div>
-                    </a>
-                </div>
             </li>
 
             <!-- Navbar Search Dropdown-->
+             <!-- Navbar Search Dropdown-->
             <!-- * * Note: * * Visible only below the lg breakpoint-->
             <li class="nav-item dropdown no-caret me-3 d-lg-none">
                 <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="searchDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i data-feather="search"></i></a>
@@ -81,35 +56,16 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
             </li>
             <!-- Alerts Dropdown-->
             <li class="nav-item dropdown no-caret d-none d-sm-block me-3 dropdown-notifications">
-    <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownAlerts" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <i data-feather="bell"></i>
-    </a>
-    <div class="dropdown-menu dropdown-menu-end border-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownAlerts">
-        <h6 class="dropdown-header dropdown-notifications-header">
-            <i class="me-2" data-feather="bell"></i>
-            Observaciones Recientes
-        </h6>
-        <?php if (!empty($informes)): ?>
-            <?php foreach ($informes as $informe): ?>
-                <a class="dropdown-item dropdown-notifications-item" href="#!">
-                    <div class="dropdown-notifications-item-icon bg-warning"><i data-feather="activity"></i></div>
-                    <div class="dropdown-notifications-item-content">
-                        <div class="dropdown-notifications-item-content-details"><?= htmlspecialchars(date('d/m/Y H:i', strtotime($informe['fecha_creacion']))) ?></div>
-                        <div class="dropdown-notifications-item-content-text"><?= htmlspecialchars(substr($informe['informe'], 0, 50)) . (strlen($informe['informe']) > 50 ? '...' : '') ?></div>
-                    </div>
-                </a>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <a class="dropdown-item dropdown-notifications-item" href="#!">
-                <div class="dropdown-notifications-item-icon bg-info"><i data-feather="info"></i></div>
-                <div class="dropdown-notifications-item-content">
-                    <div class="dropdown-notifications-item-content-text">No hay informes recientes</div>
+                <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownAlerts" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i data-feather="bell"></i></a>
+                <div class="dropdown-menu dropdown-menu-end border-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownAlerts">
+                    <h6 class="dropdown-header dropdown-notifications-header">
+                        <i class="me-2" data-feather="bell"></i>
+                        Alerts Center
+                    </h6>
+                    
+                    <a class="dropdown-item dropdown-notifications-footer" href="#!">View All Alerts</a>
                 </div>
-            </a>
-        <?php endif; ?>
-        <a class="dropdown-item dropdown-notifications-footer" href="#!">Ver todos los informes</a>
-    </div>
-</li>
+            </li>
             <!-- Messages Dropdown-->
             <li class="nav-item dropdown no-caret d-none d-sm-block me-3 dropdown-notifications">
                 <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownMessages" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i data-feather="mail"></i></a>
@@ -118,6 +74,9 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                         <i class="me-2" data-feather="mail"></i>
                         Message Center
                     </h6>
+                    
+                    <!-- Footer Link-->
+                    <a class="dropdown-item dropdown-notifications-footer" href="#!">Read All Messages</a>
                 </div>
             </li>
             <!-- User Dropdown-->

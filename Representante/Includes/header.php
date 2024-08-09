@@ -49,7 +49,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                     <i class="fas fa-chevron-right dropdown-arrow"></i>
                 </a>
                 <div class="dropdown-menu dropdown-menu-end py-0 me-sm-n15 me-lg-0 o-hidden animated--fade-in-up" aria-labelledby="navbarDropdownDocs">
-                    
+
                 </div>
             </li>
 
@@ -75,7 +75,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                         <i class="me-2" data-feather="bell"></i>
                         Alerts Center
                     </h6>
-                    
+
                     <a class="dropdown-item dropdown-notifications-footer" href="#!">View All Alerts</a>
                 </div>
             </li>
@@ -87,7 +87,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                         <i class="me-2" data-feather="mail"></i>
                         Message Center
                     </h6>
-                    
+
                     <!-- Footer Link-->
                     <a class="dropdown-item dropdown-notifications-footer" href="#!">Read All Messages</a>
                 </div>
@@ -146,44 +146,23 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                         </a>
 
                         <!-- Sidenav Heading (App Views)-->
+                        <!-- Sidenav Heading (App Views)-->
                         <div class="sidenav-menu-heading">Interfaz</div>
-                        <!-- Sidenav Accordion (Pages)-->
-                        <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
-                            <div class="nav-link-icon"><i class="fas fa-fw fa-cog"></i></div>
-                            Componentes
-                            <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                        </a>
-                        <div class="collapse" id="collapsePages" data-bs-parent="#accordionSidenav">
-                            <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPagesMenu">
-                                <!-- Nested Sidenav Accordion (Pages -> Account)-->
-                                <a class="nav-link" href="/looneytunes/admin/configuracion/pagos/pagos.php">
-                                    Pago
-                                </a>
-                            </nav>
-                        </div>
-                        <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseFlows" aria-expanded="false" aria-controls="collapseFlows">
-                            <div class="nav-link-icon"><i class="fas fa-fw fa-wrench"></i></div>
-                            Utilidades
-                            <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                        </a>
-                        <div class="collapse" id="collapseFlows" data-bs-parent="#accordionSidenav">
-                            <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavFlowsMenu">
-                                <!-- Nested Sidenav Accordion (Flows -> Crear Usuarios)-->
-                                <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#flowsCollapseCrearUsuarios" aria-expanded="false" aria-controls="flowsCollapseCrearUsuarios">
-                                    Información
-                                    <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                                </a>
-                                <div class="collapse" id="flowsCollapseCrearUsuarios" data-bs-parent="#accordionSidenavFlowsMenu">
-                                    <nav class="sidenav-menu-nested nav">
-                                        <a class="nav-link" href="/looneytunes/representante/configuracion/infodepo.php">informacion</a>
-                                        </nav>
-                                </div>
-                            </nav>
-                        </div>
 
+                        <!-- Enlace a Pago directamente -->
+                        <a class="nav-link" href="pagosre.php">
+                            <div class="nav-link-icon"><i class="fas fa-fw fa-cog"></i></div>
+                            Pago
+                        </a>
+
+                        <!-- Enlace a Información directamente -->
+                        <a class="nav-link" href="/looneytunes/representante/configuracion/infodepo.php">
+                            <div class="nav-link-icon"><i class="fas fa-fw fa-wrench"></i></div>
+                            Información
+                        </a>
                     </div>
                 </div>
-                
+
                 <!-- Sidenav Footer -->
                 <div class="sidenav-footer">
                     <div class="sidenav-footer-content">

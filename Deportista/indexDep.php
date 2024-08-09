@@ -44,7 +44,7 @@ if ($deportista) {
     $informes = [];
 }
 
-include './includes/header.php';
+include './Includes/header.php';
 ?>
 <main>
     <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
@@ -161,7 +161,7 @@ include './includes/header.php';
     </div>
 </main>
 <?php
-include './includes/footer.php';
+include './Includes/footer.php';
 ?>
 
 
