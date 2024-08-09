@@ -123,11 +123,11 @@ include './includes/header.php';
                             <input type="text" class="form-control" id="numeroCamisa" name="numeroCamisa" required>
                         </div>
                         <div class="mb-3">
-                            <label for="altura" class="form-label">Altura</label>
+                            <label for="altura" class="form-label">Altura (cm)</label>
                             <input type="text" class="form-control" id="altura" name="altura" required>
                         </div>
                         <div class="mb-3">
-                            <label for="peso" class="form-label">Peso</label>
+                            <label for="peso" class="form-label">Peso (Kg)</label>
                             <input type="text" class="form-control" id="peso" name="peso" required>
                         </div>
                         <div class="mb-3">
@@ -157,7 +157,7 @@ include './includes/header.php';
                     <input type="hidden" id="informeDeportistaId" name="deportistaId">
                     <input type="hidden" id="informeRepresentanteId" name="representanteId">
                     <div class="mb-3">
-                        <label for="informe" class="form-label">Informe</label>
+                        <label for="informe" class="form-label">Observacion</label>
                         <textarea class="form-control" id="informe" name="informe" rows="4" required></textarea>
                     </div>
                 </form>
