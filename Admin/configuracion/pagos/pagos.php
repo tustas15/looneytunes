@@ -7,112 +7,134 @@ $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
 include '../../Includespro/header.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="es">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Nunito:200,300,400,600,700,800,900" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/startbootstrap-sb-admin-2/4.1.3/css/sb-admin-2.min.css" rel="stylesheet">
-    <link href="https://cdn.datatables.net/1.11.3/css/dataTables.bootstrap5.min.css" rel="stylesheet">
-    <link href="https://cdn.datatables.net/buttons/2.0.1/css/buttons.bootstrap5.min.css" rel="stylesheet">
-    <link href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css" rel="stylesheet">
-    <link href="https://cdn.datatables.net/buttons/1.6.2/css/buttons.dataTables.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.css" rel="stylesheet">
     <link href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
-    <script src="js/sb-admin-2.min.js"></script>
+    <script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.28.0/feather.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-</head>
-
-<body>
-    <div class="container">
-        <h2>Formulario de Pago</h2>
-        <form id="paymentForm" enctype="multipart/form-data">
-            <input type="hidden" id="id_pago" name="id_pago">
-            <div class="form-group">
-                <label for="representante">Apellido del Representante:</label>
-                <select id="representante" name="representante" class="form-control" required>
-                    <!-- Options will be populated by JS -->
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="cedula_representante">Cédula del Representante:</label>
-                <input type="text" id="cedula_representante" class="form-control" readonly>
-            </div>
-            <div class="form-group">
-                <label for="deportista" class="form-label">Deportista</label>
-                <select id="deportista" name="deportista" class="form-control" required>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="cedula_deportista">Cédula del Deportista:</label>
-                <input type="text" id="cedula_deportista" class="form-control" readonly>
-            </div>
-            <div class="form-group">
-                <label for="metodo_pago">Método de Pago:</label>
-                <select id="metodo_pago" name="metodo_pago" class="form-control">
-                    <option value="efectivo">Efectivo</option>
-                    <option value="transferencia">Transferencia</option>
-                </select>
-            </div>
-            <div class="form-group" id="banco_section" style="display:none;">
-                <label for="banco">Banco Destino:</label>
-                <select id="banco" name="banco" class="form-control" readonly>
-                    <!-- Options will be populated by JS -->
-                </select>
-            </div>
-            <div class="form-group" id="entidad_section" style="display:none;">
-                <label for="entidad_origen">Entidad Financiera de Origen:</label>
-                <input type="text" id="entidad_origen" name="entidad_origen" class="form-control">
-            </div>
-            <div class="form-group" id="comprobante_section" style="display:none;">
-                <label for="comprobante">Comprobante:</label>
-                <input id="nombre_archivo" name="nombre_archivo" type="file" class="form-control" readonly>
-            </div>
-            <div class="form-group">
-                <label for="monto">Monto:</label>
-                <input id="monto" name="monto" class="form-control" required>
-            </div>
-            <div class="form-group">
-                <label for="fecha" class="form-label">Fecha</label>
-                <input type="date" class="form-control fecha-actual" id="fecha" name="fecha">
-            </div>
-
-            <div class="form-group">
-                <label for="mes">Mes:</label>
-                <select id="mes" class="form-control">
-                    <option value="01">Enero</option>
-                    <option value="02">Febrero</option>
-                    <option value="03">Marzo</option>
-                    <option value="04">Abril</option>
-                    <option value="05">Mayo</option>
-                    <option value="06">Junio</option>
-                    <option value="07">Julio</option>
-                    <option value="08">Agosto</option>
-                    <option value="09">Septiembre</option>
-                    <option value="10">Octubre</option>
-                    <option value="11">Noviembre</option>
-                    <option value="12">Diciembre</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="anio">Año:</label>
-                <input type="number" id="anio" class="form-control">
-            </div>
-
-            <div class="form-group">
-                <label for="motivo">Motivo:</label>
-                <input id="motivo" name="motivo" class="form-control" readonly>
-            </div>
-
-            <script>
+<body class="nav-fixed">
+            <main>
+                <div class="container-fluid px-4">
+                    <h1 class="mt-4">Gestión de Pagos</h1>
+                    <ol class="breadcrumb mb-4">
+                        <li class="breadcrumb-item"><a href="/looneytunes/admin/indexad.php">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Pagos</li>
+                    </ol>
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <i class="fas fa-dollar-sign me-1"></i>
+                            Formulario de Pago
+                        </div>
+                        <div class="card-body">
+                            <form id="paymentForm" enctype="multipart/form-data">
+                                <input type="hidden" id="id_pago" name="id_pago">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <div class="form-floating mb-3 mb-md-0">
+                                            <select id="representante" name="representante" class="form-select" required>
+                                                <option value="">Seleccionar</option>
+                                            </select>
+                                            <label for="representante">Apellido del Representante</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <input type="text" id="cedula_representante" class="form-control" readonly>
+                                            <label for="cedula_representante">Cédula del Representante</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <div class="form-floating mb-3 mb-md-0">
+                                            <select id="deportista" name="deportista" class="form-select" required>
+                                                <option value="">Seleccionar</option>
+                                            </select>
+                                            <label for="deportista">Deportista</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <input type="text" id="cedula_deportista" class="form-control" readonly>
+                                            <label for="cedula_deportista">Cédula del Deportista</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <div class="form-floating mb-3 mb-md-0">
+                                            <select id="metodo_pago" name="metodo_pago" class="form-select">
+                                                <option value="efectivo">Efectivo</option>
+                                                <option value="transferencia">Transferencia</option>
+                                            </select>
+                                            <label for="metodo_pago">Método de Pago</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <input type="number" id="monto" name="monto" class="form-control" required>
+                                            <label for="monto">Monto</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="banco_section" style="display:none;">
+                                    <div class="form-floating mb-3">
+                                        <select id="banco" name="banco" class="form-select" readonly>
+                                            <option value="">Seleccionar</option>
+                                        </select>
+                                        <label for="banco">Banco Destino</label>
+                                    </div>
+                                </div>
+                                <div id="entidad_section" style="display:none;">
+                                    <div class="form-floating mb-3">
+                                        <input type="text" id="entidad_origen" name="entidad_origen" class="form-control">
+                                        <label for="entidad_origen">Entidad Financiera de Origen</label>
+                                    </div>
+                                </div>
+                                <div id="comprobante_section" style="display:none;">
+                                    <div class="mb-3">
+                                        <label for="nombre_archivo" class="form-label">Comprobante</label>
+                                        <input id="nombre_archivo" name="nombre_archivo" type="file" class="form-control" readonly>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <div class="form-floating mb-3 mb-md-0">
+                                            <input type="date" class="form-control fecha-actual" id="fecha" name="fecha">
+                                            <label for="fecha">Fecha</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-floating mb-3 mb-md-0">
+                                            <select id="mes" class="form-select">
+                                                <option value="01">Enero</option>
+                                                <option value="02">Febrero</option>
+                                                <option value="03">Marzo</option>
+                                                <option value="04">Abril</option>
+                                                <option value="05">Mayo</option>
+                                                <option value="06">Junio</option>
+                                                <option value="07">Julio</option>
+                                                <option value="08">Agosto</option>
+                                                <option value="09">Septiembre</option>
+                                                <option value="10">Octubre</option>
+                                                <option value="11">Noviembre</option>
+                                                <option value="12">Diciembre</option>
+                                            </select>
+                                            <label for="mes">Mes</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-floating">
+                                            <input type="number" id="anio" class="form-control">
+                                            <label for="anio">Año</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input id="motivo" name="motivo" class="form-control" readonly>
+                                    <label for="motivo">Motivo</label>
+                                </div>
+                                <script>
                 function setFechaYMesActual() {
                     var today = new Date();
                     var dd = String(today.getDate()).padStart(2, '0');
@@ -147,34 +169,51 @@ include '../../Includespro/header.php';
                 document.getElementById('mes').addEventListener('change', actualizarMotivo);
                 document.getElementById('anio').addEventListener('change', actualizarMotivo);
             </script>
-            <button type="submit" class="btn btn-primary">Registrar Pago</button>
-        </form>
-        <div id="message"></div>
-
-        <h2>Historial de Pagos</h2>
-        <table id="historial_pagos" class="table table-striped table-bordered">
-            <thead>
-                <tr>
-                    <th>Deportista</th>
-                    <th>Representante</th>
-                    <th>Tipo de Pago</th>
-                    <th>Fecha</th>
-                    <th>Motivo</th>
-                    <th>Monto</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Los datos se cargarán aquí dinámicamente -->
-            </tbody>
-        </table>
-
-
+                                <div class="mt-4 mb-0">
+                                    <div class="d-grid">
+                                        <button type="submit" class="btn btn-primary btn-block">Registrar Pago</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div id="message"></div>
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <i class="fas fa-table me-1"></i>
+                            Historial de Pagos
+                        </div>
+                        <div class="card-body">
+                            <table id="historial_pagos" class="table table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Deportista</th>
+                                        <th>Representante</th>
+                                        <th>Tipo de Pago</th>
+                                        <th>Fecha</th>
+                                        <th>Motivo</th>
+                                        <th>Monto</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Los datos se cargarán aquí dinámicamente -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </main>
+            <?php include '../../Includespro/footer.php'; ?>
+        </div>
     </div>
 
-
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="/looneytunes/Assets/js/scripts.js"></script>
     <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.6.2/js/dataTables.buttons.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.6.2/js/buttons.bootstrap4.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
@@ -182,8 +221,10 @@ include '../../Includespro/header.php';
     <script src="https://cdn.datatables.net/buttons/1.6.2/js/buttons.print.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.6.2/js/buttons.colVis.min.js"></script>
 
+    <!-- Aquí va tu script JavaScript existente -->
     <script>
         $(document).ready(function() {
+            setFechaYMesActual();
             var table = $('#historial_pagos').DataTable({
                 ajax: {
                     url: 'historial_pagos.php',
@@ -303,7 +344,6 @@ include '../../Includespro/header.php';
                         });
                     }
                 });
-
 
             });
 
@@ -562,5 +602,4 @@ include '../../Includespro/header.php';
         });
     </script>
 </body>
-
 </html>
