@@ -7,7 +7,6 @@ $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
 include '../../Includespro/header.php';
 ?>
 
-
 <link href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css" rel="stylesheet">
 <script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.28.0/feather.min.js" crossorigin="anonymous"></script>
@@ -34,6 +33,7 @@ include '../../Includespro/header.php';
                                 <div class="form-floating mb-3 mb-md-0">
                                     <select id="representante" name="representante" class="form-select" required>
                                         <option value="">Seleccionar</option>
+                                        <!-- Opciones se llenarán dinámicamente -->
                                     </select>
                                     <label for="representante">Apellido del Representante</label>
                                 </div>
@@ -50,6 +50,7 @@ include '../../Includespro/header.php';
                                 <div class="form-floating mb-3 mb-md-0">
                                     <select id="deportista" name="deportista" class="form-select" required>
                                         <option value="">Seleccionar</option>
+                                        <!-- Opciones se llenarán dinámicamente -->
                                     </select>
                                     <label for="deportista">Deportista</label>
                                 </div>
@@ -82,6 +83,7 @@ include '../../Includespro/header.php';
                             <div class="form-floating mb-3">
                                 <select id="banco" name="banco" class="form-select" readonly>
                                     <option value="">Seleccionar</option>
+                                    <!-- Opciones se llenarán dinámicamente -->
                                 </select>
                                 <label for="banco">Banco Destino</label>
                             </div>
@@ -135,41 +137,7 @@ include '../../Includespro/header.php';
                             <input id="motivo" name="motivo" class="form-control" readonly>
                             <label for="motivo">Motivo</label>
                         </div>
-                        <script>
-                            function setFechaYMesActual() {
-                                var today = new Date();
-                                var dd = String(today.getDate()).padStart(2, '0');
-                                var mm = String(today.getMonth() + 1).padStart(2, '0'); // Enero es 0!
-                                var yyyy = today.getFullYear();
-
-                                // Establecer la fecha actual
-                                var fechaActual = yyyy + '-' + mm + '-' + dd;
-                                document.getElementById('fecha').value = fechaActual;
-
-                                // Establecer el mes actual
-                                document.getElementById('mes').value = mm;
-
-                                // Establecer el año actual
-                                document.getElementById('anio').value = yyyy;
-
-                                // Actualizar el motivo
-                                actualizarMotivo();
-                            }
-
-                            function actualizarMotivo() {
-                                var mesSeleccionado = document.getElementById('mes');
-                                var mesTexto = mesSeleccionado.options[mesSeleccionado.selectedIndex].text;
-                                //var anioSeleccionado = document.getElementById('anio').value;
-                                document.getElementById('motivo').value = 'Pago del mes de ' + mesTexto + ' ';
-                            }
-
-                            // Llamar a la función cuando se carga la página
-                            window.onload = setFechaYMesActual;
-
-                            // Actualizar motivo cuando cambia el mes o el año
-                            document.getElementById('mes').addEventListener('change', actualizarMotivo);
-                            document.getElementById('anio').addEventListener('change', actualizarMotivo);
-                        </script>
+                        <input type="hidden" id="telefono" name="telefono">
                         <div class="mt-4 mb-0">
                             <div class="d-grid">
                                 <button type="submit" class="btn btn-primary btn-block">Registrar Pago</button>
@@ -206,6 +174,80 @@ include '../../Includespro/header.php';
         </div>
     </main>
     <?php include '../../Includespro/footer.php'; ?>
+
+    <script>
+        document.getElementById('paymentForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const formData = new FormData(this);
+
+            fetch('/looneytunes/admin/configuracion/whatsapp/index.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    Swal.fire({
+                        title: 'Éxito',
+                        text: data.message,
+                        icon: 'success',
+                        confirmButtonText: 'Aceptar'
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error',
+                        text: data.message,
+                        icon: 'error',
+                        confirmButtonText: 'Aceptar'
+                    });
+                }
+            })
+            .catch(error => {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Ocurrió un error al enviar el formulario.',
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+            });
+        });
+
+        // Asegúrate de que estas funciones estén presentes en tu código
+        function setFechaYMesActual() {
+            var today = new Date();
+            var dd = String(today.getDate()).padStart(2, '0');
+            var mm = String(today.getMonth() + 1).padStart(2, '0'); // Enero es 0!
+            var yyyy = today.getFullYear();
+
+            // Establecer la fecha actual
+            var fechaActual = yyyy + '-' + mm + '-' + dd;
+            document.getElementById('fecha').value = fechaActual;
+
+            // Establecer el mes actual
+            document.getElementById('mes').value = mm;
+
+            // Establecer el año actual
+            document.getElementById('anio').value = yyyy;
+
+            // Actualizar el motivo
+            actualizarMotivo();
+        }
+
+        function actualizarMotivo() {
+            var mesSeleccionado = document.getElementById('mes');
+            var mesTexto = mesSeleccionado.options[mesSeleccionado.selectedIndex].text;
+            //var anioSeleccionado = document.getElementById('anio').value;
+            document.getElementById('motivo').value = 'Pago del mes de ' + mesTexto + ' ';
+        }
+
+        // Llamar a la función cuando se carga la página
+        window.onload = setFechaYMesActual;
+
+        // Actualizar motivo cuando cambia el mes o el año
+        document.getElementById('mes').addEventListener('change', actualizarMotivo);
+        document.getElementById('anio').addEventListener('change', actualizarMotivo);
+    </script>
     </div>
     </div>
 
