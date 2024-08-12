@@ -34,7 +34,7 @@ if (in_array($modulo_buscador, $modulos)) {
                 ';
             } else {
                 $_SESSION[$modulo_buscador] = $txt;
-                header("Location: index.php?vista=$modulos_url", true, 303);
+                @header("Location: index.php?vista=$modulos_url", true, 303);
                 exit();
             }
         }
@@ -42,7 +42,7 @@ if (in_array($modulo_buscador, $modulos)) {
 
     if (isset($_POST['eliminar_buscador'])) {
         unset($_SESSION[$modulo_buscador]);
-        header("Location: index.php?vista=$modulos_url", true, 303);
+        @header("Location: index.php?vista=$modulos_url", true, 303);
         exit();
     }
 } else {

@@ -301,10 +301,10 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                                 <a class="nav-link collapsed" href="/looneytunes/Admin/inventario/index.php?vista=category_list">
                                     Lista
                                 </a>
-                                <!-- Nested Sidenav Accordion (Categorías -> Buscar)-->
+                                <!-- Nested Sidenav Accordion (Categorías -> Buscar)
                                 <a class="nav-link collapsed" href="/looneytunes/Admin/inventario/index.php?vista=category_search">
                                     Buscar
-                                </a>
+                                </a>-->
                             </nav>
                         </div>
 
@@ -328,10 +328,10 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                                 <a class="nav-link collapsed" href="/looneytunes/Admin/inventario/index.php?vista=product_category">
                                     Por categorías
                                 </a>
-                                <!-- Nested Sidenav Accordion (Productos -> Buscar)-->
+                                <!-- Nested Sidenav Accordion (Productos -> Buscar)
                                 <a class="nav-link collapsed" href="/looneytunes/Admin/inventario/index.php?vista=product_search">
                                     Buscar
-                                </a>
+                                </a>-->
                             </nav>
                         </div>
 
