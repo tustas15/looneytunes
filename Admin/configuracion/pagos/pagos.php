@@ -8,204 +8,205 @@ include '../../Includespro/header.php';
 ?>
 
 
-    <link href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css" rel="stylesheet">
-    <script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.28.0/feather.min.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+<script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.28.0/feather.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <body class="nav-fixed">
-            <main>
-                <div class="container-fluid px-4">
-                    <h1 class="mt-4">Gestión de Pagos</h1>
-                    <ol class="breadcrumb mb-4">
-                        <li class="breadcrumb-item"><a href="/looneytunes/admin/indexad.php">Dashboard</a></li>
-                        <li class="breadcrumb-item active">Pagos</li>
-                    </ol>
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            <i class="fas fa-dollar-sign me-1"></i>
-                            Formulario de Pago
-                        </div>
-                        <div class="card-body">
-                            <form id="paymentForm" enctype="multipart/form-data">
-                                <input type="hidden" id="id_pago" name="id_pago">
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <div class="form-floating mb-3 mb-md-0">
-                                            <select id="representante" name="representante" class="form-select" required>
-                                                <option value="">Seleccionar</option>
-                                            </select>
-                                            <label for="representante">Apellido del Representante</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-floating">
-                                            <input type="text" id="cedula_representante" class="form-control" readonly>
-                                            <label for="cedula_representante">Cédula del Representante</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <div class="form-floating mb-3 mb-md-0">
-                                            <select id="deportista" name="deportista" class="form-select" required>
-                                                <option value="">Seleccionar</option>
-                                            </select>
-                                            <label for="deportista">Deportista</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-floating">
-                                            <input type="text" id="cedula_deportista" class="form-control" readonly>
-                                            <label for="cedula_deportista">Cédula del Deportista</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <div class="form-floating mb-3 mb-md-0">
-                                            <select id="metodo_pago" name="metodo_pago" class="form-select">
-                                                <option value="efectivo">Efectivo</option>
-                                                <option value="transferencia">Transferencia</option>
-                                            </select>
-                                            <label for="metodo_pago">Método de Pago</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-floating">
-                                            <input type="number" id="monto" name="monto" class="form-control" required>
-                                            <label for="monto">Monto</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div id="banco_section" style="display:none;">
-                                    <div class="form-floating mb-3">
-                                        <select id="banco" name="banco" class="form-select" readonly>
-                                            <option value="">Seleccionar</option>
-                                        </select>
-                                        <label for="banco">Banco Destino</label>
-                                    </div>
-                                </div>
-                                <div id="entidad_section" style="display:none;">
-                                    <div class="form-floating mb-3">
-                                        <input type="text" id="entidad_origen" name="entidad_origen" class="form-control">
-                                        <label for="entidad_origen">Entidad Financiera de Origen</label>
-                                    </div>
-                                </div>
-                                <div id="comprobante_section" style="display:none;">
-                                    <div class="mb-3">
-                                        <label for="nombre_archivo" class="form-label">Comprobante</label>
-                                        <input id="nombre_archivo" name="nombre_archivo" type="file" class="form-control" readonly>
-                                    </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-md-4">
-                                        <div class="form-floating mb-3 mb-md-0">
-                                            <input type="date" class="form-control fecha-actual" id="fecha" name="fecha">
-                                            <label for="fecha">Fecha</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-floating mb-3 mb-md-0">
-                                            <select id="mes" class="form-select">
-                                                <option value="01">Enero</option>
-                                                <option value="02">Febrero</option>
-                                                <option value="03">Marzo</option>
-                                                <option value="04">Abril</option>
-                                                <option value="05">Mayo</option>
-                                                <option value="06">Junio</option>
-                                                <option value="07">Julio</option>
-                                                <option value="08">Agosto</option>
-                                                <option value="09">Septiembre</option>
-                                                <option value="10">Octubre</option>
-                                                <option value="11">Noviembre</option>
-                                                <option value="12">Diciembre</option>
-                                            </select>
-                                            <label for="mes">Mes</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-floating">
-                                            <input type="number" id="anio" class="form-control">
-                                            <label for="anio">Año</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-floating mb-3">
-                                    <input id="motivo" name="motivo" class="form-control" readonly>
-                                    <label for="motivo">Motivo</label>
-                                </div>
-                                <script>
-                function setFechaYMesActual() {
-                    var today = new Date();
-                    var dd = String(today.getDate()).padStart(2, '0');
-                    var mm = String(today.getMonth() + 1).padStart(2, '0'); // Enero es 0!
-                    var yyyy = today.getFullYear();
-
-                    // Establecer la fecha actual
-                    var fechaActual = yyyy + '-' + mm + '-' + dd;
-                    document.getElementById('fecha').value = fechaActual;
-
-                    // Establecer el mes actual
-                    document.getElementById('mes').value = mm;
-
-                    // Establecer el año actual
-                    document.getElementById('anio').value = yyyy;
-
-                    // Actualizar el motivo
-                    actualizarMotivo();
-                }
-
-                function actualizarMotivo() {
-                    var mesSeleccionado = document.getElementById('mes');
-                    var mesTexto = mesSeleccionado.options[mesSeleccionado.selectedIndex].text;
-                    //var anioSeleccionado = document.getElementById('anio').value;
-                    document.getElementById('motivo').value = 'Pago del mes de ' + mesTexto + ' ';
-                }
-
-                // Llamar a la función cuando se carga la página
-                window.onload = setFechaYMesActual;
-
-                // Actualizar motivo cuando cambia el mes o el año
-                document.getElementById('mes').addEventListener('change', actualizarMotivo);
-                document.getElementById('anio').addEventListener('change', actualizarMotivo);
-            </script>
-                                <div class="mt-4 mb-0">
-                                    <div class="d-grid">
-                                        <button type="submit" class="btn btn-primary btn-block">Registrar Pago</button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                    <div id="message"></div>
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            <i class="fas fa-table me-1"></i>
-                            Historial de Pagos
-                        </div>
-                        <div class="card-body">
-                            <table id="historial_pagos" class="table table-striped table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>Deportista</th>
-                                        <th>Representante</th>
-                                        <th>Tipo de Pago</th>
-                                        <th>Fecha</th>
-                                        <th>Motivo</th>
-                                        <th>Monto</th>
-                                        <th>Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <!-- Los datos se cargarán aquí dinámicamente -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+    <main>
+        <div class="container-fluid px-4">
+            <h1 class="mt-4">Gestión de Pagos</h1>
+            <ol class="breadcrumb mb-4">
+                <li class="breadcrumb-item"><a href="/looneytunes/admin/indexad.php">Dashboard</a></li>
+                <li class="breadcrumb-item active">Pagos</li>
+            </ol>
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-dollar-sign me-1"></i>
+                    Formulario de Pago
                 </div>
-            </main>
-            <?php include '../../Includespro/footer.php'; ?>
+                <div class="card-body">
+                    <form id="paymentForm" enctype="multipart/form-data">
+                        <input type="hidden" id="id_pago" name="id_pago">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3 mb-md-0">
+                                    <select id="representante" name="representante" class="form-select" required>
+                                        <option value="">Seleccionar</option>
+                                    </select>
+                                    <label for="representante">Apellido del Representante</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" id="cedula_representante" class="form-control" readonly>
+                                    <label for="cedula_representante">Cédula del Representante</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3 mb-md-0">
+                                    <select id="deportista" name="deportista" class="form-select" required>
+                                        <option value="">Seleccionar</option>
+                                    </select>
+                                    <label for="deportista">Deportista</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" id="cedula_deportista" class="form-control" readonly>
+                                    <label for="cedula_deportista">Cédula del Deportista</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3 mb-md-0">
+                                    <select id="metodo_pago" name="metodo_pago" class="form-select">
+                                        <option value="efectivo">Efectivo</option>
+                                        <option value="transferencia">Transferencia</option>
+                                    </select>
+                                    <label for="metodo_pago">Método de Pago</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="number" id="monto" name="monto" class="form-control" required>
+                                    <label for="monto">Monto</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="banco_section" style="display:none;">
+                            <div class="form-floating mb-3">
+                                <select id="banco" name="banco" class="form-select" readonly>
+                                    <option value="">Seleccionar</option>
+                                </select>
+                                <label for="banco">Banco Destino</label>
+                            </div>
+                        </div>
+                        <div id="entidad_section" style="display:none;">
+                            <div class="form-floating mb-3">
+                                <input type="text" id="entidad_origen" name="entidad_origen" class="form-control">
+                                <label for="entidad_origen">Entidad Financiera de Origen</label>
+                            </div>
+                        </div>
+                        <div id="comprobante_section" style="display:none;">
+                            <div class="mb-3">
+                                <label for="nombre_archivo" class="form-label">Comprobante</label>
+                                <input id="nombre_archivo" name="nombre_archivo" type="file" class="form-control" readonly>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <div class="form-floating mb-3 mb-md-0">
+                                    <input type="date" class="form-control fecha-actual" id="fecha" name="fecha">
+                                    <label for="fecha">Fecha</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-floating mb-3 mb-md-0">
+                                    <select id="mes" class="form-select">
+                                        <option value="01">Enero</option>
+                                        <option value="02">Febrero</option>
+                                        <option value="03">Marzo</option>
+                                        <option value="04">Abril</option>
+                                        <option value="05">Mayo</option>
+                                        <option value="06">Junio</option>
+                                        <option value="07">Julio</option>
+                                        <option value="08">Agosto</option>
+                                        <option value="09">Septiembre</option>
+                                        <option value="10">Octubre</option>
+                                        <option value="11">Noviembre</option>
+                                        <option value="12">Diciembre</option>
+                                    </select>
+                                    <label for="mes">Mes</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-floating">
+                                    <input type="number" id="anio" class="form-control">
+                                    <label for="anio">Año</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input id="motivo" name="motivo" class="form-control" readonly>
+                            <label for="motivo">Motivo</label>
+                        </div>
+                        <script>
+                            function setFechaYMesActual() {
+                                var today = new Date();
+                                var dd = String(today.getDate()).padStart(2, '0');
+                                var mm = String(today.getMonth() + 1).padStart(2, '0'); // Enero es 0!
+                                var yyyy = today.getFullYear();
+
+                                // Establecer la fecha actual
+                                var fechaActual = yyyy + '-' + mm + '-' + dd;
+                                document.getElementById('fecha').value = fechaActual;
+
+                                // Establecer el mes actual
+                                document.getElementById('mes').value = mm;
+
+                                // Establecer el año actual
+                                document.getElementById('anio').value = yyyy;
+
+                                // Actualizar el motivo
+                                actualizarMotivo();
+                            }
+
+                            function actualizarMotivo() {
+                                var mesSeleccionado = document.getElementById('mes');
+                                var mesTexto = mesSeleccionado.options[mesSeleccionado.selectedIndex].text;
+                                //var anioSeleccionado = document.getElementById('anio').value;
+                                document.getElementById('motivo').value = 'Pago del mes de ' + mesTexto + ' ';
+                            }
+
+                            // Llamar a la función cuando se carga la página
+                            window.onload = setFechaYMesActual;
+
+                            // Actualizar motivo cuando cambia el mes o el año
+                            document.getElementById('mes').addEventListener('change', actualizarMotivo);
+                            document.getElementById('anio').addEventListener('change', actualizarMotivo);
+                        </script>
+                        <div class="mt-4 mb-0">
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-block">Registrar Pago</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div id="message"></div>
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-table me-1"></i>
+                    Historial de Pagos
+                </div>
+                <div class="card-body">
+                    <table id="historial_pagos" class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Deportista</th>
+                                <th>Representante</th>
+                                <th>Tipo de Pago</th>
+                                <th>Fecha</th>
+                                <th>Motivo</th>
+                                <th>Monto</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Los datos se cargarán aquí dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
+    </main>
+    <?php include '../../Includespro/footer.php'; ?>
+    </div>
     </div>
 
     <!-- Scripts -->
@@ -602,4 +603,5 @@ include '../../Includespro/header.php';
         });
     </script>
 </body>
+
 </html>
