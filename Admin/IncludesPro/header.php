@@ -298,11 +298,11 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                                     Nueva
                                 </a>
                                 <!-- Nested Sidenav Accordion (Categorías -> Lista)-->
-                                <a class="nav-link collapsed" href="/looneytunes/Admin/inventario/categoria/category_list.php">
+                                <a class="nav-link collapsed" href="/looneytunes/Admin/inventario/index.php?vista=category_list">
                                     Lista
                                 </a>
                                 <!-- Nested Sidenav Accordion (Categorías -> Buscar)-->
-                                <a class="nav-link collapsed" href="/looneytunes/Admin/inventario/categoria/category_search.php">
+                                <a class="nav-link collapsed" href="/looneytunes/Admin/inventario/index.php?vista=category_search">
                                     Buscar
                                 </a>
                             </nav>
