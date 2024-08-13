@@ -134,7 +134,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
 
                         <!-- Sidenav Heading (App Views)-->
                         <div class="sidenav-menu-heading">Interfaz</div>
-                        <!-- Sidenav Accordion (Pages)-->
+                        <!-- Sidenav Accordion 
                         <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
                             <div class="nav-link-icon"><i class="fas fa-fw fa-chart-area"></i></div>
                             Gráfica
@@ -146,7 +146,9 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                                     IMC
                                 </a>
                             </nav>
+                            
                         </div>
+-->
                     </div>
                 </div>
                 <!-- Modal para Subir Backup -->
