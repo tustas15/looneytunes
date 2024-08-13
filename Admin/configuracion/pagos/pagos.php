@@ -153,8 +153,7 @@ include '../../Includespro/header.php';
                     Historial de Pagos
                 </div>
                 <div class="card-body">
-                    <table id="historial_pagos" class="table table-striped table-bordered">
-                        <thead>
+                <table id="historial_pagos" class="table table-striped table-bordered">                        <thead>
                             <tr>
                                 <th>Deportista</th>
                                 <th>Representante</th>
@@ -266,189 +265,147 @@ include '../../Includespro/header.php';
 
     <!-- Aquí va tu script JavaScript existente -->
     <script>
-        $(document).ready(function() {
-            setFechaYMesActual();
-            var table = $('#historial_pagos').DataTable({
-                ajax: {
-                    url: 'historial_pagos.php',
-                    dataSrc: 'data'
-                },
-                columns: [{
-                        data: 'deportista'
-                    },
-                    {
-                        data: 'representante'
-                    },
-                    {
-                        data: 'metodo_pago'
-                    },
-                    {
-                        data: 'fecha_pago'
-                    },
-                    {
-                        data: 'motivo'
-                    },
-                    {
-                        data: 'monto'
-                    },
-                    {
-                        data: 'acciones'
-                    }
-                ],
-                language: {
-                    url: '//cdn.datatables.net/plug-ins/1.10.20/i18n/Spanish.json'
-                },
+    $(document).ready(function() {
+    setFechaYMesActual();
 
-                dom: 'Bfrtip',
-                buttons: [{
-                        extend: 'copy',
-                        exportOptions: {
-                            columns: ':not(:last-child)'
-                        }
-                    },
-                    {
-                        extend: 'csv',
-                        exportOptions: {
-                            columns: ':not(:last-child)'
-                        }
-                    },
-                    {
-                        extend: 'excel',
-                        exportOptions: {
-                            columns: ':not(:last-child)'
-                        }
-                    },
-                    {
-                        extend: 'pdf',
-                        exportOptions: {
-                            columns: ':not(:last-child)'
-                        }
-                    },
-                    {
-                        extend: 'print',
-                        exportOptions: {
-                            columns: ':not(:last-child)'
-                        }
-                    }
-                ]
+    var table = $('#historial_pagos').DataTable({
+        ajax: {
+            url: 'historial_pagos.php',
+            dataSrc: 'data'
+        },
+        columns: [
+            { data: 'deportista' },
+            { data: 'representante' },
+            { data: 'metodo_pago' },
+            { data: 'fecha_pago' },
+            { data: 'motivo' },
+            { data: 'monto' },
+            { data: 'acciones' }
+        ],
+        language: {
+            url: '//cdn.datatables.net/plug-ins/1.10.20/i18n/Spanish.json'
+        },
+        dom: 'Bfrtip',
+        buttons: [
+            { extend: 'copy', exportOptions: { columns: ':not(:last-child)' } },
+            { extend: 'csv', exportOptions: { columns: ':not(:last-child)' } },
+            { extend: 'excel', exportOptions: { columns: ':not(:last-child)' } },
+            { extend: 'pdf', exportOptions: { columns: ':not(:last-child)' } },
+            { extend: 'print', exportOptions: { columns: ':not(:last-child)' } }
+        ]
+    });
 
-            });
+    $('#paymentForm').submit(function(e) {
+        e.preventDefault();
 
+        var formData = new FormData(this);
+        var isUpdating = $('#id_pago').val() !== "";
+        var url = isUpdating ? 'actualizar.php' : 'registrar_pagos.php';
+        var successMessage = isUpdating ? 'Pago actualizado correctamente' : 'Pago registrado correctamente';
 
-
-            // Manejar clic en el botón eliminar
-            $('#historial_pagos').on('click', '.delete-btn', function() {
-                var id = $(this).data('id');
+        $.ajax({
+            url: url,
+            method: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            dataType: 'json',
+            success: function(response) {
+                if (response.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Éxito',
+                        text: successMessage
+                    });
+                    table.ajax.reload(null, false); // Recargar la tabla sin perder la página actual
+                    $('#paymentForm')[0].reset();
+                    setFechaYMesActual();
+                    $('button[type="submit"]').text('Registrar Pago');
+                    $('#id_pago').val(''); // Limpiar el campo oculto del ID
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: response.message
+                    });
+                }
+            },
+            error: function(xhr, status, error) {
                 Swal.fire({
-                    title: '¿Estás seguro?',
-                    text: "No podrás revertir esto!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Sí, eliminar!',
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: 'eliminar.php',
-                            type: 'POST',
-                            data: {
-                                id: id
-                            },
-                            dataType: 'json',
-                            success: function(response) {
-                                if (response.success) {
-                                    Swal.fire(
-                                        'Eliminado!',
-                                        'El pago ha sido eliminado.',
-                                        'success'
-                                    );
-                                    if (typeof table !== 'undefined') {
-                                        table.ajax.reload();
-                                    }
-                                } else {
-                                    Swal.fire(
-                                        'Error!',
-                                        'Error al eliminar el pago: ' + response.message,
-                                        'error'
-                                    );
-                                }
-                            },
-                            error: function(xhr, status, error) {
-                                Swal.fire(
-                                    'Error!',
-                                    'Error al procesar la solicitud: ' + xhr.responseText,
-                                    'error'
-                                );
-                            }
-                        });
-                    }
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error al procesar la solicitud'
                 });
+            }
+        });
+    });
 
-            });
+    // Edit button logic
+    $('#historial_pagos').on('click', '.edit-btn', function() {
+        var id = $(this).data('id');
+        editarPago(id);
+    });
 
-            // Manejar clic en los botones de editar
-
-            $(document).ready(function() {
-                $('.edit-btn').click(function() {
-                    var id = $(this).data('id');
-                    $.ajax({
-                        url: 'obtener_pago.php',
-                        type: 'GET',
-                        data: {
-                            id: id
-                        },
-                        dataType: 'json',
-                        success: function(data) {
-                            $('#id_pago').val(data.ID_PAGO);
-                            $('#deportista').val(data.DEPORTISTA);
-                            $('#representante').val(data.REPRESENTANTE);
-                            $('#tipo_pago').val(data.TIPO_PAGO);
-                            $('#fecha').val(data.FECHA);
-                            $('#motivo').val(data.MOTIVO);
-                            $('#monto').val(data.MONTO);
-
-                            $('#btnGuardar').text('Guardar Cambios');
-                            $('#btnGuardar').data('action', 'update');
-                        },
-                        error: function() {
-                            alert('Error al cargar los datos del pago');
-                        }
-                    });
+    function editarPago(id) {
+        $.ajax({
+            url: 'obtener_pago.php',
+            type: 'GET',
+            data: { id: id },
+            dataType: 'json',
+            success: function(data) {
+                $('#id_pago').val(data.ID_PAGO);
+                $('#representante').val(data.ID_REPRESENTANTE);
+                $('#deportista').val(data.ID_DEPORTISTA);
+                $('#metodo_pago').val(data.METODO_PAGO);
+                $('#monto').val(data.MONTO);
+                $('#fecha').val(data.FECHA_PAGO);
+                $('#mes').val(data.MES);
+                $('#anio').val(data.ANIO);
+                $('#motivo').val(data.MOTIVO);
+                
+                $('button[type="submit"]').text('Guardar Cambios');
+                
+                $('html, body').animate({
+                    scrollTop: $("#paymentForm").offset().top
+                }, 500);
+            },
+            error: function() {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error al cargar los datos del pago'
                 });
+            }
+        });
+    }
 
-                $('#btnGuardar').click(function() {
-                    var action = $(this).data('action');
-                    var url = action === 'update' ? 'actualizar.php' : 'registrar_pago.php';
+    // Funciones auxiliares
+    function setFechaYMesActual() {
+        var today = new Date();
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0');
+        var yyyy = today.getFullYear();
 
-                    $.ajax({
-                        url: url,
-                        type: 'POST',
-                        data: {
-                            id_pago: $('#id_pago').val(),
-                            deportista: $('#deportista').val(),
-                            representante: $('#representante').val(),
-                            tipo_pago: $('#tipo_pago').val(),
-                            fecha: $('#fecha').val(),
-                            motivo: $('#motivo').val(),
-                            monto: $('#monto').val()
-                        },
-                        dataType: 'json',
-                        success: function(response) {
-                            if (response.success) {
-                                alert('Operación realizada con éxito');
-                                location.reload(); // Recargar la página para mostrar los cambios
-                            } else {
-                                alert('Error: ' + response.message);
-                            }
-                        },
-                        error: function() {
-                            alert('Error al procesar la solicitud');
-                        }
-                    });
-                });
-            });
+        var fechaActual = yyyy + '-' + mm + '-' + dd;
+        $('#fecha').val(fechaActual);
+        $('#mes').val(mm);
+        $('#anio').val(yyyy);
+
+        actualizarMotivo();
+    }
+
+    function actualizarMotivo() {
+        var mesTexto = $('#mes option:selected').text();
+        $('#motivo').val('Pago del mes de ' + mesTexto + ' ');
+    }
+
+    $('#mes, #anio').on('change', actualizarMotivo);
+    })
+
+
+
+
+
 
 
 
@@ -640,8 +597,13 @@ include '../../Includespro/header.php';
                 var id = $(this).data('id');
                 // Implementar lógica para editar el pago
             });
-        });
+        
     </script>
+    
+
+   
+ 
+
 </body>
 
 </html>

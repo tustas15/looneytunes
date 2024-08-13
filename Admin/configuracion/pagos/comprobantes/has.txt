@@ -1,0 +1,23 @@
+REVISIÓN A LA HISTORIA
+En el siguiente taller en parejas, investigaremos los siguientes casos más populares sobre ataques informáticos.
+1.	Sony Pictures
+2.	Yahoo
+3.	Uber 
+4.	Cambridge Analytica
+5.	Dropbox
+6.	Stuxnet
+De todos estos casos, se debe detallar la siguiente información:
+Datos sobre el Ataque
+•	Tipo de ataque: ¿Fue un ataque de phishing, ransomware, DDoS, o otro tipo?
+•	Vector de ataque: ¿Cómo ingresaron los atacantes a la red? (por ejemplo, a través de un correo electrónico, una vulnerabilidad en un software, etc.)
+•	Objetivos: ¿Qué datos o sistemas eran el objetivo principal del ataque?
+•	Fecha y hora: ¿Cuándo ocurrió el ataque?
+•	Duración: ¿Cuánto tiempo duró el ataque?
+•	Alcance: ¿Cuántas personas o sistemas se vieron afectados?
+•	Daños causados: ¿Cuáles fueron las consecuencias directas del ataque? (pérdida de datos, interrupción de servicios, daños a la reputación, etc.)
+•	Costos: ¿Cuánto costó remediar el ataque y recuperar los sistemas?
+
+Que aprendimos de estos casos?
+•	Vulnerabilidades: ¿Qué vulnerabilidades permitieron que se produjera el ataque?
+•	Fallos en los procesos: ¿Hubo fallas en los procesos de seguridad o en la respuesta a incidentes?
+•	Recomendaciones: ¿Qué medidas se pueden tomar para prevenir ataques similares en el futuro?

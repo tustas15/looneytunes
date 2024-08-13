@@ -7,39 +7,42 @@ $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
 include '../../Includespro/header.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Reporte de Pagos</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Nunito:200,300,400,600,700,800,900" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/startbootstrap-sb-admin-2/4.1.3/css/sb-admin-2.min.css" rel="stylesheet">
-    <link href="https://cdn.datatables.net/1.11.3/css/dataTables.bootstrap5.min.css" rel="stylesheet">
-    <link href="https://cdn.datatables.net/buttons/2.0.1/css/buttons.bootstrap5.min.css" rel="stylesheet">
-</head>
-<body>
-    <div class="container mt-5">
+<link href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+<script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.28.0/feather.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<body class="nav-fixed">
+    <main>
+        <div class="container-fluid px-4">
         <h2>Reporte de Pagos</h2>
         <form id="reporte-form">
-            <div class="mb-3">
-                <label for="tipo_reporte" class="form-label">Tipo de Reporte</label>
-                <select id="tipo_reporte" class="form-select" required>
-                    <option value="">Seleccionar</option>
-                    <option value="individual">Reporte Individual por Deportista</option>
-                    <option value="al_dia">Deportistas al Día</option>
-                    <option value="no_al_dia">Deportistas no al Día</option>
-                </select>
-            </div>
-            <div id="deportista-section" class="mb-3 d-none">
-                <label for="deportista_reporte" class="form-label">Deportista</label>
-                <select id="deportista_reporte" class="form-select" required>
-                    <option value="">Seleccionar</option>
-                </select>
-            </div>
-            <button type="submit" class="btn btn-primary">Generar Reporte</button>
-        </form>
+    <div class="mb-3">
+        <label for="tipo_reporte" class="form-label">Tipo de Reporte</label>
+        <select id="tipo_reporte" class="form-select" required>
+            <option value="">Seleccionar</option>
+            <option value="individual">Reporte Individual por Deportista</option>
+            <option value="al_dia">Deportistas al Día</option>
+            <option value="no_al_dia">Deportistas no al Día</option>
+        </select>
+    </div>
+    <div id="deportista-section" class="mb-3 d-none">
+        <label for="deportista_reporte" class="form-label">Deportista</label>
+        <select id="deportista_reporte" class="form-select">
+            <option value="">Seleccionar</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="fecha_inicio" class="form-label">Fecha de Inicio</label>
+        <input type="date" id="fecha_inicio" class="form-control">
+    </div>
+    <div class="mb-3">
+        <label for="fecha_fin" class="form-label">Fecha de Fin</label>
+        <input type="date" id="fecha_fin" class="form-control">
+    </div>
+    <button type="submit" class="btn btn-primary">Generar Reporte</button>
+</form>
+
 
         <div class="mt-5">
             <table id="reporte-tabla" class="table table-striped table-bordered">

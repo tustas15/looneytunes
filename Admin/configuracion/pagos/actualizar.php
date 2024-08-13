@@ -1,53 +1,58 @@
 <?php
+// actualizar_pago.php
+
+session_start();
 require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
 
-// Asegúrate de que la solicitud sea POST
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Recupera los datos del formulario
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id_pago = $_POST['id_pago'];
-    $deportista = $_POST['deportista'];
     $representante = $_POST['representante'];
-    $tipo_pago = $_POST['tipo_pago'];
-    $fecha = $_POST['fecha'];
-    $motivo = $_POST['motivo'];
+    $deportista = $_POST['deportista'];
+    $metodo_pago = $_POST['metodo_pago'];
     $monto = $_POST['monto'];
+    $fecha = $_POST['fecha'];
+    $mes = $_POST['mes'];
+    $anio = $_POST['anio'];
+    $motivo = $_POST['motivo'];
 
-    try {
-        // Prepara la consulta SQL para actualizar el pago
-        $sql = "UPDATE tab_pagos SET 
-                DEPORTISTA = :deportista,
-                REPRESENTANTE = :representante,
-                TIPO_PAGO = :tipo_pago,
-                FECHA = :fecha,
-                MOTIVO = :motivo,
-                MONTO = :monto
-                WHERE ID_PAGO = :id_pago";
+    $sql = "UPDATE pagos SET 
+            ID_REPRESENTANTE = ?, 
+            ID_DEPORTISTA = ?, 
+            METODO_PAGO = ?, 
+            MONTO = ?, 
+            FECHA_PAGO = ?, 
+            MES = ?, 
+            ANIO = ?, 
+            MOTIVO = ? 
+            WHERE ID_PAGO = ?";
 
-        $stmt = $conn->prepare($sql);
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("iisdssssi", $representante, $deportista, $metodo_pago, $monto, $fecha, $mes, $anio, $motivo, $id_pago);
 
-        // Vincula los parámetros
-        $stmt->bindParam(':deportista', $deportista);
-        $stmt->bindParam(':representante', $representante);
-        $stmt->bindParam(':tipo_pago', $tipo_pago);
-        $stmt->bindParam(':fecha', $fecha);
-        $stmt->bindParam(':motivo', $motivo);
-        $stmt->bindParam(':monto', $monto);
-        $stmt->bindParam(':id_pago', $id_pago);
-
-        // Ejecuta la consulta
-        if ($stmt->execute()) {
-            // Si la actualización fue exitosa
-            echo json_encode(['success' => true, 'message' => 'Pago actualizado con éxito']);
-        } else {
-            // Si hubo un error en la actualización
-            echo json_encode(['success' => false, 'message' => 'Error al actualizar el pago']);
-        }
-    } catch (PDOException $e) {
-        // Si ocurre una excepción, devuelve un mensaje de error
-        echo json_encode(['success' => false, 'message' => 'Error de base de datos: ' . $e->getMessage()]);
+    if ($stmt->execute()) {
+        $response = array(
+            "success" => true,
+            "message" => "Pago actualizado correctamente"
+        );
+    } else {
+        $response = array(
+            "success" => false,
+            "message" => "Error al actualizar el pago: " . $stmt->error
+        );
     }
+
+    $stmt->close();
+    $conn->close();
+
+    header('Content-Type: application/json');
+    echo json_encode($response);
 } else {
-    // Si la solicitud no es POST, devuelve un error
-    echo json_encode(['success' => false, 'message' => 'Método de solicitud no válido']);
+    $response = array(
+        "success" => false,
+        "message" => "No se recibieron datos para actualizar"
+    );
+    header('Content-Type: application/json');
+    echo json_encode($response);
+    
 }
 ?>

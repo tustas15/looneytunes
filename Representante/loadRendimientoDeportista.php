@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../conexion/conexion.php';
+require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['deportista_id']) && isset($_POST['csrf_token'])) {
     // Verificar el token CSRF

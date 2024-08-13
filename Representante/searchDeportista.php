@@ -1,5 +1,5 @@
 <?php
-include '../conexion/conexion.php'; // Asegúrate de que esta ruta sea correcta
+require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
 
 // Verificar si se recibió la cédula
 if (isset($_POST['cedula'])) {

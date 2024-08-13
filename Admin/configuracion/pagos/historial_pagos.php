@@ -11,6 +11,7 @@ try {
         INNER JOIN tab_representantes r ON p.ID_REPRESENTANTE = r.ID_REPRESENTANTE
         INNER JOIN tab_deportistas d ON p.ID_DEPORTISTA = d.ID_DEPORTISTA
         ORDER BY p.FECHA_PAGO DESC";
+        
     $stmt = $conn->prepare($sql);
     $stmt->execute();
     $pagos = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -25,8 +26,8 @@ try {
             'fecha_pago' => date('d/m/Y', strtotime($pago['FECHA_PAGO'])),
             'motivo' => $pago['MOTIVO'],
             'monto' => '$' . number_format($pago['MONTO'], 2),
-            'acciones' => '<button class="btn btn-primary btn-sm edit-btn" data-id="' . $pago['ID_PAGO'] . '">Editar</button> ' .
-                          '<button class="btn btn-danger btn-sm delete-btn" data-id="' . $pago['ID_PAGO'] . '">Eliminar</button>'
+            'acciones' => '<button class="btn btn-primary btn-sm edit-btn" data-id="' . $pago['ID_PAGO'] . '"><i class="fas fa-pencil-alt"></i></button> ' .
+                          '<button class="btn btn-danger btn-sm delete-btn" data-id="' . $pago['ID_PAGO'] . '"><i class="fas fa-trash"></i></button>'
         ];
     }
 
