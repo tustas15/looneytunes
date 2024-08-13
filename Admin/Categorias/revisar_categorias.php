@@ -579,12 +579,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                                     </div>
                                                     Establecer límite
                                                 </a>
-                                                <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#modalReasignar" data-categoria-id="<?php echo htmlspecialchars($categoria['ID_CATEGORIA']); ?>">
+                                                <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#modalReasignar<?php echo htmlspecialchars($categoria['ID_CATEGORIA']); ?>" data-categoria-id="<?php echo htmlspecialchars($categoria['ID_CATEGORIA']); ?>">
                                                     <div class="dropdown-item-icon">
                                                         <i class="text-gray-500" data-feather="refresh-cw"></i>
                                                     </div>
                                                     Cambiar deportista
                                                 </a>
+
                                             </div>
                                         </div>
                                     </div>
@@ -632,11 +633,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <!-- Modal para reasignar deportista -->
                 <?php foreach ($categorias as $categoria) : ?>
-                    <div class="modal fade" id="modalReasignar" tabindex="-1" aria-labelledby="modalReasignarLabel" aria-hidden="true">
+                    <div class="modal fade" id="modalReasignar<?php echo htmlspecialchars($categoria['ID_CATEGORIA']); ?>" tabindex="-1" aria-labelledby="modalReasignarLabel<?php echo htmlspecialchars($categoria['ID_CATEGORIA']); ?>" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="modalReasignarLabel">Reasignar Deportista</h5>
+                                    <h5 class="modal-title" id="modalReasignarLabel<?php echo htmlspecialchars($categoria['ID_CATEGORIA']); ?>">Reasignar Deportista</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <form method="POST">
@@ -644,8 +645,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <input type="hidden" name="accion" value="reasignar_deportista">
                                         <input type="hidden" name="categoria_id" value="<?php echo htmlspecialchars($categoria['ID_CATEGORIA']); ?>">
                                         <div class="mb-3">
-                                            <label for="deportista" class="form-label">Selecciona Deportista</label>
-                                            <select name="id_deportista" id="deportista" class="form-select" required>
+                                            <label for="deportista<?php echo htmlspecialchars($categoria['ID_CATEGORIA']); ?>" class="form-label">Selecciona Deportista</label>
+                                            <select name="id_deportista" id="deportista<?php echo htmlspecialchars($categoria['ID_CATEGORIA']); ?>" class="form-select" required>
                                                 <?php
                                                 // Obtener los deportistas de la categoría seleccionada
                                                 $sqlDeportistasCategoria = "SELECT d.ID_DEPORTISTA, CONCAT(d.NOMBRE_DEPO, ' ', d.APELLIDO_DEPO) AS nombre_completo
@@ -665,8 +666,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                             </select>
                                         </div>
                                         <div class="mb-3">
-                                            <label for="nueva_categoria" class="form-label">Nueva Categoría</label>
-                                            <select name="nueva_categoria" id="nueva_categoria" class="form-select" required>
+                                            <label for="nueva_categoria<?php echo htmlspecialchars($categoria['ID_CATEGORIA']); ?>" class="form-label">Nueva Categoría</label>
+                                            <select name="nueva_categoria" id="nueva_categoria<?php echo htmlspecialchars($categoria['ID_CATEGORIA']); ?>" class="form-select" required>
                                                 <?php foreach ($categorias as $cat) : ?>
                                                     <option value="<?php echo htmlspecialchars($cat['ID_CATEGORIA']); ?>">
                                                         <?php echo htmlspecialchars($cat['CATEGORIA']); ?>
@@ -684,6 +685,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
                     </div>
                 <?php endforeach; ?>
+
 
                 <!-- Modal para establecer límite de deportistas -->
                 <?php foreach ($categorias as $categoria) : ?>
@@ -850,32 +852,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
 
                 <!-- Modal para eliminar entrenador -->
-<div class="modal fade" id="deleteEntrenadorModal" tabindex="-1" aria-labelledby="deleteEntrenadorModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteEntrenadorModalLabel">Eliminar Entrenador</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
-                <div class="modal-body">
-                    <input type="hidden" name="accion" value="eliminar_entrenador">
-                    <input type="hidden" id="deleteEntrenadorModalCategoriaId" name="categoria_id">
-                    <div class="mb-3">
-                        <label for="entrenador" class="form-label">Selecciona Entrenador</label>
-                        <select name="id_entrenador" id="entrenador" class="form-select" required>
-                            <!-- Opciones llenadas por JavaScript -->
-                        </select>
+                <div class="modal fade" id="deleteEntrenadorModal" tabindex="-1" aria-labelledby="deleteEntrenadorModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="deleteEntrenadorModalLabel">Eliminar Entrenador</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
+                                <div class="modal-body">
+                                    <input type="hidden" name="accion" value="eliminar_entrenador">
+                                    <input type="hidden" id="deleteEntrenadorModalCategoriaId" name="categoria_id">
+                                    <div class="mb-3">
+                                        <label for="entrenador" class="form-label">Selecciona Entrenador</label>
+                                        <select name="id_entrenador" id="entrenador" class="form-select" required>
+                                            <!-- Opciones llenadas por JavaScript -->
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-danger">Eliminar</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 
                 <!-- Modal para eliminar -->
                 <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">

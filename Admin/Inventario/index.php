@@ -26,7 +26,7 @@ $usuario = isset($_SESSION['usuario']) ? $_SESSION['usuario'] : 'Usuario';
 
     // Verificar si la vista solicitada es válida
     if (is_file("./vistas/" . $_GET['vista'] . ".php")) {
-        include "./inc/navbarcopy.php";
+        include "./inc/navbarcopy.html";
         include "./vistas/" . $_GET['vista'] . ".php";
         include "./inc/script.php";
         include "./inc/footer.php";

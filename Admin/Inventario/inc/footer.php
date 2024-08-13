@@ -36,7 +36,8 @@
         </div>
     </div>
 </div>
-
+</div>
+</div>
 <!-- JavaScript -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
