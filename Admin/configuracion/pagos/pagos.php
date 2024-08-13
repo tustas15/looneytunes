@@ -293,8 +293,6 @@ include '../../Includespro/header.php';
 
 
 
-
-
             // Manejar clic en el botón eliminar
             $('#historial_pagos').on('click', '.delete-btn', function() {
                 var id = $(this).data('id');
