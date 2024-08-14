@@ -34,12 +34,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
         <a class="navbar-brand pe-3 ps-4 ps-lg-2" href="/looneytunes/index.php">Dashboard</a>
         <!-- Navbar Search Input-->
         <!-- * * Note: * * Visible only on and above the lg breakpoint-->
-        <form class="form-inline me-auto d-none d-lg-block me-3">
-            <div class="input-group input-group-joined input-group-solid">
-                <input class="form-control pe-0" type="search" placeholder="Search" aria-label="Search" />
-                <div class="input-group-text"><i data-feather="search"></i></div>
-            </div>
-        </form>
+        
         <!-- Navbar Items-->
         <ul class="navbar-nav align-items-center ms-auto">
             <!-- Documentation Dropdown-->
@@ -79,19 +74,41 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                     <a class="dropdown-item dropdown-notifications-footer" href="#!">View All Alerts</a>
                 </div>
             </li>
-            <!-- Messages Dropdown-->
-            <li class="nav-item dropdown no-caret d-none d-sm-block me-3 dropdown-notifications">
-                <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownMessages" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i data-feather="mail"></i></a>
-                <div class="dropdown-menu dropdown-menu-end border-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownMessages">
-                    <h6 class="dropdown-header dropdown-notifications-header">
-                        <i class="me-2" data-feather="mail"></i>
-                        Message Center
-                    </h6>
 
-                    <!-- Footer Link-->
-                    <a class="dropdown-item dropdown-notifications-footer" href="#!">Read All Messages</a>
+
+            <li class="nav-item dropdown no-caret d-none d-sm-block me-3 dropdown-notifications">
+    <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownMessages" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i data-feather="mail"></i></a>
+    <div class="dropdown-menu dropdown-menu-end border-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownMessages">
+        <h6 class="dropdown-header dropdown-notifications-header">
+            <i class="me-2" data-feather="mail"></i>
+            Mensages de Observaciones
+        </h6>
+
+        <?php if (!empty($informes)): ?>
+    <?php foreach ($informes as $informe): ?>
+        <a class="dropdown-item dropdown-notification-item" href="#">
+            <div class="dropdown-notification-item-content">
+                <div class="dropdown-notification-item-title">
+                    <?php echo htmlspecialchars($informe['NOMBRE_DEPO'] . ' ' . $informe['APELLIDO_DEPO'], ENT_QUOTES, 'UTF-8'); ?>
                 </div>
-            </li>
+                <div class="dropdown-notification-item-description">
+                    <?php echo htmlspecialchars($informe['informe'], ENT_QUOTES, 'UTF-8'); ?>
+                </div>
+                <div class="dropdown-notification-item-time">
+                    <?php echo htmlspecialchars($informe['fecha_creacion'], ENT_QUOTES, 'UTF-8'); ?>
+                </div>
+            </div>
+        </a>
+    <?php endforeach; ?>
+<?php else: ?>
+    <p class="dropdown-item-text">No hay informes disponibles</p>
+<?php endif; ?>
+
+        <!-- Footer Link-->
+        <a class="dropdown-item dropdown-notifications-footer" href="#!">Leer todos los mensajes</a>
+    </div>
+</li>
+
             <!-- User Dropdown-->
             <li class="nav-item dropdown no-caret dropdown-user me-3 me-lg-4">
                 <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownUserImage" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img class="img-fluid" src="/looneytunes/Assets/img/illustrations/profiles/profile-1.png" /></a>
@@ -150,7 +167,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                         <div class="sidenav-menu-heading">Interfaz</div>
 
                         <!-- Enlace a Pago directamente -->
-                        <a class="nav-link" href="pagosre.php">
+                        <a class="nav-link" href="../representante/pagosre.php">
                             <div class="nav-link-icon"><i class="fas fa-fw fa-cog"></i></div>
                             Pago
                         </a>

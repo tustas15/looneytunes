@@ -55,26 +55,39 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                 </div>
             </li>
             <!-- Alerts Dropdown-->
-            <li class="nav-item dropdown no-caret d-none d-sm-block me-3 dropdown-notifications">
-                <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownAlerts" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i data-feather="bell"></i></a>
-                <div class="dropdown-menu dropdown-menu-end border-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownAlerts">
-                    <h6 class="dropdown-header dropdown-notifications-header">
-                        <i class="me-2" data-feather="bell"></i>
-                        Alerts Center
-                    </h6>
-                    
-                    <a class="dropdown-item dropdown-notifications-footer" href="#!">View All Alerts</a>
-                </div>
-            </li>
+<li class="nav-item dropdown no-caret d-none d-sm-block me-3 dropdown-notifications">
+    <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownAlerts" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i data-feather="bell"></i></a>
+    <div class="dropdown-menu dropdown-menu-end border-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownAlerts">
+        <h6 class="dropdown-header dropdown-notifications-header">
+            <i class="me-2" data-feather="bell"></i>
+            Alerts Center
+        </h6>
+
+
+        <a class="dropdown-item dropdown-notifications-footer" href="#!">View All Alerts</a>
+    </div>
+</li>
             <!-- Messages Dropdown-->
             <li class="nav-item dropdown no-caret d-none d-sm-block me-3 dropdown-notifications">
                 <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownMessages" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i data-feather="mail"></i></a>
                 <div class="dropdown-menu dropdown-menu-end border-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownMessages">
                     <h6 class="dropdown-header dropdown-notifications-header">
                         <i class="me-2" data-feather="mail"></i>
-                        Message Center
+                        Mensajes de Observaciones
                     </h6>
                     
+        <?php if (!empty($informes)): ?>
+            <?php foreach ($informes as $informe): ?>
+                <a class="dropdown-item dropdown-notification-item" href="#">
+                    <div class="dropdown-notification-item-content">
+                        <div class="dropdown-notification-item-title"><?= htmlspecialchars($informe['informe']); ?></div>
+                        <div class="dropdown-notification-item-time"><?= htmlspecialchars($informe['fecha_creacion']); ?></div>
+                    </div>
+                </a>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <p class="dropdown-item-text">No hay informes disponibles</p>
+        <?php endif; ?>
                     <!-- Footer Link-->
                     <a class="dropdown-item dropdown-notifications-footer" href="#!">Read All Messages</a>
                 </div>

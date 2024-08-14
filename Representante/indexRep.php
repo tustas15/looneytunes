@@ -30,6 +30,8 @@ if ($tipo_usuario != '3') {
     exit();
 }
 
+
+
 // Obtener información del representante
 $stmt = $conn->prepare("SELECT * FROM tab_representantes WHERE ID_USUARIO = :id_usuario");
 $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
@@ -82,6 +84,24 @@ try {
     exit();
 }
 
+
+// Obtener los informes asociados al representante
+try {
+    $stmtInformes = $conn->prepare("
+        SELECT inf.informe, inf.fecha_creacion, dep.NOMBRE_DEPO, dep.APELLIDO_DEPO
+        FROM tab_informes inf
+        JOIN tab_deportistas dep ON inf.id_deportista = dep.ID_DEPORTISTA
+        WHERE inf.id_representante = :id_representante
+        ORDER BY inf.fecha_creacion DESC
+    ");
+    $stmtInformes->bindParam(':id_representante', $representante['ID_REPRESENTANTE'], PDO::PARAM_INT);
+    $stmtInformes->execute();
+    $informes = $stmtInformes->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    echo "Error en la consulta de informes: " . $e->getMessage();
+    exit();
+}
+
 $conn = null;
 
 // Función para calcular el tiempo transcurrido en formato legible
@@ -113,6 +133,8 @@ function timeElapsedString($datetime, $full = false) {
     if (!$full) $string = array_slice($string, 0, 1);
     return $string ? implode(', ', $string) . ' ago' : 'just now';
 }
+
+
 
 include './Includes/header.php';
 ?>
