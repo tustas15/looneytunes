@@ -81,12 +81,19 @@ include '../representante/includes/header.php';
 <link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/dataTables.bootstrap4.min.css">
 <!-- Incluir Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+<?php
+                        $stmt->execute();
+                        $deportista = $stmt->fetch(PDO::FETCH_ASSOC);
+                        if ($deportista):
+                            $fecha_nacimiento = new DateTime($deportista['FECHA_NACIMIENTO']);
+                            $hoy = new DateTime();
+                            $edad = $hoy->diff($fecha_nacimiento)->y;
+                        ?>
 <main>
     <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
         <div class="container-xl px-4">
             <div class="page-header-content pt-4">
-                <h1 class="text-white">Datos del Deportista</h1>
+                <h1 class="text-white"><?= htmlspecialchars($deportista['NOMBRE_DEPO'] . ' ' . $deportista['APELLIDO_DEPO']) . ' (' . $edad . ' años)' ?></h1>
             </div>
         </div>
     </header>
@@ -95,16 +102,8 @@ include '../representante/includes/header.php';
             <div class="col-lg-12 mb-4">
                 <div class="card h-100">
                     <div class="card-body">
-                        <?php
-                        $stmt->execute();
-                        $deportista = $stmt->fetch(PDO::FETCH_ASSOC);
-                        if ($deportista):
-                            $fecha_nacimiento = new DateTime($deportista['FECHA_NACIMIENTO']);
-                            $hoy = new DateTime();
-                            $edad = $hoy->diff($fecha_nacimiento)->y;
-                        ?>
-                            <h2><?= htmlspecialchars($deportista['NOMBRE_DEPO'] . ' ' . $deportista['APELLIDO_DEPO']) . ' (' . $edad . ' años)' ?></h2>
-                            <p><?= htmlspecialchars($deportista['CATEGORIA']) ?></p>
+                        
+                            <h2><?= htmlspecialchars($deportista['CATEGORIA']) ?></h2>
                             <p><?= htmlspecialchars($deportista['CEDULA_DEPO'])?></p>
                             <table id="detallesTable" class="table table-striped">
                                 <thead>
