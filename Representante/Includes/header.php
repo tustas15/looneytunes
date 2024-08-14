@@ -154,12 +154,6 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                             <div class="nav-link-icon"><i class="fas fa-fw fa-cog"></i></div>
                             Pago
                         </a>
-
-                        <!-- Enlace a Información directamente -->
-                        <a class="nav-link" href="/looneytunes/representante/infodepo.php">
-                            <div class="nav-link-icon"><i class="fas fa-fw fa-wrench"></i></div>
-                            Información
-                        </a>
                     </div>
                 </div>
 
