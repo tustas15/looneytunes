@@ -74,7 +74,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 $jsonDataPoints = json_encode($dataPoints);
 
 // Incluir el encabezado
-include './includes/header.php';
+include '../representante/includes/header.php';
 ?>
 
 <!-- Añadir el CSS de DataTables -->
