@@ -165,7 +165,7 @@ include './includes/header.php';
 
 <?php
 // Incluir el pie de página
-include './includes/footer.php';
+include './Includes/footer.php';
 ?>
 
 <!-- Añadir los scripts de DataTables -->

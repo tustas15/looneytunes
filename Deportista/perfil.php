@@ -1,7 +1,13 @@
 <?php
-require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
-session_start();
+// Habilitar la visualización de errores para depuración
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
+// Incluir el archivo de conexión a la base de datos
+require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
+
+// Iniciar la sesión
+session_start();
 // Verificar que el usuario esté logueado
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../Public/login.php");
@@ -16,8 +22,6 @@ if (isset($_GET['id_deportista'])) {
     header("Location: index.php");
     exit();
 }
-
-
 
 try {
     $stmt = $conn->prepare("
@@ -67,10 +71,16 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     }
 }
 
-$jsonDataPoints = json_encode($dataPoints); // Array para almacenar los datos de IMC y fechas
+$jsonDataPoints = json_encode($dataPoints);
 
-include './Includes/header.php';
+// Incluir el encabezado
+include './includes/header.php';
 ?>
+
+<!-- Añadir el CSS de DataTables -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/dataTables.bootstrap4.min.css">
+<!-- Incluir Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <main>
     <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
@@ -145,6 +155,7 @@ include './Includes/header.php';
 </main>
 
 <?php
+// Incluir el pie de página
 include './Includes/footer.php';
 ?>
 
@@ -153,6 +164,30 @@ include './Includes/footer.php';
 <script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap4.min.js"></script>
 
 <script>
+function eliminarDetalle(idDetalle, idDeportista) {
+    if (confirm("¿Estás seguro de que deseas eliminar este detalle?")) {
+        $.ajax({
+            url: 'eliminar_detalle.php',
+            type: 'POST',
+            data: { id: idDetalle, deportista_id: idDeportista },
+            success: function(response) {
+                if (response === 'success') {
+                    // Eliminar la fila de la tabla
+                    $(`#detallesTable tr[data-id="${idDetalle}"]`).remove();
+                    
+                    // Actualizar la gráfica
+                    actualizarGrafica(idDeportista);
+                } else {
+                    alert('Error al eliminar el detalle');
+                }
+            },
+            error: function() {
+                alert('Error en la solicitud AJAX');
+            }
+        });
+    }
+}
+
 function actualizarGrafica(idDeportista) {
     $.ajax({
         url: window.location.href,
@@ -227,4 +262,3 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <!-- Agregar este elemento oculto para almacenar los datos de la gráfica -->
 <script id="jsonDataPoints" type="application/json"><?php echo $jsonDataPoints; ?></script>
-
