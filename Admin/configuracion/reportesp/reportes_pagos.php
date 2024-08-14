@@ -72,7 +72,70 @@ include '../../Includespro/header.php';
     <script src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.print.min.js"></script>
     <script>
-        $(document).ready(function() {
+       $(document).ready(function() {
+    var table = $('#reporte-tabla').DataTable({
+        dom: 'Bfrtip',
+        buttons: [
+            'copy', 'csv', 'excel', 'pdf', 'print'
+        ]
+    });
+
+    $('#tipo_reporte').on('change', function() {
+        if ($(this).val() === 'individual') {
+            $('#deportista-section').removeClass('d-none');
+        } else {
+            $('#deportista-section').addClass('d-none');
+        }
+    });
+
+    $('#reporte-form').on('submit', function(e) {
+        e.preventDefault();
+        var tipoReporte = $('#tipo_reporte').val();
+        var deportista = $('#deportista_reporte').val();
+        var fechaInicio = $('#fecha_inicio').val();
+        var fechaFin = $('#fecha_fin').val();
+
+        $.ajax({
+            url: 'generar_reporte.php',
+            method: 'POST',
+            data: {
+                tipo_reporte: tipoReporte,
+                deportista: deportista,
+                fecha_inicio: fechaInicio,
+                fecha_fin: fechaFin
+            },
+            dataType: 'json',
+            success: function(data) {
+                table.clear().draw();
+                data.forEach(function(item) {
+                    table.row.add([
+                        item.NOMBRE_DEPO + ' ' + item.APELLIDO_DEPO,
+                        item.mes,
+                        item.anio,
+                        item.MONTO,
+                        item.FECHA_PAGO,
+                        item.MOTIVO
+                    ]).draw();
+                });
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error("Error en la solicitud AJAX:", textStatus, errorThrown);
+                alert("Hubo un error al generar el reporte. Por favor, intente de nuevo.");
+            }
+        });
+    });
+
+    $.ajax({
+        url: 'cargar_deportistas.php',
+        method: 'GET',
+        dataType: 'json',
+        success: function(data) {
+            data.forEach(function(deportista) {
+                $('#deportista_reporte').append(`<option value="${deportista.CEDULA_DEPO}">${deportista.APELLIDO_DEPO} ${deportista.NOMBRE_DEPO}</option>`);
+            });
+        }
+    });
+});
             var table = $('#reporte-tabla').DataTable({
                 dom: 'Bfrtip',
                 buttons: [
@@ -98,7 +161,9 @@ include '../../Includespro/header.php';
                     method: 'POST',
                     data: {
                         tipo_reporte: tipoReporte,
-                        deportista: deportista
+                        deportista: deportista,
+                        fecha_inicio: fechaInicio,
+        fecha_fin: fechaFin
                     },
                     dataType: 'json',
                     success: function(data) {
@@ -113,7 +178,10 @@ include '../../Includespro/header.php';
                                 item.motivo
                             ]).draw();
                         });
+                        
                     }
+                    
+                    
                 });
             });
 
@@ -123,11 +191,11 @@ include '../../Includespro/header.php';
                 dataType: 'json',
                 success: function(data) {
                     data.forEach(function(deportista) {
-                        $('#deportista_reporte').append(`<option value="${deportista.cedula}">${deportista.apellido} ${deportista.nombre}</option>`);
+                        $('#deportista_reporte').append(`<option value="${deportista.CEDULA_DEPO}">${deportista.APELLIDO_DEPO} ${deportista.NOMBRE_DEPO}</option>`);
                     });
                 }
             });
-        });
+      
     </script>
 </body>
 </html>

@@ -404,6 +404,58 @@ include '../../Includespro/header.php';
 
 
 
+    $('#historial_pagos').on('click', '.delete-btn', function() {
+                var id = $(this).data('id');
+                Swal.fire({
+                    title: '¿Estás seguro?',
+                    text: "No podrás revertir esto!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Sí, eliminar!',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: 'eliminar.php',
+                            type: 'POST',
+                            data: { id: id },
+                            dataType: 'json',
+                            success: function(response) {
+                                if (response.success) {
+                                    Swal.fire(
+                                        'Eliminado!',
+                                        'El pago ha sido eliminado.',
+                                        'success'
+                                    );
+                                    table.ajax.reload();
+                                } else {
+                                    Swal.fire(
+                                        'Error!',
+                                        'Error al eliminar el pago: ' + response.message,
+                                        'error'
+                                    );
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                Swal.fire(
+                                    'Error!',
+                                    'Error al procesar la solicitud',
+                                    'error'
+                                );
+                            }
+                        });
+                    }
+                });
+            });
+        
+    
+
+
+
+
+
 
 
 
