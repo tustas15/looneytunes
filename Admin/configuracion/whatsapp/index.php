@@ -18,17 +18,17 @@ $id_representante = $_POST['representante'] ?? 0;
 $monto = $_POST['monto'] ?? '0.00';
 
 // Consultar el nombre y número de teléfono del representante
-$sql = "SELECT NOMBRE_REPRE, APELLIDO_REPRE, CELULAR_REPRE FROM tab_representantes WHERE ID_REPRESENTANTE = ?";
+$sql = "SELECT NOMBRE_REPRE, CELULAR_REPRE FROM tab_representantes WHERE ID_REPRESENTANTE = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $id_representante);
 $stmt->execute();
-$stmt->bind_result($nombre_repre,$apellido_repre, $celular_repre);
+$stmt->bind_result($nombre_repre, $celular_repre);
 $stmt->fetch();
 $stmt->close();
 $conn->close();
 
 // Verificar si se obtuvo el nombre y número de teléfono
-if (!$nombre_repre || $apellido_repre || !$celular_repre) {
+if (!$nombre_repre || !$celular_repre) {
     // Responder con error en JSON
     echo json_encode([
         'status' => 'error',
@@ -56,8 +56,6 @@ $mensaje = json_encode([
                 'type' => 'body',
                 'parameters' => [
                     ['type' => 'text', 'text' => $nombre_repre],
-                    ['type' => 'text', 'text' => $apellido_repre],
-
                     ['type' => 'text', 'text' => $monto]
                 ]
             ]
