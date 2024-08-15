@@ -14,7 +14,7 @@
 
 		/*== Verificando categoria ==*/
     	$check_categoria=conexion();
-    	$check_categoria=$check_categoria->query("SELECT * FROM categoria WHERE categoria_id='$id'");
+    	$check_categoria=$check_categoria->query("SELECT * FROM tab_producto_categoria WHERE id_categoria_producto='$id'");
 
         if($check_categoria->rowCount()>0){
         	$datos=$check_categoria->fetch();
@@ -24,7 +24,7 @@
 
 	<form action="./php/categoria_actualizar.php" method="POST" class="FormularioAjax" autocomplete="off" >
 
-		<input type="hidden" name="categoria_id" value="<?php echo $datos['categoria_id']; ?>" required >
+		<input type="hidden" name="categoria_id" value="<?php echo $datos['id_categoria_producto']; ?>" required >
 
 		<div class="columns">
 		  	<div class="column">
