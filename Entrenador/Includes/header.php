@@ -54,25 +54,16 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                     <a class="dropdown-item py-3" href="/looneytunes/Admin/configuracion/respaldo/downloadFile.php">
                         <div class="icon-stack bg-primary-soft text-primary me-4"><i data-feather="database"></i></div>
                         <div>
-                            <div class="small text-gray-500">Generar Respaldo</div>
-                            Haz click y descarga el respaldo del sistema
+                            <div class="small text-gray-500">Descargar Hoja de vida</div>
+                            Haz click y descarga Hoja de vida
                         </div>
                     </a>
                     <div class="dropdown-divider m-0"></div>
                     <a class="dropdown-item py-3" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#uploadBackupModal">
                         <div class="icon-stack bg-primary-soft text-primary me-4"><i data-feather="upload"></i></div>
                         <div>
-                            <div class="small text-gray-500">Subir Respaldo</div>
-                            Haz click para subir el respaldo del sistema
-                        </div>
-                    </a>
-
-                    <div class="dropdown-divider m-0"></div>
-                    <a class="dropdown-item py-3" href="https://docs.startbootstrap.com/sb-admin-pro/changelog" target="_blank">
-                        <div class="icon-stack bg-primary-soft text-primary me-4"><i data-feather="file-text"></i></div>
-                        <div>
-                            <div class="small text-gray-500">Changelog</div>
-                            Updates and changes
+                            <div class="small text-gray-500">Subir Hoja de vida</div>
+                            Haz click para subir Hoja de vida
                         </div>
                     </a>
                 </div>
