@@ -135,6 +135,15 @@ $storedPass = isset($_COOKIE['pass']) ? $_COOKIE['pass'] : '';
             background-position: center;
             background-repeat: no-repeat;
         }
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .card-header img {
+            max-width: 50px; /* Ajusta el tamaño según sea necesario */
+            margin-right: 10px; /* Espacio entre el logo y el texto */
+        }
     </style>
 </head>
 
@@ -146,7 +155,8 @@ $storedPass = isset($_COOKIE['pass']) ? $_COOKIE['pass'] : '';
                     <div class="row justify-content-center">
                         <div class="col-lg-5">
                             <div class="card shadow-lg border-0 rounded-lg mt-5">
-                                <div class="card-header justify-content-center">
+                                <div class="card-header">
+                                    <img src="../Assets/img/logo_sinfondo.png" alt="Logo de la Empresa" />
                                     <h3 class="fw-light my-4">Login</h3>
                                 </div>
                                 <div class="card-body">
@@ -198,5 +208,6 @@ $storedPass = isset($_COOKIE['pass']) ? $_COOKIE['pass'] : '';
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     <script src="../Assets/js/scripts.js"></script>
 </body>
+
 
 </html>
