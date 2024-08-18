@@ -204,6 +204,17 @@ $marcadores = [
 $guardar_producto->execute($marcadores);
 
 if ($guardar_producto->rowCount() == 1) {
+    // Registrar el evento en tab_logs
+    $insert_log = conexion()->prepare("INSERT INTO tab_logs (ID_USUARIO, EVENTO, HORA_LOG, DIA_LOG, IP, TIPO_EVENTO) VALUES (:id_usuario, :evento, :hora_log, :dia_log, :ip, :tipo_evento)");
+    $insert_log->execute([
+        ':id_usuario' => $_SESSION['user_id'],
+        ':evento' => "Producto registrado: " . $nombre,
+        ':hora_log' => date('H:i:s'),
+        ':dia_log' => date('Y-m-d'),
+        ':ip' => $_SERVER['REMOTE_ADDR'],
+        ':tipo_evento' => 'producto_registrado'
+    ]);
+
     echo '
         <div class="notification is-info is-light">
             <strong>¡PRODUCTO REGISTRADO!</strong><br>
