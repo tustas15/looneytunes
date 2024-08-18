@@ -224,7 +224,47 @@ function timeElapsedString($datetime, $full = false)
 
 include './includespro/header.php';
 ?>
+<style>
+    .bg-green {
+        background-color: #28a745;
+    }
 
+    .bg-red {
+        background-color: #dc3545;
+    }
+
+    .bg-purple {
+        background-color: #6f42c1;
+    }
+
+    .bg-yellow {
+        background-color: #ffc107;
+    }
+
+    .bg-blue {
+        background-color: #007bff;
+    }
+
+    .bg-orange {
+        background-color: #fd7e14;
+    }
+
+    .bg-pink {
+        background-color: #e83e8c;
+    }
+
+    .bg-teal {
+        background-color: #20c997;
+    }
+
+    .bg-gray {
+        background-color: #6c757d;
+    }
+
+    .bg-teal {
+        background-color: #20c997;
+    }
+</style>
 <main>
     <!-- Mostrar Mensajes -->
     <?php
@@ -283,11 +323,21 @@ include './includespro/header.php';
                             </button>
                             <div class="dropdown-menu dropdown-menu-end animated--fade-in-up" aria-labelledby="dropdownMenuButton">
                                 <h6 class="dropdown-header">Filter Activity:</h6>
-                                <a class="dropdown-item"><span class="badge bg-green-soft text-green my-1">INICIO SESIÓN</span></a>
-                                <a class="dropdown-item"><span class="badge bg-red-soft text-red my-1">CIERRE SESIÓN</span></a>
-                                <a class="dropdown-item"><span class="badge bg-purple-soft text-purple my-1">USUARIO NUEVO</span></a>
-                                <a class="dropdown-item"><span class="badge bg-yellow-soft text-yellow my-1">SUBIDA BASE DATOS</span></a>
+                                <a class="dropdown-item" href="?event=inicio_sesion"><span class="badge bg-green-soft text-green my-1">INICIO SESIÓN</span></a>
+                                <a class="dropdown-item" href="?event=cierre_sesion"><span class="badge bg-red-soft text-red my-1">CIERRE SESIÓN</span></a>
+                                <a class="dropdown-item" href="?event=nuevo_usuario"><span class="badge bg-purple-soft text-purple my-1">USUARIO NUEVO</span></a>
+                                <a class="dropdown-item" href="?event=subida_base_datos"><span class="badge bg-yellow-soft text-yellow my-1">SUBIDA BASE DATOS</span></a>
+                                <a class="dropdown-item" href="?event=nuevo_producto_creado"><span class="badge bg-blue-soft text-blue my-1">NUEVO PRODUCTO CREADO</span></a>
+                                <a class="dropdown-item" href="?event=nueva_categoria_producto_creado"><span class="badge bg-orange-soft text-orange my-1">NUEVA CATEGORÍA PRODUCTO</span></a>
+                                <a class="dropdown-item" href="?event=nueva_categoria_deportista_creado"><span class="badge bg-pink-soft text-pink my-1">NUEVA CATEGORÍA DEPORTISTA</span></a>
+                                <a class="dropdown-item" href="?event=nuevo_informe_enviado"><span class="badge bg-teal-soft text-teal my-1">NUEVO INFORME ENVIADO</span></a>
+                                <a class="dropdown-item" href="?event=nuevo_pago_agregado"><span class="badge bg-gray-soft text-gray my-1">NUEVO PAGO AGREGADO</span></a>
+                                <a class="dropdown-item" href="?event=nuevo_limite_categoria_deportistas_definido"><span class="badge bg-green-soft text-green my-1">NUEVO LÍMITE CATEGORÍA DEPORTISTAS</span></a>
+                                <a class="dropdown-item" href="?event=usuario_inactivo"><span class="badge bg-red-soft text-red my-1">USUARIO INACTIVO</span></a>
+                                <a class="dropdown-item" href="?event=usuario_activo"><span class="badge bg-purple-soft text-purple my-1">USUARIO ACTIVO</span></a>
+                                <a class="dropdown-item" href="?event=actualizacion_perfil"><span class="badge bg-teal-soft text-teal my-1">ACTUALIZACIÓN PERFIL</span></a>
                             </div>
+
                         </div>
                     </div>
                     <div class="card-body">
@@ -317,6 +367,33 @@ include './includespro/header.php';
                                                                                                 break;
                                                                                             case 'subida_base_datos':
                                                                                                 echo 'bg-yellow';
+                                                                                                break;
+                                                                                            case 'nuevo_producto_creado':
+                                                                                                echo 'bg-blue';
+                                                                                                break;
+                                                                                            case 'nueva_categoria_producto_creado':
+                                                                                                echo 'bg-orange';
+                                                                                                break;
+                                                                                            case 'nueva_categoria_deportista_creado':
+                                                                                                echo 'bg-pink';
+                                                                                                break;
+                                                                                            case 'nuevo_informe_enviado':
+                                                                                                echo 'bg-teal';
+                                                                                                break;
+                                                                                            case 'nuevo_pago_agregado':
+                                                                                                echo 'bg-gray';
+                                                                                                break;
+                                                                                            case 'nuevo_limite_categoria_deportistas_definido':
+                                                                                                echo 'bg-green';
+                                                                                                break;
+                                                                                            case 'usuario_inactivo':
+                                                                                                echo 'bg-red';
+                                                                                                break;
+                                                                                            case 'usuario_activo':
+                                                                                                echo 'bg-purple';
+                                                                                                break;
+                                                                                            case 'actualizacion_perfil':
+                                                                                                echo 'bg-teal'; // Asegúrate de que este color esté definido en tu CSS
                                                                                                 break;
                                                                                             default:
                                                                                                 echo 'bg-gray';
