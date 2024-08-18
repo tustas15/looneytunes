@@ -17,10 +17,50 @@ if (!isset($_SESSION['tipo_usuario'])) {
 $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
 $tipo_usuario = $_SESSION['tipo_usuario'];
 $usuario = isset($_SESSION['usuario']) ? $_SESSION['usuario'] : 'Usuario';
-include '/xampp/htdocs/looneytunes/admin/includespro/header.php';
+
 
 // Obtener el término de búsqueda si se ha enviado
 $searchTerm = isset($_GET['search']) ? $_GET['search'] : '';
+
+// Verificar si se ha solicitado activar o desactivar un representante
+if (isset($_GET['action']) && isset($_GET['ID_REPRESENTANTE'])) {
+    $idRepresentante = $_GET['ID_REPRESENTANTE'];
+    $newStatus = $_GET['action'] === 'activate' ? 'activo' : 'inactivo';
+
+    try {
+        // Obtener el ID_USUARIO relacionado
+        $sql = "SELECT ID_USUARIO FROM tab_representantes WHERE ID_REPRESENTANTE = :idRepresentante";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':idRepresentante', $idRepresentante, PDO::PARAM_INT);
+        $stmt->execute();
+        $idUsuario = $stmt->fetchColumn();
+
+        if (!$idUsuario) {
+            echo "ID de usuario no encontrado.";
+            exit();
+        }
+
+        // Actualizar el estado del representante en `tab_representantes`
+        $sql = "UPDATE tab_representantes SET status = :newStatus WHERE ID_REPRESENTANTE = :idRepresentante";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':newStatus', $newStatus, PDO::PARAM_STR);
+        $stmt->bindParam(':idRepresentante', $idRepresentante, PDO::PARAM_INT);
+        $stmt->execute();
+
+        // Actualizar el estado del usuario en `tab_usuarios`
+        $sql = "UPDATE tab_usuarios SET status = :newStatus WHERE ID_USUARIO = :idUsuario";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':newStatus', $newStatus, PDO::PARAM_STR);
+        $stmt->bindParam(':idUsuario', $idUsuario, PDO::PARAM_INT);
+        $stmt->execute();
+
+        header("Location: indexrepresentante.php?mensaje=estado_actualizado");
+        exit();
+    } catch (PDOException $e) {
+        echo "Error: " . $e->getMessage();
+    }
+}
+include '/xampp/htdocs/looneytunes/admin/includespro/header.php';
 ?>
 
 <main>
@@ -28,7 +68,7 @@ $searchTerm = isset($_GET['search']) ? $_GET['search'] : '';
         <!-- Page title -->
         <div class="page-title">
             <h1>Lista de Representantes</h1>
-        </div>        
+        </div>
 
         <!-- Tabla de Representantes -->
         <div class="card mb-4">
@@ -37,33 +77,38 @@ $searchTerm = isset($_GET['search']) ? $_GET['search'] : '';
                 <table id="datatablesSimple">
                     <thead>
                         <tr>
-                            <th>ID</th>
+                            <th>ID Representante</th>
+                            <th>ID Usuario</th>
                             <th>Nombre</th>
                             <th>Apellido</th>
                             <th>Cédula</th>
                             <th>Celular</th>
-                            <th>Acción</th> <!-- Nueva columna para el enlace al perfil -->
+                            <th>Perfil</th>
+                            <th>Acciones</th> <!-- Columna para activar/desactivar -->
                         </tr>
                     </thead>
                     <tfoot>
                         <tr>
-                            <th>ID</th>
+                            <th>ID Representante</th>
+                            <th>ID Usuario</th>
                             <th>Nombre</th>
                             <th>Apellido</th>
                             <th>Cédula</th>
                             <th>Celular</th>
-                            <th>Acción</th> <!-- Nueva columna para el enlace al perfil -->
+                            <th>Perfil</th>
+                            <th>Acciones</th> <!-- Columna para activar/desactivar -->
                         </tr>
                     </tfoot>
                     <tbody>
                         <?php
                         try {
                             // Construir la consulta SQL con el término de búsqueda
-                            $sql = "SELECT ID_REPRESENTANTE, NOMBRE_REPRE, APELLIDO_REPRE, CEDULA_REPRE, CELULAR_REPRE
-                                    FROM tab_representantes";
+                            $sql = "SELECT r.ID_REPRESENTANTE, u.ID_USUARIO, u.USUARIO, r.NOMBRE_REPRE, r.APELLIDO_REPRE, r.CEDULA_REPRE, r.CELULAR_REPRE, r.status
+                                    FROM tab_representantes r
+                                    INNER JOIN tab_usuarios u ON r.ID_USUARIO = u.ID_USUARIO";
 
                             if ($searchTerm) {
-                                $sql .= " WHERE NOMBRE_REPRE LIKE :searchTerm OR CEDULA_REPRE LIKE :searchTerm";
+                                $sql .= " WHERE r.NOMBRE_REPRE LIKE :searchTerm OR r.CEDULA_REPRE LIKE :searchTerm";
                             }
 
                             $stmt = $conn->prepare($sql);
@@ -78,17 +123,24 @@ $searchTerm = isset($_GET['search']) ? $_GET['search'] : '';
 
                             // Mostrar la lista de representantes
                             foreach ($representantes as $representante) {
+                                $status = htmlspecialchars($representante['status']);
+                                $actionLink = $status === 'activo' ? 
+                                    "<a href='indexrepresentante.php?action=deactivate&ID_REPRESENTANTE=" . htmlspecialchars($representante['ID_REPRESENTANTE']) . "'>Desactivar</a>" : 
+                                    "<a href='indexrepresentante.php?action=activate&ID_REPRESENTANTE=" . htmlspecialchars($representante['ID_REPRESENTANTE']) . "'>Activar</a>";
+
                                 echo "<tr>";
                                 echo "<td>" . htmlspecialchars($representante['ID_REPRESENTANTE']) . "</td>";
+                                echo "<td>" . htmlspecialchars($representante['ID_USUARIO']) . "</td>";
                                 echo "<td>" . htmlspecialchars($representante['NOMBRE_REPRE']) . "</td>";
                                 echo "<td>" . htmlspecialchars($representante['APELLIDO_REPRE']) . "</td>";
                                 echo "<td>" . htmlspecialchars($representante['CEDULA_REPRE']) . "</td>";
                                 echo "<td>" . htmlspecialchars($representante['CELULAR_REPRE']) . "</td>";
                                 echo "<td><a href='../perfil/perfil_representante.php?ID_REPRESENTANTE=" . htmlspecialchars($representante['ID_REPRESENTANTE']) . "'>Ver Perfil</a></td>";
+                                echo "<td>$actionLink</td>";
                                 echo "</tr>";
                             }
                         } catch (PDOException $e) {
-                            echo "<tr><td colspan='6'>Error: " . $e->getMessage() . "</td></tr>";
+                            echo "<tr><td colspan='8'>Error: " . $e->getMessage() . "</td></tr>";
                         }
 
                         // Cierre de la conexión

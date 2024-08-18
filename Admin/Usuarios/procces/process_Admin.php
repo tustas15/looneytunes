@@ -5,9 +5,33 @@ include '../../configuracion/conexion.php'; // Asegúrate de que esta ruta es co
 $conn->beginTransaction();
 
 try {
-    // Verificar que las contraseñas coincidan
+    // Verificar que el celular no esté vacío
     if (empty($_POST['celular_a'])) {
         throw new Exception('El celular es obligatorio.');
+    }
+
+    // Generar el nombre de usuario a partir del nombre y apellido
+    $nombre_usuario = strtolower($_POST['nombre_a'] . '.' . $_POST['apellido_a']);
+    $nombre_usuario = preg_replace('/\s+/', '.', $nombre_usuario); // Reemplazar espacios por puntos
+
+    // Verificar si el nombre de usuario ya existe
+    $stmt = $conn->prepare("SELECT COUNT(*) FROM tab_usuarios WHERE usuario = :usuario");
+    $stmt->bindParam(':usuario', $nombre_usuario);
+    $stmt->execute();
+    $count = $stmt->fetchColumn();
+
+    if ($count > 0) {
+        // Si el nombre de usuario ya existe, agregar un sufijo numérico
+        $suffix = 1;
+        do {
+            $nombre_usuario = strtolower($_POST['nombre_a'] . '.' . $_POST['apellido_a'] . $suffix);
+            $nombre_usuario = preg_replace('/\s+/', '.', $nombre_usuario);
+            $stmt = $conn->prepare("SELECT COUNT(*) FROM tab_usuarios WHERE usuario = :usuario");
+            $stmt->bindParam(':usuario', $nombre_usuario);
+            $stmt->execute();
+            $count = $stmt->fetchColumn();
+            $suffix++;
+        } while ($count > 0);
     }
 
     // Preparar la consulta SQL para insertar los datos en tab_usuarios
@@ -15,7 +39,7 @@ try {
     $hashed_password = password_hash($_POST['celular_a'], PASSWORD_DEFAULT); // Usando celular como contraseña
 
     // Bind de parámetros
-    $stmt->bindParam(':usuario', $_POST['nombre_a']);
+    $stmt->bindParam(':usuario', $nombre_usuario);
     $stmt->bindParam(':pass', $hashed_password);
     $stmt->execute();
 
@@ -44,7 +68,7 @@ try {
     $conn->commit();
 
     // Registrar el evento en la tabla tab_logs
-    $evento = "Registro de nuevo administrador: " . $nombre . " " . $apellido;
+    $evento = "Registro de nuevo administrador: " . $_POST['nombre_a'] . " " . $_POST['apellido_a'];
     $ip = $_SERVER['REMOTE_ADDR'];
     $tipo_evento = 'nuevo_usuario';  // Define el tipo de evento
 

@@ -10,12 +10,36 @@ try {
         throw new Exception('Todos los campos son obligatorios.');
     }
 
+    // Generar el nombre de usuario a partir del nombre y apellido
+    $nombre_usuario = strtolower($_POST['nombre_r'] . '.' . $_POST['apellido_r']);
+    $nombre_usuario = preg_replace('/\s+/', '.', $nombre_usuario); // Reemplazar espacios por puntos
+
+    // Verificar si el nombre de usuario ya existe
+    $stmt = $conn->prepare("SELECT COUNT(*) FROM tab_usuarios WHERE usuario = :usuario");
+    $stmt->bindParam(':usuario', $nombre_usuario);
+    $stmt->execute();
+    $count = $stmt->fetchColumn();
+
+    if ($count > 0) {
+        // Si el nombre de usuario ya existe, agregar un sufijo numérico
+        $suffix = 1;
+        do {
+            $nombre_usuario = strtolower($_POST['nombre_r'] . '.' . $_POST['apellido_r'] . $suffix);
+            $nombre_usuario = preg_replace('/\s+/', '.', $nombre_usuario);
+            $stmt = $conn->prepare("SELECT COUNT(*) FROM tab_usuarios WHERE usuario = :usuario");
+            $stmt->bindParam(':usuario', $nombre_usuario);
+            $stmt->execute();
+            $count = $stmt->fetchColumn();
+            $suffix++;
+        } while ($count > 0);
+    }
+
     // Preparar la consulta SQL para insertar los datos en tab_usuarios
     $stmt = $conn->prepare("INSERT INTO tab_usuarios (usuario, pass) VALUES (:usuario, :pass)");
     $hashed_password = password_hash($_POST['cedula_r'], PASSWORD_DEFAULT);
 
     // Bind de parámetros
-    $stmt->bindParam(':usuario', $_POST['nombre_r']);
+    $stmt->bindParam(':usuario', $nombre_usuario);
     $stmt->bindParam(':pass', $hashed_password);
     $stmt->execute();
 
@@ -57,11 +81,13 @@ try {
 
     // Redirigir con mensaje de éxito
     header("Location: ../crear_usuarios/crrepresentante.php?message=success");
+    exit();
 } catch (Exception $e) {
     // Revertir la transacción en caso de error
     $conn->rollBack();
     // Redirigir con mensaje de error
     header("Location: ../crear_usuarios/crrepresentante.php?message=" . urlencode($e->getMessage()));
+    exit();
 }
 
 // Cerrar la conexión

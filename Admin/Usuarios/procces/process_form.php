@@ -10,12 +10,36 @@ try {
     // Iniciar la transacción
     $conn->beginTransaction();
 
+    // Generar el nombre de usuario a partir del nombre y apellido
+    $nombre_usuario = strtolower($_POST['nombre'] . '.' . $_POST['apellido']);
+    $nombre_usuario = preg_replace('/\s+/', '.', $nombre_usuario); // Reemplazar espacios por puntos
+
+    // Verificar si el nombre de usuario ya existe
+    $stmt = $conn->prepare("SELECT COUNT(*) FROM tab_usuarios WHERE usuario = :usuario");
+    $stmt->bindParam(':usuario', $nombre_usuario);
+    $stmt->execute();
+    $count = $stmt->fetchColumn();
+
+    if ($count > 0) {
+        // Si el nombre de usuario ya existe, agregar un sufijo numérico
+        $suffix = 1;
+        do {
+            $nombre_usuario = strtolower($_POST['nombre'] . '.' . $_POST['apellido'] . $suffix);
+            $nombre_usuario = preg_replace('/\s+/', '.', $nombre_usuario);
+            $stmt = $conn->prepare("SELECT COUNT(*) FROM tab_usuarios WHERE usuario = :usuario");
+            $stmt->bindParam(':usuario', $nombre_usuario);
+            $stmt->execute();
+            $count = $stmt->fetchColumn();
+            $suffix++;
+        } while ($count > 0);
+    }
+
     // Preparar la consulta SQL para insertar los datos en tab_usuarios
     $stmt = $conn->prepare("INSERT INTO tab_usuarios (usuario, pass) VALUES (:usuario, :pass)");
     // Encriptar la contraseña
     $hashed_password = password_hash($_POST['cedula'], PASSWORD_DEFAULT);
 
-    $stmt->bindParam(':usuario', $_POST['nombre']);
+    $stmt->bindParam(':usuario', $nombre_usuario);
     $stmt->bindParam(':pass', $hashed_password);
     
     $stmt->execute();
@@ -33,8 +57,6 @@ try {
     // Preparar la consulta SQL para insertar los datos en tab_entrenadores
     $stmt = $conn->prepare('INSERT INTO tab_entrenadores (id_usuario, nombre_entre, apellido_entre, experiencia_entre, celular_entre, correo_entre, direccion_entre, cedula_entre) 
     VALUES (:id_usuario, :nombre_entre, :apellido_entre, :experiencia_entre, :celular_entre, :correo_entre, :direccion_entre, :cedula_entre)');
-    // Bind de parámetros
-    
     $stmt->bindParam(':id_usuario', $id_usuario);
     $stmt->bindParam(':nombre_entre', $_POST['nombre']);
     $stmt->bindParam(':apellido_entre', $_POST['apellido']);
@@ -71,11 +93,13 @@ try {
 
     // Redirigir con mensaje de éxito
     header("Location: ../crear_usuarios/crentrenador.php?message=success");
+    exit();
 } catch (Exception $e) {
     // Revertir la transacción en caso de error
     $conn->rollBack();
     // Redirigir con mensaje de error
     header("Location: ../crear_usuarios/crentrenador.php?message=" . urlencode($e->getMessage()));
+    exit();
 }
 
 // Cerrar la conexión

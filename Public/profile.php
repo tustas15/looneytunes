@@ -146,7 +146,7 @@ try {
         // Actualizar la contraseña
         if (!empty($nuevo_password)) {
             $hashed_password = password_hash($nuevo_password, PASSWORD_DEFAULT);
-            $update_password_stmt = $conn->prepare("UPDATE tab_usuarios SET CLAVE_USUARIO = :password WHERE ID_USUARIO = :id_usuario");
+            $update_password_stmt = $conn->prepare("UPDATE tab_usuarios SET pass = :password WHERE ID_USUARIO = :id_usuario");
             $update_password_stmt->bindParam(':password', $hashed_password, PDO::PARAM_STR);
             $update_password_stmt->bindParam(':id_usuario', $id_usuario_logueado, PDO::PARAM_INT);
             $update_password_stmt->execute();
