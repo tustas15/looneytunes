@@ -10,27 +10,39 @@
         </div>
     </div>
 </footer>
+
+<!-- Modal para Subir Hoja de Vida -->
+<div class="modal fade" id="uploadCVModal" tabindex="-1" aria-labelledby="uploadCVModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="uploadCVModalLabel">Subir Hoja de Vida (PDF)</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="uploadCVForm" action="/looneytunes/Entrenador/configuracion/uploadCV.php" method="POST" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="cvFile" class="form-label">Selecciona el archivo PDF</label>
+                        <input type="file" class="form-control" id="cvFile" name="cvFile" accept=".pdf" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary">Subir</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
 </div>
 </div>
 <script>
     feather.replace();
 </script>
-<!-- Formulario para subir archivos (oculto) -->
-<form id="uploadBackupForm" action="/looneytunes/Uploads/uploadBackup.php" method="POST" enctype="multipart/form-data" style="display:none;">
-                <input type="file" id="backupFile" name="backupFile" required>
-            </form>
-
             <!-- JavaScript para manejar el clic en el enlace -->
             <script>
-                document.getElementById('uploadBackupLink').addEventListener('click', function() {
-                    document.getElementById('backupFile').click();
-                });
-
-                document.getElementById('backupFile').addEventListener('change', function() {
-                    document.getElementById('uploadBackupForm').submit();
-                });
-            </script>
-<script>
 $(document).ready(function() {
     $('#datatablesSimple').DataTable({
         "language": {
@@ -44,15 +56,8 @@ $(document).ready(function() {
         "autoWidth": false
     });
 });
-</script>
-<script>
-    // JavaScript para actualizar el año actual en el footer
-    document.addEventListener('DOMContentLoaded', function() {
-        var currentYear = new Date().getFullYear();
-        document.getElementById('currentYear').textContent = currentYear;
-    });
-</script>
-<script>
+
+
     document.getElementById('uploadBackupLink').addEventListener('click', function() {
         document.getElementById('backupFile').click();
     });
@@ -60,18 +65,91 @@ $(document).ready(function() {
     document.getElementById('backupFile').addEventListener('change', function() {
         document.getElementById('uploadBackupForm').submit();
     });
-</script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-<script src="/looneytunes/Assets/js/scripts.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" crossorigin="anonymous"></script>
-<script src="/looneytunes/Assets/demo/chart-area-demo.js"></script>
-<script src="/looneytunes/Assets/demo/chart-bar-demo.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" crossorigin="anonymous"></script>
-<script src="/looneytunes/Assets/js/datatables/datatables-simple-demo.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/litepicker/dist/bundle.js" crossorigin="anonymous"></script>
-<script src="/looneytunes/Assets/js/litepicker.js"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
+    document.addEventListener('DOMContentLoaded', function() {
+
+// Manejador para el botón de informes
+$('.btn-informes').click(function(e) {
+    console.log('Botón informes clickeado');
+    e.preventDefault();
+    var deportistaId = $(this).data('id');
+    var representanteId = $(this).data('representante');
+    var nombreDeportista = $(this).data('nombre');
+    console.log('Deportista ID:', deportistaId, 'Representante ID:', representanteId, 'Nombre:', nombreDeportista);
+    $('#informeDeportistaId').val(deportistaId);
+    $('#informeRepresentanteId').val(representanteId);
+    $('#nombreDeportista').text(nombreDeportista);
+    $('#informesModal').modal('show');
+});
+
+// Manejador para enviar el informe
+$('#enviarInforme').click(function() {
+var deportistaId = $('#informeDeportistaId').val();
+var representanteId = $('#informeRepresentanteId').val();
+var informe = $('#informe').val();
+
+$.ajax({
+    url: 'guardar_informe.php',
+    method: 'POST',
+    data: {
+        deportistaId: deportistaId,
+        representanteId: representanteId,
+        informe: informe
+    },
+    dataType: 'json',
+    success: function(response) {
+        if (response.success) {
+            alert(response.message);
+            $('#informesModal').modal('hide');
+            $('#informe').val('');
+        } else {
+            console.error('Error al guardar el informe:', response.message);
+        }
+    },
+    error: function(jqXHR, textStatus, errorThrown) {
+        console.error('Error AJAX:', textStatus, errorThrown);
+    }
+});
+});
+
+// Manejador para el botón de ingresar detalles
+$('.btn-ingresar').on('click', function(e) {
+    e.preventDefault();
+    var deportistaId = $(this).data('id');
+    var nombreDeportista = $(this).data('nombre');
+    $('#deportistaId').val(deportistaId);
+    $('#nombreDeportistaIngreso').text(nombreDeportista);
+    $('#ingresarModal').modal('show');
+});
+
+// Manejador para guardar los detalles
+$('#guardarDetalles').click(function() {
+    var deportistaId = $('#deportistaId').val();
+    var numeroCamisa = $('#numeroCamisa').val();
+    var altura = $('#altura').val();
+    var peso = $('#peso').val();
+    var fechaIngreso = $('#fechaIngreso').val();
+
+    $.ajax({
+        url: 'guardar_detalles.php',
+        method: 'POST',
+        data: {
+            deportistaId: deportistaId,
+            numeroCamisa: numeroCamisa,
+            altura: altura,
+            peso: peso,
+            fechaIngreso: fechaIngreso
+        },
+        success: function(response) {
+            $('#ingresarModal').modal('hide');
+            // Limpiar los campos del formulario
+            $('#detallesForm')[0].reset();
+        },
+        error: function() {
+            alert('Error al guardar los detalles');
+        }
+    });
+});
+});
 document.addEventListener('DOMContentLoaded', function() {
     var ingresarModal = new bootstrap.Modal(document.getElementById('ingresarModal'));
     
@@ -103,93 +181,40 @@ document.addEventListener('DOMContentLoaded', function() {
 
     
 });
+
+
+
+function descargarHojaVida() {
+    // Hacer una petición AJAX al servidor para obtener la hoja de vida
+    fetch('/looneytunes/entrenador/configuracion/descargarHojaVida.php')
+        .then(response => {
+            if (response.ok) return response.blob();
+            throw new Error('No se pudo descargar la hoja de vida');
+        })
+        .then(blob => {
+            // Crear un objeto URL para el blob
+            const url = window.URL.createObjectURL(blob);
+            // Crear un enlace temporal
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            // El nombre del archivo para la descarga
+            a.download = 'HojaDeVida.pdf';
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+        })
+        .catch(error => alert(error.message));
+}
 </script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+<script src="/looneytunes/Assets/js/scripts.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" crossorigin="anonymous"></script>
+<script src="/looneytunes/Assets/demo/chart-area-demo.js"></script>
+<script src="/looneytunes/Assets/demo/chart-bar-demo.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" crossorigin="anonymous"></script>
+<script src="/looneytunes/Assets/js/datatables/datatables-simple-demo.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/litepicker/dist/bundle.js" crossorigin="anonymous"></script>
+<script src="/looneytunes/Assets/js/litepicker.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-
-    // Manejador para el botón de informes
-    $('.btn-informes').click(function(e) {
-        console.log('Botón informes clickeado');
-        e.preventDefault();
-        var deportistaId = $(this).data('id');
-        var representanteId = $(this).data('representante');
-        var nombreDeportista = $(this).data('nombre');
-        console.log('Deportista ID:', deportistaId, 'Representante ID:', representanteId, 'Nombre:', nombreDeportista);
-        $('#informeDeportistaId').val(deportistaId);
-        $('#informeRepresentanteId').val(representanteId);
-        $('#nombreDeportista').text(nombreDeportista);
-        $('#informesModal').modal('show');
-    });
-
-    // Manejador para enviar el informe
-    $('#enviarInforme').click(function() {
-    var deportistaId = $('#informeDeportistaId').val();
-    var representanteId = $('#informeRepresentanteId').val();
-    var informe = $('#informe').val();
-
-    $.ajax({
-        url: 'guardar_informe.php',
-        method: 'POST',
-        data: {
-            deportistaId: deportistaId,
-            representanteId: representanteId,
-            informe: informe
-        },
-        dataType: 'json',
-        success: function(response) {
-            if (response.success) {
-                alert(response.message);
-                $('#informesModal').modal('hide');
-                $('#informe').val('');
-            } else {
-                console.error('Error al guardar el informe:', response.message);
-            }
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
-            console.error('Error AJAX:', textStatus, errorThrown);
-        }
-    });
-});
-
-    // Manejador para el botón de ingresar detalles
-    $('.btn-ingresar').on('click', function(e) {
-        e.preventDefault();
-        var deportistaId = $(this).data('id');
-        var nombreDeportista = $(this).data('nombre');
-        $('#deportistaId').val(deportistaId);
-        $('#nombreDeportistaIngreso').text(nombreDeportista);
-        $('#ingresarModal').modal('show');
-    });
-
-    // Manejador para guardar los detalles
-    $('#guardarDetalles').click(function() {
-        var deportistaId = $('#deportistaId').val();
-        var numeroCamisa = $('#numeroCamisa').val();
-        var altura = $('#altura').val();
-        var peso = $('#peso').val();
-        var fechaIngreso = $('#fechaIngreso').val();
-
-        $.ajax({
-            url: 'guardar_detalles.php',
-            method: 'POST',
-            data: {
-                deportistaId: deportistaId,
-                numeroCamisa: numeroCamisa,
-                altura: altura,
-                peso: peso,
-                fechaIngreso: fechaIngreso
-            },
-            success: function(response) {
-                $('#ingresarModal').modal('hide');
-                // Limpiar los campos del formulario
-                $('#detallesForm')[0].reset();
-            },
-            error: function() {
-                alert('Error al guardar los detalles');
-            }
-        });
-    });
-});
-</script>
 </body>

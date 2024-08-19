@@ -47,26 +47,26 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
             <!-- Documentation Dropdown-->
             <li class="nav-item dropdown no-caret d-none d-md-block me-3">
                 <a class="nav-link dropdown-toggle" id="navbarDropdownDocs" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <div class="fw-500">Documentation</div>
+                    <div class="fw-500">Hoja de vida</div>
                     <i class="fas fa-chevron-right dropdown-arrow"></i>
                 </a>
                 <div class="dropdown-menu dropdown-menu-end py-0 me-sm-n15 me-lg-0 o-hidden animated--fade-in-up" aria-labelledby="navbarDropdownDocs">
-                    <a class="dropdown-item py-3" href="/looneytunes/Admin/configuracion/respaldo/downloadFile.php">
-                        <div class="icon-stack bg-primary-soft text-primary me-4"><i data-feather="database"></i></div>
-                        <div>
-                            <div class="small text-gray-500">Descargar Hoja de vida</div>
-                            Haz click y descarga Hoja de vida
-                        </div>
-                    </a>
-                    <div class="dropdown-divider m-0"></div>
-                    <a class="dropdown-item py-3" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#uploadBackupModal">
-                        <div class="icon-stack bg-primary-soft text-primary me-4"><i data-feather="upload"></i></div>
-                        <div>
-                            <div class="small text-gray-500">Subir Hoja de vida</div>
-                            Haz click para subir Hoja de vida
-                        </div>
-                    </a>
-                </div>
+    <a class="dropdown-item py-3" href="javascript:void(0);" onclick="descargarHojaVida()">
+        <div class="icon-stack bg-primary-soft text-primary me-4"><i data-feather="download"></i></div>
+        <div>
+            <div class="small text-gray-500">Descargar Hoja de vida</div>
+            Haz click para descargar tu Hoja de vida
+        </div>
+    </a>
+    <div class="dropdown-divider m-0"></div>
+    <a class="dropdown-item py-3" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#uploadCVModal">
+        <div class="icon-stack bg-primary-soft text-primary me-4"><i data-feather="upload"></i></div>
+        <div>
+            <div class="small text-gray-500">Subir Hoja de vida</div>
+            Haz click para subir tu Hoja de vida (PDF)
+        </div>
+    </a>
+</div>
             </li>
 
             <!-- Navbar Search Dropdown-->
@@ -210,29 +210,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
 
                     </div>
                 </div>
-                <!-- Modal para Subir Backup -->
-                <div class="modal fade" id="uploadBackupModal" tabindex="-1" aria-labelledby="uploadBackupModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="uploadBackupModalLabel">Subir Respaldo</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <form id="uploadBackupForm" action="/looneytunes/Uploads/uploadBackup.php" method="POST" enctype="multipart/form-data">
-                                <div class="modal-body">
-                                    <div class="mb-3">
-                                        <label for="backupFile" class="form-label">Selecciona el archivo de respaldo</label>
-                                        <input type="file" class="form-control" id="backupFile" name="backupFile" required>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                                    <button type="submit" class="btn btn-primary">Subir</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
+                
                 <!-- Sidenav Footer -->
                 <div class="sidenav-footer">
                     <div class="sidenav-footer-content">
