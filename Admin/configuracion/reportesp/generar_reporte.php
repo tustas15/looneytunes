@@ -1,5 +1,5 @@
 <?php
-require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
+require_once('../conexion.php');
 
 $tipo_reporte = $_POST['tipo_reporte'];
 $deportista = $_POST['deportista'];

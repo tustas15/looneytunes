@@ -1,6 +1,6 @@
 <?php
 // Conexión a la base de datos
-require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
+require_once('../../admin/configuracion/conexion.php');
 session_start();
 
 date_default_timezone_set('America/Guayaquil'); // Ajusta a tu zona horaria

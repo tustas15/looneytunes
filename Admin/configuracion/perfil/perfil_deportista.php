@@ -1,6 +1,6 @@
 <?php
 // Conexión a la base de datos
-require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
+require_once('../conexion.php');
 session_start();
 
 // Verificar si el usuario está logueado

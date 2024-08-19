@@ -1,6 +1,6 @@
 <?php
 session_start();
-include_once "./Admin/configuracion/conexion.php";
+include_once "./admin/configuracion/conexion.php";
 
 // Verifica si el usuario está autenticado
 if (isset($_SESSION['user_id']) && isset($_SESSION['tipo_usuario'])) {

@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
+require_once('../conexion.php');
 
 // Conecta a la base de datos
 $mysqli = new mysqli('localhost', 'root', '', 'looneytunes');

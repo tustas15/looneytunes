@@ -1,7 +1,7 @@
 <?php
 // Conexión a la base de datos
 session_start();
-require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
+require_once('../conexion.php');
 
 $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
 include '../../Includespro/header.php';

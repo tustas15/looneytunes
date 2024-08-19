@@ -13,8 +13,8 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
     <title>Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/litepicker/dist/css/litepicker.css" rel="stylesheet" />
-    <link href="/looneytunes/Assets/css/styles.css" rel="stylesheet" />
-    <link rel="icon" type="image/x-icon" href="/looneytunes/AssetsFree/img/logo.png" />
+    <link href="../assets/css/styles.css" rel="stylesheet" />
+    <link rel="icon" type="image/x-icon" href="../assetsFree/img/logo.png" />
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>
@@ -30,7 +30,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
         <!-- * * Tip * * You can use text or an image for your navbar brand.-->
         <!-- * * * * * * When using an image, we recommend the SVG format.-->
         <!-- * * * * * * Dimensions: Maximum height: 32px, maximum width: 240px-->
-        <a class="navbar-brand pe-3 ps-4 ps-lg-2" href="/looneytunes/admin/indexad.php">Dashboard</a>
+        <a class="navbar-brand pe-3 ps-4 ps-lg-2" href="../admin/indexAd.php">Dashboard</a>
         <!-- Navbar Search Input-->
         <!-- * * Note: * * Visible only on and above the lg breakpoint-->
         <!--
@@ -50,7 +50,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                     <i class="fas fa-chevron-right dropdown-arrow"></i>
                 </a>
                 <div class="dropdown-menu dropdown-menu-end py-0 me-sm-n15 me-lg-0 o-hidden animated--fade-in-up" aria-labelledby="navbarDropdownDocs">
-                    <a class="dropdown-item py-3" href="/looneytunes/Admin/configuracion/respaldo/downloadFile.php">
+                    <a class="dropdown-item py-3" href="../Admin/configuracion/respaldo/downloadFile.php">
                         <div class="icon-stack bg-primary-soft text-primary me-4"><i data-feather="database"></i></div>
                         <div>
                             <div class="small text-gray-500">Generar Respaldo</div>
@@ -128,7 +128,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                     </h6>
                     <!-- Example Message 1  -->
                     <a class="dropdown-item dropdown-notifications-item" href="#!">
-                        <img class="dropdown-notifications-item-img" src="/looneytunes//Assets/img/illustrations/profiles/profile-2.png" />
+                        <img class="dropdown-notifications-item-img" src="../Assets/img/illustrations/profiles/profile-2.png" />
                         <div class="dropdown-notifications-item-content">
                             <div class="dropdown-notifications-item-content-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div>
                             <div class="dropdown-notifications-item-content-details">Thomas Wilcox · 58m</div>
@@ -136,7 +136,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                     </a>
                     <!-- Example Message 2-->
                     <a class="dropdown-item dropdown-notifications-item" href="#!">
-                        <img class="dropdown-notifications-item-img" src="/looneytunes/Assets/img/illustrations/profiles/profile-3.png" />
+                        <img class="dropdown-notifications-item-img" src="../Assets/img/illustrations/profiles/profile-3.png" />
                         <div class="dropdown-notifications-item-content">
                             <div class="dropdown-notifications-item-content-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div>
                             <div class="dropdown-notifications-item-content-details">Emily Fowler · 2d</div>
@@ -144,7 +144,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                     </a>
                     <!-- Example Message 3-->
                     <a class="dropdown-item dropdown-notifications-item" href="#!">
-                        <img class="dropdown-notifications-item-img" src="/looneytunes/Assets/img/illustrations/profiles/profile-4.png" />
+                        <img class="dropdown-notifications-item-img" src="../Assets/img/illustrations/profiles/profile-4.png" />
                         <div class="dropdown-notifications-item-content">
                             <div class="dropdown-notifications-item-content-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div>
                             <div class="dropdown-notifications-item-content-details">Marshall Rosencrantz · 3d</div>

@@ -1,12 +1,12 @@
 <?php
 // Conexión a la base de datos
-require_once('../Admin/configuracion/conexion.php');
+require_once('../admin/configuracion/conexion.php');
 session_start();
 
 date_default_timezone_set('America/Guayaquil'); // Ajusta a tu zona horaria
 
 if (!isset($_SESSION['user_id'])) {
-    header("Location: ../Public/login.php");
+    header("Location: ../public/login.php");
     exit();
 }
 
@@ -607,7 +607,7 @@ include './includespro/header.php';
                             </div>
                         </div>
                         <div class="card-footer d-flex align-items-center justify-content-between small">
-                            <a class="text-white stretched-link" href="../Admin/configuracion/busqueda/indexadministrador.php">Listado</a>
+                            <a class="text-white stretched-link" href="../admin/configuracion/busqueda/indexadministrador.php">Listado</a>
                             <div class="text-white"><i class="fas fa-angle-right"></i></div>
                         </div>
                     </div>
@@ -624,7 +624,7 @@ include './includespro/header.php';
                             </div>
                         </div>
                         <div class="card-footer d-flex align-items-center justify-content-between small">
-                            <a class="text-white stretched-link" href="../Admin/configuracion/busqueda/indexentrenador.php">Listado</a>
+                            <a class="text-white stretched-link" href="../admin/configuracion/busqueda/indexentrenador.php">Listado</a>
                             <div class="text-white"><i class="fas fa-angle-right"></i></div>
                         </div>
                     </div>
@@ -641,7 +641,7 @@ include './includespro/header.php';
                             </div>
                         </div>
                         <div class="card-footer d-flex align-items-center justify-content-between small">
-                            <a class="text-white stretched-link" href="../Admin/configuracion/busqueda/indexrepresentante.php">Listado</a>
+                            <a class="text-white stretched-link" href="../admin/configuracion/busqueda/indexrepresentante.php">Listado</a>
                             <div class="text-white"><i class="fas fa-angle-right"></i></div>
                         </div>
                     </div>
@@ -658,7 +658,7 @@ include './includespro/header.php';
                             </div>
                         </div>
                         <div class="card-footer d-flex align-items-center justify-content-between small">
-                            <a class="text-white stretched-link" href="../Admin/configuracion/busqueda/indexdeportista.php">Listado</a>
+                            <a class="text-white stretched-link" href="../admin/configuracion/busqueda/indexdeportista.php">Listado</a>
                             <div class="text-white"><i class="fas fa-angle-right"></i></div>
                         </div>
                     </div>
