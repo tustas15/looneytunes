@@ -70,14 +70,15 @@ try {
     // Confirmar la transacción
     $conn->commit();
 
-    // Registrar el evento en la tabla tab_logs
-    $evento = "Registro de nuevo representante: " . $_POST['nombre_r'] . " " . $_POST['apellido_r'];
+    // Registrar la actividad en el log usando el ID del usuario que lo creó
+    $creador_id = $_SESSION['user_id']; // Obtener el ID del usuario que creó al nuevo deportista
+    $evento = "Nuevo representante registrado: " . $_POST['nombre_r'] . " " . $_POST['apellido_r'];
     $ip = $_SERVER['REMOTE_ADDR'];
     $tipo_evento = 'nuevo_usuario';  // Define el tipo de evento
 
     $logQuery = "INSERT INTO tab_logs (ID_USUARIO, EVENTO, HORA_LOG, DIA_LOG, IP, TIPO_EVENTO) VALUES (?, ?, CURRENT_TIME(), CURRENT_DATE(), ?, ?)";
     $logStmt = $conn->prepare($logQuery);
-    $logStmt->execute([$id_usuario, $evento, $ip, $tipo_evento]);
+    $logStmt->execute([$creador_id, $evento, $ip, $tipo_evento]);
 
     // Redirigir con mensaje de éxito
     header("Location: ../crear_usuarios/crrepresentante.php?message=success");

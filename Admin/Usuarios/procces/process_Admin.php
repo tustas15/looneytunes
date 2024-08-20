@@ -64,17 +64,18 @@ try {
     $stmt->bindParam(':CELULAR_ADMIN', $_POST['celular_a']);
     $stmt->execute();
 
-    // Confirmar la transacción
-    $conn->commit();
-
-    // Registrar el evento en la tabla tab_logs
+    // Registrar el evento en la tabla tab_logs usando el ID del usuario que creó la cuenta
+    $id_creador = $_SESSION['user_id'];  // Obtener el ID del creador desde la sesión
     $evento = "Registro de nuevo administrador: " . $_POST['nombre_a'] . " " . $_POST['apellido_a'];
     $ip = $_SERVER['REMOTE_ADDR'];
     $tipo_evento = 'nuevo_usuario';  // Define el tipo de evento
 
     $query = "INSERT INTO tab_logs (ID_USUARIO, EVENTO, HORA_LOG, DIA_LOG, IP, TIPO_EVENTO) VALUES (?, ?, CURRENT_TIME(), CURRENT_DATE(), ?, ?)";
     $stmt = $conn->prepare($query);
-    $stmt->execute([$id_usuario, $evento, $ip, $tipo_evento]);
+    $stmt->execute([$id_creador, $evento, $ip, $tipo_evento]);
+
+    // Confirmar la transacción
+    $conn->commit();
 
     header("Location: ../crear_usuarios/cradmin.php?message=Registro exitoso"); // Redirige al formulario con un mensaje de éxito
 } catch (Exception $e) {
