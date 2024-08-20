@@ -12,14 +12,14 @@
 </footer>
 
 <!-- Modal para Subir Hoja de Vida -->
-<div class="modal fade" id="uploadCVModal" tabindex="-1" aria-labelledby="uploadCVModalLabel" aria-hidden="true">
+<div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="uploadCVModalLabel">Subir Hoja de Vida (PDF)</h5>
+                <h5 class="modal-title" id="uploadModalLabel">Subir Hoja de Vida (PDF)</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form id="uploadCVForm" action="/looneytunes/Entrenador/configuracion/uploadCV.php" method="POST" enctype="multipart/form-data">
+            <form id="uploadForm" action="./configuracion/upload.php" method="POST" enctype="multipart/form-data">
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="cvFile" class="form-label">Selecciona el archivo PDF</label>
@@ -34,6 +34,7 @@
         </div>
     </div>
 </div>
+
 
 
 </div>
