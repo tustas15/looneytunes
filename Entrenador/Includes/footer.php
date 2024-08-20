@@ -12,14 +12,14 @@
 </footer>
 
 <!-- Modal para Subir Hoja de Vida -->
-<div class="modal fade" id="uploadCVModal" tabindex="-1" aria-labelledby="uploadCVModalLabel" aria-hidden="true">
+<div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="uploadCVModalLabel">Subir Hoja de Vida (PDF)</h5>
+                <h5 class="modal-title" id="uploadModalLabel">Subir Hoja de Vida (PDF)</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form id="uploadCVForm" action="/looneytunes/Entrenador/configuracion/uploadCV.php" method="POST" enctype="multipart/form-data">
+            <form id="uploadForm" action="./configuracion/upload.php" method="POST" enctype="multipart/form-data">
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="cvFile" class="form-label">Selecciona el archivo PDF</label>
@@ -34,6 +34,7 @@
         </div>
     </div>
 </div>
+
 
 
 </div>
@@ -184,28 +185,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-function descargarHojaVida() {
-    // Hacer una petición AJAX al servidor para obtener la hoja de vida
-    fetch('/looneytunes/entrenador/configuracion/descargarHojaVida.php')
-        .then(response => {
-            if (response.ok) return response.blob();
-            throw new Error('No se pudo descargar la hoja de vida');
-        })
-        .then(blob => {
-            // Crear un objeto URL para el blob
-            const url = window.URL.createObjectURL(blob);
-            // Crear un enlace temporal
-            const a = document.createElement('a');
-            a.style.display = 'none';
-            a.href = url;
-            // El nombre del archivo para la descarga
-            a.download = 'HojaDeVida.pdf';
-            document.body.appendChild(a);
-            a.click();
-            window.URL.revokeObjectURL(url);
-        })
-        .catch(error => alert(error.message));
-}
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 <script src="/looneytunes/Assets/js/scripts.js"></script>
