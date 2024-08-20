@@ -109,12 +109,11 @@ CREATE TABLE `tab_categoria_deportista` (
 --
 
 INSERT INTO `tab_categoria_deportista` (`ID_CATEGORIA`, `ID_DEPORTISTA`) VALUES
-(1, 8),
-(2, 12),
-(4, 10),
+(1, 10),
+(1, 12),
+(2, 8),
 (8, 11),
 (8, 16);
-
 -- --------------------------------------------------------
 
 --
@@ -165,8 +164,10 @@ CREATE TABLE `tab_detalles` (
 --
 
 INSERT INTO `tab_detalles` (`ID_DETALLE`, `ID_USUARIO`, `NUMERO_CAMISA`, `ALTURA`, `PESO`, `FECHA_INGRESO`, `ID_DEPORTISTA`) VALUES
-(18, 27, '47', '1.70', '70', '2024-07-01', 10),
-(19, 28, '13', '75', '95', '2024-07-01', 11);
+(18, 27, '47', '170', '70', '2024-07-01', 10),
+(19, 28, '13', '75', '95', '2024-07-01', 11),
+(20, 16, '13', '170', '50', '2024-08-13', 12),
+(21, 16, '13', '172', '55', '2024-09-14', 12);
 
 -- --------------------------------------------------------
 
@@ -223,11 +224,11 @@ INSERT INTO `tab_entrenador_categoria` (`ID_ENTRENADOR`, `ID_CATEGORIA`) VALUES
 
 CREATE TABLE `tab_informes` (
   `id_informe` int(11) NOT NULL,
-  `id_deportista` int(11) NOT NULL,
-  `id_representante` int(11) NOT NULL,
-  `id_entrenador` int(11) NOT NULL,
-  `informe` text NOT NULL,
-  `fecha_creacion` timestamp NOT NULL DEFAULT current_timestamp()
+  `id_deportista` int(11) DEFAULT NULL,
+  `id_representante` int(11) DEFAULT NULL,
+  `id_entrenador` int(11) DEFAULT NULL,
+  `informe` text DEFAULT NULL,
+  `fecha_creacion` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -235,7 +236,8 @@ CREATE TABLE `tab_informes` (
 --
 
 INSERT INTO `tab_informes` (`id_informe`, `id_deportista`, `id_representante`, `id_entrenador`, `informe`, `fecha_creacion`) VALUES
-(16, 8, 3, 2, 'Sin uniforme', '2024-08-07 20:14:32');
+(1, 12, 4, 2, 'Mal uniformado', '2024-08-14 01:33:13'),
+(3, 10, 3, 2, 'Todo correcto', '2024-08-14 02:50:29');
 
 -- --------------------------------------------------------
 
@@ -376,6 +378,27 @@ INSERT INTO `tab_pagos` (`ID_PAGO`, `ID_REPRESENTANTE`, `ID_DEPORTISTA`, `ID_BAN
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `tab_pdfs`
+--
+
+CREATE TABLE `tab_pdfs` (
+  `id_pdf` int(11) NOT NULL,
+  `id_usuario` int(11) NOT NULL,
+  `file_name` varchar(255) NOT NULL,
+  `file_path` varchar(255) NOT NULL,
+  `uploaded_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `tab_pdfs`
+--
+
+INSERT INTO `tab_pdfs` (`id_pdf`, `id_usuario`, `file_name`, `file_path`, `uploaded_at`) VALUES
+(13, 16, '16_cv.pdf', '/looneytunes/entrenador/pdfs/16_cv.pdf', '2024-08-20 22:03:09');
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `tab_productos`
 --
 
@@ -460,6 +483,7 @@ CREATE TABLE `tab_representantes_deportistas` (
 
 INSERT INTO `tab_representantes_deportistas` (`ID_DEPORTISTA`, `ID_REPRESENTANTE`) VALUES
 (8, 3),
+(10, 3),
 (12, 4),
 (16, 4);
 
@@ -645,6 +669,16 @@ ALTER TABLE `tab_entrenador_categoria`
   ADD KEY `ID_CATEGORIA` (`ID_CATEGORIA`);
 
 --
+-- Indices de la tabla `tab_informes`
+--
+ALTER TABLE `tab_informes`
+  ADD PRIMARY KEY (`id_informe`),
+  ADD KEY `id_deportista` (`id_deportista`),
+  ADD KEY `id_representante` (`id_representante`),
+  ADD KEY `id_entrenador` (`id_entrenador`);
+
+
+--
 -- Indices de la tabla `tab_logs`
 --
 ALTER TABLE `tab_logs`
@@ -659,6 +693,13 @@ ALTER TABLE `tab_pagos`
   ADD KEY `ID_REPRESENTANTE` (`ID_REPRESENTANTE`),
   ADD KEY `ID_DEPORTISTA` (`ID_DEPORTISTA`),
   ADD KEY `ID_BANCO` (`ID_BANCO`);
+
+--
+-- Indices de la tabla `tab_pdfs`
+--
+ALTER TABLE `tab_pdfs`
+  ADD PRIMARY KEY (`id_pdf`),
+  ADD KEY `id_usuario` (`id_usuario`);
 
 --
 -- Indices de la tabla `tab_productos`
@@ -763,6 +804,12 @@ ALTER TABLE `tab_entrenadores`
   MODIFY `ID_ENTRENADOR` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
+-- AUTO_INCREMENT de la tabla `tab_informes`
+--
+ALTER TABLE `tab_informes`
+  MODIFY `id_informe` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
 -- AUTO_INCREMENT de la tabla `tab_logs`
 --
 ALTER TABLE `tab_logs`
@@ -772,7 +819,13 @@ ALTER TABLE `tab_logs`
 -- AUTO_INCREMENT de la tabla `tab_pagos`
 --
 ALTER TABLE `tab_pagos`
-  MODIFY `ID_PAGO` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=72;
+  MODIFY `ID_PAGO` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=58;
+
+--
+-- AUTO_INCREMENT de la tabla `tab_pdfs`
+--
+ALTER TABLE `tab_pdfs`
+  MODIFY `id_pdf` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT de la tabla `tab_productos`
@@ -866,6 +919,14 @@ ALTER TABLE `tab_entrenador_categoria`
   ADD CONSTRAINT `tab_entrenador_categoria_ibfk_2` FOREIGN KEY (`ID_CATEGORIA`) REFERENCES `tab_categorias` (`ID_CATEGORIA`);
 
 --
+-- Filtros para la tabla `tab_informes`
+--
+ALTER TABLE `tab_informes`
+  ADD CONSTRAINT `tab_informes_ibfk_1` FOREIGN KEY (`id_deportista`) REFERENCES `tab_deportistas` (`ID_DEPORTISTA`),
+  ADD CONSTRAINT `tab_informes_ibfk_2` FOREIGN KEY (`id_representante`) REFERENCES `tab_representantes` (`ID_REPRESENTANTE`),
+  ADD CONSTRAINT `tab_informes_ibfk_3` FOREIGN KEY (`id_entrenador`) REFERENCES `tab_entrenadores` (`ID_ENTRENADOR`);
+
+--
 -- Filtros para la tabla `tab_logs`
 --
 ALTER TABLE `tab_logs`
@@ -878,6 +939,12 @@ ALTER TABLE `tab_pagos`
   ADD CONSTRAINT `ID_BANCO` FOREIGN KEY (`ID_BANCO`) REFERENCES `tab_bancos` (`ID_BANCO`),
   ADD CONSTRAINT `tab_pagos_ibfk_1` FOREIGN KEY (`ID_REPRESENTANTE`) REFERENCES `tab_representantes` (`ID_REPRESENTANTE`),
   ADD CONSTRAINT `tab_pagos_ibfk_2` FOREIGN KEY (`ID_DEPORTISTA`) REFERENCES `tab_deportistas` (`ID_DEPORTISTA`);
+
+--
+-- Filtros para la tabla `tab_pdfs`
+--
+ALTER TABLE `tab_pdfs`
+  ADD CONSTRAINT `tab_pdfs_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `tab_usuarios` (`ID_USUARIO`) ON DELETE CASCADE;
 
 --
 -- Filtros para la tabla `tab_productos`
