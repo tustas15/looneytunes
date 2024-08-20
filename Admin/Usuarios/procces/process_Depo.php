@@ -1,4 +1,6 @@
 <?php
+session_start(); // Asegúrate de que la sesión esté iniciada
+
 include '../../configuracion/conexion.php';
 
 try {
@@ -84,14 +86,15 @@ try {
     // Confirmar la transacción
     $conn->commit();
 
-    // Registrar la actividad en el log
+    // Registrar la actividad en el log usando el ID del usuario que lo creó
+    $creador_id = $_SESSION['user_id']; // Obtener el ID del usuario que creó al nuevo deportista
     $evento = "Nuevo deportista registrado: " . $_POST['nombre_d'] . " " . $_POST['apellido_d'];
     $ip = $_SERVER['REMOTE_ADDR'];
     $tipo_evento = 'nuevo_usuario';  // Define el tipo de evento
 
     $logQuery = "INSERT INTO tab_logs (ID_USUARIO, EVENTO, HORA_LOG, DIA_LOG, IP, TIPO_EVENTO) VALUES (?, ?, CURRENT_TIME(), CURRENT_DATE(), ?, ?)";
     $logStmt = $conn->prepare($logQuery);
-    $logStmt->execute([$id_usuario, $evento, $ip, $tipo_evento]);
+    $logStmt->execute([$creador_id, $evento, $ip, $tipo_evento]);
 
     // Redirigir a la página de éxito
     header("Location: ../crear_usuarios/crdeportista.php?message=success");

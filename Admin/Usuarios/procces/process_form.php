@@ -79,14 +79,15 @@ try {
     $stmt->execute();
 
     // Registrar el evento
-    $id_usuario_log = $_SESSION['id_usuario'];
-    $evento = "Creación de cuenta de entrenador";
+    // Registrar la actividad en el log usando el ID del usuario que lo creó
+    $creador_id = $_SESSION['user_id']; // Obtener el ID del usuario que creó al nuevo deportista
+    $evento = "Nuevo entrenador registrado: " . $_POST['nombre'] . " " . $_POST['apellido'];
     $ip = $_SERVER['REMOTE_ADDR'];
-    $tipo_evento = "Registro";
+    $tipo_evento = 'nuevo_usuario';  // Define el tipo de evento
 
     $logQuery = "INSERT INTO tab_logs (ID_USUARIO, EVENTO, HORA_LOG, DIA_LOG, IP, TIPO_EVENTO) VALUES (?, ?, CURRENT_TIME(), CURRENT_DATE(), ?, ?)";
     $logStmt = $conn->prepare($logQuery);
-    $logStmt->execute([$id_usuario_log, $evento, $ip, $tipo_evento]);
+    $logStmt->execute([$creador_id, $evento, $ip, $tipo_evento]);
 
     // Confirmar la transacción
     $conn->commit();
