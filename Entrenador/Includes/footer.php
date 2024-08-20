@@ -185,28 +185,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-function descargarHojaVida() {
-    // Hacer una petición AJAX al servidor para obtener la hoja de vida
-    fetch('/looneytunes/entrenador/configuracion/descargarHojaVida.php')
-        .then(response => {
-            if (response.ok) return response.blob();
-            throw new Error('No se pudo descargar la hoja de vida');
-        })
-        .then(blob => {
-            // Crear un objeto URL para el blob
-            const url = window.URL.createObjectURL(blob);
-            // Crear un enlace temporal
-            const a = document.createElement('a');
-            a.style.display = 'none';
-            a.href = url;
-            // El nombre del archivo para la descarga
-            a.download = 'HojaDeVida.pdf';
-            document.body.appendChild(a);
-            a.click();
-            window.URL.revokeObjectURL(url);
-        })
-        .catch(error => alert(error.message));
-}
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 <script src="/looneytunes/Assets/js/scripts.js"></script>
