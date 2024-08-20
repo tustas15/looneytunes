@@ -1,5 +1,5 @@
 <?php
-require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
+require_once('../admin/configuracion/conexion.php');
 session_start();
 
 if (!isset($_SESSION['user_id'])) {
