@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 19-08-2024 a las 17:49:10
+-- Tiempo de generación: 21-08-2024 a las 22:14:21
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -20,6 +20,19 @@ SET time_zone = "+00:00";
 --
 -- Base de datos: `looneytunes`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `password_resets`
+--
+
+CREATE TABLE `password_resets` (
+  `id` int(11) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `token` varchar(255) NOT NULL,
+  `expire` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -114,6 +127,7 @@ INSERT INTO `tab_categoria_deportista` (`ID_CATEGORIA`, `ID_DEPORTISTA`) VALUES
 (2, 8),
 (8, 11),
 (8, 16);
+
 -- --------------------------------------------------------
 
 --
@@ -344,7 +358,11 @@ INSERT INTO `tab_logs` (`ID_LOG`, `ID_USUARIO`, `EVENTO`, `HORA_LOG`, `DIA_LOG`,
 (361, 17, 'Cierre de sesión', '15:44:23', '2024-08-18', '::1', 'cierre_sesion'),
 (362, 17, 'Se ha iniciado una nueva sesión', '15:44:25', '2024-08-18', '::1', 'inicio_sesion'),
 (363, 17, 'Actualización de información del administrador: Santiago Andrade', '17:44:17', '2024-08-19', '::1', 'actualizacion_perfil'),
-(364, 17, 'Actualización de información del administrador: Santiago Rosales', '17:44:23', '2024-08-19', '::1', 'actualizacion_perfil');
+(364, 17, 'Actualización de información del administrador: Santiago Rosales', '17:44:23', '2024-08-19', '::1', 'actualizacion_perfil'),
+(365, 54, 'Se ha iniciado una nueva sesión desde la IP: ::1', '14:36:46', '2024-08-21', '::1', 'inicio_sesion'),
+(366, 54, 'Cierre de sesión', '14:38:06', '2024-08-21', '::1', 'cierre_sesion'),
+(367, 17, 'Se ha iniciado una nueva sesión desde la IP: ::1', '14:38:08', '2024-08-21', '::1', 'inicio_sesion'),
+(368, 17, 'Cierre de sesión', '14:45:26', '2024-08-21', '::1', 'cierre_sesion');
 
 -- --------------------------------------------------------
 
@@ -558,26 +576,28 @@ CREATE TABLE `tab_usuarios` (
   `PASS` varchar(100) DEFAULT NULL,
   `intentos_fallidos` int(11) DEFAULT 0,
   `bloqueado_hasta` datetime DEFAULT NULL,
-  `status` enum('activo','inactivo') NOT NULL DEFAULT 'activo'
+  `status` enum('activo','inactivo') NOT NULL DEFAULT 'activo',
+  `reset_token` varchar(100) DEFAULT NULL,
+  `reset_token_exp` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `tab_usuarios`
 --
 
-INSERT INTO `tab_usuarios` (`ID_USUARIO`, `USUARIO`, `PASS`, `intentos_fallidos`, `bloqueado_hasta`, `status`) VALUES
-(16, 'Santiago', '$2y$10$drUQ3gjrFF5PtnRVAkWGgeQbXtqZqF451Ilzl2IDL80Z0aHsh9L8C', 0, NULL, 'activo'),
-(17, 'Carlos', '$2y$10$q/IbwCdYWpIeFPQpFamUtuzRyX9sqe8eMPQfiP.MN06OV.zxzpyxu', 0, NULL, 'activo'),
-(18, 'Viviana', '$2y$10$P2FXS9k8pp00fhFN8qEtg.0RkvMXforjqfrdAonnIlE.MdDN7NEb6', 0, NULL, 'activo'),
-(25, 'Samia', '$2y$10$2.Ex7qBAmjTyMxrxbKtQJuUHElXIaBDroT5DJBrwb4LZBAIyel/qm', 0, NULL, 'activo'),
-(27, 'Brandon', '$2y$10$zuA7jncJXXMeFMzmb/XUROEIg8dHJe4igng4mWeSja12DFZOC4rzG', 0, NULL, 'activo'),
-(28, 'Pablo', '$2y$10$tsyl.IF1cagtsdNELZEhOOgmNM4/Lv7akbOVUqd5JZ04imKNWDyEi', 0, NULL, 'activo'),
-(29, 'Luis', '$2y$10$W.YAEcunEQqWJJqTyLa8zOh9429IExWPMDs40iU40QKDSSeZKmmvq', 0, NULL, 'activo'),
-(39, 'Carlos', '$2y$10$ttXulishggwe2v.fz.4EPOkUw8logHb7Wmo0J4ian89FM688uiWUG', 0, NULL, 'activo'),
-(40, 'Raquel', '$2y$10$EhWPbmIm70wlbIjNCxbnmeelozAQVV2hguti/EB3.bsjf0noOkW1e', 0, NULL, 'activo'),
-(50, 'Francisco', '$2y$10$Y6QBinOgrECiNVyDDX.pUufzLqlRA53bkBLAg8PLZerNZgyrkbBUi', 0, NULL, 'activo'),
-(54, 'Christian', '$2y$10$TceF7SOJPbNHyWIugR6t8.m2CshOc/IRBPmZ7zLU99a.YcFEXR5a2', 0, NULL, 'activo'),
-(56, 'santiago.rosales', '$2y$10$bkWPEZWYouKXzovq6x3Yf.YDBgtXpxk0/vaQCypaQIAaktpS4UHTC', 0, NULL, 'activo');
+INSERT INTO `tab_usuarios` (`ID_USUARIO`, `USUARIO`, `PASS`, `intentos_fallidos`, `bloqueado_hasta`, `status`, `reset_token`, `reset_token_exp`) VALUES
+(16, 'Santiago', '$2y$10$drUQ3gjrFF5PtnRVAkWGgeQbXtqZqF451Ilzl2IDL80Z0aHsh9L8C', 0, NULL, 'activo', NULL, NULL),
+(17, 'Carlos', '$2y$10$q/IbwCdYWpIeFPQpFamUtuzRyX9sqe8eMPQfiP.MN06OV.zxzpyxu', 0, NULL, 'activo', NULL, NULL),
+(18, 'Viviana', '$2y$10$P2FXS9k8pp00fhFN8qEtg.0RkvMXforjqfrdAonnIlE.MdDN7NEb6', 0, NULL, 'activo', NULL, NULL),
+(25, 'Samia', '$2y$10$2.Ex7qBAmjTyMxrxbKtQJuUHElXIaBDroT5DJBrwb4LZBAIyel/qm', 0, NULL, 'activo', NULL, NULL),
+(27, 'Brandon', '$2y$10$zuA7jncJXXMeFMzmb/XUROEIg8dHJe4igng4mWeSja12DFZOC4rzG', 0, NULL, 'activo', NULL, NULL),
+(28, 'Pablo', '$2y$10$tsyl.IF1cagtsdNELZEhOOgmNM4/Lv7akbOVUqd5JZ04imKNWDyEi', 0, NULL, 'activo', NULL, NULL),
+(29, 'Luis', '$2y$10$W.YAEcunEQqWJJqTyLa8zOh9429IExWPMDs40iU40QKDSSeZKmmvq', 0, NULL, 'activo', NULL, NULL),
+(39, 'Carlos', '$2y$10$ttXulishggwe2v.fz.4EPOkUw8logHb7Wmo0J4ian89FM688uiWUG', 0, NULL, 'activo', NULL, NULL),
+(40, 'Raquel', '$2y$10$EhWPbmIm70wlbIjNCxbnmeelozAQVV2hguti/EB3.bsjf0noOkW1e', 0, NULL, 'activo', NULL, NULL),
+(50, 'Francisco', '$2y$10$Y6QBinOgrECiNVyDDX.pUufzLqlRA53bkBLAg8PLZerNZgyrkbBUi', 0, NULL, 'activo', NULL, NULL),
+(54, 'Christian', '$2y$10$UTpzN/orLLN3XGYyPgcVj.eOlo.xOYxRkDsdi7siUrxq3IEz3LSw2', 0, NULL, 'activo', '18e6792cc8807554ca7172d5873f3e772d74ba8e9e69deb0f00bd159c385b9f86a5e8d709860737b73811ef4b64f5037a57f', '2024-08-21 23:06:17'),
+(56, 'santiago.rosales', '$2y$10$bkWPEZWYouKXzovq6x3Yf.YDBgtXpxk0/vaQCypaQIAaktpS4UHTC', 0, NULL, 'activo', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -612,6 +632,12 @@ INSERT INTO `tab_usu_tipo` (`ID_USU_TIPO`, `ID_TIPO`, `ID_USUARIO`) VALUES
 --
 -- Índices para tablas volcadas
 --
+
+--
+-- Indices de la tabla `password_resets`
+--
+ALTER TABLE `password_resets`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indices de la tabla `tab_administradores`
@@ -676,7 +702,6 @@ ALTER TABLE `tab_informes`
   ADD KEY `id_deportista` (`id_deportista`),
   ADD KEY `id_representante` (`id_representante`),
   ADD KEY `id_entrenador` (`id_entrenador`);
-
 
 --
 -- Indices de la tabla `tab_logs`
@@ -768,6 +793,12 @@ ALTER TABLE `tab_usu_tipo`
 --
 
 --
+-- AUTO_INCREMENT de la tabla `password_resets`
+--
+ALTER TABLE `password_resets`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT de la tabla `tab_administradores`
 --
 ALTER TABLE `tab_administradores`
@@ -795,7 +826,7 @@ ALTER TABLE `tab_deportistas`
 -- AUTO_INCREMENT de la tabla `tab_detalles`
 --
 ALTER TABLE `tab_detalles`
-  MODIFY `ID_DETALLE` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `ID_DETALLE` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT de la tabla `tab_entrenadores`
@@ -813,13 +844,13 @@ ALTER TABLE `tab_informes`
 -- AUTO_INCREMENT de la tabla `tab_logs`
 --
 ALTER TABLE `tab_logs`
-  MODIFY `ID_LOG` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=365;
+  MODIFY `ID_LOG` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=369;
 
 --
 -- AUTO_INCREMENT de la tabla `tab_pagos`
 --
 ALTER TABLE `tab_pagos`
-  MODIFY `ID_PAGO` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=58;
+  MODIFY `ID_PAGO` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=72;
 
 --
 -- AUTO_INCREMENT de la tabla `tab_pdfs`
