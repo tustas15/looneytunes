@@ -97,7 +97,7 @@ try {
     $logStmt->execute([$creador_id, $evento, $ip, $tipo_evento]);
 
     // Redirigir a crdeportista.php con el nombre de usuario y la clave generada
-    header("Location: ../crear_usuarios/crdeportista.php?message=Registro exitoso&usuario={$nombre_usuario}&clave={$_POST['celular_a']}");
+    header("Location: ../crear_usuarios/crdeportista.php?message=Registro exitoso&usuario={$nombre_usuario}&clave={$_POST['cedula_d']}");
     exit();
 } catch (Exception $e) {
     // Revertir la transacción en caso de error

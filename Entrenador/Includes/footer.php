@@ -66,6 +66,22 @@ $(document).ready(function() {
     document.getElementById('backupFile').addEventListener('change', function() {
         document.getElementById('uploadBackupForm').submit();
     });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+<script src="../../Assets/js/scripts.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" crossorigin="anonymous"></script>
+<script src="../../Assets/demo/chart-area-demo.js"></script>
+<script src="../../Assets/demo/chart-bar-demo.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" crossorigin="anonymous"></script>
+<script src="../../Assets/js/datatables/datatables-simple-demo.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/litepicker/dist/bundle.js" crossorigin="anonymous"></script>
+<script src="../../Assets/js/litepicker.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+
+
     document.addEventListener('DOMContentLoaded', function() {
 
 // Manejador para el botón de informes
@@ -151,6 +167,8 @@ $('#guardarDetalles').click(function() {
     });
 });
 });
+
+
 document.addEventListener('DOMContentLoaded', function() {
     var ingresarModal = new bootstrap.Modal(document.getElementById('ingresarModal'));
     
@@ -190,14 +208,5 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 </script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-<script src="../Assets/js/scripts.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" crossorigin="anonymous"></script>
-<script src="../Assets/demo/chart-area-demo.js"></script>
-<script src="../Assets/demo/chart-bar-demo.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" crossorigin="anonymous"></script>
-<script src="../Assets/js/datatables/datatables-simple-demo.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/litepicker/dist/bundle.js" crossorigin="anonymous"></script>
-<script src="../Assets/js/litepicker.js"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </body>
+</html>

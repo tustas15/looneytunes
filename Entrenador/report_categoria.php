@@ -88,11 +88,11 @@ include './includes/header.php';
                                             <td><?= htmlspecialchars($jugador['NOMBRE_REPRE'] . ' ' . $jugador['APELLIDO_REPRE']) ?></td>
                                             <td>
                                                 <a href="detalle_deportista.php?id=<?= $jugador['ID_DEPORTISTA'] ?>" class="btn btn-primary">Datos</a>
-                                                <a href="#" class="btn btn-success btn-ingresar" data-id="<?= $jugador['ID_DEPORTISTA'] ?>" data-nombre="<?= htmlspecialchars($jugador['NOMBRE_DEPO'] . ' ' . $jugador['APELLIDO_DEPO']) ?>" data-bs-toggle="modal" data-bs-target="#ingresarModal">Ingresar</a>
+                                                <a href="#" class="btn btn-success btn-ingresar" data-id="<?= $jugador['ID_DEPORTISTA'] ?>" data-nombre="<?= htmlspecialchars($jugador['NOMBRE_DEPO'] . ' ' . $jugador['APELLIDO_DEPO']) ?>" >Ingresar</a>
                                             </td>
                                             <td>
                                                 <a href="observaciones_deportista.php?id=<?= $jugador['ID_DEPORTISTA'] ?>" class="btn btn-secondary">Observaciones</a>
-                                                <a href="#" class="btn btn-info btn-informes" data-id="<?= $jugador['ID_DEPORTISTA'] ?>" data-representante="<?= $jugador['ID_REPRESENTANTE'] ?>" data-nombre="<?= htmlspecialchars($jugador['NOMBRE_DEPO'] . ' ' . $jugador['APELLIDO_DEPO']) ?>"data-bs-toggle="modal" data-bs-target="#ingresarModal">Ingresar</a>
+                                                <a href="#" class="btn btn-info btn-informes" data-id="<?= $jugador['ID_DEPORTISTA'] ?>" data-representante="<?= $jugador['ID_REPRESENTANTE'] ?>" data-nombre="<?= htmlspecialchars($jugador['NOMBRE_DEPO'] . ' ' . $jugador['APELLIDO_DEPO']) ?>">Ingresar</a>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>
@@ -173,6 +173,6 @@ include './includes/header.php';
 
 <?php
 // Incluir el pie de página
-include 'includes/footer.php';
+include_once('/xampp/htdocs/looneytunes/entrenador/includes/footer.php'); 
 ?>
 

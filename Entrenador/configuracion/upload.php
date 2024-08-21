@@ -1,10 +1,10 @@
 <?php
 session_start();
-require_once('../admin/configuracion/conexion.php');
+require_once('../../admin/configuracion/conexion.php');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $idUsuario = $_SESSION['user_id']; 
-    $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/looneytunes/entrenador/pdfs/';
+    $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/entrenador/pdfs/';
 
     if (!is_dir($uploadDir)) {
         mkdir($uploadDir, 0777, true);
@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
     
     // Redirigir a indexentrenador.php con el mensaje
-    header("Location: /entrenador/indexentrenador.php?message=" . urlencode($message));
+    header("Location: ../entrenador/indexentrenador.php?message=" . urlencode($message));
     exit();
 }
 ?>
