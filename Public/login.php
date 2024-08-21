@@ -186,13 +186,10 @@ $storedPass = isset($_COOKIE['pass']) ? $_COOKIE['pass'] : '';
                                             </div>
                                         </div>
                                         <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
-                                            <a class="small" href="password.html">Olvidaste tu contraseña?</a>
+                                            <a class="small" href="auth-password-basic.html">Olvidaste tu contraseña?</a>
                                             <button type="submit" class="btn btn-primary">Login</button>
                                         </div>
                                     </form>
-                                </div>
-                                <div class="card-footer text-center">
-                                    <div class="small"><a href="register.html">Necesitas una cuenta? Registrate!</a></div>
                                 </div>
                             </div>
                         </div>
