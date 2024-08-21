@@ -16,7 +16,7 @@ if ($conn === null) {
 
 // Comprobar si el usuario está logueado
 if (!isset($_SESSION['user_id'])) {
-    header("Location: ../Public/login.php");
+    header("Location: ../public/login.php");
     exit();
 }
 

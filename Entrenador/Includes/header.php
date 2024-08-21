@@ -14,8 +14,8 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
     <title>Dashboard </title>
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/litepicker/dist/css/litepicker.css" rel="stylesheet" />
-    <link href="/Assets/css/styles.css" rel="stylesheet" />
-    <link rel="icon" type="image/x-icon" href="/Assets/img/logo.png" />
+    <link href="../Assets/css/styles.css" rel="stylesheet" />
+    <link rel="icon" type="image/x-icon" href="../Assets/img/logo.png" />
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>
@@ -108,20 +108,20 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
             </li>
             <!-- User Dropdown-->
             <li class="nav-item dropdown no-caret dropdown-user me-3 me-lg-4">
-                <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownUserImage" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img class="img-fluid" src="/looneytunes/Assets/img/illustrations/profiles/profile-1.png" /></a>
+                <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownUserImage" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img class="img-fluid" src="../Assets/img/illustrations/profiles/profile-1.png" /></a>
                 <div class="dropdown-menu dropdown-menu-end border-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownUserImage">
                     <h6 class="dropdown-header d-flex align-items-center">
-                        <img class="dropdown-user-img" src="/Assets/img/illustrations/profiles/profile-1.png" />
+                        <img class="dropdown-user-img" src="../Assets/img/illustrations/profiles/profile-1.png" />
                         <div class="dropdown-user-details">
                             <div class="dropdown-user-details-name"><?= $nombre ?></div>
                         </div>
                     </h6>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="../Public/profile.php">
+                    <a class="dropdown-item" href="../public/profile.php">
                         <div class="dropdown-item-icon"><i data-feather="settings"></i></div>
                         Cuenta
                     </a>
-                    <a class="dropdown-item" href="../Public/logout.php">
+                    <a class="dropdown-item" href="../public/logout.php">
                         <div class="dropdown-item-icon"><i data-feather="log-out"></i></div>
                         Logout
                     </a>
