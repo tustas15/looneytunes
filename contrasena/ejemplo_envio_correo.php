@@ -17,19 +17,19 @@ try {
     $mail = new PHPMailer($debug);
     if ($debug) {
         // Genera un registro detallado
-        //$mail->SMTPDebug = SMTP::DEBUG_SERVER; 
+        $mail->SMTPDebug = SMTP::DEBUG_SERVER; 
     }
     // Autentificación con SMTP
     $mail->isSMTP();
     $mail->SMTPAuth = true;
     // Login
-    $mail->Host = "mail.pensamientosocial.com";
+    $mail->Host = "sistema.clublooneytunes.com";
     $mail->Port = 587;
-    $mail->Username = "cuarto@pensamientosocial.com";
-    $mail->Password = "cuarto*itsi1234";
+    $mail->Username = "clublooneytunes@sistema.clublooneytunes.com";
+    $mail->Password = "Aght7JHgt5kmjgaDFqSmp";
     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-    $mail->setFrom('cuarto@pensamientosocial.com', 'Cuarto');
-    $mail->addAddress('eicono@hotmail.com', 'EICONO');
+    $mail->setFrom('clublooneytunes@sistema.clublooneytunes.com', 'Cuarto');
+    $mail->addAddress('tustasgamer@gmail.com', 'EICONO');
     //$mail->addAttachment("/home/user/Escritorio/imagendeejemplo.png", "imagendeejemplo.png");
     $mail->CharSet = 'UTF-8';
     $mail->Encoding = 'base64';
@@ -37,13 +37,7 @@ try {
     $mail->Subject = 'Saludo cuarto software';
     $mail->Body = 'Hola a todos los de cuarto software, como estan';
     $mail->AltBody = 'Texto como elemento de texto simple';
-    if(!$mail->send()) {
-        echo 'No se envio el correo.';
-        echo 'Error: ' . $mail->ErrorInfo;
-    } else {
-        echo 'Correo enviado correctamente';
-    }
-
+    $mail->send();
 } catch (Exception $e) {
-    echo "Mailer Error: ".$e->getMessage();
+    echo "Message could not be sent. Mailer Error: ".$e->getMessage();
 }
