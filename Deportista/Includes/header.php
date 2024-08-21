@@ -14,7 +14,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
     <title>Dashboard </title>
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/litepicker/dist/css/litepicker.css" rel="stylesheet" />
-    <link href="/Assets/css/styles.css" rel="stylesheet" />
+    <link href="../Assets/css/styles.css" rel="stylesheet" />
     <link rel="icon" type="image/x-icon" href="/AssetsFree/img/logo.png" />
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
@@ -54,7 +54,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                     </form>
                 </div>
             </li>
-            <!-- Alerts Dropdown-->
+            <!-- Alerts Dropdown
 <li class="nav-item dropdown no-caret d-none d-sm-block me-3 dropdown-notifications">
     <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownAlerts" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i data-feather="bell"></i></a>
     <div class="dropdown-menu dropdown-menu-end border-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownAlerts">
@@ -66,7 +66,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
 
         <a class="dropdown-item dropdown-notifications-footer" href="#!">View All Alerts</a>
     </div>
-</li>
+</li>-->
             <!-- Messages Dropdown-->
             <li class="nav-item dropdown no-caret d-none d-sm-block me-3 dropdown-notifications">
                 <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownMessages" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i data-feather="mail"></i></a>
@@ -97,17 +97,17 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                 <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownUserImage" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img class="img-fluid" src="/looneytunes/Assets/img/illustrations/profiles/profile-1.png" /></a>
                 <div class="dropdown-menu dropdown-menu-end border-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownUserImage">
                     <h6 class="dropdown-header d-flex align-items-center">
-                        <img class="dropdown-user-img" src="/Assets/img/illustrations/profiles/profile-1.png" />
+                        <img class="dropdown-user-img" src="../Assets/img/illustrations/profiles/profile-1.png" />
                         <div class="dropdown-user-details">
                             <div class="dropdown-user-details-name"><?= $nombre ?></div>
                         </div>
                     </h6>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="/Public/profile.php">
+                    <a class="dropdown-item" href="../public/profile.php">
                         <div class="dropdown-item-icon"><i data-feather="settings"></i></div>
                         Cuenta
                     </a>
-                    <a class="dropdown-item" href="/Public/logout.php">
+                    <a class="dropdown-item" href="../public/logout.php">
                         <div class="dropdown-item-icon"><i data-feather="log-out"></i></div>
                         Logout
                     </a>
