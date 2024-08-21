@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php'); // Asegúrate de que este archivo contiene la conexión a la base de datos con PDO.
+require_once('../admin/configuracion/conexion.php'); // Asegúrate de que este archivo contiene la conexión a la base de datos con PDO.
 
 $idUsuario = $_SESSION['user_id'];
 

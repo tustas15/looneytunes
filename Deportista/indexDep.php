@@ -1,6 +1,6 @@
 <?php
 // Conexión a la base de datos
-require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
+require_once('../admin/configuracion/conexion.php');
 
 // Verificar que la conexión se estableció correctamente
 if ($conn === null) {
@@ -12,7 +12,7 @@ session_start();
 
 // Comprobamos si el usuario está logueado
 if (!isset($_SESSION['user_id'])) {
-    header("Location: ../Public/login.php");
+    header("Location: ../public/login.php");
     exit();
 }
 
@@ -44,7 +44,7 @@ if ($deportista) {
     $informes = [];
 }
 
-include './Includes/header.php';
+include './includes/header.php';
 ?>
 <main>
     <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
@@ -70,7 +70,7 @@ include './Includes/header.php';
                                     <p class="text-gray-700 mb-0"></p>
                                 </div>
                             </div>
-                            <div class="col-xl-4 col-xxl-12 text-center"><img class="img-fluid" src="../assets/img/illustrations/at-work.svg" style="max-width: 26rem" /></div>
+                            <div class="col-xl-4 col-xxl-12 text-center"><img class="img-fluid" src="../Assets/img/illustrations/at-work.svg" style="max-width: 26rem" /></div>
                         </div>
                     </div>
                 </div>
@@ -161,41 +161,5 @@ include './Includes/header.php';
     </div>
 </main>
 <?php
-include './Includes/footer.php';
+include './includes/footer.php';
 ?>
-
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var ctx = document.getElementById('imcChart').getContext('2d');
-        var imcData = <?php echo json_encode($imc_data); ?>;
-
-        var labels = imcData.map(function(item) {
-            return item.fecha;
-        });
-        var data = imcData.map(function(item) {
-            return item.imc;
-        });
-
-        var chart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'IMC',
-                    data: data,
-                    borderColor: 'rgb(75, 192, 192)',
-                    tension: 0.1
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: false
-                    }
-                }
-            }
-        });
-    });
-</script>

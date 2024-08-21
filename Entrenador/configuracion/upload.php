@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
+require_once('../admin/configuracion/conexion.php');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $idUsuario = $_SESSION['user_id']; 
@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Subir el archivo
     if (move_uploaded_file($_FILES['cvFile']['tmp_name'], $uploadFile)) {
-        $filePath = '/looneytunes/entrenador/pdfs/' . $fileName;
+        $filePath = '/entrenador/pdfs/' . $fileName;
 
         // Inserta el nuevo registro
         $sql = "INSERT INTO tab_pdfs (id_usuario, file_name, file_path) VALUES (:id_usuario, :file_name, :file_path)";
@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
     
     // Redirigir a indexentrenador.php con el mensaje
-    header("Location: /looneytunes/Entrenador/indexentrenador.php?message=" . urlencode($message));
+    header("Location: /entrenador/indexentrenador.php?message=" . urlencode($message));
     exit();
 }
 ?>

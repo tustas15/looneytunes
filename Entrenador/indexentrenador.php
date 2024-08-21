@@ -1,6 +1,6 @@
 <?php
 // Conexión a la base de datos
-require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
+require_once('../admin/configuracion/conexion.php');
 
 date_default_timezone_set('America/Guayaquil'); // Ajusta a tu zona horaria
 
@@ -156,7 +156,7 @@ include './includes/header.php';
                                     <p class="text-gray-700 mb-0"></p>
                                 </div>
                             </div>
-                            <div class="col-xl-4 col-xxl-12 text-center"><img class="img-fluid" src="../assets/img/illustrations/at-work.svg" style="max-width: 26rem" /></div>
+                            <div class="col-xl-4 col-xxl-12 text-center"><img class="img-fluid" src="../Assets/img/illustrations/at-work.svg" style="max-width: 26rem" /></div>
                         </div>
                     </div>
                 </div>

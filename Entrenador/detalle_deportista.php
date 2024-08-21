@@ -4,7 +4,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 // Incluir el archivo de conexión a la base de datos
-require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
+require_once('../admin/configuracion/conexion.php');
 
 // Iniciar la sesión
 session_start();
@@ -165,7 +165,7 @@ include './includes/header.php';
 
 <?php
 // Incluir el pie de página
-include './Includes/footer.php';
+include './includes/footer.php';
 ?>
 
 <!-- Añadir los scripts de DataTables -->

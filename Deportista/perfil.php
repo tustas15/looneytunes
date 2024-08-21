@@ -4,13 +4,13 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 // Incluir el archivo de conexión a la base de datos
-require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
+require_once('../admin/configuracion/conexion.php');
 
 // Iniciar la sesión
 session_start();
 // Verificar que el usuario esté logueado
 if (!isset($_SESSION['user_id'])) {
-    header("Location: ../Public/login.php");
+    header("Location: ../public/login.php");
     exit();
 }
 
@@ -155,7 +155,7 @@ include '../representante/includes/header.php';
 
 <?php
 // Incluir el pie de página
-include './Includes/footer.php';
+include './includes/footer.php';
 ?>
 
 <!-- Añadir los scripts de DataTables -->
