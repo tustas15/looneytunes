@@ -9,7 +9,7 @@ $categorias = $stmt->fetchAll(PDO::FETCH_ASSOC);
 // Mostrar el mensaje de éxito o error desde procces_form.php
 $message = '';
 if (isset($_GET['message'])) {
-    if ($_GET['message'] === 'success') {
+    if ($_GET['message'] === 'Registro exitoso') {
         $message = '<div style="margin: 20px; padding: 20px; border: 1px solid #4CAF50; background-color: #DFF2BF; color: #4CAF50; font-family: Arial, sans-serif; font-size: 16px; border-radius: 5px; text-align: center;">
                         Registro exitoso
                     </div>';
@@ -19,6 +19,7 @@ if (isset($_GET['message'])) {
                     </div>';
     }
 }
+
 ?>
 
 <!DOCTYPE html>

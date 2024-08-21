@@ -43,7 +43,7 @@ try {
 
     $stmt->bindParam(':usuario', $nombre_usuario);
     $stmt->bindParam(':pass', $hashed_password);
-    
+
     $stmt->execute();
 
     $id_usuario = $conn->lastInsertId();
@@ -95,11 +95,11 @@ try {
     $conn->commit();
 
     // Redirigir a crentrenador.php con el nombre de usuario y la clave generada
-    header("Location: ../crear_usuarios/crentrenador.php?message=Registro exitoso&usuario={$nombre_usuario}&clave={$_POST['cedula']}");
+    $mensaje = urlencode('Registro exitoso');
+    header("Location: ../crear_usuarios/crentrenador.php?message=$mensaje&usuario={$nombre_usuario}&clave={$_POST['cedula']}");
     exit();
 } catch (Exception $e) {
     // Revertir la transacción en caso de error
     $conn->rollBack();
     echo "Fallo: " . $e->getMessage();
 }
-?>

@@ -82,7 +82,7 @@ try {
     $logStmt->execute([$creador_id, $evento, $ip, $tipo_evento]);
 
     // Redirigir a crentrenador.php con el nombre de usuario y la clave generada
-    header("Location: ../crear_usuarios/crrepresentante.php?message=Registro exitoso&usuario={$nombre_usuario}&clave={$_POST['cedula_r']}");
+    header("Location: ../crear_usuarios/crrepresentante.php?message=success&usuario=" . urlencode($nombre_usuario) . "&clave=" . urlencode($_POST['cedula_r']));
     exit();
 } catch (Exception $e) {
     // Revertir la transacción en caso de error

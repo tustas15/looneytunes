@@ -66,7 +66,7 @@ try {
     $stmt->bindParam(':CEDULA_DEPO', $_POST['cedula_d']);
     $stmt->bindParam(':NUMERO_CELULAR', $_POST['celular_d']);
     $stmt->bindParam(':GENERO', $_POST['genero']);
-    
+
     $stmt->execute();
 
     $id_deportista = $conn->lastInsertId(); // Obtener el id_deportista generado
@@ -97,11 +97,10 @@ try {
     $logStmt->execute([$creador_id, $evento, $ip, $tipo_evento]);
 
     // Redirigir a crdeportista.php con el nombre de usuario y la clave generada
-    header("Location: ../crear_usuarios/crdeportista.php?message=Registro exitoso&usuario={$nombre_usuario}&clave={$_POST['cedula_d']}");
+    header("Location: ../crear_usuarios/crdeportista.php?message=success&usuario={$nombre_usuario}&clave={$_POST['cedula_d']}");
     exit();
 } catch (Exception $e) {
     // Revertir la transacción en caso de error
     $conn->rollBack();
     echo "Fallo: " . $e->getMessage();
 }
-?>
