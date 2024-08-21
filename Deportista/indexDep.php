@@ -44,6 +44,24 @@ if ($deportista) {
     $informes = [];
 }
 
+// Obtener el nombre del entrenador
+$query_entrenador = "SELECT tab_entrenadores.nombre_entre, tab_categorias.categoria
+                             FROM tab_entrenadores 
+                             LEFT JOIN tab_entrenador_categoria ON tab_entrenadores.ID_ENTRENADOR = tab_entrenador_categoria.ID_ENTRENADOR
+                             LEFT JOIN tab_categorias ON tab_entrenador_categoria.ID_CATEGORIA = tab_categorias.id_categoria
+                             LEFT JOIN tab_categoria_deportista ON tab_categorias.ID_CATEGORIA = tab_categoria_deportista.ID_CATEGORIA 
+                             LEFT JOIN tab_deportistas ON tab_categoria_deportista.ID_DEPORTISTA = tab_deportistas.ID_DEPORTISTA
+                             WHERE tab_deportistas.ID_USUARIO = ?";
+$stmt_entrenador = $conn->prepare($query_entrenador);
+$stmt_entrenador->execute([$id_usuario]);
+$entrenadores = $stmt_entrenador->fetch(PDO::FETCH_ASSOC);
+if($entrenadores){
+    $nombre_entrenador = $entrenadores['nombre_entre'];
+}
+if($entrenadores){
+    $categoria = $entrenadores['categoria'];
+}
+
 include './includes/header.php';
 ?>
 <main>
@@ -67,7 +85,9 @@ include './includes/header.php';
                             <div class="col-xl-8 col-xxl-12">
                                 <div class="text-center text-xl-start text-xxl-center mb-4 mb-xl-0 mb-xxl-4">
                                     <h2 class="text-primary">Bienvenido, deportista <?= $nombre ?>.</h2>
-                                    <p class="text-gray-700 mb-0"></p>
+                                    
+                                    <p class="text-gray-700 mb-0">CATEGORIA: <?=$categoria?></p>
+                                    <p class="text-gray-700 mb-0">ENTRENADOR: <?=$nombre_entrenador?></p>
                                 </div>
                             </div>
                             <div class="col-xl-4 col-xxl-12 text-center"><img class="img-fluid" src="../Assets/img/illustrations/at-work.svg" style="max-width: 26rem" /></div>
