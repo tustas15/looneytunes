@@ -8,9 +8,37 @@
     <meta name="author" content="" />
     <title>Registrar Administrador</title>
     <link href="../../../Assets/css/styles.css" rel="stylesheet" />
-    <link rel="icon" type="image/x-icon" href="/looneytunes/AssetsFree/img/logo.png" />
+    <link rel="icon" type="image/x-icon" href="/Assets/img/logo.png" />
     <script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.28.0/feather.min.js" crossorigin="anonymous"></script>
+
+    <!-- Modal -->
+    <div class="modal fade" id="userModal" tabindex="-1" role="dialog" aria-labelledby="userModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="userModalLabel">Datos de la Cuenta</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Nombre de Usuario:</strong> <?php echo htmlspecialchars($_GET['usuario']); ?></p>
+                    <p><strong>Clave:</strong> <?php echo htmlspecialchars($_GET['clave']); ?></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', event => {
+            <?php if (isset($_GET['usuario']) && isset($_GET['clave'])): ?>
+                var userModal = new bootstrap.Modal(document.getElementById('userModal'));
+                userModal.show();
+            <?php endif; ?>
+        });
+    </script>
 </head>
 <body class="bg-primary">
     <div id="layoutAuthentication">
@@ -31,7 +59,7 @@
                                         }
                                     ?>
                                     <!-- Registration form-->
-                                    <form action="../procces/process_Admin.php" method="post"> <!-- Corregir la ruta al archivo PHP -->
+                                    <form action="../procces/process_Admin.php" method="post">
                                         <!-- Form Row-->
                                         <div class="row gx-3">
                                             <div class="col-md-6">
@@ -57,7 +85,7 @@
                                         <!-- Form Group (create account submit)-->
                                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                                             <button class="btn btn-primary btn-block" type="submit">Crear Cuenta</button>
-                                            <a class="btn btn-primary btn-block" href="../../indexAd.php">Volver</a> <!-- Botón para volver -->
+                                            <a class="btn btn-primary btn-block" href="../../indexAd.php">Volver</a>
                                         </div>
                                     </form>
                                 </div>
@@ -68,3 +96,7 @@
             </main>
         </div>
         <?php include_once('/xampp/htdocs/looneytunes/admin/includespro/footer.php'); ?>
+    </div>
+    
+</body>
+</html>

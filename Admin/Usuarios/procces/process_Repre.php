@@ -1,6 +1,7 @@
 <?php
 include '../../configuracion/conexion.php';
-
+// Iniciar la sesión antes de acceder a cualquier variable de sesión
+session_start();
 try {
     // Iniciar la transacción
     $conn->beginTransaction();
@@ -56,7 +57,7 @@ try {
     // Preparar la consulta SQL para insertar los datos en tab_representantes
     $stmt = $conn->prepare('INSERT INTO tab_representantes (ID_USUARIO, NOMBRE_REPRE, APELLIDO_REPRE, CELULAR_REPRE, CORREO_REPRE, DIRECCION_REPRE, CEDULA_REPRE) 
     VALUES (:ID_USUARIO, :NOMBRE_REPRE, :APELLIDO_REPRE, :CELULAR_REPRE, :CORREO_REPRE, :DIRECCION_REPRE, :CEDULA_REPRE)');
-    
+
     // Bind de parámetros
     $stmt->bindParam(':ID_USUARIO', $id_usuario);
     $stmt->bindParam(':NOMBRE_REPRE', $_POST['nombre_r']);
@@ -80,17 +81,12 @@ try {
     $logStmt = $conn->prepare($logQuery);
     $logStmt->execute([$creador_id, $evento, $ip, $tipo_evento]);
 
-    // Redirigir con mensaje de éxito
-    header("Location: ../crear_usuarios/crrepresentante.php?message=success");
+    // Redirigir a crentrenador.php con el nombre de usuario y la clave generada
+    header("Location: ../crear_usuarios/crrepresentante.php?message=Registro exitoso&usuario={$nombre_usuario}&clave={$_POST['cedula_r']}");
     exit();
 } catch (Exception $e) {
     // Revertir la transacción en caso de error
     $conn->rollBack();
-    // Redirigir con mensaje de error
-    header("Location: ../crear_usuarios/crrepresentante.php?message=" . urlencode($e->getMessage()));
-    exit();
+    echo "Fallo: " . $e->getMessage();
 }
-
-// Cerrar la conexión
-$conn = null;
 ?>

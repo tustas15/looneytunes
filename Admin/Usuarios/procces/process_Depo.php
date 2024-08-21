@@ -96,14 +96,12 @@ try {
     $logStmt = $conn->prepare($logQuery);
     $logStmt->execute([$creador_id, $evento, $ip, $tipo_evento]);
 
-    // Redirigir a la página de éxito
-    header("Location: ../crear_usuarios/crdeportista.php?message=success");
+    // Redirigir a crdeportista.php con el nombre de usuario y la clave generada
+    header("Location: ../crear_usuarios/crdeportista.php?message=Registro exitoso&usuario={$nombre_usuario}&clave={$_POST['celular_a']}");
     exit();
 } catch (Exception $e) {
     // Revertir la transacción en caso de error
     $conn->rollBack();
-    // Redirigir a la página de error con el mensaje de excepción
-    header("Location: ../crear_usuarios/crdeportista.php?message=" . urlencode($e->getMessage()));
-    exit();
+    echo "Fallo: " . $e->getMessage();
 }
 ?>

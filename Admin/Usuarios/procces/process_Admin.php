@@ -1,6 +1,9 @@
 <?php
 include '../../configuracion/conexion.php'; // Asegúrate de que esta ruta es correcta
 
+// Iniciar la sesión antes de acceder a cualquier variable de sesión
+session_start();
+
 // Iniciar la transacción
 $conn->beginTransaction();
 
@@ -77,16 +80,12 @@ try {
     // Confirmar la transacción
     $conn->commit();
 
-    header("Location: ../crear_usuarios/cradmin.php?message=Registro exitoso"); // Redirige al formulario con un mensaje de éxito
+    // Redirigir a cradmin.php con el nombre de usuario y la clave generada
+    header("Location: ../crear_usuarios/cradmin.php?message=Registro exitoso&usuario={$nombre_usuario}&clave={$_POST['celular_a']}");
+    exit();
 } catch (Exception $e) {
     // Revertir la transacción en caso de error
-    if ($conn->inTransaction()) {
-        $conn->rollBack();
-    }
-
-    header("Location: ../crear_usuarios/cradmin.php?message=" . urlencode($e->getMessage())); // Redirige al formulario con un mensaje de error
+    $conn->rollBack();
+    echo "Fallo: " . $e->getMessage();
 }
-
-// Cerrar la conexión
-$conn = null;
 ?>

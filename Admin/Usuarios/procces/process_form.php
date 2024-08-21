@@ -1,6 +1,8 @@
 <?php
 include '../../configuracion/conexion.php';
 
+session_start(); // Asegúrate de que la sesión esté iniciada
+
 try {
     // Verificar que todos los campos están completos
     if (!isset($_POST['nombre'], $_POST['apellido'], $_POST['experiencia'], $_POST['celular'], $_POST['correo'], $_POST['direccion'], $_POST['cedula'], $_POST['categoria'])) {
@@ -92,17 +94,12 @@ try {
     // Confirmar la transacción
     $conn->commit();
 
-    // Redirigir con mensaje de éxito
-    header("Location: ../crear_usuarios/crentrenador.php?message=success");
+    // Redirigir a crentrenador.php con el nombre de usuario y la clave generada
+    header("Location: ../crear_usuarios/crentrenador.php?message=Registro exitoso&usuario={$nombre_usuario}&clave={$_POST['cedula']}");
     exit();
 } catch (Exception $e) {
     // Revertir la transacción en caso de error
     $conn->rollBack();
-    // Redirigir con mensaje de error
-    header("Location: ../crear_usuarios/crentrenador.php?message=" . urlencode($e->getMessage()));
-    exit();
+    echo "Fallo: " . $e->getMessage();
 }
-
-// Cerrar la conexión
-$conn = null;
 ?>
