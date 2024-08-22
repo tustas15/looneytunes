@@ -84,72 +84,74 @@ include '/xampp/htdocs/looneytunes/admin/includespro/header.php';
             <div class="card-body">
                 <!-- Formulario de búsqueda -->
 
-                <table id="datatablesSimple">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nombre</th>
-                            <th>Apellido</th>
-                            <th>Celular</th>
-                            <th>Acción</th> <!-- Nueva columna para el enlace al perfil -->
-                        </tr>
-                    </thead>
-                    <tfoot>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nombre</th>
-                            <th>Apellido</th>
-                            <th>Celular</th>
-                            <th>Acción</th> <!-- Nueva columna para el enlace al perfil -->
-                        </tr>
-                    </tfoot>
-                    <tbody>
-                        <?php
-                        try {
-                            // Construir la consulta SQL con el término de búsqueda
-                            $sql = "SELECT ID_ADMINISTRADOR, NOMBRE_ADMIN, APELLIDO_ADMIN, CELULAR_ADMIN, status FROM tab_administradores";
+                <div class="table-responsive">
+                    <table id="datatablesSimple" class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Apellido</th>
+                                <th>Celular</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Apellido</th>
+                                <th>Celular</th>
+                                <th>Acción</th>
+                            </tr>
+                        </tfoot>
+                        <tbody>
+                            <?php
+                            try {
+                                // Construir la consulta SQL con el término de búsqueda
+                                $sql = "SELECT ID_ADMINISTRADOR, NOMBRE_ADMIN, APELLIDO_ADMIN, CELULAR_ADMIN, status FROM tab_administradores";
 
-                            if ($searchTerm) {
-                                $sql .= " WHERE NOMBRE_ADMIN LIKE :searchTerm OR APELLIDO_ADMIN LIKE :searchTerm OR CELULAR_ADMIN LIKE :searchTerm";
+                                if ($searchTerm) {
+                                    $sql .= " WHERE NOMBRE_ADMIN LIKE :searchTerm OR APELLIDO_ADMIN LIKE :searchTerm OR CELULAR_ADMIN LIKE :searchTerm";
+                                }
+
+                                $stmt = $conn->prepare($sql);
+
+                                if ($searchTerm) {
+                                    $searchTerm = '%' . $searchTerm . '%';
+                                    $stmt->bindParam(':searchTerm', $searchTerm, PDO::PARAM_STR);
+                                }
+
+                                $stmt->execute();
+                                $administradores = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                                // Mostrar la lista de administradores
+                                foreach ($administradores as $administrador) {
+                                    $status = htmlspecialchars($administrador['status']);
+                                    $actionLink = $status === 'activo' ?
+                                        "<a href='indexadministrador.php?action=deactivate&ID_ADMINISTRADOR=" . htmlspecialchars($administrador['ID_ADMINISTRADOR']) . "'>Desactivar</a>" :
+                                        "<a href='indexadministrador.php?action=activate&ID_ADMINISTRADOR=" . htmlspecialchars($administrador['ID_ADMINISTRADOR']) . "'>Activar</a>";
+
+                                    echo "<tr>";
+                                    echo "<td>" . htmlspecialchars($administrador['ID_ADMINISTRADOR']) . "</td>";
+                                    echo "<td>" . htmlspecialchars($administrador['NOMBRE_ADMIN']) . "</td>";
+                                    echo "<td>" . htmlspecialchars($administrador['APELLIDO_ADMIN']) . "</td>";
+                                    echo "<td>" . htmlspecialchars($administrador['CELULAR_ADMIN']) . "</td>";
+                                    echo "<td>
+                                            <a href='../perfil/perfil_administrador.php?ID_ADMINISTRADOR=" . htmlspecialchars($administrador['ID_ADMINISTRADOR']) . "'>Ver Perfil</a> | 
+                                            $actionLink
+                                          </td>";
+                                    echo "</tr>";
+                                }
+                            } catch (PDOException $e) {
+                                echo "<tr><td colspan='5'>Error: " . $e->getMessage() . "</td></tr>";
                             }
 
-                            $stmt = $conn->prepare($sql);
-
-                            if ($searchTerm) {
-                                $searchTerm = '%' . $searchTerm . '%';
-                                $stmt->bindParam(':searchTerm', $searchTerm, PDO::PARAM_STR);
-                            }
-
-                            $stmt->execute();
-                            $administradores = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-                            // Mostrar la lista de administradores
-                            foreach ($administradores as $administrador) {
-                                $status = htmlspecialchars($administrador['status']);
-                                $actionLink = $status === 'activo' ? 
-                                    "<a href='indexadministrador.php?action=deactivate&ID_ADMINISTRADOR=" . htmlspecialchars($administrador['ID_ADMINISTRADOR']) . "'>Desactivar</a>" : 
-                                    "<a href='indexadministrador.php?action=activate&ID_ADMINISTRADOR=" . htmlspecialchars($administrador['ID_ADMINISTRADOR']) . "'>Activar</a>";
-
-                                echo "<tr>";
-                                echo "<td>" . htmlspecialchars($administrador['ID_ADMINISTRADOR']) . "</td>";
-                                echo "<td>" . htmlspecialchars($administrador['NOMBRE_ADMIN']) . "</td>";
-                                echo "<td>" . htmlspecialchars($administrador['APELLIDO_ADMIN']) . "</td>";
-                                echo "<td>" . htmlspecialchars($administrador['CELULAR_ADMIN']) . "</td>";
-                                echo "<td>
-                                        <a href='../perfil/perfil_administrador.php?ID_ADMINISTRADOR=" . htmlspecialchars($administrador['ID_ADMINISTRADOR']) . "'>Ver Perfil</a> | 
-                                        $actionLink
-                                      </td>";
-                                echo "</tr>";
-                            }
-                        } catch (PDOException $e) {
-                            echo "<tr><td colspan='5'>Error: " . $e->getMessage() . "</td></tr>";
-                        }
-
-                        // Cierre de la conexión
-                        $conn = null;
-                        ?>
-                    </tbody>
-                </table>
+                            // Cierre de la conexión
+                            $conn = null;
+                            ?>
+                        </tbody>
+                    </table>
+                </div> <!-- Fin de table-responsive -->
             </div>
         </div>
     </div>

@@ -73,81 +73,84 @@ include '/xampp/htdocs/looneytunes/admin/includespro/header.php';
         <div class="card mb-4">
             <div class="card-header">Entrenadores</div>
             <div class="card-body">
-                <table id="datatablesSimple">
-                    <thead>
-                        <tr>
-                            <th>ID Entrenador</th>
-                            <th>ID Usuario</th>
-                            <th>Nombre</th>
-                            <th>Apellido</th>
-                            <th>Experiencia</th>
-                            <th>Celular</th>
-                            <th>Correo</th>
-                            <th>Perfil</th>
-                            <th>Acciones</th> <!-- Columna para activar/desactivar -->
-                        </tr>
-                    </thead>
-                    <tfoot>
-                        <tr>
-                            <th>ID Entrenador</th>
-                            <th>ID Usuario</th>
-                            <th>Nombre</th>
-                            <th>Apellido</th>
-                            <th>Experiencia</th>
-                            <th>Celular</th>
-                            <th>Correo</th>
-                            <th>Perfil</th>
-                            <th>Acciones</th> <!-- Columna para activar/desactivar -->
-                        </tr>
-                    </tfoot>
-                    <tbody>
-                        <?php
-                        try {
-                            // Consulta para obtener todos los entrenadores con sus detalles
-                            $stmt = $conn->prepare("
-                                SELECT e.ID_ENTRENADOR, e.ID_USUARIO, u.USUARIO, e.NOMBRE_ENTRE, e.APELLIDO_ENTRE, e.EXPERIENCIA_ENTRE, e.CELULAR_ENTRE, e.CORREO_ENTRE, e.status
-                                FROM tab_entrenadores e
-                                INNER JOIN tab_usuarios u ON e.ID_USUARIO = u.ID_USUARIO
-                                WHERE e.ID_USUARIO IN (
-                                    SELECT ID_USUARIO FROM tab_usu_tipo WHERE ID_TIPO = :tipo_entrenador
-                                )
-                            ");
-                            $tipo_entrenador = 2;  // ID_TIPO para entrenadores
-                            $stmt->bindParam(':tipo_entrenador', $tipo_entrenador, PDO::PARAM_INT);
-                            $stmt->execute();
-                            $entrenadores = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                <div class="table-responsive"> <!-- Aquí añadimos el contenedor table-responsive -->
+                    <table id="datatablesSimple">
+                        <thead>
+                            <tr>
+                                <th>ID Entrenador</th>
+                                <th>ID Usuario</th>
+                                <th>Nombre</th>
+                                <th>Apellido</th>
+                                <th>Experiencia</th>
+                                <th>Celular</th>
+                                <th>Correo</th>
+                                <th>Perfil</th>
+                                <th>Acciones</th> <!-- Columna para activar/desactivar -->
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <tr>
+                                <th>ID Entrenador</th>
+                                <th>ID Usuario</th>
+                                <th>Nombre</th>
+                                <th>Apellido</th>
+                                <th>Experiencia</th>
+                                <th>Celular</th>
+                                <th>Correo</th>
+                                <th>Perfil</th>
+                                <th>Acciones</th> <!-- Columna para activar/desactivar -->
+                            </tr>
+                        </tfoot>
+                        <tbody>
+                            <?php
+                            try {
+                                // Consulta para obtener todos los entrenadores con sus detalles
+                                $stmt = $conn->prepare("
+                                    SELECT e.ID_ENTRENADOR, e.ID_USUARIO, u.USUARIO, e.NOMBRE_ENTRE, e.APELLIDO_ENTRE, e.EXPERIENCIA_ENTRE, e.CELULAR_ENTRE, e.CORREO_ENTRE, e.status
+                                    FROM tab_entrenadores e
+                                    INNER JOIN tab_usuarios u ON e.ID_USUARIO = u.ID_USUARIO
+                                    WHERE e.ID_USUARIO IN (
+                                        SELECT ID_USUARIO FROM tab_usu_tipo WHERE ID_TIPO = :tipo_entrenador
+                                    )
+                                ");
+                                $tipo_entrenador = 2;  // ID_TIPO para entrenadores
+                                $stmt->bindParam(':tipo_entrenador', $tipo_entrenador, PDO::PARAM_INT);
+                                $stmt->execute();
+                                $entrenadores = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-                            // Mostrar la lista de entrenadores
-                            foreach ($entrenadores as $entrenador) {
-                                $status = htmlspecialchars($entrenador['status']);
-                                $actionLink = $status === 'activo' ? 
-                                    "<a href='indexentrenador.php?action=deactivate&ID_ENTRENADOR=" . htmlspecialchars($entrenador['ID_ENTRENADOR']) . "'>Desactivar</a>" : 
-                                    "<a href='indexentrenador.php?action=activate&ID_ENTRENADOR=" . htmlspecialchars($entrenador['ID_ENTRENADOR']) . "'>Activar</a>";
+                                // Mostrar la lista de entrenadores
+                                foreach ($entrenadores as $entrenador) {
+                                    $status = htmlspecialchars($entrenador['status']);
+                                    $actionLink = $status === 'activo' ? 
+                                        "<a href='indexentrenador.php?action=deactivate&ID_ENTRENADOR=" . htmlspecialchars($entrenador['ID_ENTRENADOR']) . "'>Desactivar</a>" : 
+                                        "<a href='indexentrenador.php?action=activate&ID_ENTRENADOR=" . htmlspecialchars($entrenador['ID_ENTRENADOR']) . "'>Activar</a>";
 
-                                echo "<tr>";
-                                echo "<td>" . htmlspecialchars($entrenador['ID_ENTRENADOR']) . "</td>";
-                                echo "<td>" . htmlspecialchars($entrenador['ID_USUARIO']) . "</td>";
-                                echo "<td>" . htmlspecialchars($entrenador['NOMBRE_ENTRE']) . "</td>";
-                                echo "<td>" . htmlspecialchars($entrenador['APELLIDO_ENTRE']) . "</td>";
-                                echo "<td>" . htmlspecialchars($entrenador['EXPERIENCIA_ENTRE']) . "</td>";
-                                echo "<td>" . htmlspecialchars($entrenador['CELULAR_ENTRE']) . "</td>";
-                                echo "<td>" . htmlspecialchars($entrenador['CORREO_ENTRE']) . "</td>";
-                                echo "<td><a href='../perfil/perfil_entrenador.php?ID_USUARIO=" . htmlspecialchars($entrenador['ID_USUARIO']) . "'>Ver Perfil</a></td>";
-                                echo "<td>$actionLink</td>";
-                                echo "</tr>";
+                                    echo "<tr>";
+                                    echo "<td>" . htmlspecialchars($entrenador['ID_ENTRENADOR']) . "</td>";
+                                    echo "<td>" . htmlspecialchars($entrenador['ID_USUARIO']) . "</td>";
+                                    echo "<td>" . htmlspecialchars($entrenador['NOMBRE_ENTRE']) . "</td>";
+                                    echo "<td>" . htmlspecialchars($entrenador['APELLIDO_ENTRE']) . "</td>";
+                                    echo "<td>" . htmlspecialchars($entrenador['EXPERIENCIA_ENTRE']) . "</td>";
+                                    echo "<td>" . htmlspecialchars($entrenador['CELULAR_ENTRE']) . "</td>";
+                                    echo "<td>" . htmlspecialchars($entrenador['CORREO_ENTRE']) . "</td>";
+                                    echo "<td><a href='../perfil/perfil_entrenador.php?ID_USUARIO=" . htmlspecialchars($entrenador['ID_USUARIO']) . "'>Ver Perfil</a></td>";
+                                    echo "<td>$actionLink</td>";
+                                    echo "</tr>";
+                                }
+                            } catch (PDOException $e) {
+                                echo "<tr><td colspan='9'>Error: " . $e->getMessage() . "</td></tr>";
                             }
-                        } catch (PDOException $e) {
-                            echo "<tr><td colspan='9'>Error: " . $e->getMessage() . "</td></tr>";
-                        }
 
-                        // Cierre de la conexión
-                        $conn = null;
-                        ?>
-                    </tbody>
-                </table>
+                            // Cierre de la conexión
+                            $conn = null;
+                            ?>
+                        </tbody>
+                    </table>
+                </div> <!-- Fin del contenedor table-responsive -->
             </div>
         </div>
     </div>
 </main>
+
 
 <?php include_once('/xampp/htdocs/looneytunes/admin/includespro/footer.php'); ?>

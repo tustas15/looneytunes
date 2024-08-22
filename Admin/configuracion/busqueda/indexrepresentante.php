@@ -74,80 +74,82 @@ include '/xampp/htdocs/looneytunes/admin/includespro/header.php';
         <div class="card mb-4">
             <div class="card-header">Representantes</div>
             <div class="card-body">
-                <table id="datatablesSimple">
-                    <thead>
-                        <tr>
-                            <th>ID Representante</th>
-                            <th>ID Usuario</th>
-                            <th>Nombre</th>
-                            <th>Apellido</th>
-                            <th>Cédula</th>
-                            <th>Celular</th>
-                            <th>Perfil</th>
-                            <th>Acciones</th> <!-- Columna para activar/desactivar -->
-                        </tr>
-                    </thead>
-                    <tfoot>
-                        <tr>
-                            <th>ID Representante</th>
-                            <th>ID Usuario</th>
-                            <th>Nombre</th>
-                            <th>Apellido</th>
-                            <th>Cédula</th>
-                            <th>Celular</th>
-                            <th>Perfil</th>
-                            <th>Acciones</th> <!-- Columna para activar/desactivar -->
-                        </tr>
-                    </tfoot>
-                    <tbody>
-                        <?php
-                        try {
-                            // Construir la consulta SQL con el término de búsqueda
-                            $sql = "SELECT r.ID_REPRESENTANTE, u.ID_USUARIO, u.USUARIO, r.NOMBRE_REPRE, r.APELLIDO_REPRE, r.CEDULA_REPRE, r.CELULAR_REPRE, r.status
-                                    FROM tab_representantes r
-                                    INNER JOIN tab_usuarios u ON r.ID_USUARIO = u.ID_USUARIO";
+                <div class="table-responsive"> <!-- Clase para hacer la tabla responsive -->
+                    <table id="datatablesSimple">
+                        <thead>
+                            <tr>
+                                <th>ID Representante</th>
+                                <th>ID Usuario</th>
+                                <th>Nombre</th>
+                                <th>Apellido</th>
+                                <th>Cédula</th>
+                                <th>Celular</th>
+                                <th>Perfil</th>
+                                <th>Acciones</th> <!-- Columna para activar/desactivar -->
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <tr>
+                                <th>ID Representante</th>
+                                <th>ID Usuario</th>
+                                <th>Nombre</th>
+                                <th>Apellido</th>
+                                <th>Cédula</th>
+                                <th>Celular</th>
+                                <th>Perfil</th>
+                                <th>Acciones</th> <!-- Columna para activar/desactivar -->
+                            </tr>
+                        </tfoot>
+                        <tbody>
+                            <?php
+                            try {
+                                // Construir la consulta SQL con el término de búsqueda
+                                $sql = "SELECT r.ID_REPRESENTANTE, u.ID_USUARIO, u.USUARIO, r.NOMBRE_REPRE, r.APELLIDO_REPRE, r.CEDULA_REPRE, r.CELULAR_REPRE, r.status
+                                        FROM tab_representantes r
+                                        INNER JOIN tab_usuarios u ON r.ID_USUARIO = u.ID_USUARIO";
 
-                            if ($searchTerm) {
-                                $sql .= " WHERE r.NOMBRE_REPRE LIKE :searchTerm OR r.CEDULA_REPRE LIKE :searchTerm";
+                                if ($searchTerm) {
+                                    $sql .= " WHERE r.NOMBRE_REPRE LIKE :searchTerm OR r.CEDULA_REPRE LIKE :searchTerm";
+                                }
+
+                                $stmt = $conn->prepare($sql);
+
+                                if ($searchTerm) {
+                                    $searchTerm = '%' . $searchTerm . '%';
+                                    $stmt->bindParam(':searchTerm', $searchTerm, PDO::PARAM_STR);
+                                }
+
+                                $stmt->execute();
+                                $representantes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                                // Mostrar la lista de representantes
+                                foreach ($representantes as $representante) {
+                                    $status = htmlspecialchars($representante['status']);
+                                    $actionLink = $status === 'activo' ? 
+                                        "<a href='indexrepresentante.php?action=deactivate&ID_REPRESENTANTE=" . htmlspecialchars($representante['ID_REPRESENTANTE']) . "'>Desactivar</a>" : 
+                                        "<a href='indexrepresentante.php?action=activate&ID_REPRESENTANTE=" . htmlspecialchars($representante['ID_REPRESENTANTE']) . "'>Activar</a>";
+
+                                    echo "<tr>";
+                                    echo "<td>" . htmlspecialchars($representante['ID_REPRESENTANTE']) . "</td>";
+                                    echo "<td>" . htmlspecialchars($representante['ID_USUARIO']) . "</td>";
+                                    echo "<td>" . htmlspecialchars($representante['NOMBRE_REPRE']) . "</td>";
+                                    echo "<td>" . htmlspecialchars($representante['APELLIDO_REPRE']) . "</td>";
+                                    echo "<td>" . htmlspecialchars($representante['CEDULA_REPRE']) . "</td>";
+                                    echo "<td>" . htmlspecialchars($representante['CELULAR_REPRE']) . "</td>";
+                                    echo "<td><a href='../perfil/perfil_representante.php?ID_REPRESENTANTE=" . htmlspecialchars($representante['ID_REPRESENTANTE']) . "'>Ver Perfil</a></td>";
+                                    echo "<td>$actionLink</td>";
+                                    echo "</tr>";
+                                }
+                            } catch (PDOException $e) {
+                                echo "<tr><td colspan='8'>Error: " . $e->getMessage() . "</td></tr>";
                             }
 
-                            $stmt = $conn->prepare($sql);
-
-                            if ($searchTerm) {
-                                $searchTerm = '%' . $searchTerm . '%';
-                                $stmt->bindParam(':searchTerm', $searchTerm, PDO::PARAM_STR);
-                            }
-
-                            $stmt->execute();
-                            $representantes = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-                            // Mostrar la lista de representantes
-                            foreach ($representantes as $representante) {
-                                $status = htmlspecialchars($representante['status']);
-                                $actionLink = $status === 'activo' ? 
-                                    "<a href='indexrepresentante.php?action=deactivate&ID_REPRESENTANTE=" . htmlspecialchars($representante['ID_REPRESENTANTE']) . "'>Desactivar</a>" : 
-                                    "<a href='indexrepresentante.php?action=activate&ID_REPRESENTANTE=" . htmlspecialchars($representante['ID_REPRESENTANTE']) . "'>Activar</a>";
-
-                                echo "<tr>";
-                                echo "<td>" . htmlspecialchars($representante['ID_REPRESENTANTE']) . "</td>";
-                                echo "<td>" . htmlspecialchars($representante['ID_USUARIO']) . "</td>";
-                                echo "<td>" . htmlspecialchars($representante['NOMBRE_REPRE']) . "</td>";
-                                echo "<td>" . htmlspecialchars($representante['APELLIDO_REPRE']) . "</td>";
-                                echo "<td>" . htmlspecialchars($representante['CEDULA_REPRE']) . "</td>";
-                                echo "<td>" . htmlspecialchars($representante['CELULAR_REPRE']) . "</td>";
-                                echo "<td><a href='../perfil/perfil_representante.php?ID_REPRESENTANTE=" . htmlspecialchars($representante['ID_REPRESENTANTE']) . "'>Ver Perfil</a></td>";
-                                echo "<td>$actionLink</td>";
-                                echo "</tr>";
-                            }
-                        } catch (PDOException $e) {
-                            echo "<tr><td colspan='8'>Error: " . $e->getMessage() . "</td></tr>";
-                        }
-
-                        // Cierre de la conexión
-                        $conn = null;
-                        ?>
-                    </tbody>
-                </table>
+                            // Cierre de la conexión
+                            $conn = null;
+                            ?>
+                        </tbody>
+                    </table>
+                </div> <!-- Fin del div table-responsive -->
             </div>
         </div>
     </div>
