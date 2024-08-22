@@ -34,15 +34,15 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
             <!-- Documentation Dropdown-->
             <li class="nav-item dropdown no-caret d-none d-md-block me-3">
                 <a class="nav-link dropdown-toggle" id="navbarDropdownDocs" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <div class="fw-500">Documentation</div>
+                    <div class="fw-500">Documentacion</div>
                     <i class="fas fa-chevron-right dropdown-arrow"></i>
                 </a>
                 <div class="dropdown-menu dropdown-menu-end py-0 me-sm-n15 me-lg-0 o-hidden animated--fade-in-up" aria-labelledby="navbarDropdownDocs">
                 <a class="dropdown-item py-3" href="./configuracion/download.php">
                     <div class="icon-stack bg-primary-soft text-primary me-4"><i data-feather="download"></i></div>
                         <div>
-                        <div class="small text-gray-500">Descargar Hoja de vida</div>
-                        Haz click para descargar tu Hoja de vida
+                        <div class="small text-gray-500">Hoja de vida del entrenador</div>
+                        Haz click para descargar el PDF
                         </div>
                 </a>
                 </div>
