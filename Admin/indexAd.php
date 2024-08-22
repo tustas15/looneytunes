@@ -689,26 +689,65 @@ include './includespro/header.php';
                     </div>
                 </div>
                 <div class="col-xl-6 mb-4">
-                    <div class="card card-header-actions h-100">
-                        <div class="card-header">
-                            Ganancia Mensual
-                            <div class="dropdown no-caret">
-                                <button class="btn btn-transparent-dark btn-icon dropdown-toggle" id="areaChartDropdownExample" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="text-gray-500" data-feather="more-vertical"></i></button>
-                                <div class="dropdown-menu dropdown-menu-end animated--fade-in-up" aria-labelledby="areaChartDropdownExample">
-                                    <a class="dropdown-item" href="#!">Last 12 Months</a>
-                                    <a class="dropdown-item" href="#!">Last 30 Days</a>
-                                    <a class="dropdown-item" href="#!">Last 7 Days</a>
-                                    <a class="dropdown-item" href="#!">This Month</a>
-                                    <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="#!">Custom Range</a>
-                                </div>
-                            </div>
-                        </div>
+                    <!-- Pie chart with legend example-->
+                    <div class="card h-100">
+                        <div class="card-header">Traffic Sources</div>
                         <div class="card-body">
-                            <div class="chart-bar"><canvas id="myBarChart" width="100%" height="30"></canvas></div>
+                            <div class="chart-pie mb-4"><canvas id="myPieChart" width="100%" height="50"></canvas></div>
+                            <div class="list-group list-group-flush" id="trafficSourcesList">
+                                <!-- La lista se actualizará dinámicamente -->
+                            </div>
                         </div>
                     </div>
                 </div>
+
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        fetch('configuracion/procesar_datos.php')
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.error) {
+                                    console.error(data.error);
+                                    return;
+                                }
+
+                                var categorias = Array.isArray(data.categorias) ? data.categorias : [];
+                                var cantidades = Array.isArray(data.cantidades) ? data.cantidades : [];
+
+                                // Crear gráfico de pastel
+                                var ctx = document.getElementById('myPieChart').getContext('2d');
+                                new Chart(ctx, {
+                                    type: 'pie',
+                                    data: {
+                                        labels: categorias,
+                                        datasets: [{
+                                            data: cantidades,
+                                            backgroundColor: ['#007bff', '#6f42c1', '#28a745'],
+                                        }]
+                                    }
+                                });
+
+                                // Actualizar la lista de fuentes de tráfico
+                                var list = document.getElementById('trafficSourcesList');
+                                list.innerHTML = ''; // Limpiar la lista existente
+
+                                categorias.forEach((categoria, index) => {
+                                    var colorClass = ['text-blue', 'text-purple', 'text-green'][index % 3];
+                                    var listItem = document.createElement('div');
+                                    listItem.className = 'list-group-item d-flex align-items-center justify-content-between small px-0 py-2';
+                                    listItem.innerHTML = `
+                            <div class="me-3">
+                                <i class="fas fa-circle fa-sm me-1 ${colorClass}"></i>
+                                ${categoria}
+                            </div>
+                            <div class="fw-500 text-dark">${cantidades[index]}%</div>
+                        `;
+                                    list.appendChild(listItem);
+                                });
+                            })
+                            .catch(error => console.error('Error:', error));
+                    });
+                </script>
             </div>
 
             <!-- Tarjeta para generar Informes -->
