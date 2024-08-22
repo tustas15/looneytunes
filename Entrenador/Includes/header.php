@@ -34,7 +34,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
         <a class="navbar-brand pe-3 ps-4 ps-lg-2" href="/index.php">Dashboard</a>
         <!-- Navbar Search Input-->
         <!-- * * Note: * * Visible only on and above the lg breakpoint-->
-         <!--
+        <!--
         <form class="form-inline me-auto d-none d-lg-block me-3">
             <div class="input-group input-group-joined input-group-solid">
                 <input class="form-control pe-0" type="search" placeholder="Search" aria-label="Search" />
@@ -53,25 +53,25 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                 <div class="dropdown-menu dropdown-menu-end py-0 me-sm-n15 me-lg-0 o-hidden animated--fade-in-up" aria-labelledby="navbarDropdownDocs">
 
 
-<!-- Botón para abrir el Modal de Subida -->
-<a class="dropdown-item py-3" href="#" data-bs-toggle="modal" data-bs-target="#uploadModal">
-    <div class="icon-stack bg-primary-soft text-primary me-4"><i data-feather="upload"></i></div>
-    <div>
-        <div class="small text-gray-500">Subir Hoja de vida</div>
-        Haz click para subir tu Hoja de vida (PDF)
-    </div>
-</a>
+                    <!-- Botón para abrir el Modal de Subida -->
+                    <a class="dropdown-item py-3" href="#" data-bs-toggle="modal" data-bs-target="#uploadModal">
+                        <div class="icon-stack bg-primary-soft text-primary me-4"><i data-feather="upload"></i></div>
+                        <div>
+                            <div class="small text-gray-500">Subir Hoja de vida</div>
+                            Haz click para subir tu Hoja de vida (PDF)
+                        </div>
+                    </a>
 
-    <!-- Botón para Descargar Hoja de Vida -->
-    <a class="dropdown-item py-3" href="./configuracion/download.php">
-    <div class="icon-stack bg-primary-soft text-primary me-4"><i data-feather="download"></i></div>
-    <div>
-        <div class="small text-gray-500">Descargar Hoja de vida</div>
-        Haz click para descargar tu Hoja de vida
-    </div>
-</a>
+                    <!-- Botón para Descargar Hoja de Vida -->
+                    <a class="dropdown-item py-3" href="./configuracion/download.php">
+                        <div class="icon-stack bg-primary-soft text-primary me-4"><i data-feather="download"></i></div>
+                        <div>
+                            <div class="small text-gray-500">Descargar Hoja de vida</div>
+                            Haz click para descargar tu Hoja de vida
+                        </div>
+                    </a>
 
-</div>
+                </div>
             </li>
 
             <!-- Navbar Search Dropdown-->
@@ -123,6 +123,10 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                         <div class="dropdown-item-icon"><i data-feather="settings"></i></div>
                         Cuenta
                     </a>
+                    <a class="dropdown-item" href="/looneytunes/public/logs.php">
+                        <div class="dropdown-item-icon"><i data-feather="file-text"></i></div>
+                        Registro de Actividades
+                    </a>
                     <a class="dropdown-item" href="../public/logout.php">
                         <div class="dropdown-item-icon"><i data-feather="log-out"></i></div>
                         Logout
@@ -164,10 +168,10 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                         <!-- Sidenav Heading (App Views)-->
                         <div class="sidenav-menu-heading">Categorias</div>
                         <!-- Sidenav Accordion (Pages)-->
-                        
+
                     </div>
                 </div>
-                
+
                 <!-- Sidenav Footer -->
                 <div class="sidenav-footer">
                     <div class="sidenav-footer-content">

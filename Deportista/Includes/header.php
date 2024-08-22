@@ -40,7 +40,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
             </li>
 
             <!-- Navbar Search Dropdown-->
-             <!-- Navbar Search Dropdown-->
+            <!-- Navbar Search Dropdown-->
             <!-- * * Note: * * Visible only below the lg breakpoint-->
             <li class="nav-item dropdown no-caret me-3 d-lg-none">
                 <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="searchDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i data-feather="search"></i></a>
@@ -75,19 +75,19 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                         <i class="me-2" data-feather="mail"></i>
                         Mensajes de Observaciones
                     </h6>
-                    
-        <?php if (!empty($informes)): ?>
-            <?php foreach ($informes as $informe): ?>
-                <a class="dropdown-item dropdown-notification-item" href="#">
-                    <div class="dropdown-notification-item-content">
-                        <div class="dropdown-notification-item-title"><?= htmlspecialchars($informe['informe']); ?></div>
-                        <div class="dropdown-notification-item-time"><?= htmlspecialchars($informe['fecha_creacion']); ?></div>
-                    </div>
-                </a>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <p class="dropdown-item-text">No hay informes disponibles</p>
-        <?php endif; ?>
+
+                    <?php if (!empty($informes)): ?>
+                        <?php foreach ($informes as $informe): ?>
+                            <a class="dropdown-item dropdown-notification-item" href="#">
+                                <div class="dropdown-notification-item-content">
+                                    <div class="dropdown-notification-item-title"><?= htmlspecialchars($informe['informe']); ?></div>
+                                    <div class="dropdown-notification-item-time"><?= htmlspecialchars($informe['fecha_creacion']); ?></div>
+                                </div>
+                            </a>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <p class="dropdown-item-text">No hay informes disponibles</p>
+                    <?php endif; ?>
                     <!-- Footer Link-->
                     <a class="dropdown-item dropdown-notifications-footer" href="#!">Read All Messages</a>
                 </div>
@@ -106,6 +106,10 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                     <a class="dropdown-item" href="../public/profile.php">
                         <div class="dropdown-item-icon"><i data-feather="settings"></i></div>
                         Cuenta
+                    </a>
+                    <a class="dropdown-item" href="/looneytunes/public/logs.php">
+                        <div class="dropdown-item-icon"><i data-feather="file-text"></i></div>
+                        Registro de Actividades
                     </a>
                     <a class="dropdown-item" href="../public/logout.php">
                         <div class="dropdown-item-icon"><i data-feather="log-out"></i></div>
@@ -147,7 +151,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
 
                         <!-- Sidenav Heading (App Views)-->
                         <div class="sidenav-menu-heading">Interfaz</div>
-                       
+
                         <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
                             <div class="nav-link-icon"><i class="fas fa-fw fa-chart-area"></i></div>
                             Gráfica
@@ -159,7 +163,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                                     IMC
                                 </a>
                             </nav>
-                            
+
                         </div>
 
                     </div>

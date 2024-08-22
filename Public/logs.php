@@ -55,10 +55,18 @@ try {
 $showModal = false;
 
 // Procesa la solicitud para vaciar los registros
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['vaciar_logs'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
-        // Ejecuta la consulta para eliminar los registros del usuario actual
-        $deleteQuery = "DELETE FROM tab_logs WHERE ID_USUARIO = ?";
+        // Determina qué botón fue presionado
+        if (isset($_POST['vaciar_inicios'])) {
+            $deleteQuery = "DELETE FROM tab_logs WHERE ID_USUARIO = ? AND EVENTO = 'Inicio de Sesión'";
+        } elseif (isset($_POST['vaciar_cierres'])) {
+            $deleteQuery = "DELETE FROM tab_logs WHERE ID_USUARIO = ? AND EVENTO = 'Cierre de Sesión'";
+        } else {
+            throw new Exception("Acción no válida.");
+        }
+
+        // Ejecuta la consulta para eliminar los registros seleccionados
         $stmt = $conn->prepare($deleteQuery);
         $stmt->bindParam(1, $idUsuario, PDO::PARAM_INT);
         $stmt->execute();
@@ -115,8 +123,8 @@ $conn = null;
                                                 </div>
                                                 <!-- Formulario para vaciar los registros -->
                                                 <form method="post">
-                                                    <button type="submit" name="vaciar_logs" class="btn btn-danger btn-user btn-block">Vaciar Registros</button>
-                                                </form>
+                                                    <button type="submit" name="vaciar_inicios" class="btn btn-warning btn-user btn-block">Eliminar Registros de Inicio de Sesión</button>
+                                                    <button type="submit" name="vaciar_cierres" class="btn btn-danger btn-user btn-block">Eliminar Registros de Cierre de Sesión</button>
                                                 <table class="table mt-4">
                                                     <thead>
                                                         <tr>

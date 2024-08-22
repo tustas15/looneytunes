@@ -34,7 +34,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
         <a class="navbar-brand pe-3 ps-4 ps-lg-2" href="/looneytunes/index.php">Dashboard</a>
         <!-- Navbar Search Input-->
         <!-- * * Note: * * Visible only on and above the lg breakpoint-->
-        
+
         <!-- Navbar Items-->
         <ul class="navbar-nav align-items-center ms-auto">
             <!-- Documentation Dropdown-->
@@ -77,37 +77,37 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
 
 
             <li class="nav-item dropdown no-caret d-none d-sm-block me-3 dropdown-notifications">
-    <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownMessages" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i data-feather="mail"></i></a>
-    <div class="dropdown-menu dropdown-menu-end border-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownMessages">
-        <h6 class="dropdown-header dropdown-notifications-header">
-            <i class="me-2" data-feather="mail"></i>
-            Mensages de Observaciones
-        </h6>
+                <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownMessages" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i data-feather="mail"></i></a>
+                <div class="dropdown-menu dropdown-menu-end border-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownMessages">
+                    <h6 class="dropdown-header dropdown-notifications-header">
+                        <i class="me-2" data-feather="mail"></i>
+                        Mensages de Observaciones
+                    </h6>
 
-        <?php if (!empty($informes)): ?>
-    <?php foreach ($informes as $informe): ?>
-        <a class="dropdown-item dropdown-notification-item" href="#">
-            <div class="dropdown-notification-item-content">
-                <div class="dropdown-notification-item-title">
-                    <?php echo htmlspecialchars($informe['NOMBRE_DEPO'] . ' ' . $informe['APELLIDO_DEPO'], ENT_QUOTES, 'UTF-8'); ?>
-                </div>
-                <div class="dropdown-notification-item-description">
-                    <?php echo htmlspecialchars($informe['informe'], ENT_QUOTES, 'UTF-8'); ?>
-                </div>
-                <div class="dropdown-notification-item-time">
-                    <?php echo htmlspecialchars($informe['fecha_creacion'], ENT_QUOTES, 'UTF-8'); ?>
-                </div>
-            </div>
-        </a>
-    <?php endforeach; ?>
-<?php else: ?>
-    <p class="dropdown-item-text">No hay informes disponibles</p>
-<?php endif; ?>
+                    <?php if (!empty($informes)): ?>
+                        <?php foreach ($informes as $informe): ?>
+                            <a class="dropdown-item dropdown-notification-item" href="#">
+                                <div class="dropdown-notification-item-content">
+                                    <div class="dropdown-notification-item-title">
+                                        <?php echo htmlspecialchars($informe['NOMBRE_DEPO'] . ' ' . $informe['APELLIDO_DEPO'], ENT_QUOTES, 'UTF-8'); ?>
+                                    </div>
+                                    <div class="dropdown-notification-item-description">
+                                        <?php echo htmlspecialchars($informe['informe'], ENT_QUOTES, 'UTF-8'); ?>
+                                    </div>
+                                    <div class="dropdown-notification-item-time">
+                                        <?php echo htmlspecialchars($informe['fecha_creacion'], ENT_QUOTES, 'UTF-8'); ?>
+                                    </div>
+                                </div>
+                            </a>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <p class="dropdown-item-text">No hay informes disponibles</p>
+                    <?php endif; ?>
 
-        <!-- Footer Link-->
-        <a class="dropdown-item dropdown-notifications-footer" href="#!">Leer todos los mensajes</a>
-    </div>
-</li>
+                    <!-- Footer Link-->
+                    <a class="dropdown-item dropdown-notifications-footer" href="#!">Leer todos los mensajes</a>
+                </div>
+            </li>
 
             <!-- User Dropdown-->
             <li class="nav-item dropdown no-caret dropdown-user me-3 me-lg-4">
@@ -123,6 +123,10 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                     <a class="dropdown-item" href="/looneytunes/Public/profile.php">
                         <div class="dropdown-item-icon"><i data-feather="settings"></i></div>
                         Cuenta
+                    </a>
+                    <a class="dropdown-item" href="/looneytunes/public/logs.php">
+                        <div class="dropdown-item-icon"><i data-feather="file-text"></i></div>
+                        Registro de Actividades
                     </a>
                     <a class="dropdown-item" href="/looneytunes/Public/logout.php">
                         <div class="dropdown-item-icon"><i data-feather="log-out"></i></div>
