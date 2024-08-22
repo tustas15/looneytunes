@@ -37,22 +37,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
 
         <!-- Navbar Items-->
         <ul class="navbar-nav align-items-center ms-auto">
-            <!-- Documentation Dropdown-->
-            <li class="nav-item dropdown no-caret d-none d-md-block me-3">
-                <a class="nav-link dropdown-toggle" id="navbarDropdownDocs" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <div class="fw-500">Documentacion</div>
-                    <i class="fas fa-chevron-right dropdown-arrow"></i>
-                </a>
-                <div class="dropdown-menu dropdown-menu-end py-0 me-sm-n15 me-lg-0 o-hidden animated--fade-in-up" aria-labelledby="navbarDropdownDocs">
-                <a class="dropdown-item py-3" href="./configuracion/download.php">
-                    <div class="icon-stack bg-primary-soft text-primary me-4"><i data-feather="download"></i></div>
-                        <div>
-                        <div class="small text-gray-500">Hoja de vida del entrenador</div>
-                        Haz click para descargar el PDF
-                        </div>
-                </a>
-                </div>
-            </li>
+            
 
             <!-- Navbar Search Dropdown-->
             <!-- * * Note: * * Visible only below the lg breakpoint-->
@@ -68,18 +53,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                     </form>
                 </div>
             </li>
-            <!-- Alerts Dropdown-->
-            <li class="nav-item dropdown no-caret d-none d-sm-block me-3 dropdown-notifications">
-                <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownAlerts" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i data-feather="bell"></i></a>
-                <div class="dropdown-menu dropdown-menu-end border-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownAlerts">
-                    <h6 class="dropdown-header dropdown-notifications-header">
-                        <i class="me-2" data-feather="bell"></i>
-                        Alerts Center
-                    </h6>
-
-                    <a class="dropdown-item dropdown-notifications-footer" href="#!">View All Alerts</a>
-                </div>
-            </li>
+            
 
 
             <li class="nav-item dropdown no-caret d-none d-sm-block me-3 dropdown-notifications">

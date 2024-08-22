@@ -30,6 +30,22 @@ if ($idUsuarioEntrenador) {
             header('Pragma: public');
             header('Content-Length: ' . filesize($filePath));
             readfile($filePath);
+
+            //Nombre del entrenador
+            $sql = "SELECT e.nombre_entre 
+            FROM tab_entrenadores e
+            WHERE e.id_usuario = :id_usuario";
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':id_usuario', $idUsuarioEntrenador, PDO::PARAM_INT);
+    $stmt->execute();
+    $entre_nom = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            $ip = $_SERVER['REMOTE_ADDR'];
+    $evento = "Descarga pdf del entrenador ".$entre_nom['nombre_entre'];
+    $tipo_evento = "descarga_pdf";
+    $query = "INSERT INTO tab_logs (ID_USUARIO, EVENTO, HORA_LOG, DIA_LOG, IP, TIPO_EVENTO) VALUES (?, ?, CURRENT_TIME(), CURRENT_DATE(), ?, ?)";
+    $stmt = $conn->prepare($query);
+    $stmt->execute([$_SESSION['user_id'], $evento, $ip, $tipo_evento]);
             exit;
         } else {
             echo "El archivo no se encuentra en el servidor.";
