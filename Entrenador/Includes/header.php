@@ -1,6 +1,28 @@
 <?php
+
+
 $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
 $tipo_usuario = $_SESSION['tipo_usuario'];
+$id_usuarios = $_SESSION['user_id']; // Asegúrate de que tienes el ID del usuario en la sesión
+
+
+// Obtener las categorías del entrenador
+$categorias_entrenador = [];
+if ($tipo_usuario == 'Entrenador') {
+    try {
+        $stmt = $pdo->prepare("
+            SELECT c.ID_CATEGORIA, c.CATEGORIA 
+            FROM tab_categorias c
+            INNER JOIN tab_entrenador_categoria ec ON c.ID_CATEGORIA = ec.ID_CATEGORIA
+            INNER JOIN tab_entrenadores e ON ec.ID_ENTRENADOR = e.ID_ENTRENADOR
+            WHERE e.ID_USUARIO = :id_usuario");
+        $stmt->execute(['id_usuario' => $id_usuarios]);
+        $categorias_entrenador = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        // Manejo de errores
+        error_log("Error al obtener categorías del entrenador: " . $e->getMessage());
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -32,16 +54,6 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
         <!-- * * * * * * When using an image, we recommend the SVG format.-->
         <!-- * * * * * * Dimensions: Maximum height: 32px, maximum width: 240px-->
         <a class="navbar-brand pe-3 ps-4 ps-lg-2" href="/index.php">Dashboard</a>
-        <!-- Navbar Search Input-->
-        <!-- * * Note: * * Visible only on and above the lg breakpoint-->
-        <!--
-        <form class="form-inline me-auto d-none d-lg-block me-3">
-            <div class="input-group input-group-joined input-group-solid">
-                <input class="form-control pe-0" type="search" placeholder="Search" aria-label="Search" />
-                <div class="input-group-text"><i data-feather="search"></i></div>
-            </div>
-        </form>
-        -->
         <!-- Navbar Items-->
         <ul class="navbar-nav align-items-center ms-auto">
             <!-- Documentation Dropdown-->
@@ -51,30 +63,24 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                     <i class="fas fa-chevron-right dropdown-arrow"></i>
                 </a>
                 <div class="dropdown-menu dropdown-menu-end py-0 me-sm-n15 me-lg-0 o-hidden animated--fade-in-up" aria-labelledby="navbarDropdownDocs">
-
-
-                    <!-- Botón para abrir el Modal de Subida -->
-                    <a class="dropdown-item py-3" href="#" data-bs-toggle="modal" data-bs-target="#uploadModal">
-                        <div class="icon-stack bg-primary-soft text-primary me-4"><i data-feather="upload"></i></div>
-                        <div>
-                            <div class="small text-gray-500">Subir Hoja de vida</div>
-                            Haz click para subir tu Hoja de vida (PDF)
-                        </div>
-                    </a>
-
-                    <!-- Botón para Descargar Hoja de Vida -->
-                    <a class="dropdown-item py-3" href="./configuracion/download.php">
-                        <div class="icon-stack bg-primary-soft text-primary me-4"><i data-feather="download"></i></div>
-                        <div>
-                            <div class="small text-gray-500">Descargar Hoja de vida</div>
-                            Haz click para descargar tu Hoja de vida
-                        </div>
-                    </a>
-
-                </div>
+<!-- Botón para abrir el Modal de Subida -->
+<a class="dropdown-item py-3" href="#" data-bs-toggle="modal" data-bs-target="#uploadModal">
+    <div class="icon-stack bg-primary-soft text-primary me-4"><i data-feather="upload"></i></div>
+    <div>
+        <div class="small text-gray-500">Subir Hoja de vida</div>
+        Haz click para subir tu Hoja de vida (PDF)
+    </div>
+</a>
+    <!-- Botón para Descargar Hoja de Vida -->
+    <a class="dropdown-item py-3" href="./configuracion/download.php">
+    <div class="icon-stack bg-primary-soft text-primary me-4"><i data-feather="download"></i></div>
+    <div>
+        <div class="small text-gray-500">Descargar Hoja de vida</div>
+        Haz click para descargar tu Hoja de vida
+    </div>
+</a>
+</div>
             </li>
-
-            <!-- Navbar Search Dropdown-->
             <!-- * * Note: * * Visible only below the lg breakpoint-->
             <li class="nav-item dropdown no-caret me-3 d-lg-none">
                 <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="searchDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i data-feather="search"></i></a>
@@ -123,10 +129,6 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                         <div class="dropdown-item-icon"><i data-feather="settings"></i></div>
                         Cuenta
                     </a>
-                    <a class="dropdown-item" href="/looneytunes/public/logs.php">
-                        <div class="dropdown-item-icon"><i data-feather="file-text"></i></div>
-                        Registro de Actividades
-                    </a>
                     <a class="dropdown-item" href="../public/logout.php">
                         <div class="dropdown-item-icon"><i data-feather="log-out"></i></div>
                         Logout
@@ -140,17 +142,14 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
             <nav class="sidenav shadow-right sidenav-dark">
                 <div class="sidenav-menu">
                     <div class="nav accordion" id="accordionSidenav">
-                        <!-- Sidenav Menu Heading (Account)-->
                         <!-- * * Note: * * Visible only on and above the sm breakpoint-->
                         <div class="sidenav-menu-heading d-sm-none">Account</div>
-                        <!-- Sidenav Link (Alerts)-->
                         <!-- * * Note: * * Visible only on and above the sm breakpoint-->
                         <a class="nav-link d-sm-none" href="#!">
                             <div class="nav-link-icon"><i data-feather="bell"></i></div>
                             Alerts
                             <span class="badge bg-warning-soft text-warning ms-auto">4 New!</span>
                         </a>
-                        <!-- Sidenav Link (Messages)-->
                         <!-- * * Note: * * Visible only on and above the sm breakpoint-->
                         <a class="nav-link d-sm-none" href="#!">
                             <div class="nav-link-icon"><i data-feather="mail"></i></div>
@@ -164,14 +163,24 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                             <div class="nav-link-icon"><i data-feather="home"></i></div>
                             Dashboard
                         </a>
-
                         <!-- Sidenav Heading (App Views)-->
                         <div class="sidenav-menu-heading">Categorias</div>
-                        <!-- Sidenav Accordion (Pages)-->
-
+<?php if (!empty($categorias_entrenador)): ?>
+    <?php foreach ($categorias_entrenador as $categoria): ?>
+        <a class="nav-link" href="#">
+            <div class="nav-link-icon"><i data-feather="activity"></i></div>
+            <?php echo htmlspecialchars($categoria['CATEGORIA']); ?>
+        </a>
+    <?php endforeach; ?>
+<?php else: ?>
+    <a class="nav-link" href="#">
+        <div class="nav-link-icon"><i data-feather="alert-circle"></i></div>
+        No hay categorías asignadas
+    </a>
+<?php endif; ?>
                     </div>
                 </div>
-
+                
                 <!-- Sidenav Footer -->
                 <div class="sidenav-footer">
                     <div class="sidenav-footer-content">
