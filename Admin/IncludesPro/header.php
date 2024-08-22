@@ -14,8 +14,8 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
     <title>Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/litepicker/dist/css/litepicker.css" rel="stylesheet" />
-    <link href="../assets/css/styles.css" rel="stylesheet" />
-    <link rel="icon" type="image/x-icon" href="../assetsFree/img/logo.png" />
+    <link href="../../../Assets/css/styles.css" rel="stylesheet" />
+    <link rel="icon" type="image/x-icon" href="../../../AssetsFree/img/logo.png" />
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>
