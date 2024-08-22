@@ -521,15 +521,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <div class="collapse" id="collapseReports" data-bs-parent="#accordionSidenav">
                             <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavReportsMenu">
                                 <!-- Reportes Individuales -->
-                                <a class="nav-link" href="/looneytunes/admin/reportes/reporte_admin.php">
+                                <a class="nav-link" href="/looneytunes/admin/reportes/vista/reporte_admin.php">
                                     <div class="nav-link-icon"><i class="fas fa-user-shield"></i></div>
                                     Reportes de Administradores
                                 </a>
-                                <a class="nav-link" href="/looneytunes/admin/configuracion/reportesp/reportes_entrenadores.php">
+                                <a class="nav-link" href="/looneytunes/admin/reportes/vista/reporte_entrenador.php">
                                     <div class="nav-link-icon"><i class="fas fa-dumbbell"></i></div>
                                     Reportes de Entrenadores
                                 </a>
-                                <a class="nav-link" href="/looneytunes/admin/configuracion/reportesp/reportes_categorias.php">
+                                <a class="nav-link" href="/looneytunes/admin/reportes/vista/reporte_categorias.php">
                                     <div class="nav-link-icon"><i class="fas fa-layer-group"></i></div>
                                     Reportes de Categorías
                                 </a>
@@ -537,7 +537,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <div class="nav-link-icon"><i class="fas fa-dollar-sign"></i></div>
                                     Reportes de Pagos
                                 </a>
-                                <a class="nav-link" href="/looneytunes/admin/configuracion/reportesp/reportes_inventario.php">
+                                <a class="nav-link" href="/looneytunes/admin/reportes/vista/reporte_inventario.php">
                                     <div class="nav-link-icon"><i class="fas fa-boxes"></i></div>
                                     Reportes de Inventario
                                 </a>
