@@ -219,7 +219,7 @@ function timeElapsedString($datetime, $full = false)
 
     // Devolver la diferencia de tiempo formateada.
     if (!$full) $string = array_slice($string, 0, 1);
-    return $string ? 'hace ' . implode(', ', $string) : 'justo ahora';
+    return $string ? '' . implode(', ', $string) : 'justo ahora';
 }
 
 include './includespro/header.php';
