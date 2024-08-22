@@ -24,39 +24,46 @@ if (isset($_GET['action']) && isset($_GET['ID_ADMINISTRADOR'])) {
         // Determinar la acción solicitada
         $newStatus = $_GET['action'] === 'activate' ? 'activo' : 'inactivo';
 
-        // Obtener el ID_USUARIO relacionado
-        $sql = "SELECT ID_USUARIO FROM tab_administradores WHERE ID_ADMINISTRADOR = :idAdministrador";
+        // Obtener el ID_USUARIO relacionado y el nombre del administrador
+        $sql = "SELECT ID_USUARIO, NOMBRE_ADMIN, APELLIDO_ADMIN FROM tab_administradores WHERE ID_ADMINISTRADOR = ?";
         $stmt = $conn->prepare($sql);
-        $stmt->bindParam(':idAdministrador', $idAdministrador, PDO::PARAM_INT);
-        $stmt->execute();
-        $idUsuario = $stmt->fetchColumn();
+        $stmt->execute([$idAdministrador]);
+        $adminData = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if (!$idUsuario) {
-            echo "ID de usuario no encontrado.";
+        if (!$adminData) {
+            echo "Administrador no encontrado.";
             exit();
         }
 
+        $idUsuario = $adminData['ID_USUARIO'];
+        $nombreAdministrador = $adminData['NOMBRE_ADMIN'] . ' ' . $adminData['APELLIDO_ADMIN'];
+
         // No permitir desactivar o activar el perfil propio
         if ($idUsuario == $loggedUserId) {
-            echo "No puedes cambiar el estado de tu propio perfil.";
+            header("Location: indexadministrador.php?mensaje=No puedes cambiar el estado de tu propio perfil.");
             exit();
         }
 
         // Actualizar el estado del administrador en `tab_administradores`
-        $sql = "UPDATE tab_administradores SET status = :newStatus WHERE ID_ADMINISTRADOR = :idAdministrador";
+        $sql = "UPDATE tab_administradores SET status = ? WHERE ID_ADMINISTRADOR = ?";
         $stmt = $conn->prepare($sql);
-        $stmt->bindParam(':newStatus', $newStatus, PDO::PARAM_STR);
-        $stmt->bindParam(':idAdministrador', $idAdministrador, PDO::PARAM_INT);
-        $stmt->execute();
+        $stmt->execute([$newStatus, $idAdministrador]);
 
         // Actualizar el estado del usuario en `tab_usuarios`
-        $sql = "UPDATE tab_usuarios SET status = :newStatus WHERE ID_USUARIO = :idUsuario";
+        $sql = "UPDATE tab_usuarios SET status = ? WHERE ID_USUARIO = ?";
         $stmt = $conn->prepare($sql);
-        $stmt->bindParam(':newStatus', $newStatus, PDO::PARAM_STR);
-        $stmt->bindParam(':idUsuario', $idUsuario, PDO::PARAM_INT);
-        $stmt->execute();
+        $stmt->execute([$newStatus, $idUsuario]);
 
-        header("Location: indexadministrador.php?mensaje=estado_actualizado");
+        // Registrar el cambio en la tabla `tab_logs`
+        $sql = "INSERT INTO tab_logs (ID_USUARIO, EVENTO, HORA_LOG, DIA_LOG, IP, TIPO_EVENTO) VALUES (?, ?, CURRENT_TIME(), CURRENT_DATE(), ?, ?)";
+        $stmt = $conn->prepare($sql);
+        $evento = $newStatus === 'activo' ? "Administrador $nombreAdministrador activado" : "Administrador $nombreAdministrador desactivado";
+        $ip = $_SERVER['REMOTE_ADDR'];
+        $tipoEvento = $newStatus === 'activo' ? 'usuario_activo' : 'usuario_inactivo';
+        
+        $stmt->execute([$loggedUserId, $evento, $ip, $tipoEvento]);
+
+        header("Location: indexadministrador.php?mensaje=Estado del administrador $nombreAdministrador actualizado.");
         exit();
     } catch (PDOException $e) {
         echo "Error: " . $e->getMessage();
@@ -68,6 +75,8 @@ $searchTerm = isset($_GET['search']) ? $_GET['search'] : '';
 $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
 $tipo_usuario = $_SESSION['tipo_usuario'];
 $usuario = isset($_SESSION['usuario']) ? $_SESSION['usuario'] : 'Usuario';
+$mensaje = isset($_GET['mensaje']) ? htmlspecialchars($_GET['mensaje']) : '';
+
 include '/xampp/htdocs/looneytunes/admin/includespro/header.php';
 ?>
 
@@ -77,6 +86,13 @@ include '/xampp/htdocs/looneytunes/admin/includespro/header.php';
         <div class="page-title">
             <h1>Lista de Administradores</h1>
         </div>
+
+        <!-- Mensaje de estado -->
+        <?php if ($mensaje): ?>
+            <div class="alert alert-warning">
+                <?php echo $mensaje; ?>
+            </div>
+        <?php endif; ?>
 
         <!-- Example DataTable for Dashboard Demo-->
         <div class="card mb-4">

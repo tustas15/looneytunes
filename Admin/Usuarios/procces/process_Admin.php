@@ -69,7 +69,7 @@ try {
 
     // Registrar el evento en la tabla tab_logs usando el ID del usuario que creó la cuenta
     $id_creador = $_SESSION['user_id'];  // Obtener el ID del creador desde la sesión
-    $evento = "Registro de nuevo administrador: " . $_POST['nombre_a'] . " " . $_POST['apellido_a'];
+    $evento = "Nuevo admin: " . $nombre_usuario;
     $ip = $_SERVER['REMOTE_ADDR'];
     $tipo_evento = 'nuevo_usuario';  // Define el tipo de evento
 

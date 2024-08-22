@@ -83,7 +83,7 @@ try {
     // Registrar el evento
     // Registrar la actividad en el log usando el ID del usuario que lo creó
     $creador_id = $_SESSION['user_id']; // Obtener el ID del usuario que creó al nuevo deportista
-    $evento = "Nuevo entrenador registrado: " . $_POST['nombre'] . " " . $_POST['apellido'];
+    $evento = "Nuevo entrenador: " . $nombre_usuario;
     $ip = $_SERVER['REMOTE_ADDR'];
     $tipo_evento = 'nuevo_usuario';  // Define el tipo de evento
 

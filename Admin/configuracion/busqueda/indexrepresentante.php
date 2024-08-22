@@ -16,8 +16,7 @@ if (!isset($_SESSION['tipo_usuario'])) {
 
 $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
 $tipo_usuario = $_SESSION['tipo_usuario'];
-$usuario = isset($_SESSION['usuario']) ? $_SESSION['usuario'] : 'Usuario';
-
+$usuario = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 'Usuario'; // Cambiado para usar el ID de usuario de la sesión
 
 // Obtener el término de búsqueda si se ha enviado
 $searchTerm = isset($_GET['search']) ? $_GET['search'] : '';
@@ -40,6 +39,20 @@ if (isset($_GET['action']) && isset($_GET['ID_REPRESENTANTE'])) {
             exit();
         }
 
+        // Obtener el nombre del representante
+        $sql = "SELECT NOMBRE_REPRE, APELLIDO_REPRE FROM tab_representantes WHERE ID_REPRESENTANTE = :idRepresentante";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':idRepresentante', $idRepresentante, PDO::PARAM_INT);
+        $stmt->execute();
+        $representanteData = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$representanteData) {
+            echo "Representante no encontrado.";
+            exit();
+        }
+
+        $nombreRepresentante = $representanteData['NOMBRE_REPRE'] . ' ' . $representanteData['APELLIDO_REPRE'];
+
         // Actualizar el estado del representante en `tab_representantes`
         $sql = "UPDATE tab_representantes SET status = :newStatus WHERE ID_REPRESENTANTE = :idRepresentante";
         $stmt = $conn->prepare($sql);
@@ -52,6 +65,19 @@ if (isset($_GET['action']) && isset($_GET['ID_REPRESENTANTE'])) {
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(':newStatus', $newStatus, PDO::PARAM_STR);
         $stmt->bindParam(':idUsuario', $idUsuario, PDO::PARAM_INT);
+        $stmt->execute();
+
+        // Registrar el cambio en la tabla `tab_logs`
+        $sql = "INSERT INTO tab_logs (ID_USUARIO, EVENTO, HORA_LOG, DIA_LOG, IP, TIPO_EVENTO) VALUES (:idUsuario, :evento, CURRENT_TIME(), CURRENT_DATE(), :ip, :tipoEvento)";
+        $stmt = $conn->prepare($sql);
+        $evento = $newStatus === 'activo' ? "Representante $nombreRepresentante activado" : "Representante $nombreRepresentante desactivado";
+        $ip = $_SERVER['REMOTE_ADDR'];
+        $tipoEvento = $newStatus === 'activo' ? 'usuario_activo' : 'usuario_inactivo';
+
+        $stmt->bindParam(':idUsuario', $usuario, PDO::PARAM_INT);
+        $stmt->bindParam(':evento', $evento, PDO::PARAM_STR);
+        $stmt->bindParam(':ip', $ip, PDO::PARAM_STR);
+        $stmt->bindParam(':tipoEvento', $tipoEvento, PDO::PARAM_STR);
         $stmt->execute();
 
         header("Location: indexrepresentante.php?mensaje=estado_actualizado");

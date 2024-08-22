@@ -17,6 +17,8 @@ if (!isset($_SESSION['tipo_usuario'])) {
     exit();
 }
 
+$user_id = $_SESSION['user_id'];
+$ip = $_SERVER['REMOTE_ADDR']; // Obtén la IP del usuario
 $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
 $tipo_usuario = $_SESSION['tipo_usuario'];
 $usuario = isset($_SESSION['usuario']) ? $_SESSION['usuario'] : 'Usuario';
@@ -76,19 +78,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             switch ($accion) {
                 case 'agregar_categoria':
                     $categoria = $_POST['categoria'];
+
+                    // Inserta la categoría en la base de datos
                     $sql = "INSERT INTO tab_categorias (CATEGORIA) VALUES (:categoria)";
                     $stmt = $conn->prepare($sql);
                     $stmt->bindParam(':categoria', $categoria);
                     $stmt->execute();
+
+                    // Registra la acción en tab_logs
+                    $log_action = "Nueva categoría: " . $categoria;
+                    $sqlLog = "INSERT INTO tab_logs (ID_USUARIO, EVENTO, HORA_LOG, DIA_LOG, IP, TIPO_EVENTO) VALUES (:user_id, :evento, CURRENT_TIME(), CURRENT_DATE(), :ip, 'nueva_categoria_deportista_creado')";
+                    $stmtLog = $conn->prepare($sqlLog);
+                    $stmtLog->bindParam(':user_id', $user_id);
+                    $stmtLog->bindParam(':evento', $log_action);
+                    $stmtLog->bindParam(':ip', $ip);
+                    $stmtLog->execute();
+
                     header("Location: " . $_SERVER['PHP_SELF']);
                     exit();
 
                 case 'eliminar_categoria':
                     $categoria_id = $_POST['categoria_id'];
+
+                    // Obtén el nombre de la categoría antes de eliminarla
+                    $get_categoria_sql = "SELECT CATEGORIA FROM tab_categorias WHERE ID_CATEGORIA = :categoria_id";
+                    $get_categoria_stmt = $conn->prepare($get_categoria_sql);
+                    $get_categoria_stmt->bindParam(':categoria_id', $categoria_id);
+                    $get_categoria_stmt->execute();
+                    $categoria = $get_categoria_stmt->fetchColumn();
+
+                    // Elimina la categoría de la base de datos
                     $sql = "DELETE FROM tab_categorias WHERE ID_CATEGORIA = :categoria_id";
                     $stmt = $conn->prepare($sql);
                     $stmt->bindParam(':categoria_id', $categoria_id);
                     $stmt->execute();
+
+                    // Registra la acción en tab_logs
+                    $log_action = "Categoría eliminada: " . $categoria;
+                    $sqlLog = "INSERT INTO tab_logs (ID_USUARIO, EVENTO, HORA_LOG, DIA_LOG, IP, TIPO_EVENTO) VALUES (:user_id, :evento, CURRENT_TIME(), CURRENT_DATE(), :ip, 'categoria_producto_eliminada')";
+                    $stmtLog = $conn->prepare($sqlLog);
+                    $stmtLog->bindParam(':user_id', $user_id);
+                    $stmtLog->bindParam(':evento', $log_action);
+                    $stmtLog->bindParam(':ip', $ip);
+                    $stmtLog->execute();
+
                     header("Location: " . $_SERVER['PHP_SELF']);
                     exit();
 
@@ -145,11 +178,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 case 'modificar_limite':
                     $categoria_id = $_POST['categoria_id'];
                     $nuevo_limite = $_POST['nuevo_limite'];
+
+                    // Actualiza el límite de deportistas en la base de datos
                     $sql = "UPDATE tab_categorias SET limite_deportistas = :nuevo_limite WHERE ID_CATEGORIA = :categoria_id";
                     $stmt = $conn->prepare($sql);
                     $stmt->bindParam(':nuevo_limite', $nuevo_limite);
                     $stmt->bindParam(':categoria_id', $categoria_id);
                     $stmt->execute();
+
+                    // Obtén el nombre de la categoría para el registro en logs
+                    $get_categoria_sql = "SELECT CATEGORIA FROM tab_categorias WHERE ID_CATEGORIA = :categoria_id";
+                    $get_categoria_stmt = $conn->prepare($get_categoria_sql);
+                    $get_categoria_stmt->bindParam(':categoria_id', $categoria_id);
+                    $get_categoria_stmt->execute();
+                    $categoria = $get_categoria_stmt->fetchColumn();
+
+                    // Registra la acción en tab_logs
+                    $log_action = "Límite modificado ". $nuevo_limite ." en "  . $categoria;
+                    $sqlLog = "INSERT INTO tab_logs (ID_USUARIO, EVENTO, HORA_LOG, DIA_LOG, IP, TIPO_EVENTO) VALUES (:user_id, :evento, CURRENT_TIME(), CURRENT_DATE(), :ip, 'nuevo_limite_categoria_deportistas_definido')";
+                    $stmtLog = $conn->prepare($sqlLog);
+                    $stmtLog->bindParam(':user_id', $user_id);
+                    $stmtLog->bindParam(':evento', $log_action);
+                    $stmtLog->bindParam(':ip', $ip);
+                    $stmtLog->execute();
+
                     header("Location: " . $_SERVER['PHP_SELF']);
                     exit();
 
@@ -392,14 +444,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                         <!-- Sidenav Accordion (Pages)-->
                         <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
-                            <div class="nav-link-icon"><i class="fas fa-fw fa-cog"></i></div>
+                            <div class="nav-link-icon"><i class="fas fa-cogs"></i></div>
                             Componentes
                             <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                         </a>
                         <div class="collapse" id="collapsePages" data-bs-parent="#accordionSidenav">
                             <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPagesMenu">
-                                <!-- Nested Sidenav Accordion (Pages -> Account)-->
+                                <!-- Crear Usuarios -->
+                                <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#flowsCollapseCrearUsuarios" aria-expanded="false" aria-controls="flowsCollapseCrearUsuarios">
+                                    <div class="nav-link-icon"><i class="fas fa-user-plus"></i></div>
+                                    Crear Usuarios
+                                    <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                                </a>
+                                <div class="collapse" id="flowsCollapseCrearUsuarios" data-bs-parent="#accordionSidenavPagesMenu">
+                                    <nav class="sidenav-menu-nested nav">
+                                        <a class="nav-link" href="/looneytunes/admin/usuarios/crear_usuarios/cradmin.php">Administrador</a>
+                                        <a class="nav-link" href="/looneytunes/admin/usuarios/crear_usuarios/crentrenador.php">Entrenador</a>
+                                        <a class="nav-link" href="/looneytunes/admin/usuarios/crear_usuarios/crrepresentante.php">Representante</a>
+                                        <a class="nav-link" href="/looneytunes/admin/usuarios/crear_usuarios/crdeportista.php">Deportista</a>
+                                    </nav>
+                                </div>
+                                <!-- Perfiles -->
                                 <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#pagesCollapseAccount" aria-expanded="false" aria-controls="pagesCollapseAccount">
+                                    <div class="nav-link-icon"><i class="fas fa-user-circle"></i></div>
                                     Perfiles
                                     <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                                 </a>
@@ -411,102 +478,116 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <a class="nav-link" href="/looneytunes/admin/configuracion/busqueda/indexdeportista.php">Deportistas</a>
                                     </nav>
                                 </div>
+                                <!-- Pago -->
                                 <a class="nav-link" href="/looneytunes/admin/configuracion/pagos/pagos.php">
-                                    Pago
-                                </a>
-                                <a class="nav-link" href="/looneytunes/admin/configuracion/reportesp/reportes_pagos.php">
-                                    Reportes de pagos
+                                    <div class="nav-link-icon"><i class="fas fa-dollar-sign"></i></div>
+                                    Pagos
                                 </a>
                             </nav>
                         </div>
 
+                        <!-- Sidenav Heading (Categorías)-->
+                        <div class="sidenav-menu-heading">Categorías</div>
+
+                        <!-- Utilidades -->
                         <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseFlows" aria-expanded="false" aria-controls="collapseFlows">
-                            <div class="nav-link-icon"><i class="fas fa-fw fa-wrench"></i></div>
-                            Utilidades
+                            <div class="nav-link-icon"><i class="fas fa-tags"></i></div>
+                            Categorías
                             <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                         </a>
                         <div class="collapse" id="collapseFlows" data-bs-parent="#accordionSidenav">
                             <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavFlowsMenu">
-                                <!-- Nested Sidenav Accordion (Flows -> Crear Usuarios)-->
-                                <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#flowsCollapseCrearUsuarios" aria-expanded="false" aria-controls="flowsCollapseCrearUsuarios">
-                                    Crear Usuarios
-                                    <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                                <!-- Categorías -->
+                                <a class="nav-link collapsed" href="/looneytunes/admin/categorias/categorias.php">
+                                    <div class="nav-link-icon"><i class="fas fa-plus-circle"></i></div>
+                                    Crear/Eliminar Categorías
                                 </a>
-                                <div class="collapse" id="flowsCollapseCrearUsuarios" data-bs-parent="#accordionSidenavFlowsMenu">
-                                    <nav class="sidenav-menu-nested nav">
-                                        <a class="nav-link" href="/looneytunes/admin/usuarios/crear_usuarios/cradmin.php">Administrador</a>
-                                        <a class="nav-link" href="/looneytunes/admin/usuarios/crear_usuarios/crentrenador.php">Entrenador</a>
-                                        <a class="nav-link" href="/looneytunes/admin/usuarios/crear_usuarios/crrepresentante.php">Representante</a>
-                                        <a class="nav-link" href="/looneytunes/admin/usuarios/crear_usuarios/crdeportista.php">Deportista</a>
-                                    </nav>
-                                </div>
-                                <!-- Añadido Categorías-->
-                                <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#flowsCollapseCategorias" aria-expanded="false" aria-controls="flowsCollapseCategorias">
-                                    Categorías
-                                    <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                                <a class="nav-link collapsed" href="/looneytunes/admin/categorias/revisar_categorias.php">
+                                    <div class="nav-link-icon"><i class="fas fa-list"></i></div>
+                                    Lista Categorías
                                 </a>
-                                <div class="collapse" id="flowsCollapseCategorias" data-bs-parent="#accordionSidenavFlowsMenu">
-                                    <nav class="sidenav-menu-nested nav">
-                                        <a class="nav-link" href="/looneytunes/admin/categorias/categorias.php">Crear/Eliminar Categorías</a>
-                                        <a class="nav-link" href="/looneytunes/admin/categorias/revisar_categorias.php">Lista Categorías</a>
-                                    </nav>
-                                </div>
                             </nav>
                         </div>
 
-                        <!-- Sidenav Heading (UI Toolkit)-->
-                        <div class="sidenav-menu-heading">INVENTARIO</div>
+                        <!-- Sidenav Heading (Reportes)-->
+                        <div class="sidenav-menu-heading">Reportes</div>
+
+                        <!-- Reportes -->
+                        <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseReports" aria-expanded="false" aria-controls="collapseReports">
+                            <div class="nav-link-icon"><i class="fas fa-chart-line"></i></div>
+                            Reportes
+                            <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                        </a>
+                        <div class="collapse" id="collapseReports" data-bs-parent="#accordionSidenav">
+                            <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavReportsMenu">
+                                <!-- Reportes Individuales -->
+                                <a class="nav-link" href="/looneytunes/admin/reportes/reporte_admin.php">
+                                    <div class="nav-link-icon"><i class="fas fa-user-shield"></i></div>
+                                    Reportes de Administradores
+                                </a>
+                                <a class="nav-link" href="/looneytunes/admin/configuracion/reportesp/reportes_entrenadores.php">
+                                    <div class="nav-link-icon"><i class="fas fa-dumbbell"></i></div>
+                                    Reportes de Entrenadores
+                                </a>
+                                <a class="nav-link" href="/looneytunes/admin/configuracion/reportesp/reportes_categorias.php">
+                                    <div class="nav-link-icon"><i class="fas fa-layer-group"></i></div>
+                                    Reportes de Categorías
+                                </a>
+                                <a class="nav-link" href="/looneytunes/admin/configuracion/reportesp/reportes_pagos.php">
+                                    <div class="nav-link-icon"><i class="fas fa-dollar-sign"></i></div>
+                                    Reportes de Pagos
+                                </a>
+                                <a class="nav-link" href="/looneytunes/admin/configuracion/reportesp/reportes_inventario.php">
+                                    <div class="nav-link-icon"><i class="fas fa-boxes"></i></div>
+                                    Reportes de Inventario
+                                </a>
+                            </nav>
+                        </div>
+
+                        <!-- Sidenav Heading (Inventario)-->
+                        <div class="sidenav-menu-heading">Inventario</div>
 
                         <!-- Sidenav Accordion (Categorías)-->
                         <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseLayoutsCategories" aria-expanded="false" aria-controls="collapseLayoutsCategories">
-                            <div class="nav-link-icon"><i data-feather="layout"></i></div>
+                            <div class="nav-link-icon"><i class="fas fa-layer-group"></i></div>
                             Categorías
                             <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                         </a>
                         <div class="collapse" id="collapseLayoutsCategories" data-bs-parent="#accordionSidenav">
                             <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavLayoutCategories">
-                                <!-- Nested Sidenav Accordion (Categorías -> Nueva)-->
-                                <a class="nav-link collapsed" href="/looneytunes/admin/inventario/index.php?vista=category_new">
-                                    Nueva
+                                <a class="nav-link" href="/looneytunes/admin/inventario/index.php?vista=category_new">
+                                    <div class="nav-link-icon"><i class="fas fa-folder-plus"></i></div>
+                                    Nueva Categoría
                                 </a>
-                                <!-- Nested Sidenav Accordion (Categorías -> Lista)-->
-                                <a class="nav-link collapsed" href="/looneytunes/Admin/inventario/categoria/category_list.php">
-                                    Lista
-                                </a>
-                                <!-- Nested Sidenav Accordion (Categorías -> Buscar)-->
-                                <a class="nav-link collapsed" href="/looneytunes/Admin/inventario/categoria/category_search.php">
-                                    Buscar
+                                <a class="nav-link" href="/looneytunes/admin/inventario/index.php?vista=category_list">
+                                    <div class="nav-link-icon"><i class="fas fa-folder-open"></i></div>
+                                    Lista Categorías
                                 </a>
                             </nav>
                         </div>
 
                         <!-- Sidenav Accordion (Productos)-->
                         <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseLayoutsProducts" aria-expanded="false" aria-controls="collapseLayoutsProducts">
-                            <div class="nav-link-icon"><i data-feather="layout"></i></div>
+                            <div class="nav-link-icon"><i class="fas fa-box"></i></div>
                             Productos
                             <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                         </a>
                         <div class="collapse" id="collapseLayoutsProducts" data-bs-parent="#accordionSidenav">
                             <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavLayoutProducts">
-                                <!-- Nested Sidenav Accordion (Productos -> Nuevo)-->
-                                <a class="nav-link collapsed" href="/looneytunes/Admin/inventario/index.php?vista=product_new">
-                                    Nuevo
+                                <a class="nav-link" href="/looneytunes/admin/inventario/index.php?vista=product_new">
+                                    <div class="nav-link-icon"><i class="fas fa-plus-circle"></i></div>
+                                    Nuevo Producto
                                 </a>
-                                <!-- Nested Sidenav Accordion (Productos -> Lista)-->
-                                <a class="nav-link collapsed" href="/looneytunes/Admin/inventario/index.php?vista=product_list">
-                                    Lista
+                                <a class="nav-link" href="/looneytunes/admin/inventario/index.php?vista=product_list">
+                                    <div class="nav-link-icon"><i class="fas fa-list"></i></div>
+                                    Lista Productos
                                 </a>
-                                <!-- Nested Sidenav Accordion (Productos -> Por categorías)-->
-                                <a class="nav-link collapsed" href="/looneytunes/Admin/inventario/index.php?vista=product_category">
-                                    Por categorías
-                                </a>
-                                <!-- Nested Sidenav Accordion (Productos -> Buscar)-->
-                                <a class="nav-link collapsed" href="/looneytunes/Admin/inventario/index.php?vista=product_search">
-                                    Buscar
+                                <a class="nav-link" href="/looneytunes/admin/inventario/index.php?vista=product_category">
+                                    <div class="nav-link-icon"><i class="fas fa-tags"></i></div>
+                                    Por Categorías
                                 </a>
                             </nav>
                         </div>
-
 
                     </div>
                 </div>

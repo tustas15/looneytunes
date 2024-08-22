@@ -280,15 +280,13 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                         <div class="collapse" id="collapseFlows" data-bs-parent="#accordionSidenav">
                             <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavFlowsMenu">
                                 <!-- Categorías -->
-                                <a class="nav-link collapsed" href="/looneytunes/admin/categorias/categorias.php" data-bs-toggle="collapse" data-bs-target="#flowsCollapseCategorias" aria-expanded="false" aria-controls="flowsCollapseCategorias">
+                                <a class="nav-link collapsed" href="/looneytunes/admin/categorias/categorias.php">
                                     <div class="nav-link-icon"><i class="fas fa-plus-circle"></i></div>
                                     Crear/Eliminar Categorías
-                                    <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                                 </a>
-                                <a class="nav-link collapsed" href="/looneytunes/admin/categorias/revisar_categorias.php" data-bs-toggle="collapse" data-bs-target="#flowsCollapseCategorias" aria-expanded="false" aria-controls="flowsCollapseCategorias">
+                                <a class="nav-link collapsed" href="/looneytunes/admin/categorias/revisar_categorias.php">
                                     <div class="nav-link-icon"><i class="fas fa-list"></i></div>
                                     Lista Categorías
-                                    <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                                 </a>
                             </nav>
                         </div>
@@ -372,9 +370,6 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                                 </a>
                             </nav>
                         </div>
-
-
-
                     </div>
                 </div>
 

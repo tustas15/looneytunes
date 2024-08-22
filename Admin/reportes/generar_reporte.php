@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $pdf->Cell(35, 8, 'Nombre', 'B', 0, 'C', 0);
         $pdf->Cell(15, 8, 'Apellido', 'B', 0, 'C', 0);
-        $pdf->Cell(75, 8, 'Evento', 'B', 0, 'C', 0);
+        $pdf->Cell(95, 8, 'Evento', 'B', 0, 'C', 0);
         $pdf->Cell(10, 8, 'Hora', 'B', 0, 'C', 0);
         $pdf->Cell(50, 8, 'Fecha', 'B', 1, 'C', 0);
 
@@ -84,13 +84,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $pdf->SetX(15);
             $pdf->Cell(25, 8, htmlspecialchars($row['NOMBRE_ADMIN']), 'B', 0, 'C', 1);
             $pdf->Cell(25, 8, htmlspecialchars($row['APELLIDO_ADMIN']), 'B', 0, 'C', 1);
-            $pdf->Cell(60, 8, htmlspecialchars($row['EVENTO']), 'B', 0, 'C', 1);
+            $pdf->Cell(80, 8, htmlspecialchars($row['EVENTO']), 'B', 0, 'C', 1);
             $pdf->Cell(30, 8, htmlspecialchars($row['HORA_LOG']), 'B', 0, 'C', 1);
             $pdf->Cell(30, 8, htmlspecialchars($row['DIA_LOG']), 'B', 1, 'C', 1);
         }
 
         // Salida del PDF
-        $pdf->Output();
+        $pdf->Output('D', 'Reporte_Administradores.pdf');
     } catch (PDOException $e) {
         echo "Error en la consulta: " . $e->getMessage();
         die();
