@@ -1,4 +1,6 @@
 <?php
+session_start(); // Asegúrate de que la sesión esté iniciada
+
 include '../../configuracion/conexion.php';
 
 try {
@@ -10,12 +12,36 @@ try {
     // Iniciar la transacción
     $conn->beginTransaction();
 
+    // Generar el nombre de usuario a partir del nombre y apellido
+    $nombre_usuario = strtolower($_POST['nombre_d'] . '.' . $_POST['apellido_d']);
+    $nombre_usuario = preg_replace('/\s+/', '.', $nombre_usuario); // Reemplazar espacios por puntos
+
+    // Verificar si el nombre de usuario ya existe
+    $stmt = $conn->prepare("SELECT COUNT(*) FROM tab_usuarios WHERE usuario = :usuario");
+    $stmt->bindParam(':usuario', $nombre_usuario);
+    $stmt->execute();
+    $count = $stmt->fetchColumn();
+
+    if ($count > 0) {
+        // Si el nombre de usuario ya existe, agregar un sufijo numérico
+        $suffix = 1;
+        do {
+            $nombre_usuario = strtolower($_POST['nombre_d'] . '.' . $_POST['apellido_d'] . $suffix);
+            $nombre_usuario = preg_replace('/\s+/', '.', $nombre_usuario);
+            $stmt = $conn->prepare("SELECT COUNT(*) FROM tab_usuarios WHERE usuario = :usuario");
+            $stmt->bindParam(':usuario', $nombre_usuario);
+            $stmt->execute();
+            $count = $stmt->fetchColumn();
+            $suffix++;
+        } while ($count > 0);
+    }
+
     // Preparar la consulta SQL para insertar los datos en tab_usuarios
     $stmt = $conn->prepare("INSERT INTO tab_usuarios (usuario, pass) VALUES (:usuario, :pass)");
     // Encriptar la contraseña
     $hashed_password = password_hash($_POST['cedula_d'], PASSWORD_DEFAULT);
 
-    $stmt->bindParam(':usuario', $_POST['nombre_d']);
+    $stmt->bindParam(':usuario', $nombre_usuario);
     $stmt->bindParam(':pass', $hashed_password);
 
     $stmt->execute();
@@ -40,7 +66,7 @@ try {
     $stmt->bindParam(':CEDULA_DEPO', $_POST['cedula_d']);
     $stmt->bindParam(':NUMERO_CELULAR', $_POST['celular_d']);
     $stmt->bindParam(':GENERO', $_POST['genero']);
-    
+
     $stmt->execute();
 
     $id_deportista = $conn->lastInsertId(); // Obtener el id_deportista generado
@@ -60,23 +86,21 @@ try {
     // Confirmar la transacción
     $conn->commit();
 
-    // Registrar la actividad en el log
+    // Registrar la actividad en el log usando el ID del usuario que lo creó
+    $creador_id = $_SESSION['user_id']; // Obtener el ID del usuario que creó al nuevo deportista
     $evento = "Nuevo deportista registrado: " . $_POST['nombre_d'] . " " . $_POST['apellido_d'];
     $ip = $_SERVER['REMOTE_ADDR'];
     $tipo_evento = 'nuevo_usuario';  // Define el tipo de evento
 
     $logQuery = "INSERT INTO tab_logs (ID_USUARIO, EVENTO, HORA_LOG, DIA_LOG, IP, TIPO_EVENTO) VALUES (?, ?, CURRENT_TIME(), CURRENT_DATE(), ?, ?)";
     $logStmt = $conn->prepare($logQuery);
-    $logStmt->execute([$id_usuario, $evento, $ip, $tipo_evento]);
+    $logStmt->execute([$creador_id, $evento, $ip, $tipo_evento]);
 
-    // Redirigir a la página de éxito
-    header("Location: ../crear_usuarios/crdeportista.php?message=success");
+    // Redirigir a crdeportista.php con el nombre de usuario y la clave generada
+    header("Location: ../crear_usuarios/crdeportista.php?message=success&usuario={$nombre_usuario}&clave={$_POST['cedula_d']}");
     exit();
 } catch (Exception $e) {
     // Revertir la transacción en caso de error
     $conn->rollBack();
-    // Redirigir a la página de error con el mensaje de excepción
-    header("Location: ../crear_usuarios/crdeportista.php?message=" . urlencode($e->getMessage()));
-    exit();
+    echo "Fallo: " . $e->getMessage();
 }
-?>

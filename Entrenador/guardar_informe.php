@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
+require_once('../admin/configuracion/conexion.php');
 
 if (!isset($_SESSION['user_id'])) {
     die(); // Termina el script silenciosamente si el usuario no está autorizado

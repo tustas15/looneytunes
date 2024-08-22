@@ -1,12 +1,12 @@
 <?php
 // Conexión a la base de datos
-require_once('../Admin/configuracion/conexion.php');
+require_once('../admin/configuracion/conexion.php');
 session_start();
 
 date_default_timezone_set('America/Guayaquil'); // Ajusta a tu zona horaria
 
 if (!isset($_SESSION['user_id'])) {
-    header("Location: ../Public/login.php");
+    header("Location: ../public/login.php");
     exit();
 }
 
@@ -224,7 +224,47 @@ function timeElapsedString($datetime, $full = false)
 
 include './includespro/header.php';
 ?>
+<style>
+    .bg-green {
+        background-color: #28a745;
+    }
 
+    .bg-red {
+        background-color: #dc3545;
+    }
+
+    .bg-purple {
+        background-color: #6f42c1;
+    }
+
+    .bg-yellow {
+        background-color: #ffc107;
+    }
+
+    .bg-blue {
+        background-color: #007bff;
+    }
+
+    .bg-orange {
+        background-color: #fd7e14;
+    }
+
+    .bg-pink {
+        background-color: #e83e8c;
+    }
+
+    .bg-teal {
+        background-color: #20c997;
+    }
+
+    .bg-gray {
+        background-color: #6c757d;
+    }
+
+    .bg-teal {
+        background-color: #20c997;
+    }
+</style>
 <main>
     <!-- Mostrar Mensajes -->
     <?php
@@ -283,11 +323,21 @@ include './includespro/header.php';
                             </button>
                             <div class="dropdown-menu dropdown-menu-end animated--fade-in-up" aria-labelledby="dropdownMenuButton">
                                 <h6 class="dropdown-header">Filter Activity:</h6>
-                                <a class="dropdown-item"><span class="badge bg-green-soft text-green my-1">INICIO SESIÓN</span></a>
-                                <a class="dropdown-item"><span class="badge bg-red-soft text-red my-1">CIERRE SESIÓN</span></a>
-                                <a class="dropdown-item"><span class="badge bg-purple-soft text-purple my-1">USUARIO NUEVO</span></a>
-                                <a class="dropdown-item"><span class="badge bg-yellow-soft text-yellow my-1">SUBIDA BASE DATOS</span></a>
+                                <a class="dropdown-item" href="?event=inicio_sesion"><span class="badge bg-green-soft text-green my-1">INICIO SESIÓN</span></a>
+                                <a class="dropdown-item" href="?event=cierre_sesion"><span class="badge bg-red-soft text-red my-1">CIERRE SESIÓN</span></a>
+                                <a class="dropdown-item" href="?event=nuevo_usuario"><span class="badge bg-purple-soft text-purple my-1">USUARIO NUEVO</span></a>
+                                <a class="dropdown-item" href="?event=subida_base_datos"><span class="badge bg-yellow-soft text-yellow my-1">SUBIDA BASE DATOS</span></a>
+                                <a class="dropdown-item" href="?event=nuevo_producto_creado"><span class="badge bg-blue-soft text-blue my-1">NUEVO PRODUCTO CREADO</span></a>
+                                <a class="dropdown-item" href="?event=nueva_categoria_producto_creado"><span class="badge bg-orange-soft text-orange my-1">NUEVA CATEGORÍA PRODUCTO</span></a>
+                                <a class="dropdown-item" href="?event=nueva_categoria_deportista_creado"><span class="badge bg-pink-soft text-pink my-1">NUEVA CATEGORÍA DEPORTISTA</span></a>
+                                <a class="dropdown-item" href="?event=nuevo_informe_enviado"><span class="badge bg-teal-soft text-teal my-1">NUEVO INFORME ENVIADO</span></a>
+                                <a class="dropdown-item" href="?event=nuevo_pago_agregado"><span class="badge bg-gray-soft text-gray my-1">NUEVO PAGO AGREGADO</span></a>
+                                <a class="dropdown-item" href="?event=nuevo_limite_categoria_deportistas_definido"><span class="badge bg-green-soft text-green my-1">NUEVO LÍMITE CATEGORÍA DEPORTISTAS</span></a>
+                                <a class="dropdown-item" href="?event=usuario_inactivo"><span class="badge bg-red-soft text-red my-1">USUARIO INACTIVO</span></a>
+                                <a class="dropdown-item" href="?event=usuario_activo"><span class="badge bg-purple-soft text-purple my-1">USUARIO ACTIVO</span></a>
+                                <a class="dropdown-item" href="?event=actualizacion_perfil"><span class="badge bg-teal-soft text-teal my-1">ACTUALIZACIÓN PERFIL</span></a>
                             </div>
+
                         </div>
                     </div>
                     <div class="card-body">
@@ -317,6 +367,33 @@ include './includespro/header.php';
                                                                                                 break;
                                                                                             case 'subida_base_datos':
                                                                                                 echo 'bg-yellow';
+                                                                                                break;
+                                                                                            case 'nuevo_producto_creado':
+                                                                                                echo 'bg-blue';
+                                                                                                break;
+                                                                                            case 'nueva_categoria_producto_creado':
+                                                                                                echo 'bg-orange';
+                                                                                                break;
+                                                                                            case 'nueva_categoria_deportista_creado':
+                                                                                                echo 'bg-pink';
+                                                                                                break;
+                                                                                            case 'nuevo_informe_enviado':
+                                                                                                echo 'bg-teal';
+                                                                                                break;
+                                                                                            case 'nuevo_pago_agregado':
+                                                                                                echo 'bg-gray';
+                                                                                                break;
+                                                                                            case 'nuevo_limite_categoria_deportistas_definido':
+                                                                                                echo 'bg-green';
+                                                                                                break;
+                                                                                            case 'usuario_inactivo':
+                                                                                                echo 'bg-red';
+                                                                                                break;
+                                                                                            case 'usuario_activo':
+                                                                                                echo 'bg-purple';
+                                                                                                break;
+                                                                                            case 'actualizacion_perfil':
+                                                                                                echo 'bg-teal'; // Asegúrate de que este color esté definido en tu CSS
                                                                                                 break;
                                                                                             default:
                                                                                                 echo 'bg-gray';
@@ -530,7 +607,7 @@ include './includespro/header.php';
                             </div>
                         </div>
                         <div class="card-footer d-flex align-items-center justify-content-between small">
-                            <a class="text-white stretched-link" href="../Admin/configuracion/busqueda/indexadministrador.php">Listado</a>
+                            <a class="text-white stretched-link" href="../admin/configuracion/busqueda/indexadministrador.php">Listado</a>
                             <div class="text-white"><i class="fas fa-angle-right"></i></div>
                         </div>
                     </div>
@@ -547,7 +624,7 @@ include './includespro/header.php';
                             </div>
                         </div>
                         <div class="card-footer d-flex align-items-center justify-content-between small">
-                            <a class="text-white stretched-link" href="../Admin/configuracion/busqueda/indexentrenador.php">Listado</a>
+                            <a class="text-white stretched-link" href="../admin/configuracion/busqueda/indexentrenador.php">Listado</a>
                             <div class="text-white"><i class="fas fa-angle-right"></i></div>
                         </div>
                     </div>
@@ -564,7 +641,7 @@ include './includespro/header.php';
                             </div>
                         </div>
                         <div class="card-footer d-flex align-items-center justify-content-between small">
-                            <a class="text-white stretched-link" href="../Admin/configuracion/busqueda/indexrepresentante.php">Listado</a>
+                            <a class="text-white stretched-link" href="../admin/configuracion/busqueda/indexrepresentante.php">Listado</a>
                             <div class="text-white"><i class="fas fa-angle-right"></i></div>
                         </div>
                     </div>
@@ -581,7 +658,7 @@ include './includespro/header.php';
                             </div>
                         </div>
                         <div class="card-footer d-flex align-items-center justify-content-between small">
-                            <a class="text-white stretched-link" href="../Admin/configuracion/busqueda/indexdeportista.php">Listado</a>
+                            <a class="text-white stretched-link" href="../admin/configuracion/busqueda/indexdeportista.php">Listado</a>
                             <div class="text-white"><i class="fas fa-angle-right"></i></div>
                         </div>
                     </div>
@@ -612,26 +689,65 @@ include './includespro/header.php';
                     </div>
                 </div>
                 <div class="col-xl-6 mb-4">
-                    <div class="card card-header-actions h-100">
-                        <div class="card-header">
-                            Ganancia Mensual
-                            <div class="dropdown no-caret">
-                                <button class="btn btn-transparent-dark btn-icon dropdown-toggle" id="areaChartDropdownExample" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="text-gray-500" data-feather="more-vertical"></i></button>
-                                <div class="dropdown-menu dropdown-menu-end animated--fade-in-up" aria-labelledby="areaChartDropdownExample">
-                                    <a class="dropdown-item" href="#!">Last 12 Months</a>
-                                    <a class="dropdown-item" href="#!">Last 30 Days</a>
-                                    <a class="dropdown-item" href="#!">Last 7 Days</a>
-                                    <a class="dropdown-item" href="#!">This Month</a>
-                                    <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="#!">Custom Range</a>
-                                </div>
-                            </div>
-                        </div>
+                    <!-- Pie chart with legend example-->
+                    <div class="card h-100">
+                        <div class="card-header">Traffic Sources</div>
                         <div class="card-body">
-                            <div class="chart-bar"><canvas id="myBarChart" width="100%" height="30"></canvas></div>
+                            <div class="chart-pie mb-4"><canvas id="myPieChart" width="100%" height="50"></canvas></div>
+                            <div class="list-group list-group-flush" id="trafficSourcesList">
+                                <!-- La lista se actualizará dinámicamente -->
+                            </div>
                         </div>
                     </div>
                 </div>
+
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        fetch('configuracion/procesar_datos.php')
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.error) {
+                                    console.error(data.error);
+                                    return;
+                                }
+
+                                var categorias = Array.isArray(data.categorias) ? data.categorias : [];
+                                var cantidades = Array.isArray(data.cantidades) ? data.cantidades : [];
+
+                                // Crear gráfico de pastel
+                                var ctx = document.getElementById('myPieChart').getContext('2d');
+                                new Chart(ctx, {
+                                    type: 'pie',
+                                    data: {
+                                        labels: categorias,
+                                        datasets: [{
+                                            data: cantidades,
+                                            backgroundColor: ['#007bff', '#6f42c1', '#28a745'],
+                                        }]
+                                    }
+                                });
+
+                                // Actualizar la lista de fuentes de tráfico
+                                var list = document.getElementById('trafficSourcesList');
+                                list.innerHTML = ''; // Limpiar la lista existente
+
+                                categorias.forEach((categoria, index) => {
+                                    var colorClass = ['text-blue', 'text-purple', 'text-green'][index % 3];
+                                    var listItem = document.createElement('div');
+                                    listItem.className = 'list-group-item d-flex align-items-center justify-content-between small px-0 py-2';
+                                    listItem.innerHTML = `
+                            <div class="me-3">
+                                <i class="fas fa-circle fa-sm me-1 ${colorClass}"></i>
+                                ${categoria}
+                            </div>
+                            <div class="fw-500 text-dark">${cantidades[index]}%</div>
+                        `;
+                                    list.appendChild(listItem);
+                                });
+                            })
+                            .catch(error => console.error('Error:', error));
+                    });
+                </script>
             </div>
 
             <!-- Tarjeta para generar Informes -->

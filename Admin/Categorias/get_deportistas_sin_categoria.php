@@ -1,5 +1,5 @@
 <?php
-require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
+require_once('../../admin/configuracion/conexion.php');
 
 try {
     $sql = "SELECT ID_DEPORTISTA, CONCAT(NOMBRE_DEPO, ' ', APELLIDO_DEPO) AS nombre_completo

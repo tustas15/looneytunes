@@ -1,6 +1,6 @@
 <?php
 // Conexión a la base de datos
-require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
+require_once('../conexion.php');
 session_start();
 
 // Verificar si el usuario está autenticado
@@ -46,8 +46,6 @@ try {
     $categoriesStmt = $conn->query("SELECT * FROM tab_categorias");
     $categorias = $categoriesStmt->fetchAll(PDO::FETCH_ASSOC);
 
-    include '/xampp/htdocs/looneytunes/admin/includespro/header.php';
-
     // Manejar el formulario de edición
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $nombre_entre = $_POST['nombre_entre'];
@@ -81,22 +79,49 @@ try {
             $deleteCategoriesStmt->execute();
 
             $insertCategoryStmt = $conn->prepare("INSERT INTO tab_entrenador_categoria (ID_ENTRENADOR, ID_CATEGORIA) VALUES (:id_entrenador, :id_categoria)");
-
             foreach ($categorias_seleccionadas as $id_categoria) {
-                $insertCategoryStmt->bindParam(':id_entrenador', $entrenador['ID_ENTRENADOR'], PDO::PARAM_INT);
-                $insertCategoryStmt->bindParam(':id_categoria', $id_categoria, PDO::PARAM_INT);
-                $insertCategoryStmt->execute();
+                $insertCategoryStmt->execute([
+                    ':id_entrenador' => $entrenador['ID_ENTRENADOR'],
+                    ':id_categoria' => intval($id_categoria)
+                ]);
             }
+
+            // Registrar el evento en la tabla tab_logs
+            $logStmt = $conn->prepare("
+                INSERT INTO tab_logs (ID_USUARIO, EVENTO, HORA_LOG, DIA_LOG, IP, TIPO_EVENTO)
+                VALUES (:id_usuario, :evento, :hora_log, :dia_log, :ip, :tipo_evento)
+            ");
+            $evento = "Actualización de información del entrenador: " . $nombre_entre . " " . $apellido_entre;
+            $hora_log = date("H:i:s");
+            $dia_log = date("Y-m-d");
+            $ip = $_SERVER['REMOTE_ADDR'];
+            $tipo_evento = "actualizacion_perfil"; // Tipo de evento adecuado
+
+            $logStmt->bindParam(':id_usuario', $_SESSION['user_id'], PDO::PARAM_INT);
+            $logStmt->bindParam(':evento', $evento, PDO::PARAM_STR);
+            $logStmt->bindParam(':hora_log', $hora_log, PDO::PARAM_STR);
+            $logStmt->bindParam(':dia_log', $dia_log, PDO::PARAM_STR);
+            $logStmt->bindParam(':ip', $ip, PDO::PARAM_STR);
+            $logStmt->bindParam(':tipo_evento', $tipo_evento, PDO::PARAM_STR);
+            $logStmt->execute();
 
             echo "<div class='alert alert-success' role='alert'>Perfil actualizado exitosamente.</div>";
 
-            // Volver a obtener los datos del entrenador actualizados
-            $stmt->execute();
-            $entrenador = $stmt->fetch(PDO::FETCH_ASSOC);
+            // Redirigir después de la actualización
+            header("Location: /looneytunes/admin/configuracion/busqueda/indexentrenador.php");
+            exit();
         } catch (PDOException $e) {
             echo "<div class='alert alert-danger' role='alert'>Error: " . $e->getMessage() . "</div>";
         }
     }
+
+    include '/xampp/htdocs/looneytunes/admin/includespro/header.php';
+} catch (PDOException $e) {
+    echo "Error: " . $e->getMessage();
+}
+
+// Cierre de la conexión
+$conn = null;
 ?>
 
 <main>
@@ -171,16 +196,9 @@ try {
                 </form>
             </div>
         </div>
-
     </div>
 </main>
 
 <?php
-    include_once('/xampp/htdocs/looneytunes/admin/includespro/footer.php');
-} catch (PDOException $e) {
-    echo "Error: " . $e->getMessage();
-}
-
-// Cierre de la conexión
-$conn = null;
+include_once('/xampp/htdocs/looneytunes/admin/includespro/footer.php');
 ?>

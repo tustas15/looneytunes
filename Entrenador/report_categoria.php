@@ -4,7 +4,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 // Incluir el archivo de conexión a la base de datos
-require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
+require_once('../admin/configuracion/conexion.php');
 
 // Iniciar la sesión
 session_start();
@@ -18,7 +18,7 @@ if ($conn === null) {
 
 // Comprobamos si el usuario está logueado
 if (!isset($_SESSION['user_id'])) {
-    header("Location: ../Public/login.php");
+    header("Location: ../public/login.php");
     exit();
 }
 
@@ -88,7 +88,7 @@ include './includes/header.php';
                                             <td><?= htmlspecialchars($jugador['NOMBRE_REPRE'] . ' ' . $jugador['APELLIDO_REPRE']) ?></td>
                                             <td>
                                                 <a href="detalle_deportista.php?id=<?= $jugador['ID_DEPORTISTA'] ?>" class="btn btn-primary">Datos</a>
-                                                <a href="#" class="btn btn-success btn-ingresar" data-id="<?= $jugador['ID_DEPORTISTA'] ?>" data-nombre="<?= htmlspecialchars($jugador['NOMBRE_DEPO'] . ' ' . $jugador['APELLIDO_DEPO']) ?>">Ingresar</a>
+                                                <a href="#" class="btn btn-success btn-ingresar" data-id="<?= $jugador['ID_DEPORTISTA'] ?>" data-nombre="<?= htmlspecialchars($jugador['NOMBRE_DEPO'] . ' ' . $jugador['APELLIDO_DEPO']) ?>" >Ingresar</a>
                                             </td>
                                             <td>
                                                 <a href="observaciones_deportista.php?id=<?= $jugador['ID_DEPORTISTA'] ?>" class="btn btn-secondary">Observaciones</a>
@@ -112,9 +112,9 @@ include './includes/header.php';
         <div class="modal-dialog">
             <div class="modal-content">
             <div class="modal-header">
-    <h5 class="modal-title" id="ingresarModalLabel">Ingresar Datos para <span id="nombreDeportistaIngreso"></span></h5>
-    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-</div>
+                <h5 class="modal-title" id="ingresarModalLabel">Ingresar Datos para <span id="nombreDeportistaIngreso"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
                 <div class="modal-body">
                     <form id="detallesForm">
                         <input type="hidden" id="deportistaId" name="deportistaId">
@@ -173,6 +173,6 @@ include './includes/header.php';
 
 <?php
 // Incluir el pie de página
-include './includes/footer.php';
+include_once('/xampp/htdocs/looneytunes/entrenador/includes/footer.php'); 
 ?>
 

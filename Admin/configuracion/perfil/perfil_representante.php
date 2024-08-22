@@ -1,6 +1,6 @@
 <?php
 // Conexión a la base de datos
-require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
+require_once('../conexion.php');
 session_start();
 
 if (!isset($_SESSION['user_id'])) {
@@ -21,8 +21,8 @@ if (!isset($_GET['ID_REPRESENTANTE'])) {
 
 $id_representante = intval($_GET['ID_REPRESENTANTE']);
 
-// Obtener datos del representante
 try {
+    // Obtener datos del representante
     $stmt = $conn->prepare("
         SELECT ID_REPRESENTANTE, NOMBRE_REPRE, APELLIDO_REPRE, CEDULA_REPRE, CELULAR_REPRE, CORREO_REPRE, DIRECCION_REPRE
         FROM tab_representantes
@@ -41,7 +41,7 @@ try {
     $tipo_usuario = $_SESSION['tipo_usuario'];
     $usuario = isset($_SESSION['usuario']) ? $_SESSION['usuario'] : 'Usuario';
 
-    include '/xampp/htdocs/looneytunes/admin/includespro/header.php';
+
 
     // Manejar el formulario de edición
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -72,6 +72,25 @@ try {
             $updateStmt->bindParam(':id_representante', $id_representante, PDO::PARAM_INT);
             $updateStmt->execute();
 
+            // Registrar en tab_logs
+           $logStmt = $conn->prepare("
+                INSERT INTO tab_logs (ID_USUARIO, EVENTO, HORA_LOG, DIA_LOG, IP, TIPO_EVENTO)
+                VALUES (:id_usuario, :evento, :hora_log, :dia_log, :ip, :tipo_evento)
+            ");
+            $logStmt->bindParam(':id_usuario', $_SESSION['user_id'], PDO::PARAM_INT);
+            $logStmt->bindParam(':evento', $evento, PDO::PARAM_STR);
+            $logStmt->bindParam(':hora_log', $hora_log, PDO::PARAM_STR);
+            $logStmt->bindParam(':dia_log', $dia_log, PDO::PARAM_STR);
+            $logStmt->bindParam(':ip', $ip, PDO::PARAM_STR);
+            $logStmt->bindParam(':tipo_evento', $tipo_evento, PDO::PARAM_STR);
+
+            // Datos del log
+            $evento = "Actualización de información del representante: " . $nombre_repre . " " . $apellido_repre;
+            $hora_log = date("H:i:s");
+            $dia_log = date("Y-m-d");
+            $ip = $_SERVER['REMOTE_ADDR'];
+            $tipo_evento = "actualizacion_perfil"; // Tipo de evento adecuado
+            $logStmt->execute();
             echo "<div class='alert alert-success' role='alert'>Perfil actualizado exitosamente.</div>";
 
             // Volver a obtener los datos del representante actualizados
@@ -81,7 +100,7 @@ try {
             echo "<div class='alert alert-danger' role='alert'>Error: " . $e->getMessage() . "</div>";
         }
     }
-
+    include '/xampp/htdocs/looneytunes/admin/includespro/header.php';
     // Obtener los deportistas asociados al representante
     $deportistasStmt = $conn->prepare("
         SELECT d.ID_DEPORTISTA, d.NOMBRE_DEPO, d.APELLIDO_DEPO
@@ -92,90 +111,90 @@ try {
     $deportistasStmt->bindParam(':id_representante', $id_representante, PDO::PARAM_INT);
     $deportistasStmt->execute();
     $deportistas = $deportistasStmt->fetchAll(PDO::FETCH_ASSOC);
-
+    
 ?>
 
-<main>
-    <div class="container-xl px-4 mt-4">
-        <!-- Page title -->
-        <div class="page-title">
-            <h1>Perfil de Representante</h1>
-        </div>
+    <main>
+        <div class="container-xl px-4 mt-4">
+            <!-- Page title -->
+            <div class="page-title">
+                <h1>Perfil de Representante</h1>
+            </div>
 
-        <!-- Profile Details -->
-        <div class="card mb-4">
-            <div class="card-header">Detalles del Representante</div>
-            <div class="card-body">
-                <form method="POST" action="">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="nombre_repre">Nombre</label>
-                                <input type="text" class="form-control" id="nombre_repre" name="nombre_repre" value="<?php echo htmlspecialchars($representante['NOMBRE_REPRE']); ?>" required>
+            <!-- Profile Details -->
+            <div class="card mb-4">
+                <div class="card-header">Detalles del Representante</div>
+                <div class="card-body">
+                    <form method="POST" action="">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="nombre_repre">Nombre</label>
+                                    <input type="text" class="form-control" id="nombre_repre" name="nombre_repre" value="<?php echo htmlspecialchars($representante['NOMBRE_REPRE']); ?>" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="apellido_repre">Apellido</label>
+                                    <input type="text" class="form-control" id="apellido_repre" name="apellido_repre" value="<?php echo htmlspecialchars($representante['APELLIDO_REPRE']); ?>" required>
+                                </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="apellido_repre">Apellido</label>
-                                <input type="text" class="form-control" id="apellido_repre" name="apellido_repre" value="<?php echo htmlspecialchars($representante['APELLIDO_REPRE']); ?>" required>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="cedula_repre">Cédula</label>
+                                    <input type="text" class="form-control" id="cedula_repre" name="cedula_repre" value="<?php echo htmlspecialchars($representante['CEDULA_REPRE']); ?>" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="celular_repre">Celular</label>
+                                    <input type="text" class="form-control" id="celular_repre" name="celular_repre" value="<?php echo htmlspecialchars($representante['CELULAR_REPRE']); ?>" required>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="cedula_repre">Cédula</label>
-                                <input type="text" class="form-control" id="cedula_repre" name="cedula_repre" value="<?php echo htmlspecialchars($representante['CEDULA_REPRE']); ?>" required>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="correo_repre">Correo</label>
+                                    <input type="email" class="form-control" id="correo_repre" name="correo_repre" value="<?php echo htmlspecialchars($representante['CORREO_REPRE']); ?>" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="direccion_repre">Dirección</label>
+                                    <input type="text" class="form-control" id="direccion_repre" name="direccion_repre" value="<?php echo htmlspecialchars($representante['DIRECCION_REPRE']); ?>" required>
+                                </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="celular_repre">Celular</label>
-                                <input type="text" class="form-control" id="celular_repre" name="celular_repre" value="<?php echo htmlspecialchars($representante['CELULAR_REPRE']); ?>" required>
+                        <div class="row mt-4">
+                            <div class="col-md-12 d-flex justify-content-between">
+                                <button type="submit" class="btn btn-primary">Actualizar</button>
+                                <a href="/looneytunes/admin/configuracion/busqueda/indexrepresentante.php" class="btn btn-primary">Volver a la Lista</a>
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="correo_repre">Correo</label>
-                                <input type="email" class="form-control" id="correo_repre" name="correo_repre" value="<?php echo htmlspecialchars($representante['CORREO_REPRE']); ?>" required>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="direccion_repre">Dirección</label>
-                                <input type="text" class="form-control" id="direccion_repre" name="direccion_repre" value="<?php echo htmlspecialchars($representante['DIRECCION_REPRE']); ?>" required>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row mt-4">
-                        <div class="col-md-12 d-flex justify-content-between">
-                            <button type="submit" class="btn btn-primary">Actualizar</button>
-                            <a href="/looneytunes/admin/configuracion/busqueda/indexrepresentante.php" class="btn btn-primary">Volver a la Lista</a>
-                        </div>
-                    </div>
-                </form>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Deportistas Asociados -->
+            <div class="card mb-4">
+                <div class="card-header">Deportistas Asociados</div>
+                <div class="card-body">
+                    <ul class="list-group">
+                        <?php foreach ($deportistas as $deportista): ?>
+                            <li class="list-group-item">
+                                <a href="perfil_deportista.php?ID_DEPORTISTA=<?php echo $deportista['ID_DEPORTISTA']; ?>">
+                                    <?php echo htmlspecialchars($deportista['NOMBRE_DEPO'] . ' ' . $deportista['APELLIDO_DEPO']); ?>
+                                </a>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
             </div>
         </div>
-
-        <!-- Deportistas Asociados -->
-        <div class="card mb-4">
-            <div class="card-header">Deportistas Asociados</div>
-            <div class="card-body">
-                <ul class="list-group">
-                    <?php foreach ($deportistas as $deportista): ?>
-                        <li class="list-group-item">
-                            <a href="perfil_deportista.php?ID_DEPORTISTA=<?php echo $deportista['ID_DEPORTISTA']; ?>">
-                                <?php echo htmlspecialchars($deportista['NOMBRE_DEPO'] . ' ' . $deportista['APELLIDO_DEPO']); ?>
-                            </a>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
-            </div>
-        </div>
-    </div>
-</main>
+    </main>
 
 <?php
     include_once('/xampp/htdocs/looneytunes/admin/includespro/footer.php');

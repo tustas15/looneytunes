@@ -1,76 +1,108 @@
 <?php
-	/*== Almacenando datos ==*/
-    $usuario=limpiar_cadena($_POST['login_usuario']);
-    $clave=limpiar_cadena($_POST['login_clave']);
-
+    /*== Almacenando datos ==*/
+    $usuario = limpiar_cadena($_POST['login_usuario']);
+    $clave = limpiar_cadena($_POST['login_clave']);
 
     /*== Verificando campos obligatorios ==*/
-    if($usuario=="" || $clave==""){
+    if ($usuario == "" || $clave == "") {
         echo '
             <div class="notification is-danger is-light">
-                <strong>¡Ocurrio un error inesperado!</strong><br>
+                <strong>¡Ocurrió un error inesperado!</strong><br>
                 No has llenado todos los campos que son obligatorios
             </div>
         ';
         exit();
     }
 
-
     /*== Verificando integridad de los datos ==*/
-    if(verificar_datos("[a-zA-Z0-9]{4,20}",$usuario)){
+    if (verificar_datos("[a-zA-Z0-9]{4,20}", $usuario)) {
         echo '
             <div class="notification is-danger is-light">
-                <strong>¡Ocurrio un error inesperado!</strong><br>
+                <strong>¡Ocurrió un error inesperado!</strong><br>
                 El USUARIO no coincide con el formato solicitado
             </div>
         ';
         exit();
     }
 
-    if(verificar_datos("[a-zA-Z0-9$@.-]{7,100}",$clave)){
+    if (verificar_datos("[a-zA-Z0-9$@.-]{7,100}", $clave)) {
         echo '
             <div class="notification is-danger is-light">
-                <strong>¡Ocurrio un error inesperado!</strong><br>
-                Las CLAVE no coinciden con el formato solicitado
+                <strong>¡Ocurrió un error inesperado!</strong><br>
+                La CLAVE no coincide con el formato solicitado
             </div>
         ';
         exit();
     }
 
+    /*== Conectando a la base de datos ==*/
+    $check_user = conexion();
+    $query = $check_user->prepare("SELECT * FROM tab_usuarios WHERE USUARIO = :usuario");
+    $query->bindParam(':usuario', $usuario, PDO::PARAM_STR);
+    $query->execute();
 
-    $check_user=conexion();
-    $check_user=$check_user->query("SELECT * FROM usuario WHERE usuario_usuario='$usuario'");
-    if($check_user->rowCount()==1){
+    if ($query->rowCount() == 1) {
+        $check_user = $query->fetch();
 
-    	$check_user=$check_user->fetch();
+        /*== Verificando si el usuario está bloqueado ==*/
+        if ($check_user['bloqueado_hasta'] > date('Y-m-d H:i:s')) {
+            echo '
+                <div class="notification is-danger is-light">
+                    <strong>¡Cuenta bloqueada!</strong><br>
+                    Tu cuenta está bloqueada hasta el ' . date('d-m-Y H:i:s', strtotime($check_user['bloqueado_hasta'])) . '
+                </div>
+            ';
+            exit();
+        }
 
-    	if($check_user['usuario_usuario']==$usuario && password_verify($clave, $check_user['usuario_clave'])){
+        if ($check_user['USUARIO'] == $usuario && password_verify($clave, $check_user['PASS'])) {
+            /*== Restableciendo intentos fallidos ==*/
+            $update = $check_user->prepare("UPDATE tab_usuarios SET intentos_fallidos = 0 WHERE USUARIO = :usuario");
+            $update->bindParam(':usuario', $usuario, PDO::PARAM_STR);
+            $update->execute();
 
-    		$_SESSION['id']=$check_user['usuario_id'];
-    		$_SESSION['nombre']=$check_user['usuario_nombre'];
-    		$_SESSION['apellido']=$check_user['usuario_apellido'];
-    		$_SESSION['usuario']=$check_user['usuario_usuario'];
+            /*== Iniciando sesión ==*/
+            $_SESSION['id'] = $check_user['ID_USUARIO'];
+            $_SESSION['usuario'] = $check_user['USUARIO'];
 
-    		if(headers_sent()){
-				echo "<script> window.location.href='index.php?vista=home'; </script>";
-			}else{
-				header("Location: index.php?vista=home");
-			}
+            if (headers_sent()) {
+                echo "<script> window.location.href='index.php?vista=home'; </script>";
+            } else {
+                header("Location: index.php?vista=home");
+            }
 
-    	}else{
-    		echo '
-	            <div class="notification is-danger is-light">
-	                <strong>¡Ocurrio un error inesperado!</strong><br>
-	                Usuario o clave incorrectos
-	            </div>
-	        ';
-    	}
-    }else{
-    	echo '
+        } else {
+            /*== Incrementando intentos fallidos ==*/
+            $intentos_fallidos = $check_user['intentos_fallidos'] + 1;
+            $bloqueado_hasta = null;
+
+            if ($intentos_fallidos >= 3) {
+                /*== Bloqueando usuario por 15 minutos ==*/
+                $bloqueado_hasta = date('Y-m-d H:i:s', strtotime('+15 minutes'));
+                $intentos_fallidos = 0;
+            }
+
+            $update = $check_user->prepare("UPDATE tab_usuarios SET intentos_fallidos = :intentos_fallidos, bloqueado_hasta = :bloqueado_hasta WHERE USUARIO = :usuario");
+            $update->bindParam(':intentos_fallidos', $intentos_fallidos, PDO::PARAM_INT);
+            $update->bindParam(':bloqueado_hasta', $bloqueado_hasta, PDO::PARAM_STR);
+            $update->bindParam(':usuario', $usuario, PDO::PARAM_STR);
+            $update->execute();
+
+            echo '
+                <div class="notification is-danger is-light">
+                    <strong>¡Ocurrió un error inesperado!</strong><br>
+                    Usuario o clave incorrectos
+                </div>
+            ';
+        }
+    } else {
+        echo '
             <div class="notification is-danger is-light">
-                <strong>¡Ocurrio un error inesperado!</strong><br>
+                <strong>¡Ocurrió un error inesperado!</strong><br>
                 Usuario o clave incorrectos
             </div>
         ';
     }
-    $check_user=null;
+
+    $check_user = null;
+?>

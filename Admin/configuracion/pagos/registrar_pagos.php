@@ -11,43 +11,42 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $motivo = $_POST['motivo'] ?? '';
     $nombre_archivo = '';
     $entidad_origen = $_POST['entidad_origen'] ?? '';
-
+    $tipo_evento = 'nuevo_pago_agregado'; // Tipo de evento para log
+    $id_usuario = $_SESSION['user_id'] ?? null; // ID del usuario desde la sesión
 
     // Si el método de pago es efectivo, se asigna el ID del banco "placeholder"
     if ($metodo_pago === 'efectivo') {
         $id_banco = 0; // ID del banco "Efectivo"
-       
     } else {
         $id_banco = $_POST['banco'] ?? '';
         if (isset($_FILES['nombre_archivo'])) {
             $archivo = $_FILES['nombre_archivo'];
             $nombre_archivo = $archivo['name'];
             $ruta_destino = 'C:/xampp/htdocs/looneytunes/Admin/configuracion/pagos/comprobantes/';
-            //$nombre_unico = uniqid() . '_' . $nombre_archivo; //para ponerle un valor unico antes del nombre del archivo 
-            $ruta_completa = $ruta_destino .$nombre_archivo; //$nombre_unico; es ved de nombre_archivo es nombre_unico
+            $ruta_completa = $ruta_destino . $nombre_archivo;
 
             if (!move_uploaded_file($archivo['tmp_name'], $ruta_completa)){
                 $response = [
                     'success' => false,
-                    'message' => 'porfavor ingresa el comprobante'
+                    'message' => 'Por favor, ingresa el comprobante'
                 ];
                 header('Content-Type: application/json');
                 echo json_encode($response);
                 exit;
             }
-            $nombre_archivo;//= $nombre_unico; solo descomentar el codigo si quiero que se genero un codigo unico seguido del nombre del comprobante 
-        
         } elseif ($metodo_pago === 'efectivo') {
             // No se maneja archivo para efectivo
             $nombre_archivo = null; // No se usa archivo
-            $entidad_origen=null;
+            $entidad_origen = null;
         }
     }
+
     try {
-        $sql = "INSERT INTO tab_pagos (ID_REPRESENTANTE, ID_DEPORTISTA, ID_BANCO, METODO_PAGO, MONTO, FECHA_PAGO, MOTIVO, NOMBRE_ARCHIVO, ENTIDAD_ORIGEN) 
-                VALUES (:id_representante, :id_deportista, :id_banco, :metodo_pago, :monto, :fecha_pago, :motivo, :nombre_archivo, :entidad_origen)";
-        $stmt = $conn->prepare($sql);
-        $stmt->execute([
+        // Insertar en tab_pagos
+        $sql_pagos = "INSERT INTO tab_pagos (ID_REPRESENTANTE, ID_DEPORTISTA, ID_BANCO, METODO_PAGO, MONTO, FECHA_PAGO, MOTIVO, NOMBRE_ARCHIVO, ENTIDAD_ORIGEN) 
+                      VALUES (:id_representante, :id_deportista, :id_banco, :metodo_pago, :monto, :fecha_pago, :motivo, :nombre_archivo, :entidad_origen)";
+        $stmt_pagos = $conn->prepare($sql_pagos);
+        $stmt_pagos->execute([
             ':id_representante' => $id_representante,
             ':id_deportista' => $id_deportista,
             ':id_banco' => $id_banco,
@@ -57,6 +56,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ':motivo' => $motivo,
             ':nombre_archivo' => $nombre_archivo,
             ':entidad_origen' => $entidad_origen
+        ]);
+
+        // Obtener el ID del último pago registrado
+        $last_insert_id = $conn->lastInsertId();
+
+        // Insertar en tab_logs
+        $sql_logs = "INSERT INTO tab_logs (ID_USUARIO, EVENTO, HORA_LOG, DIA_LOG, IP, TIPO_EVENTO) 
+                     VALUES (:id_usuario, :evento, :hora_log, :dia_log, :ip, :tipo_evento)";
+        $stmt_logs = $conn->prepare($sql_logs);
+        $stmt_logs->execute([
+            ':id_usuario' => $id_usuario,
+            ':evento' => "Nuevo pago registrado con ID: $last_insert_id",
+            ':hora_log' => date('H:i:s'),
+            ':dia_log' => date('Y-m-d'),
+            ':ip' => $_SERVER['REMOTE_ADDR'],
+            ':tipo_evento' => $tipo_evento
         ]);
 
         $response = [

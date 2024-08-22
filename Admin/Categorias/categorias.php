@@ -1,5 +1,5 @@
 <?php
-require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
+require_once('../../admin/configuracion/conexion.php');
 
 // Procesar formulario de creación de categoría
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['crear_categoria'])) {

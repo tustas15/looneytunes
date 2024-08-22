@@ -1,5 +1,5 @@
 <?php
-require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
+require_once('../admin/configuracion/conexion.php');
 require_once(__DIR__ . '/../../vendor/autoload.php');  // Ruta corregida para autoload.php
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;

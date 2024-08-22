@@ -1,6 +1,6 @@
 <?php
 // Conexión a la base de datos
-require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
+require_once('../admin/configuracion/conexion.php');
 
 // Verificar que la conexión se estableció correctamente
 if ($conn === null) {
@@ -12,7 +12,7 @@ session_start();
 
 // Comprobamos si el usuario está logueado
 if (!isset($_SESSION['user_id'])) {
-    header("Location: ../Public/login.php");
+    header("Location: ../public/login.php");
     exit();
 }
 
@@ -44,7 +44,25 @@ if ($deportista) {
     $informes = [];
 }
 
-include './Includes/header.php';
+// Obtener el nombre del entrenador
+$query_entrenador = "SELECT tab_entrenadores.nombre_entre, tab_categorias.categoria
+                             FROM tab_entrenadores 
+                             LEFT JOIN tab_entrenador_categoria ON tab_entrenadores.ID_ENTRENADOR = tab_entrenador_categoria.ID_ENTRENADOR
+                             LEFT JOIN tab_categorias ON tab_entrenador_categoria.ID_CATEGORIA = tab_categorias.id_categoria
+                             LEFT JOIN tab_categoria_deportista ON tab_categorias.ID_CATEGORIA = tab_categoria_deportista.ID_CATEGORIA 
+                             LEFT JOIN tab_deportistas ON tab_categoria_deportista.ID_DEPORTISTA = tab_deportistas.ID_DEPORTISTA
+                             WHERE tab_deportistas.ID_USUARIO = ?";
+$stmt_entrenador = $conn->prepare($query_entrenador);
+$stmt_entrenador->execute([$id_usuario]);
+$entrenadores = $stmt_entrenador->fetch(PDO::FETCH_ASSOC);
+if($entrenadores){
+    $nombre_entrenador = $entrenadores['nombre_entre'];
+}
+if($entrenadores){
+    $categoria = $entrenadores['categoria'];
+}
+
+include './includes/header.php';
 ?>
 <main>
     <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
@@ -67,10 +85,12 @@ include './Includes/header.php';
                             <div class="col-xl-8 col-xxl-12">
                                 <div class="text-center text-xl-start text-xxl-center mb-4 mb-xl-0 mb-xxl-4">
                                     <h2 class="text-primary">Bienvenido, deportista <?= $nombre ?>.</h2>
-                                    <p class="text-gray-700 mb-0"></p>
+                                    
+                                    <p class="text-gray-700 mb-0">CATEGORIA: <?=$categoria?></p>
+                                    <p class="text-gray-700 mb-0">ENTRENADOR: <?=$nombre_entrenador?></p>
                                 </div>
                             </div>
-                            <div class="col-xl-4 col-xxl-12 text-center"><img class="img-fluid" src="../assets/img/illustrations/at-work.svg" style="max-width: 26rem" /></div>
+                            <div class="col-xl-4 col-xxl-12 text-center"><img class="img-fluid" src="../Assets/img/illustrations/at-work.svg" style="max-width: 26rem" /></div>
                         </div>
                     </div>
                 </div>
@@ -161,41 +181,5 @@ include './Includes/header.php';
     </div>
 </main>
 <?php
-include './Includes/footer.php';
+include './includes/footer.php';
 ?>
-
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var ctx = document.getElementById('imcChart').getContext('2d');
-        var imcData = <?php echo json_encode($imc_data); ?>;
-
-        var labels = imcData.map(function(item) {
-            return item.fecha;
-        });
-        var data = imcData.map(function(item) {
-            return item.imc;
-        });
-
-        var chart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'IMC',
-                    data: data,
-                    borderColor: 'rgb(75, 192, 192)',
-                    tension: 0.1
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: false
-                    }
-                }
-            }
-        });
-    });
-</script>

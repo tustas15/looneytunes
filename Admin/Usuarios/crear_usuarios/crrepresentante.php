@@ -24,6 +24,34 @@ if (isset($_GET['message'])) {
     <link rel="icon" type="image/x-icon" href="/looneytunes/AssetsFree/img/logo.png" />
     <script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.28.0/feather.min.js" crossorigin="anonymous"></script>
+
+    <!-- Modal -->
+    <div class="modal fade" id="userModal" tabindex="-1" role="dialog" aria-labelledby="userModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="userModalLabel">Datos de la Cuenta</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Nombre de Usuario:</strong> <?php echo htmlspecialchars($_GET['usuario']); ?></p>
+                    <p><strong>Clave:</strong> <?php echo htmlspecialchars($_GET['clave']); ?></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', event => {
+            <?php if (isset($_GET['usuario']) && isset($_GET['clave'])): ?>
+                var userModal = new bootstrap.Modal(document.getElementById('userModal'));
+                userModal.show();
+            <?php endif; ?>
+        });
+    </script>
 </head>
 
 <body class="bg-primary">

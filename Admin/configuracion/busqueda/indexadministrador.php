@@ -1,6 +1,6 @@
 <?php
 // Conexión a la base de datos
-require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
+require_once('../conexion.php');
 session_start();
 
 if (!isset($_SESSION['user_id'])) {
@@ -16,30 +16,48 @@ if (!isset($_SESSION['tipo_usuario'])) {
 // Obtener el ID del usuario logueado
 $loggedUserId = $_SESSION['user_id'];
 
-// Verificar si se ha solicitado eliminar un administrador
-if (isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['ID_ADMINISTRADOR'])) {
+// Verificar si se ha solicitado activar o desactivar un administrador
+if (isset($_GET['action']) && isset($_GET['ID_ADMINISTRADOR'])) {
     $idAdministrador = $_GET['ID_ADMINISTRADOR'];
 
     try {
-        // Comprobar si el usuario logueado está eliminando su propio perfil
-        if ($idAdministrador == $loggedUserId) {
-            // Cerrar la sesión del usuario
-            session_destroy();
-            header("Location: ../Public/login.php?mensaje=perfil_eliminado");
-            exit();
-        }
+        // Determinar la acción solicitada
+        $newStatus = $_GET['action'] === 'activate' ? 'activo' : 'inactivo';
 
-        // Proceder con la eliminación del perfil
-        $sql = "DELETE FROM tab_administradores WHERE ID_ADMINISTRADOR = :idAdministrador";
+        // Obtener el ID_USUARIO relacionado
+        $sql = "SELECT ID_USUARIO FROM tab_administradores WHERE ID_ADMINISTRADOR = :idAdministrador";
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(':idAdministrador', $idAdministrador, PDO::PARAM_INT);
+        $stmt->execute();
+        $idUsuario = $stmt->fetchColumn();
 
-        if ($stmt->execute()) {
-            header("Location: indexadministrador.php?mensaje=eliminado");
+        if (!$idUsuario) {
+            echo "ID de usuario no encontrado.";
             exit();
-        } else {
-            echo "Error al eliminar el administrador.";
         }
+
+        // No permitir desactivar o activar el perfil propio
+        if ($idUsuario == $loggedUserId) {
+            echo "No puedes cambiar el estado de tu propio perfil.";
+            exit();
+        }
+
+        // Actualizar el estado del administrador en `tab_administradores`
+        $sql = "UPDATE tab_administradores SET status = :newStatus WHERE ID_ADMINISTRADOR = :idAdministrador";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':newStatus', $newStatus, PDO::PARAM_STR);
+        $stmt->bindParam(':idAdministrador', $idAdministrador, PDO::PARAM_INT);
+        $stmt->execute();
+
+        // Actualizar el estado del usuario en `tab_usuarios`
+        $sql = "UPDATE tab_usuarios SET status = :newStatus WHERE ID_USUARIO = :idUsuario";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':newStatus', $newStatus, PDO::PARAM_STR);
+        $stmt->bindParam(':idUsuario', $idUsuario, PDO::PARAM_INT);
+        $stmt->execute();
+
+        header("Location: indexadministrador.php?mensaje=estado_actualizado");
+        exit();
     } catch (PDOException $e) {
         echo "Error: " . $e->getMessage();
     }
@@ -66,7 +84,6 @@ include '/xampp/htdocs/looneytunes/admin/includespro/header.php';
             <div class="card-body">
                 <!-- Formulario de búsqueda -->
 
-
                 <table id="datatablesSimple">
                     <thead>
                         <tr>
@@ -90,7 +107,7 @@ include '/xampp/htdocs/looneytunes/admin/includespro/header.php';
                         <?php
                         try {
                             // Construir la consulta SQL con el término de búsqueda
-                            $sql = "SELECT ID_ADMINISTRADOR, NOMBRE_ADMIN, APELLIDO_ADMIN, CELULAR_ADMIN FROM tab_administradores";
+                            $sql = "SELECT ID_ADMINISTRADOR, NOMBRE_ADMIN, APELLIDO_ADMIN, CELULAR_ADMIN, status FROM tab_administradores";
 
                             if ($searchTerm) {
                                 $sql .= " WHERE NOMBRE_ADMIN LIKE :searchTerm OR APELLIDO_ADMIN LIKE :searchTerm OR CELULAR_ADMIN LIKE :searchTerm";
@@ -108,6 +125,11 @@ include '/xampp/htdocs/looneytunes/admin/includespro/header.php';
 
                             // Mostrar la lista de administradores
                             foreach ($administradores as $administrador) {
+                                $status = htmlspecialchars($administrador['status']);
+                                $actionLink = $status === 'activo' ? 
+                                    "<a href='indexadministrador.php?action=deactivate&ID_ADMINISTRADOR=" . htmlspecialchars($administrador['ID_ADMINISTRADOR']) . "'>Desactivar</a>" : 
+                                    "<a href='indexadministrador.php?action=activate&ID_ADMINISTRADOR=" . htmlspecialchars($administrador['ID_ADMINISTRADOR']) . "'>Activar</a>";
+
                                 echo "<tr>";
                                 echo "<td>" . htmlspecialchars($administrador['ID_ADMINISTRADOR']) . "</td>";
                                 echo "<td>" . htmlspecialchars($administrador['NOMBRE_ADMIN']) . "</td>";
@@ -115,7 +137,7 @@ include '/xampp/htdocs/looneytunes/admin/includespro/header.php';
                                 echo "<td>" . htmlspecialchars($administrador['CELULAR_ADMIN']) . "</td>";
                                 echo "<td>
                                         <a href='../perfil/perfil_administrador.php?ID_ADMINISTRADOR=" . htmlspecialchars($administrador['ID_ADMINISTRADOR']) . "'>Ver Perfil</a> | 
-                                        <a href='indexadministrador.php?action=delete&ID_ADMINISTRADOR=" . htmlspecialchars($administrador['ID_ADMINISTRADOR']) . "' onclick=\"return confirm('¿Estás seguro de que deseas eliminar este administrador?');\">Eliminar</a>
+                                        $actionLink
                                       </td>";
                                 echo "</tr>";
                             }
