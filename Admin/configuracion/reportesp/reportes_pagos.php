@@ -15,187 +15,158 @@ include '../../Includespro/header.php';
 <body class="nav-fixed">
     <main>
         <div class="container-fluid px-4">
-        <h2>Reporte de Pagos</h2>
-        <form id="reporte-form">
-    <div class="mb-3">
-        <label for="tipo_reporte" class="form-label">Tipo de Reporte</label>
-        <select id="tipo_reporte" class="form-select" required>
-            <option value="">Seleccionar</option>
-            <option value="individual">Reporte Individual por Deportista</option>
-            <option value="al_dia">Deportistas al Día</option>
-            <option value="no_al_dia">Deportistas no al Día</option>
-        </select>
-    </div>
-    <div id="deportista-section" class="mb-3 d-none">
-        <label for="deportista_reporte" class="form-label">Deportista</label>
-        <select id="deportista_reporte" class="form-select">
-            <option value="">Seleccionar</option>
-        </select>
-    </div>
-    <div class="mb-3">
-        <label for="fecha_inicio" class="form-label">Fecha de Inicio</label>
-        <input type="date" id="fecha_inicio" class="form-control">
-    </div>
-    <div class="mb-3">
-        <label for="fecha_fin" class="form-label">Fecha de Fin</label>
-        <input type="date" id="fecha_fin" class="form-control">
-    </div>
-    <button type="submit" class="btn btn-primary">Generar Reporte</button>
-</form>
+            <h2 class="mt-4">Reporte de Pagos</h2>
+            <form id="reporte-form">
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <label for="fecha_inicio" class="form-label">Fecha Inicio</label>
+                        <input type="date" class="form-control" id="fecha_inicio" name="fecha_inicio" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="fecha_fin" class="form-label">Fecha Fin</label>
+                        <input type="date" class="form-control" id="fecha_fin" name="fecha_fin" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="filtro" class="form-label">Filtrar por</label>
+                        <select class="form-control" id="filtro" name="filtro" required>
+                            <option value="">Seleccionar Filtro</option>
+                            <option value="categoria">Categoría</option>
+                            <option value="deportista">Deportista</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="opcion" class="form-label">Opción</label>
+                        <select class="form-control" id="opcion" name="opcion">
+                            <option value="">Todas las opciones</option>
+                            <!-- Las opciones se cargarán dinámicamente con AJAX -->
+                        </select>
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary">Generar Reporte</button>
+                    </div>
+                </div>
+            </form>
 
+            <div id="resultados-reporte" class="mt-4">
+                <!-- Aquí se mostrarán los resultados del reporte -->
+            </div>
 
-        <div class="mt-5">
-            <table id="reporte-tabla" class="table table-striped table-bordered">
-                <thead>
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Mes</th>
-                        <th>Año</th>
-                        <th>Monto</th>
-                        <th>Fecha de Pago</th>
-                        <th>Motivo</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Datos se cargarán aquí -->
-                </tbody>
-            </table>
+            <div id="grafico-reporte" class="mt-4">
+                <canvas id="myChart"></canvas>
+            </div>
         </div>
-    </div>
+    </main>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.11.3/js/dataTables.bootstrap5.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.0.1/js/dataTables.buttons.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.bootstrap5.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.html5.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.print.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <script>
-       $(document).ready(function() {
-    var table = $('#reporte-tabla').DataTable({
-        dom: 'Bfrtip',
-        buttons: [
-            'copy', 'csv', 'excel', 'pdf', 'print'
-        ]
-    });
+    $(document).ready(function() {
+        // Establecer la fecha fin como la fecha actual
+        var today = new Date().toISOString().split('T')[0];
+        $('#fecha_fin').val(today);
 
-    $('#tipo_reporte').on('change', function() {
-        if ($(this).val() === 'individual') {
-            $('#deportista-section').removeClass('d-none');
-        } else {
-            $('#deportista-section').addClass('d-none');
-        }
-    });
-
-    $('#reporte-form').on('submit', function(e) {
-        e.preventDefault();
-        var tipoReporte = $('#tipo_reporte').val();
-        var deportista = $('#deportista_reporte').val();
-        var fechaInicio = $('#fecha_inicio').val();
-        var fechaFin = $('#fecha_fin').val();
-
-        $.ajax({
-            url: 'generar_reporte.php',
-            method: 'POST',
-            data: {
-                tipo_reporte: tipoReporte,
-                deportista: deportista,
-                fecha_inicio: fechaInicio,
-                fecha_fin: fechaFin
-            },
-            dataType: 'json',
-            success: function(data) {
-                table.clear().draw();
-                data.forEach(function(item) {
-                    table.row.add([
-                        item.NOMBRE_DEPO + ' ' + item.APELLIDO_DEPO,
-                        item.mes,
-                        item.anio,
-                        item.MONTO,
-                        item.FECHA_PAGO,
-                        item.MOTIVO
-                    ]).draw();
-                });
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                console.error("Error en la solicitud AJAX:", textStatus, errorThrown);
-                alert("Hubo un error al generar el reporte. Por favor, intente de nuevo.");
-            }
-        });
-    });
-
-    $.ajax({
-        url: 'cargar_deportistas.php',
-        method: 'GET',
-        dataType: 'json',
-        success: function(data) {
-            data.forEach(function(deportista) {
-                $('#deportista_reporte').append(`<option value="${deportista.CEDULA_DEPO}">${deportista.APELLIDO_DEPO} ${deportista.NOMBRE_DEPO}</option>`);
-            });
-        }
-    });
-});
-            var table = $('#reporte-tabla').DataTable({
-                dom: 'Bfrtip',
-                buttons: [
-                    'copy', 'csv', 'excel', 'pdf', 'print'
-                ]
-            });
-
-            $('#tipo_reporte').on('change', function() {
-                if ($(this).val() === 'individual') {
-                    $('#deportista-section').removeClass('d-none');
-                } else {
-                    $('#deportista-section').addClass('d-none');
-                }
-            });
-
-            $('#reporte-form').on('submit', function(e) {
-                e.preventDefault();
-                var tipoReporte = $('#tipo_reporte').val();
-                var deportista = $('#deportista_reporte').val();
-
-                $.ajax({
-                    url: 'generar_reporte.php',
-                    method: 'POST',
-                    data: {
-                        tipo_reporte: tipoReporte,
-                        deportista: deportista,
-                        fecha_inicio: fechaInicio,
-        fecha_fin: fechaFin
-                    },
-                    dataType: 'json',
-                    success: function(data) {
-                        table.clear().draw();
-                        data.forEach(function(item) {
-                            table.row.add([
-                                item.nombre,
-                                item.mes,
-                                item.anio,
-                                item.monto,
-                                item.fecha_pago,
-                                item.motivo
-                            ]).draw();
-                        });
-                        
-                    }
-                    
-                    
-                });
-            });
+        $('#reporte-form').submit(function(e) {
+            e.preventDefault();
+            var formData = $(this).serialize();
 
             $.ajax({
-                url: 'cargar_deportistas.php',
-                method: 'GET',
-                dataType: 'json',
-                success: function(data) {
-                    data.forEach(function(deportista) {
-                        $('#deportista_reporte').append(`<option value="${deportista.CEDULA_DEPO}">${deportista.APELLIDO_DEPO} ${deportista.NOMBRE_DEPO}</option>`);
-                    });
+                url: 'procesar_reporte.php',
+                type: 'POST',
+                data: formData,
+                success: function(response) {
+                    $('#resultados-reporte').html(response);
+                    $('#tabla-reporte').DataTable();
+                    generarGrafico();
+                },
+                error: function() {
+                    Swal.fire('Error', 'Hubo un problema al generar el reporte', 'error');
                 }
             });
-      
+        });
+
+        $('#filtro').change(function() {
+            var filtro = $(this).val();
+
+            if (filtro === 'categoria' || filtro === 'deportista') {
+                $.ajax({
+                    url: 'obtener_opciones.php',
+                    type: 'POST',
+                    data: { filtro: filtro },
+                    success: function(response) {
+                        $('#opcion').html(response);
+                    },
+                    error: function() {
+                        Swal.fire('Error', 'Hubo un problema al cargar las opciones', 'error');
+                    }
+                });
+            } else {
+                $('#opcion').html('<option value="">Todas las opciones</option>');
+            }
+        });
+
+        function generarGrafico() {
+            // Aquí iría el código para generar el gráfico con Chart.js
+            // Esto dependerá de los datos específicos que quieras mostrar
+        }
+    });
     </script>
+
+    <script>
+    $(document).ready(function() {
+        $('#reporte-form').submit(function(e) {
+            e.preventDefault();
+            var formData = $(this).serialize();
+
+            $.ajax({
+                url: 'procesar_reporte.php',
+                type: 'POST',
+                data: formData,
+                success: function(response) {
+                    $('#resultados-reporte').html(response);
+                    // Inicializar DataTables
+                    $('#tabla-reporte').DataTable();
+                    // Generar gráfico
+                    generarGrafico();
+                },
+                error: function() {
+                    Swal.fire('Error', 'Hubo un problema al generar el reporte', 'error');
+                }
+            });
+        });
+
+        function generarGrafico() {
+            // Aquí iría el código para generar el gráfico con Chart.js
+            // Esto dependerá de los datos específicos que quieras mostrar
+        }
+         // Asegúrate de que estas funciones estén presentes en tu código
+         function setFechaYMesActual() {
+            var today = new Date();
+            var dd = String(today.getDate()).padStart(2, '0');
+            var mm = String(today.getMonth() + 1).padStart(2, '0'); // Enero es 0!
+            var yyyy = today.getFullYear();
+
+            // Establecer la fecha actual
+            var fechaActual = yyyy + '-' + mm + '-' + dd;
+            document.getElementById('fecha').value = fechaActual;
+
+            // Establecer el mes actual
+            document.getElementById('mes').value = mm;
+
+            // Establecer el año actual
+            document.getElementById('anio').value = yyyy;
+
+            // Actualizar el motivo
+            actualizarMotivo();
+        }
+
+    });
+    </script>
+    
 </body>
-</html>
+
+<?php
+include '../../Includespro/footer.php';
+?>
