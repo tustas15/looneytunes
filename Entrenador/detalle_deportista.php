@@ -1,13 +1,14 @@
 <?php
+
+session_start();
+include './includes/header.php';
 // Habilitar la visualización de errores para depuración
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 // Incluir el archivo de conexión a la base de datos
-require_once('../admin/configuracion/conexion.php');
 
 // Iniciar la sesión
-session_start();
 
 // Verificar que la conexión se estableció correctamente
 if ($conn === null) {
@@ -81,7 +82,6 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 $jsonDataPoints = json_encode($dataPoints);
 
 // Incluir el encabezado
-include './includes/header.php';
 ?>
 
 <!-- Añadir el CSS de DataTables -->

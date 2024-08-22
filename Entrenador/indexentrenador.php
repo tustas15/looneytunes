@@ -1,6 +1,8 @@
 <?php
+
+session_start();
 // Conexión a la base de datos
-require_once('../admin/configuracion/conexion.php');
+include './includes/header.php';
 
 date_default_timezone_set('America/Guayaquil'); // Ajusta a tu zona horaria
 
@@ -9,8 +11,7 @@ if ($conn === null) {
     die("Error de conexión a la base de datos.");
 }
 
-// Inicio de sesión
-session_start();
+
 
 // Comprobamos si el usuario está logueado
 if (!isset($_SESSION['user_id'])) {
@@ -100,6 +101,7 @@ try {
     exit();
 }
 
+
 $conn = null;
 
 // Función para calcular el tiempo transcurrido en formato legible
@@ -134,7 +136,7 @@ function timeElapsedString($datetime, $full = false) {
     return $string ? implode(', ', $string) . ' ago' : 'just now';  // Construir la cadena final.
 }
 
-include './includes/header.php';
+
 ?>
 <main>
     <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">

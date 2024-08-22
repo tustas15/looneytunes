@@ -1,28 +1,29 @@
 <?php
+require_once('../admin/configuracion/conexion.php');
 
-
+// Verificación de la sesión y de las variables necesarias
 $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
-$tipo_usuario = $_SESSION['tipo_usuario'];
-$id_usuarios = $_SESSION['user_id']; // Asegúrate de que tienes el ID del usuario en la sesión
+$id_usuarios = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
+
 
 
 // Obtener las categorías del entrenador
 $categorias_entrenador = [];
-if ($tipo_usuario == 'Entrenador') {
     try {
-        $stmt = $pdo->prepare("
-            SELECT c.ID_CATEGORIA, c.CATEGORIA 
+        $stmt = $conn->prepare("
+            SELECT c.ID_CATEGORIA, c.CATEGORIA
             FROM tab_categorias c
             INNER JOIN tab_entrenador_categoria ec ON c.ID_CATEGORIA = ec.ID_CATEGORIA
             INNER JOIN tab_entrenadores e ON ec.ID_ENTRENADOR = e.ID_ENTRENADOR
-            WHERE e.ID_USUARIO = :id_usuario");
+            WHERE e.ID_USUARIO = :id_usuario
+        ");
         $stmt->execute(['id_usuario' => $id_usuarios]);
         $categorias_entrenador = $stmt->fetchAll(PDO::FETCH_ASSOC);
     } catch (PDOException $e) {
-        // Manejo de errores
         error_log("Error al obtener categorías del entrenador: " . $e->getMessage());
+        // Podrías manejar el error mostrando un mensaje al usuario
     }
-}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -53,7 +54,7 @@ if ($tipo_usuario == 'Entrenador') {
         <!-- * * Tip * * You can use text or an image for your navbar brand.-->
         <!-- * * * * * * When using an image, we recommend the SVG format.-->
         <!-- * * * * * * Dimensions: Maximum height: 32px, maximum width: 240px-->
-        <a class="navbar-brand pe-3 ps-4 ps-lg-2" href="/index.php">Dashboard</a>
+        <a class="navbar-brand pe-3 ps-4 ps-lg-2" href="../index.php">Dashboard</a>
         <!-- Navbar Items-->
         <ul class="navbar-nav align-items-center ms-auto">
             <!-- Documentation Dropdown-->
@@ -94,16 +95,7 @@ if ($tipo_usuario == 'Entrenador') {
                     </form>
                 </div>
             </li>
-            <!-- Alerts Dropdown-->
-            <li class="nav-item dropdown no-caret d-none d-sm-block me-3 dropdown-notifications">
-                <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownAlerts" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i data-feather="bell"></i></a>
-                <div class="dropdown-menu dropdown-menu-end border-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownAlerts">
-                    <h6 class="dropdown-header dropdown-notifications-header">
-                        <i class="me-2" data-feather="bell"></i>
-                        Alerts Center
-                    </h6>
-                </div>
-            </li>
+            
             <!-- Messages Dropdown-->
             <li class="nav-item dropdown no-caret d-none d-sm-block me-3 dropdown-notifications">
                 <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownMessages" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i data-feather="mail"></i></a>
@@ -144,12 +136,7 @@ if ($tipo_usuario == 'Entrenador') {
                     <div class="nav accordion" id="accordionSidenav">
                         <!-- * * Note: * * Visible only on and above the sm breakpoint-->
                         <div class="sidenav-menu-heading d-sm-none">Account</div>
-                        <!-- * * Note: * * Visible only on and above the sm breakpoint-->
-                        <a class="nav-link d-sm-none" href="#!">
-                            <div class="nav-link-icon"><i data-feather="bell"></i></div>
-                            Alerts
-                            <span class="badge bg-warning-soft text-warning ms-auto">4 New!</span>
-                        </a>
+                        
                         <!-- * * Note: * * Visible only on and above the sm breakpoint-->
                         <a class="nav-link d-sm-none" href="#!">
                             <div class="nav-link-icon"><i data-feather="mail"></i></div>
@@ -159,25 +146,25 @@ if ($tipo_usuario == 'Entrenador') {
                         <!-- Sidenav Menu Heading (Core)-->
                         <div class="sidenav-menu-heading">Core</div>
                         <!-- Sidenav Accordion (Dashboard)-->
-                        <a class="nav-link" href=" /index.php">
+                        <a class="nav-link" href=" ../index.php">
                             <div class="nav-link-icon"><i data-feather="home"></i></div>
                             Dashboard
                         </a>
                         <!-- Sidenav Heading (App Views)-->
                         <div class="sidenav-menu-heading">Categorias</div>
-<?php if (!empty($categorias_entrenador)): ?>
-    <?php foreach ($categorias_entrenador as $categoria): ?>
-        <a class="nav-link" href="#">
-            <div class="nav-link-icon"><i data-feather="activity"></i></div>
-            <?php echo htmlspecialchars($categoria['CATEGORIA']); ?>
-        </a>
-    <?php endforeach; ?>
-<?php else: ?>
-    <a class="nav-link" href="#">
-        <div class="nav-link-icon"><i data-feather="alert-circle"></i></div>
-        No hay categorías asignadas
-    </a>
-<?php endif; ?>
+                        <?php if (!empty($categorias_entrenador)): ?>
+                            <?php foreach ($categorias_entrenador as $categoria): ?>
+                                <a class="nav-link" href="report_categoria.php?categoria=<?php echo urlencode($categoria['CATEGORIA']); ?>">
+                                    <div class="nav-link-icon"><i data-feather="activity"></i></div>
+                                    <?= htmlspecialchars($categoria['CATEGORIA']); ?>
+                                </a>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <a class="nav-link" href="#">
+                                <div class="nav-link-icon"><i data-feather="alert-circle"></i></div>
+                                No hay categorías asignadas
+                            </a>
+                        <?php endif; ?>
                     </div>
                 </div>
                 
