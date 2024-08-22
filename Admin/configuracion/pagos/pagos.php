@@ -4,7 +4,7 @@ session_start();
 require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
 
 $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
-include '../../Includespro/header.php';
+include '../../IncludesPro/header.php';
 ?>
 
 <link href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css" rel="stylesheet">
