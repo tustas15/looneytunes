@@ -31,7 +31,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bindParam(':file_name', $fileName);
         $stmt->bindParam(':file_path', $filePath);
 
+
+
         if ($stmt->execute()) {
+                    
+    $ip = $_SERVER['REMOTE_ADDR'];
+    $evento = "Carga de la hoja de vida";
+    $tipo_evento = "subida_pdf";
+    $query = "INSERT INTO tab_logs (ID_USUARIO, EVENTO, HORA_LOG, DIA_LOG, IP,TIPO_EVENTO) VALUES (?, ?, CURRENT_TIME(), CURRENT_DATE(), ?,?)";
+    $stmt = $conn->prepare($query);
+    $stmt->execute([$_SESSION['user_id'], $evento, $ip,$tipo_evento]); 
             $message = "El archivo se ha subido correctamente.";
         } else {
             $message = "Hubo un error al guardar la información en la base de datos.";
