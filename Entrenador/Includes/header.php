@@ -27,21 +27,8 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
     <nav class="topnav navbar navbar-expand shadow justify-content-between justify-content-sm-start navbar-light bg-white" id="sidenavAccordion">
         <!-- Sidenav Toggle Button-->
         <button class="btn btn-icon btn-transparent-dark order-1 order-lg-0 me-2 ms-lg-2 me-lg-0" id="sidebarToggle"><i data-feather="menu"></i></button>
-        <!-- Navbar Brand-->
-        <!-- * * Tip * * You can use text or an image for your navbar brand.-->
-        <!-- * * * * * * When using an image, we recommend the SVG format.-->
         <!-- * * * * * * Dimensions: Maximum height: 32px, maximum width: 240px-->
         <a class="navbar-brand pe-3 ps-4 ps-lg-2" href="/index.php">Dashboard</a>
-        <!-- Navbar Search Input-->
-        <!-- * * Note: * * Visible only on and above the lg breakpoint-->
-         <!--
-        <form class="form-inline me-auto d-none d-lg-block me-3">
-            <div class="input-group input-group-joined input-group-solid">
-                <input class="form-control pe-0" type="search" placeholder="Search" aria-label="Search" />
-                <div class="input-group-text"><i data-feather="search"></i></div>
-            </div>
-        </form>
-        -->
         <!-- Navbar Items-->
         <ul class="navbar-nav align-items-center ms-auto">
             <!-- Documentation Dropdown-->
@@ -51,8 +38,6 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                     <i class="fas fa-chevron-right dropdown-arrow"></i>
                 </a>
                 <div class="dropdown-menu dropdown-menu-end py-0 me-sm-n15 me-lg-0 o-hidden animated--fade-in-up" aria-labelledby="navbarDropdownDocs">
-
-
 <!-- Botón para abrir el Modal de Subida -->
 <a class="dropdown-item py-3" href="#" data-bs-toggle="modal" data-bs-target="#uploadModal">
     <div class="icon-stack bg-primary-soft text-primary me-4"><i data-feather="upload"></i></div>
@@ -61,7 +46,6 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
         Haz click para subir tu Hoja de vida (PDF)
     </div>
 </a>
-
     <!-- Botón para Descargar Hoja de Vida -->
     <a class="dropdown-item py-3" href="./configuracion/download.php">
     <div class="icon-stack bg-primary-soft text-primary me-4"><i data-feather="download"></i></div>
@@ -70,11 +54,8 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
         Haz click para descargar tu Hoja de vida
     </div>
 </a>
-
 </div>
             </li>
-
-            <!-- Navbar Search Dropdown-->
             <!-- * * Note: * * Visible only below the lg breakpoint-->
             <li class="nav-item dropdown no-caret me-3 d-lg-none">
                 <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="searchDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i data-feather="search"></i></a>
@@ -136,17 +117,14 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
             <nav class="sidenav shadow-right sidenav-dark">
                 <div class="sidenav-menu">
                     <div class="nav accordion" id="accordionSidenav">
-                        <!-- Sidenav Menu Heading (Account)-->
                         <!-- * * Note: * * Visible only on and above the sm breakpoint-->
                         <div class="sidenav-menu-heading d-sm-none">Account</div>
-                        <!-- Sidenav Link (Alerts)-->
                         <!-- * * Note: * * Visible only on and above the sm breakpoint-->
                         <a class="nav-link d-sm-none" href="#!">
                             <div class="nav-link-icon"><i data-feather="bell"></i></div>
                             Alerts
                             <span class="badge bg-warning-soft text-warning ms-auto">4 New!</span>
                         </a>
-                        <!-- Sidenav Link (Messages)-->
                         <!-- * * Note: * * Visible only on and above the sm breakpoint-->
                         <a class="nav-link d-sm-none" href="#!">
                             <div class="nav-link-icon"><i data-feather="mail"></i></div>
@@ -160,14 +138,10 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                             <div class="nav-link-icon"><i data-feather="home"></i></div>
                             Dashboard
                         </a>
-
                         <!-- Sidenav Heading (App Views)-->
                         <div class="sidenav-menu-heading">Categorias</div>
-                        <!-- Sidenav Accordion (Pages)-->
-                        
                     </div>
                 </div>
-                
                 <!-- Sidenav Footer -->
                 <div class="sidenav-footer">
                     <div class="sidenav-footer-content">
