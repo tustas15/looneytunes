@@ -15,7 +15,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/litepicker/dist/css/litepicker.css" rel="stylesheet" />
     <link href="../Assets/css/styles.css" rel="stylesheet" />
-    <link rel="icon" type="image/x-icon" href="/AssetsFree/img/logo.png" />
+    <link rel="icon" type="image/x-icon" href="../AssetsFree/img/logo.png" />
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>
@@ -37,6 +37,15 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                     <div class="fw-500">Documentation</div>
                     <i class="fas fa-chevron-right dropdown-arrow"></i>
                 </a>
+                <div class="dropdown-menu dropdown-menu-end py-0 me-sm-n15 me-lg-0 o-hidden animated--fade-in-up" aria-labelledby="navbarDropdownDocs">
+                <a class="dropdown-item py-3" href="./configuracion/download.php">
+                    <div class="icon-stack bg-primary-soft text-primary me-4"><i data-feather="download"></i></div>
+                        <div>
+                        <div class="small text-gray-500">Descargar Hoja de vida</div>
+                        Haz click para descargar tu Hoja de vida
+                        </div>
+                </a>
+                </div>
             </li>
 
             <!-- Navbar Search Dropdown-->
