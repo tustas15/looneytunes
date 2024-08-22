@@ -33,7 +33,8 @@ try {
             tab_detalles.ALTURA,
             tab_detalles.PESO,
             tab_detalles.FECHA_INGRESO,
-            tab_categorias.*
+            tab_categorias.*,
+            tab_entrenadores.*
         FROM 
             tab_deportistas
         LEFT JOIN 
@@ -46,6 +47,10 @@ try {
             tab_categoria_deportista ON tab_deportistas.ID_DEPORTISTA = tab_categoria_deportista.ID_DEPORTISTA
         LEFT JOIN
             tab_categorias ON tab_categoria_deportista.ID_CATEGORIA = tab_categorias.ID_CATEGORIA
+        LEFT JOIN
+            tab_entrenador_categoria ON tab_categoria_deportista.id_categoria = tab_entrenador_categoria.id_categoria
+        LEFT JOIN
+            tab_entrenadores ON tab_entrenador_categoria.id_entrenador = tab_entrenadores.id_entrenador
         WHERE 
             tab_deportistas.ID_DEPORTISTA = :id
         ORDER BY 
@@ -74,7 +79,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 $jsonDataPoints = json_encode($dataPoints);
 
 // Incluir el encabezado
-include '../representante/includes/header.php';
+include './includes/header.php';
 ?>
 
 <!-- Añadir el CSS de DataTables -->
@@ -104,7 +109,11 @@ include '../representante/includes/header.php';
                     <div class="card-body">
                         
                             <h2><?= htmlspecialchars($deportista['CATEGORIA']) ?></h2>
-                            <p><?= htmlspecialchars($deportista['CEDULA_DEPO'])?></p>
+                            <p>Entrenador: 
+                                <a href="../representante/configuracion/download.php?id_usuario=<?= htmlspecialchars($deportista['ID_USUARIO']) ?>" target="_blank">
+                                    <?= htmlspecialchars($deportista['NOMBRE_ENTRE']) . ' ' . htmlspecialchars($deportista['APELLIDO_ENTRE']) ?>
+                                </a>
+                            </p>
                             <table id="detallesTable" class="table table-striped">
                                 <thead>
                                     <tr>
