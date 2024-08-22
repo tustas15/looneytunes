@@ -305,7 +305,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                         <div class="collapse" id="collapseReports" data-bs-parent="#accordionSidenav">
                             <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavReportsMenu">
                                 <!-- Reportes Individuales -->
-                                <a class="nav-link" href="/looneytunes/admin/configuracion/reportesp/reportes_administradores.php">
+                                <a class="nav-link" href="/looneytunes/admin/reportes/reporte_admin.php">
                                     <div class="nav-link-icon"><i class="fas fa-user-shield"></i></div>
                                     Reportes de Administradores
                                 </a>
