@@ -75,50 +75,6 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
             <li class="nav-item dropdown no-caret me-3 d-lg-none">
                 <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="searchDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i data-feather="search"></i></a>
                 <!-- Dropdown - Search-->
-
-            </li>
-            <!-- Alerts Dropdown-->
-            <li class="nav-item dropdown no-caret d-none d-sm-block me-3 dropdown-notifications">
-                <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownAlerts" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i data-feather="bell"></i></a>
-                <div class="dropdown-menu dropdown-menu-end border-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownAlerts">
-                    <h6 class="dropdown-header dropdown-notifications-header">
-                        <i class="me-2" data-feather="bell"></i>
-                        Alerts Center
-                    </h6>
-                    <!-- Example Alert 1-->
-                    <a class="dropdown-item dropdown-notifications-item" href="#!">
-                        <div class="dropdown-notifications-item-icon bg-warning"><i data-feather="activity"></i></div>
-                        <div class="dropdown-notifications-item-content">
-                            <div class="dropdown-notifications-item-content-details">December 29, 2021</div>
-                            <div class="dropdown-notifications-item-content-text">This is an alert message. It's nothing serious, but it requires your attention.</div>
-                        </div>
-                    </a>
-                    <!-- Example Alert 2-->
-                    <a class="dropdown-item dropdown-notifications-item" href="#!">
-                        <div class="dropdown-notifications-item-icon bg-info"><i data-feather="bar-chart"></i></div>
-                        <div class="dropdown-notifications-item-content">
-                            <div class="dropdown-notifications-item-content-details">December 22, 2021</div>
-                            <div class="dropdown-notifications-item-content-text">A new monthly report is ready. Click here to view!</div>
-                        </div>
-                    </a>
-                    <!-- Example Alert 3-->
-                    <a class="dropdown-item dropdown-notifications-item" href="#!">
-                        <div class="dropdown-notifications-item-icon bg-danger"><i class="fas fa-exclamation-triangle"></i></div>
-                        <div class="dropdown-notifications-item-content">
-                            <div class="dropdown-notifications-item-content-details">December 8, 2021</div>
-                            <div class="dropdown-notifications-item-content-text">Critical system failure, systems shutting down.</div>
-                        </div>
-                    </a>
-                    <!-- Example Alert 4-->
-                    <a class="dropdown-item dropdown-notifications-item" href="#!">
-                        <div class="dropdown-notifications-item-icon bg-success"><i data-feather="user-plus"></i></div>
-                        <div class="dropdown-notifications-item-content">
-                            <div class="dropdown-notifications-item-content-details">December 2, 2021</div>
-                            <div class="dropdown-notifications-item-content-text">New user request. Woody has requested access to the organization.</div>
-                        </div>
-                    </a>
-                    <a class="dropdown-item dropdown-notifications-footer" href="#!">View All Alerts</a>
-                </div>
             </li>
             <!-- Messages Dropdown-->
             <li class="nav-item dropdown no-caret d-none d-sm-block me-3 dropdown-notifications">
@@ -303,15 +259,15 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                         <div class="collapse" id="collapseReports" data-bs-parent="#accordionSidenav">
                             <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavReportsMenu">
                                 <!-- Reportes Individuales -->
-                                <a class="nav-link" href="/looneytunes/admin/reportes/reporte_admin.php">
+                                <a class="nav-link" href="/looneytunes/admin/reportes/vista/reporte_admin.php">
                                     <div class="nav-link-icon"><i class="fas fa-user-shield"></i></div>
                                     Reportes de Administradores
                                 </a>
-                                <a class="nav-link" href="/looneytunes/admin/configuracion/reportesp/reportes_entrenadores.php">
+                                <a class="nav-link" href="/looneytunes/admin/reportes/vista/reporte_entrenador.php">
                                     <div class="nav-link-icon"><i class="fas fa-dumbbell"></i></div>
                                     Reportes de Entrenadores
                                 </a>
-                                <a class="nav-link" href="/looneytunes/admin/configuracion/reportesp/reportes_categorias.php">
+                                <a class="nav-link" href="/looneytunes/admin/reportes/vista/reporte_categorias.php">
                                     <div class="nav-link-icon"><i class="fas fa-layer-group"></i></div>
                                     Reportes de Categorías
                                 </a>
@@ -319,7 +275,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                                     <div class="nav-link-icon"><i class="fas fa-dollar-sign"></i></div>
                                     Reportes de Pagos
                                 </a>
-                                <a class="nav-link" href="/looneytunes/admin/configuracion/reportesp/reportes_inventario.php">
+                                <a class="nav-link" href="/looneytunes/admin/reportes/vista/reporte_inventario.php">
                                     <div class="nav-link-icon"><i class="fas fa-boxes"></i></div>
                                     Reportes de Inventario
                                 </a>

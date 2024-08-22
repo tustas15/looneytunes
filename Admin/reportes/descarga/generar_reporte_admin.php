@@ -1,7 +1,7 @@
 <?php 
 session_start();
-include_once('../configuracion/conexion.php');
-require('fpdf/fpdf.php');
+include_once('../../configuracion/conexion.php');
+require('../fpdf/fpdf.php');
 
 class PDF extends FPDF
 {
@@ -9,10 +9,10 @@ class PDF extends FPDF
     function Header()
     {
         $this->SetFont('Times', 'B', 20);
-        $this->Image('img/triangulosrecortadosnaranja.png', 0, 0, 70); // imagen(archivo, png/jpg || x,y,tamaño)
+        $this->Image('../img/triangulosrecortadosnaranja.png', 0, 0, 70); // imagen(archivo, png/jpg || x,y,tamaño)
         $this->SetXY(60, 15);
         $this->Cell(100, 8, 'Reporte de Administradores', 0, 1, 'C', 0);
-        $this->Image('img/logo_sinfondo.png', 160, 10, 35); // imagen(archivo, png/jpg || x,y,tamaño)
+        $this->Image('../img/logo_sinfondo.png', 160, 10, 35); // imagen(archivo, png/jpg || x,y,tamaño)
         $this->Ln(40);
     }
 
@@ -68,21 +68,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $pdf->SetFillColor(233, 229, 235); // color de fondo rgb
         $pdf->SetDrawColor(61, 61, 61); // color de línea rgb
 
-        $pdf->Cell(35, 8, 'Nombre', 'B', 0, 'C', 0);
-        $pdf->Cell(15, 8, 'Apellido', 'B', 0, 'C', 0);
-        $pdf->Cell(95, 8, 'Evento', 'B', 0, 'C', 0);
-        $pdf->Cell(10, 8, 'Hora', 'B', 0, 'C', 0);
-        $pdf->Cell(50, 8, 'Fecha', 'B', 1, 'C', 0);
+        // Calcula el ancho total de la tabla
+        $totalWidth = 35 + 25 + 80 + 30 + 30;
+        // Centra la tabla
+        $pdf->SetX(($pdf->GetPageWidth() - $totalWidth) / 2);
+
+        $pdf->Cell(35, 12, 'Nombre', 'B', 0, 'C', 0);
+        $pdf->Cell(25, 12, 'Apellido', 'B', 0, 'C', 0);
+        $pdf->Cell(80, 12, 'Evento', 'B', 0, 'C', 0);
+        $pdf->Cell(30, 12, 'Hora', 'B', 0, 'C', 0);
+        $pdf->Cell(30, 12, 'Fecha', 'B', 1, 'C', 0);
 
         $pdf->SetFont('Arial', '', 12);
         $pdf->SetFillColor(233, 229, 235); // color de fondo rgb
         $pdf->SetDrawColor(61, 61, 61); // color de línea rgb
 
-        $i = 1;
         foreach ($resultLogs as $row) {
             $pdf->Ln(0.6);
-            $pdf->SetX(15);
-            $pdf->Cell(25, 8, htmlspecialchars($row['NOMBRE_ADMIN']), 'B', 0, 'C', 1);
+            $pdf->SetX(($pdf->GetPageWidth() - $totalWidth) / 2);
+            $pdf->Cell(35, 8, htmlspecialchars($row['NOMBRE_ADMIN']), 'B', 0, 'C', 1);
             $pdf->Cell(25, 8, htmlspecialchars($row['APELLIDO_ADMIN']), 'B', 0, 'C', 1);
             $pdf->Cell(80, 8, htmlspecialchars($row['EVENTO']), 'B', 0, 'C', 1);
             $pdf->Cell(30, 8, htmlspecialchars($row['HORA_LOG']), 'B', 0, 'C', 1);

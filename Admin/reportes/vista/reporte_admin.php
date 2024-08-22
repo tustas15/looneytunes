@@ -1,8 +1,8 @@
 <?php
 session_start();
-include_once('../configuracion/conexion.php');
+include_once('../../configuracion/conexion.php');
 include('/xampp/htdocs/looneytunes/admin/includespro/header.php');
-require('fpdf/fpdf.php');
+require('../fpdf/fpdf.php');
 
 try {
     // Obtener los administradores
@@ -30,7 +30,7 @@ try {
 
 <div class="container mt-5">
     <h2>Generar Reporte de Administradores</h2>
-    <form method="POST" action="generar_reporte.php">
+    <form method="POST" action="../descarga/generar_reporte_admin.php">
         <div class="form-group">
             <label for="administradores">Seleccionar Administrador(es):</label>
             <select multiple class="form-control" id="administradores" name="administradores[]">
