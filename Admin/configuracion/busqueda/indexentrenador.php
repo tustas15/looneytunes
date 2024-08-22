@@ -17,9 +17,7 @@ if (!isset($_SESSION['tipo_usuario'])) {
 
 $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
 $tipo_usuario = $_SESSION['tipo_usuario'];
-$usuario = isset($_SESSION['usuario']) ? $_SESSION['usuario'] : 'Usuario';
-
-
+$usuario = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 'Usuario'; // Cambiado para usar el ID de usuario de la sesión
 
 // Verificar si se ha solicitado activar o desactivar un entrenador
 if (isset($_GET['action']) && isset($_GET['ID_ENTRENADOR'])) {
@@ -39,6 +37,20 @@ if (isset($_GET['action']) && isset($_GET['ID_ENTRENADOR'])) {
             exit();
         }
 
+        // Obtener el nombre del entrenador
+        $sql = "SELECT NOMBRE_ENTRE, APELLIDO_ENTRE FROM tab_entrenadores WHERE ID_ENTRENADOR = :idEntrenador";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':idEntrenador', $idEntrenador, PDO::PARAM_INT);
+        $stmt->execute();
+        $entrenadorData = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$entrenadorData) {
+            echo "Entrenador no encontrado.";
+            exit();
+        }
+
+        $nombreEntrenador = $entrenadorData['NOMBRE_ENTRE'] . ' ' . $entrenadorData['APELLIDO_ENTRE'];
+
         // Actualizar el estado del entrenador en `tab_entrenadores`
         $sql = "UPDATE tab_entrenadores SET status = :newStatus WHERE ID_ENTRENADOR = :idEntrenador";
         $stmt = $conn->prepare($sql);
@@ -53,12 +65,26 @@ if (isset($_GET['action']) && isset($_GET['ID_ENTRENADOR'])) {
         $stmt->bindParam(':idUsuario', $idUsuario, PDO::PARAM_INT);
         $stmt->execute();
 
+        // Registrar el cambio en la tabla `tab_logs`
+        $sql = "INSERT INTO tab_logs (ID_USUARIO, EVENTO, HORA_LOG, DIA_LOG, IP, TIPO_EVENTO) VALUES (:idUsuario, :evento, CURRENT_TIME(), CURRENT_DATE(), :ip, :tipoEvento)";
+        $stmt = $conn->prepare($sql);
+        $evento = $newStatus === 'activo' ? "Entrenador $nombreEntrenador activado" : "Entrenador $nombreEntrenador desactivado";
+        $ip = $_SERVER['REMOTE_ADDR'];
+        $tipoEvento = $newStatus === 'activo' ? 'usuario_activo' : 'usuario_inactivo';
+
+        $stmt->bindParam(':idUsuario', $usuario, PDO::PARAM_INT);
+        $stmt->bindParam(':evento', $evento, PDO::PARAM_STR);
+        $stmt->bindParam(':ip', $ip, PDO::PARAM_STR);
+        $stmt->bindParam(':tipoEvento', $tipoEvento, PDO::PARAM_STR);
+        $stmt->execute();
+
         header("Location: indexentrenador.php?mensaje=estado_actualizado");
         exit();
     } catch (PDOException $e) {
         echo "Error: " . $e->getMessage();
     }
 }
+
 include '/xampp/htdocs/looneytunes/admin/includespro/header.php';
 ?>
 
@@ -151,6 +177,5 @@ include '/xampp/htdocs/looneytunes/admin/includespro/header.php';
         </div>
     </div>
 </main>
-
 
 <?php include_once('/xampp/htdocs/looneytunes/admin/includespro/footer.php'); ?>
