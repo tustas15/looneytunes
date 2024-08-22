@@ -23,8 +23,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bindParam(':peso', $peso, PDO::PARAM_STR);
         $stmt->bindParam(':fechaIngreso', $fechaIngreso, PDO::PARAM_STR);
 
+        
+
         if ($stmt->execute()) {
+            //Selecionar el nombre del deportista con Observacion
+    $stmt = $conn ->prepare("SELECT NOMBRE_DEPO from tab_deportistas where ID_DEPORTISTA = :deportistaId");
+    $stmt->bindParam(':deportistaId', $deportistaId, PDO::PARAM_INT);
+    $stmt->execute();
+    $nom_depo = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    $ip = $_SERVER['REMOTE_ADDR'];
+    $evento = "Nuevo Dato de ".$nom_depo['NOMBRE_DEPO'];
+    $tipo_evento = "nuevo_dato_creado";
+    $query = "INSERT INTO tab_logs (ID_USUARIO, EVENTO, HORA_LOG, DIA_LOG, IP,TIPO_EVENTO) VALUES (?, ?, CURRENT_TIME(), CURRENT_DATE(), ?,?)";
+    $stmt = $conn->prepare($query);
+    $stmt->execute([$_SESSION['user_id'], $evento, $ip,$tipo_evento]);
             echo json_encode(['success' => true]);
+            
         } else {
             echo json_encode(['success' => false, 'message' => 'Error al guardar los detalles']);
         }

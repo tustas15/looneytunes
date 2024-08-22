@@ -91,10 +91,12 @@ include './includes/header.php';
                                                 <td><?= nl2br(htmlspecialchars($observacion['informe'])) ?></td>
                                                 <td><?= htmlspecialchars($observacion['NOMBRE_REPRE'] . ' ' . $observacion['APELLIDO_REPRE']) ?></td>
                                                 <td>
-                                                    <form method="POST" action="eliminar_informe.php" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este informe?');">
-                                                        <input type="hidden" name="id_informe" value="<?= htmlspecialchars($observacion['id_informe']) ?>">
-                                                        <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
-                                                    </form>
+                                                <form method="POST" action="eliminar_informe.php" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este informe?');">
+    <input type="hidden" name="id_informe" value="<?= htmlspecialchars($observacion['id_informe']) ?>">
+    <input type="hidden" name="id_deportista" value="<?= htmlspecialchars($id_deportista) ?>"> <!-- Campo añadido -->
+    <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+</form>
+
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>

@@ -32,9 +32,29 @@ try {
     $stmt->bindParam(':informe', $informe, PDO::PARAM_STR);
     $stmt->execute();
 
+    //Selecionar el nombre del deportista con Observacion
+    $stmt = $conn ->prepare("SELECT NOMBRE_DEPO from tab_deportistas where ID_DEPORTISTA = :deportistaId");
+    $stmt->bindParam(':deportistaId', $deportistaId, PDO::PARAM_INT);
+    $stmt->execute();
+    $nom_depo = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    //LOGS
+    $ip = $_SERVER['REMOTE_ADDR'];
+    $evento = "Nueva Observacion de ".$nom_depo['NOMBRE_DEPO'];
+    $tipo_evento = "nuevo_observacion_enviada";
+    $query = "INSERT INTO tab_logs (ID_USUARIO, EVENTO, HORA_LOG, DIA_LOG, IP,TIPO_EVENTO) VALUES (?, ?, CURRENT_TIME(), CURRENT_DATE(), ?,?)";
+    $stmt = $conn->prepare($query);
+    $stmt->execute([$userId, $evento, $ip,$tipo_evento]);
+
+
+
     // Mensaje de éxito eliminado
 } catch (Exception $e) {
     error_log("Error al guardar el informe: " . $e->getMessage());
     // Mensaje de error eliminado
 }
+
+
+
+
 ?>
