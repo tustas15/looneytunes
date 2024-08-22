@@ -29,6 +29,19 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
         <button class="btn btn-icon btn-transparent-dark order-1 order-lg-0 me-2 ms-lg-2 me-lg-0" id="sidebarToggle"><i data-feather="menu"></i></button>
         <!-- * * * * * * Dimensions: Maximum height: 32px, maximum width: 240px-->
         <a class="navbar-brand pe-3 ps-4 ps-lg-2" href="/index.php">Dashboard</a>
+<<<<<<< HEAD
+=======
+        <!-- Navbar Search Input-->
+        <!-- * * Note: * * Visible only on and above the lg breakpoint-->
+        <!--
+        <form class="form-inline me-auto d-none d-lg-block me-3">
+            <div class="input-group input-group-joined input-group-solid">
+                <input class="form-control pe-0" type="search" placeholder="Search" aria-label="Search" />
+                <div class="input-group-text"><i data-feather="search"></i></div>
+            </div>
+        </form>
+        -->
+>>>>>>> b18de2ded1d0d178b86bd87d669fa19eed92ac5a
         <!-- Navbar Items-->
         <ul class="navbar-nav align-items-center ms-auto">
             <!-- Documentation Dropdown-->
@@ -38,6 +51,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                     <i class="fas fa-chevron-right dropdown-arrow"></i>
                 </a>
                 <div class="dropdown-menu dropdown-menu-end py-0 me-sm-n15 me-lg-0 o-hidden animated--fade-in-up" aria-labelledby="navbarDropdownDocs">
+<<<<<<< HEAD
 <!-- Botón para abrir el Modal de Subida -->
 <a class="dropdown-item py-3" href="#" data-bs-toggle="modal" data-bs-target="#uploadModal">
     <div class="icon-stack bg-primary-soft text-primary me-4"><i data-feather="upload"></i></div>
@@ -55,6 +69,29 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
     </div>
 </a>
 </div>
+=======
+
+
+                    <!-- Botón para abrir el Modal de Subida -->
+                    <a class="dropdown-item py-3" href="#" data-bs-toggle="modal" data-bs-target="#uploadModal">
+                        <div class="icon-stack bg-primary-soft text-primary me-4"><i data-feather="upload"></i></div>
+                        <div>
+                            <div class="small text-gray-500">Subir Hoja de vida</div>
+                            Haz click para subir tu Hoja de vida (PDF)
+                        </div>
+                    </a>
+
+                    <!-- Botón para Descargar Hoja de Vida -->
+                    <a class="dropdown-item py-3" href="./configuracion/download.php">
+                        <div class="icon-stack bg-primary-soft text-primary me-4"><i data-feather="download"></i></div>
+                        <div>
+                            <div class="small text-gray-500">Descargar Hoja de vida</div>
+                            Haz click para descargar tu Hoja de vida
+                        </div>
+                    </a>
+
+                </div>
+>>>>>>> b18de2ded1d0d178b86bd87d669fa19eed92ac5a
             </li>
             <!-- * * Note: * * Visible only below the lg breakpoint-->
             <li class="nav-item dropdown no-caret me-3 d-lg-none">
@@ -104,6 +141,10 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                         <div class="dropdown-item-icon"><i data-feather="settings"></i></div>
                         Cuenta
                     </a>
+                    <a class="dropdown-item" href="/looneytunes/public/logs.php">
+                        <div class="dropdown-item-icon"><i data-feather="file-text"></i></div>
+                        Registro de Actividades
+                    </a>
                     <a class="dropdown-item" href="../public/logout.php">
                         <div class="dropdown-item-icon"><i data-feather="log-out"></i></div>
                         Logout
@@ -140,8 +181,16 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                         </a>
                         <!-- Sidenav Heading (App Views)-->
                         <div class="sidenav-menu-heading">Categorias</div>
+<<<<<<< HEAD
                     </div>
                 </div>
+=======
+                        <!-- Sidenav Accordion (Pages)-->
+
+                    </div>
+                </div>
+
+>>>>>>> b18de2ded1d0d178b86bd87d669fa19eed92ac5a
                 <!-- Sidenav Footer -->
                 <div class="sidenav-footer">
                     <div class="sidenav-footer-content">
