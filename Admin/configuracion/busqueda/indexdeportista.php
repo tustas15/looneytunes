@@ -12,7 +12,7 @@ if (!isset($_SESSION['user_id'])) {
 // Obtener el nombre y el tipo de usuario de la sesión
 $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
 $tipo_usuario = $_SESSION['tipo_usuario'];
-$usuario = isset($_SESSION['usuario']) ? $_SESSION['usuario'] : 'Usuario';
+$usuario = $_SESSION['user_id']; // Cambiado para usar el ID de usuario de la sesión
 
 // Obtener el término de búsqueda si se ha enviado
 $searchTerm = isset($_GET['search']) ? $_GET['search'] : '';
@@ -24,10 +24,9 @@ if (isset($_GET['action']) && isset($_GET['ID_DEPORTISTA'])) {
 
     try {
         // Obtener el ID_USUARIO relacionado
-        $sql = "SELECT ID_USUARIO FROM tab_deportistas WHERE ID_DEPORTISTA = :idDeportista";
+        $sql = "SELECT ID_USUARIO FROM tab_deportistas WHERE ID_DEPORTISTA = ?";
         $stmt = $conn->prepare($sql);
-        $stmt->bindParam(':idDeportista', $idDeportista, PDO::PARAM_INT);
-        $stmt->execute();
+        $stmt->execute([$idDeportista]);
         $idUsuario = $stmt->fetchColumn();
 
         if (!$idUsuario) {
@@ -35,19 +34,38 @@ if (isset($_GET['action']) && isset($_GET['ID_DEPORTISTA'])) {
             exit();
         }
 
-        // Actualizar el estado del deportista en `tab_deportistas`
-        $sql = "UPDATE tab_deportistas SET status = :newStatus WHERE ID_DEPORTISTA = :idDeportista";
+        // Obtener el nombre del deportista
+        $sql = "SELECT NOMBRE_DEPO, APELLIDO_DEPO FROM tab_deportistas WHERE ID_DEPORTISTA = ?";
         $stmt = $conn->prepare($sql);
-        $stmt->bindParam(':newStatus', $newStatus, PDO::PARAM_STR);
-        $stmt->bindParam(':idDeportista', $idDeportista, PDO::PARAM_INT);
-        $stmt->execute();
+        $stmt->execute([$idDeportista]);
+        $deportistaData = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$deportistaData) {
+            echo "Deportista no encontrado.";
+            exit();
+        }
+
+        $nombreDeportista = $deportistaData['NOMBRE_DEPO'] . ' ' . $deportistaData['APELLIDO_DEPO'];
+
+        // Actualizar el estado del deportista en `tab_deportistas`
+        $sql = "UPDATE tab_deportistas SET status = ? WHERE ID_DEPORTISTA = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([$newStatus, $idDeportista]);
 
         // Actualizar el estado del usuario en `tab_usuarios`
-        $sql = "UPDATE tab_usuarios SET status = :newStatus WHERE ID_USUARIO = :idUsuario";
+        $sql = "UPDATE tab_usuarios SET status = ? WHERE ID_USUARIO = ?";
         $stmt = $conn->prepare($sql);
-        $stmt->bindParam(':newStatus', $newStatus, PDO::PARAM_STR);
-        $stmt->bindParam(':idUsuario', $idUsuario, PDO::PARAM_INT);
-        $stmt->execute();
+        $stmt->execute([$newStatus, $idUsuario]);
+
+        // Registrar el cambio en la tabla `tab_logs`
+        $sql = "INSERT INTO tab_logs (ID_USUARIO, EVENTO, HORA_LOG, DIA_LOG, IP, TIPO_EVENTO) VALUES (?, ?, CURRENT_TIME(), CURRENT_DATE(), ?, ?)";
+        $stmt = $conn->prepare($sql);
+        $evento = $newStatus === 'activo' ? "Deportista $nombreDeportista activado" : "Deportista $nombreDeportista desactivado";
+        $ip = $_SERVER['REMOTE_ADDR'];
+        $tipoEvento = $newStatus === 'activo' ? 'usuario_activo' : 'usuario_inactivo';
+
+        // Asegúrate de que el siguiente código se ejecute correctamente
+        $stmt->execute([$usuario, $evento, $ip, $tipoEvento]);
 
         header("Location: indexdeportista.php?mensaje=estado_actualizado");
         exit();
@@ -83,7 +101,7 @@ include '/xampp/htdocs/looneytunes/admin/includespro/header.php';
                                 <th>Cédula</th>
                                 <th>Número de Celular</th>
                                 <th>Género</th>
-                                <th>Acciones</th> <!-- Columna para el botón de activar/desactivar -->
+                                <th>Acciones</th>
                             </tr>
                         </thead>
                         <tfoot>
@@ -96,7 +114,7 @@ include '/xampp/htdocs/looneytunes/admin/includespro/header.php';
                                 <th>Cédula</th>
                                 <th>Número de Celular</th>
                                 <th>Género</th>
-                                <th>Acciones</th> <!-- Columna para el botón de activar/desactivar -->
+                                <th>Acciones</th>
                             </tr>
                         </tfoot>
                         <tbody>
@@ -111,17 +129,18 @@ include '/xampp/htdocs/looneytunes/admin/includespro/header.php';
                                         WHERE t.ID_TIPO = 4";
 
                                 if ($searchTerm) {
-                                    $sql .= " AND (d.NOMBRE_DEPO LIKE :searchTerm OR d.APELLIDO_DEPO LIKE :searchTerm OR d.CEDULA_DEPO LIKE :searchTerm OR d.NUMERO_CELULAR LIKE :searchTerm)";
+                                    $sql .= " AND (d.NOMBRE_DEPO LIKE ? OR d.APELLIDO_DEPO LIKE ? OR d.CEDULA_DEPO LIKE ? OR d.NUMERO_CELULAR LIKE ?)";
                                 }
 
                                 $stmt = $conn->prepare($sql);
 
                                 if ($searchTerm) {
                                     $searchTerm = '%' . $searchTerm . '%';
-                                    $stmt->bindParam(':searchTerm', $searchTerm, PDO::PARAM_STR);
+                                    $stmt->execute([$searchTerm, $searchTerm, $searchTerm, $searchTerm]);
+                                } else {
+                                    $stmt->execute();
                                 }
 
-                                $stmt->execute();
                                 $deportistas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                                 // Mostrar la lista de deportistas

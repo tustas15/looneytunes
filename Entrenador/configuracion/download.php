@@ -24,6 +24,14 @@ if ($file) {
         header('Pragma: public');
         header('Content-Length: ' . filesize($filePath));
         readfile($filePath);
+
+        
+        $ip = $_SERVER['REMOTE_ADDR'];
+    $evento = "Descarga de la hoja de vida";
+    $tipo_evento = "descarga_pdf";
+    $query = "INSERT INTO tab_logs (ID_USUARIO, EVENTO, HORA_LOG, DIA_LOG, IP, TIPO_EVENTO) VALUES (?, ?, CURRENT_TIME(), CURRENT_DATE(), ?, ?)";
+    $stmt = $conn->prepare($query);
+    $stmt->execute([$_SESSION['user_id'], $evento, $ip, $tipo_evento]);
         exit;
     } else {
         echo "El archivo no se encuentra en el servidor.";

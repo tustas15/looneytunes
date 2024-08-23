@@ -138,7 +138,7 @@ $jsonDataPoints = json_encode($dataPoints);
                                             echo "<td>" . htmlspecialchars($deportista['ALTURA']) . "</td>";
                                             echo "<td>" . htmlspecialchars($deportista['PESO']) . "</td>";
                                             echo "<td>" . number_format($imc, 2) . "</td>";
-                                            echo "<td><button class='btn btn-danger btn-sm' onclick='eliminarDetalle(" . htmlspecialchars($deportista['ID_DETALLE']) . ", " . $id_deportista . ")'>Eliminar</button></td>";
+                                            echo "<td><button class='btn btn-danger btn-sm' onclick='eliminarDetalle(" . htmlspecialchars($deportista['ID_DETALLE']) . ", " . htmlspecialchars($id_deportista) . ")'>Eliminar</button></td>";
                                             echo "</tr>";
                                         }
                                     }
@@ -196,6 +196,7 @@ function eliminarDetalle(idDetalle, idDeportista) {
         });
     }
 }
+
 
 function actualizarGrafica(idDeportista) {
     $.ajax({

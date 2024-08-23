@@ -19,90 +19,55 @@ $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
 $tipo_usuario = $_SESSION['tipo_usuario'];
 $usuario = isset($_SESSION['usuario']) ? $_SESSION['usuario'] : 'Usuario';
 
-// Parámetros para la paginación
-$categoriasPorPagina = 8;
-$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-$offset = ($page - 1) * $categoriasPorPagina;
-
 try {
-    // Consulta SQL para obtener las categorías y el número de deportistas por categoría
+    // Consulta SQL para obtener todas las categorías y el número de deportistas por categoría
     $sql = "SELECT c.ID_CATEGORIA, c.CATEGORIA, c.LIMITE_DEPORTISTAS, COUNT(cd.id_deportista) AS num_deportistas
             FROM tab_categorias c
             LEFT JOIN tab_categoria_deportista cd ON c.ID_CATEGORIA = cd.id_categoria
-            GROUP BY c.ID_CATEGORIA, c.CATEGORIA, c.LIMITE_DEPORTISTAS
-            LIMIT :limit OFFSET :offset";
+            GROUP BY c.ID_CATEGORIA, c.CATEGORIA, c.LIMITE_DEPORTISTAS";
     $stmt = $conn->prepare($sql);
-    $stmt->bindParam(':limit', $categoriasPorPagina, PDO::PARAM_INT);
-    $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
     $stmt->execute();
     $categorias = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     if ($categorias === false) {
         throw new Exception("Error al obtener las categorías.");
     }
-
-    // Consulta para obtener el total de categorías
-    $totalCategoriasQuery = "SELECT COUNT(*) as total FROM tab_categorias";
-    $stmtTotalCategorias = $conn->prepare($totalCategoriasQuery);
-    $stmtTotalCategorias->execute();
-    $totalCategorias = $stmtTotalCategorias->fetch(PDO::FETCH_ASSOC)['total'];
-    $totalPages = ceil($totalCategorias / $categoriasPorPagina);
 } catch (PDOException $e) {
     echo "Error al ejecutar la consulta: " . $e->getMessage();
     exit();
 }
 
-// Procesar formulario de creación de categoría
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['crear_categoria'])) {
-    try {
-        $nuevaCategoria = $_POST['nueva_categoria'];
-        $sql = "INSERT INTO tab_categorias (CATEGORIA) VALUES (?)";
-        $stmt = $conn->prepare($sql);
-        $stmt->execute([$nuevaCategoria]);
-        header("Location: " . $_SERVER['PHP_SELF']);
-        exit();
-    } catch (PDOException $e) {
-        echo "Error al crear la categoría: " . $e->getMessage();
-    }
-}
-
-// Procesar formulario de eliminación de categoría
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['eliminar_categoria'])) {
-    try {
-        $idCategoria = $_POST['id_categoria'];
-
-        // Consulta para verificar el número de deportistas asociados
-        $verificarDeportistasQuery = "SELECT COUNT(*) as num_deportistas FROM tab_categoria_deportista WHERE id_categoria = ?";
-        $stmtVerificar = $conn->prepare($verificarDeportistasQuery);
-        $stmtVerificar->execute([$idCategoria]);
-        $numDeportistas = $stmtVerificar->fetch(PDO::FETCH_ASSOC)['num_deportistas'];
-
-        if ($numDeportistas > 0) {
-            // Si hay deportistas, no se puede eliminar la categoría
-            $mensajeError = "No se puede eliminar la categoría porque tiene deportistas asociados.";
-        } else {
-            // Si no hay deportistas, se puede eliminar la categoría
-            $sql = "DELETE FROM tab_categorias WHERE ID_CATEGORIA = ?";
-            $stmt = $conn->prepare($sql);
-            $stmt->execute([$idCategoria]);
-            header("Location: " . $_SERVER['PHP_SELF']);
-            exit();
-        }
-    } catch (PDOException $e) {
-        echo "Error al eliminar la categoría: " . $e->getMessage();
-    }
-}
 
 // Procesar formulario para modificar el límite de deportistas
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['modificar_limite'])) {
     try {
-        $idCategoria = $_POST['categoria_limite'];
+        $idCategoria = $_POST['categoria_limite']; // Cambié el nombre para que coincida con el campo del formulario
         $nuevoLimite = $_POST['nuevo_limite'];
 
         // Consulta para actualizar el límite de deportistas
         $sql = "UPDATE tab_categorias SET LIMITE_DEPORTISTAS = ? WHERE ID_CATEGORIA = ?";
         $stmt = $conn->prepare($sql);
         $stmt->execute([$nuevoLimite, $idCategoria]);
+
+        // Obtén el nombre de la categoría para el registro en logs
+        $get_categoria_sql = "SELECT CATEGORIA FROM tab_categorias WHERE ID_CATEGORIA = :categoria_id";
+        $get_categoria_stmt = $conn->prepare($get_categoria_sql);
+        $get_categoria_stmt->bindParam(':categoria_id', $idCategoria); // Corrección aquí
+        $get_categoria_stmt->execute();
+        $categoria = $get_categoria_stmt->fetchColumn();
+
+        // Obtén el ID del usuario actual y la IP
+        $user_id = $_SESSION['user_id']; // Asegúrate de que $_SESSION['user_id'] esté bien definido
+        $ip = $_SERVER['REMOTE_ADDR']; // Asegúrate de que la IP esté correctamente obtenida
+
+        // Registra la acción en tab_logs
+        $log_action = "Límite modificado ". $nuevoLimite ." en "  . $categoria;;
+        $sqlLog = "INSERT INTO tab_logs (ID_USUARIO, EVENTO, HORA_LOG, DIA_LOG, IP, TIPO_EVENTO) VALUES (:user_id, :evento, CURRENT_TIME(), CURRENT_DATE(), :ip, 'nuevo_limite_categoria_deportistas_definido')";
+        $stmtLog = $conn->prepare($sqlLog);
+        $stmtLog->bindParam(':user_id', $user_id);
+        $stmtLog->bindParam(':evento', $log_action);
+        $stmtLog->bindParam(':ip', $ip);
+        $stmtLog->execute();
 
         // Redirigir a la misma página para evitar resubida de formulario
         header("Location: " . $_SERVER['PHP_SELF']);
@@ -111,6 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['modificar_limite'])) 
         echo "Error al actualizar el límite de deportistas: " . $e->getMessage();
     }
 }
+
 try {
     // Consulta SQL para obtener conteo de usuarios
     $sql = "SELECT
@@ -219,7 +185,7 @@ function timeElapsedString($datetime, $full = false)
 
     // Devolver la diferencia de tiempo formateada.
     if (!$full) $string = array_slice($string, 0, 1);
-    return $string ? 'hace ' . implode(', ', $string) : 'justo ahora';
+    return $string ? '' . implode(', ', $string) : 'justo ahora';
 }
 
 include './includespro/header.php';
@@ -317,28 +283,7 @@ include './includespro/header.php';
                 <div class="card card-header-actions h-100">
                     <div class="card-header">
                         Actividades Recientes
-                        <div class="dropdown no-caret">
-                            <button class="btn btn-transparent-dark btn-icon dropdown-toggle" id="dropdownMenuButton" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="text-gray-500" data-feather="more-vertical"></i>
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-end animated--fade-in-up" aria-labelledby="dropdownMenuButton">
-                                <h6 class="dropdown-header">Filter Activity:</h6>
-                                <a class="dropdown-item" href="?event=inicio_sesion"><span class="badge bg-green-soft text-green my-1">INICIO SESIÓN</span></a>
-                                <a class="dropdown-item" href="?event=cierre_sesion"><span class="badge bg-red-soft text-red my-1">CIERRE SESIÓN</span></a>
-                                <a class="dropdown-item" href="?event=nuevo_usuario"><span class="badge bg-purple-soft text-purple my-1">USUARIO NUEVO</span></a>
-                                <a class="dropdown-item" href="?event=subida_base_datos"><span class="badge bg-yellow-soft text-yellow my-1">SUBIDA BASE DATOS</span></a>
-                                <a class="dropdown-item" href="?event=nuevo_producto_creado"><span class="badge bg-blue-soft text-blue my-1">NUEVO PRODUCTO CREADO</span></a>
-                                <a class="dropdown-item" href="?event=nueva_categoria_producto_creado"><span class="badge bg-orange-soft text-orange my-1">NUEVA CATEGORÍA PRODUCTO</span></a>
-                                <a class="dropdown-item" href="?event=nueva_categoria_deportista_creado"><span class="badge bg-pink-soft text-pink my-1">NUEVA CATEGORÍA DEPORTISTA</span></a>
-                                <a class="dropdown-item" href="?event=nuevo_informe_enviado"><span class="badge bg-teal-soft text-teal my-1">NUEVO INFORME ENVIADO</span></a>
-                                <a class="dropdown-item" href="?event=nuevo_pago_agregado"><span class="badge bg-gray-soft text-gray my-1">NUEVO PAGO AGREGADO</span></a>
-                                <a class="dropdown-item" href="?event=nuevo_limite_categoria_deportistas_definido"><span class="badge bg-green-soft text-green my-1">NUEVO LÍMITE CATEGORÍA DEPORTISTAS</span></a>
-                                <a class="dropdown-item" href="?event=usuario_inactivo"><span class="badge bg-red-soft text-red my-1">USUARIO INACTIVO</span></a>
-                                <a class="dropdown-item" href="?event=usuario_activo"><span class="badge bg-purple-soft text-purple my-1">USUARIO ACTIVO</span></a>
-                                <a class="dropdown-item" href="?event=actualizacion_perfil"><span class="badge bg-teal-soft text-teal my-1">ACTUALIZACIÓN PERFIL</span></a>
-                            </div>
-
-                        </div>
+                        
                     </div>
                     <div class="card-body">
                         <div class="timeline timeline-xs">
@@ -446,14 +391,6 @@ include './includespro/header.php';
                                 <i class="text-gray-500" data-feather="more-vertical"></i>
                             </button>
                             <div class="dropdown-menu dropdown-menu-end animated--fade-in-up" aria-labelledby="dropdownMenuButton">
-                                <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#crearCategoriaModal">
-                                    <div class="dropdown-item-icon"><i class="text-gray-500" data-feather="plus-circle"></i></div>
-                                    Agregar Categoría
-                                </a>
-                                <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#eliminarCategoriaModal">
-                                    <div class="dropdown-item-icon"><i class="text-gray-500" data-feather="trash"></i></div>
-                                    Eliminar Categoría
-                                </a>
                                 <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#modificarLimiteModal">
                                     <div class="dropdown-item-icon"><i class="text-gray-500" data-feather="edit"></i></div>
                                     Establecer límite
@@ -501,63 +438,6 @@ include './includespro/header.php';
                             <a class="stretched-link text-body" href="./categorias/revisar_categorias.php">Revisar Categorías</a>
                             <i class="fas fa-angle-right"></i>
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Modal Crear Categoría -->
-            <div class="modal fade" id="crearCategoriaModal" tabindex="-1" aria-labelledby="crearCategoriaModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="crearCategoriaModalLabel">Agregar Nueva Categoría</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <form method="post" action="">
-                            <div class="modal-body">
-                                <div class="mb-3">
-                                    <label for="nueva_categoria" class="form-label">Nombre de la Categoría</label>
-                                    <input type="text" class="form-control" id="nueva_categoria" name="nueva_categoria" required>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                <button type="submit" name="crear_categoria" class="btn btn-primary">Crear Categoría</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Modal Eliminar Categoría -->
-            <div class="modal fade" id="eliminarCategoriaModal" tabindex="-1" aria-labelledby="eliminarCategoriaModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="eliminarCategoriaModalLabel">Eliminar Categoría</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <form method="post" action="">
-                            <div class="modal-body">
-                                <div class="mb-3">
-                                    <label for="id_categoria" class="form-label">Seleccionar Categoría</label>
-                                    <select class="form-select" id="id_categoria" name="id_categoria" required>
-                                        <?php foreach ($categorias as $categoria) : ?>
-                                            <option value="<?php echo $categoria['ID_CATEGORIA']; ?>"><?php echo htmlspecialchars($categoria['CATEGORIA']); ?></option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                </div>
-                                <?php if (isset($mensajeError)) : ?>
-                                    <div class="alert alert-danger" role="alert">
-                                        <?php echo htmlspecialchars($mensajeError); ?>
-                                    </div>
-                                <?php endif; ?>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                <button type="submit" name="eliminar_categoria" class="btn btn-danger">Eliminar Categoría</button>
-                            </div>
-                        </form>
                     </div>
                 </div>
             </div>

@@ -15,7 +15,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/litepicker/dist/css/litepicker.css" rel="stylesheet" />
     <link href="../Assets/css/styles.css" rel="stylesheet" />
-    <link rel="icon" type="image/x-icon" href="/AssetsFree/img/logo.png" />
+    <link rel="icon" type="image/x-icon" href="../AssetsFree/img/logo.png" />
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>
@@ -31,13 +31,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
         <a class="navbar-brand pe-3 ps-4 ps-lg-2" href="/looneytunes/index.php">Dashboard</a>
         <!-- Navbar Items-->
         <ul class="navbar-nav align-items-center ms-auto">
-            <!-- Documentation Dropdown-->
-            <li class="nav-item dropdown no-caret d-none d-md-block me-3">
-                <a class="nav-link dropdown-toggle" id="navbarDropdownDocs" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <div class="fw-500">Documentation</div>
-                    <i class="fas fa-chevron-right dropdown-arrow"></i>
-                </a>
-            </li>
+            
 
             <!-- Navbar Search Dropdown-->
             <!-- Navbar Search Dropdown-->

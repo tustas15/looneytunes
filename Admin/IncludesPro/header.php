@@ -32,7 +32,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
         <!-- * * Tip * * You can use text or an image for your navbar brand.-->
         <!-- * * * * * * When using an image, we recommend the SVG format.-->
         <!-- * * * * * * Dimensions: Maximum height: 32px, maximum width: 240px-->
-        <a class="navbar-brand pe-3 ps-4 ps-lg-2" href="../admin/indexAd.php">Dashboard</a>
+        <a class="navbar-brand pe-3 ps-4 ps-lg-2" href="/looneytunes/index.php">Dashboard</a>
         <!-- Navbar Search Input-->
         <!-- * * Note: * * Visible only on and above the lg breakpoint-->
         <!--
@@ -75,50 +75,6 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
             <li class="nav-item dropdown no-caret me-3 d-lg-none">
                 <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="searchDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i data-feather="search"></i></a>
                 <!-- Dropdown - Search-->
-
-            </li>
-            <!-- Alerts Dropdown-->
-            <li class="nav-item dropdown no-caret d-none d-sm-block me-3 dropdown-notifications">
-                <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownAlerts" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i data-feather="bell"></i></a>
-                <div class="dropdown-menu dropdown-menu-end border-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownAlerts">
-                    <h6 class="dropdown-header dropdown-notifications-header">
-                        <i class="me-2" data-feather="bell"></i>
-                        Alerts Center
-                    </h6>
-                    <!-- Example Alert 1-->
-                    <a class="dropdown-item dropdown-notifications-item" href="#!">
-                        <div class="dropdown-notifications-item-icon bg-warning"><i data-feather="activity"></i></div>
-                        <div class="dropdown-notifications-item-content">
-                            <div class="dropdown-notifications-item-content-details">December 29, 2021</div>
-                            <div class="dropdown-notifications-item-content-text">This is an alert message. It's nothing serious, but it requires your attention.</div>
-                        </div>
-                    </a>
-                    <!-- Example Alert 2-->
-                    <a class="dropdown-item dropdown-notifications-item" href="#!">
-                        <div class="dropdown-notifications-item-icon bg-info"><i data-feather="bar-chart"></i></div>
-                        <div class="dropdown-notifications-item-content">
-                            <div class="dropdown-notifications-item-content-details">December 22, 2021</div>
-                            <div class="dropdown-notifications-item-content-text">A new monthly report is ready. Click here to view!</div>
-                        </div>
-                    </a>
-                    <!-- Example Alert 3-->
-                    <a class="dropdown-item dropdown-notifications-item" href="#!">
-                        <div class="dropdown-notifications-item-icon bg-danger"><i class="fas fa-exclamation-triangle"></i></div>
-                        <div class="dropdown-notifications-item-content">
-                            <div class="dropdown-notifications-item-content-details">December 8, 2021</div>
-                            <div class="dropdown-notifications-item-content-text">Critical system failure, systems shutting down.</div>
-                        </div>
-                    </a>
-                    <!-- Example Alert 4-->
-                    <a class="dropdown-item dropdown-notifications-item" href="#!">
-                        <div class="dropdown-notifications-item-icon bg-success"><i data-feather="user-plus"></i></div>
-                        <div class="dropdown-notifications-item-content">
-                            <div class="dropdown-notifications-item-content-details">December 2, 2021</div>
-                            <div class="dropdown-notifications-item-content-text">New user request. Woody has requested access to the organization.</div>
-                        </div>
-                    </a>
-                    <a class="dropdown-item dropdown-notifications-footer" href="#!">View All Alerts</a>
-                </div>
             </li>
             <!-- Messages Dropdown-->
             <li class="nav-item dropdown no-caret d-none d-sm-block me-3 dropdown-notifications">
@@ -216,7 +172,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                         <!-- Sidenav Menu Heading (Core)-->
                         <div class="sidenav-menu-heading">Core</div>
                         <!-- Sidenav Accordion (Dashboard)-->
-                        <a class="nav-link" href=" /looneytunes/index.php">
+                        <a class="nav-link" href="/looneytunes/index.php">
                             <div class="nav-link-icon"><i data-feather="home"></i></div>
                             Dashboard
                         </a>
@@ -226,14 +182,29 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
 
                         <!-- Sidenav Accordion (Pages)-->
                         <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
-                            <div class="nav-link-icon"><i class="fas fa-fw fa-cog"></i></div>
+                            <div class="nav-link-icon"><i class="fas fa-cogs"></i></div>
                             Componentes
                             <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                         </a>
                         <div class="collapse" id="collapsePages" data-bs-parent="#accordionSidenav">
                             <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPagesMenu">
-                                <!-- Nested Sidenav Accordion (Pages -> Account)-->
+                                <!-- Crear Usuarios -->
+                                <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#flowsCollapseCrearUsuarios" aria-expanded="false" aria-controls="flowsCollapseCrearUsuarios">
+                                    <div class="nav-link-icon"><i class="fas fa-user-plus"></i></div>
+                                    Crear Usuarios
+                                    <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                                </a>
+                                <div class="collapse" id="flowsCollapseCrearUsuarios" data-bs-parent="#accordionSidenavPagesMenu">
+                                    <nav class="sidenav-menu-nested nav">
+                                        <a class="nav-link" href="/looneytunes/admin/usuarios/crear_usuarios/cradmin.php">Administrador</a>
+                                        <a class="nav-link" href="/looneytunes/admin/usuarios/crear_usuarios/crentrenador.php">Entrenador</a>
+                                        <a class="nav-link" href="/looneytunes/admin/usuarios/crear_usuarios/crrepresentante.php">Representante</a>
+                                        <a class="nav-link" href="/looneytunes/admin/usuarios/crear_usuarios/crdeportista.php">Deportista</a>
+                                    </nav>
+                                </div>
+                                <!-- Perfiles -->
                                 <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#pagesCollapseAccount" aria-expanded="false" aria-controls="pagesCollapseAccount">
+                                    <div class="nav-link-icon"><i class="fas fa-user-circle"></i></div>
                                     Perfiles
                                     <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                                 </a>
@@ -245,103 +216,116 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                                         <a class="nav-link" href="/looneytunes/admin/configuracion/busqueda/indexdeportista.php">Deportistas</a>
                                     </nav>
                                 </div>
+                                <!-- Pago -->
                                 <a class="nav-link" href="/looneytunes/admin/configuracion/pagos/pagos.php">
-                                    Pago
-                                </a>
-                                <a class="nav-link" href="/looneytunes/admin/configuracion/reportesp/reportes_pagos.php">
-                                    Reportes de pagos
+                                    <div class="nav-link-icon"><i class="fas fa-dollar-sign"></i></div>
+                                    Pagos
                                 </a>
                             </nav>
                         </div>
 
+                        <!-- Sidenav Heading (Categorías)-->
+                        <div class="sidenav-menu-heading">Categorías</div>
+
+                        <!-- Utilidades -->
                         <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseFlows" aria-expanded="false" aria-controls="collapseFlows">
-                            <div class="nav-link-icon"><i class="fas fa-fw fa-wrench"></i></div>
-                            Utilidades
+                            <div class="nav-link-icon"><i class="fas fa-tags"></i></div>
+                            Categorías
                             <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                         </a>
                         <div class="collapse" id="collapseFlows" data-bs-parent="#accordionSidenav">
                             <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavFlowsMenu">
-                                <!-- Nested Sidenav Accordion (Flows -> Crear Usuarios)-->
-                                <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#flowsCollapseCrearUsuarios" aria-expanded="false" aria-controls="flowsCollapseCrearUsuarios">
-                                    Crear Usuarios
-                                    <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                                <!-- Categorías -->
+                                <a class="nav-link collapsed" href="/looneytunes/admin/categorias/categorias.php">
+                                    <div class="nav-link-icon"><i class="fas fa-plus-circle"></i></div>
+                                    Crear/Eliminar Categorías
                                 </a>
-                                <div class="collapse" id="flowsCollapseCrearUsuarios" data-bs-parent="#accordionSidenavFlowsMenu">
-                                    <nav class="sidenav-menu-nested nav">
-                                        <a class="nav-link" href="/looneytunes/admin/usuarios/crear_usuarios/cradmin.php">Administrador</a>
-                                        <a class="nav-link" href="/looneytunes/admin/usuarios/crear_usuarios/crentrenador.php">Entrenador</a>
-                                        <a class="nav-link" href="/looneytunes/admin/usuarios/crear_usuarios/crrepresentante.php">Representante</a>
-                                        <a class="nav-link" href="/looneytunes/admin/usuarios/crear_usuarios/crdeportista.php">Deportista</a>
-                                    </nav>
-                                </div>
-                                <!-- Añadido Categorías-->
-                                <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#flowsCollapseCategorias" aria-expanded="false" aria-controls="flowsCollapseCategorias">
-                                    Categorías
-                                    <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                                <a class="nav-link collapsed" href="/looneytunes/admin/categorias/revisar_categorias.php">
+                                    <div class="nav-link-icon"><i class="fas fa-list"></i></div>
+                                    Lista Categorías
                                 </a>
-                                <div class="collapse" id="flowsCollapseCategorias" data-bs-parent="#accordionSidenavFlowsMenu">
-                                    <nav class="sidenav-menu-nested nav">
-                                        <a class="nav-link" href="/looneytunes/admin/categorias/categorias.php">Crear/Eliminar Categorías</a>
-                                        <a class="nav-link" href="/looneytunes/admin/categorias/revisar_categorias.php">Lista Categorías</a>
-                                    </nav>
-                                </div>
                             </nav>
                         </div>
 
-                        <!-- Sidenav Heading (UI Toolkit)-->
-                        <div class="sidenav-menu-heading">INVENTARIO</div>
+                        <!-- Sidenav Heading (Reportes)-->
+                        <div class="sidenav-menu-heading">Reportes</div>
+
+                        <!-- Reportes -->
+                        <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseReports" aria-expanded="false" aria-controls="collapseReports">
+                            <div class="nav-link-icon"><i class="fas fa-chart-line"></i></div>
+                            Reportes
+                            <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                        </a>
+                        <div class="collapse" id="collapseReports" data-bs-parent="#accordionSidenav">
+                            <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavReportsMenu">
+                                <!-- Reportes Individuales -->
+                                <a class="nav-link" href="/looneytunes/admin/reportes/vista/reporte_admin.php">
+                                    <div class="nav-link-icon"><i class="fas fa-user-shield"></i></div>
+                                    Reportes de Administradores
+                                </a>
+                                <a class="nav-link" href="/looneytunes/admin/reportes/vista/reporte_entrenador.php">
+                                    <div class="nav-link-icon"><i class="fas fa-dumbbell"></i></div>
+                                    Reportes de Entrenadores
+                                </a>
+                                <a class="nav-link" href="/looneytunes/admin/reportes/vista/reporte_categorias.php">
+                                    <div class="nav-link-icon"><i class="fas fa-layer-group"></i></div>
+                                    Reportes de Categorías
+                                </a>
+                                <a class="nav-link" href="/looneytunes/admin/configuracion/reportesp/reportes_pagos.php">
+                                    <div class="nav-link-icon"><i class="fas fa-dollar-sign"></i></div>
+                                    Reportes de Pagos
+                                </a>
+                                <a class="nav-link" href="/looneytunes/admin/reportes/vista/reporte_inventario.php">
+                                    <div class="nav-link-icon"><i class="fas fa-boxes"></i></div>
+                                    Reportes de Inventario
+                                </a>
+                            </nav>
+                        </div>
+
+                        <!-- Sidenav Heading (Inventario)-->
+                        <div class="sidenav-menu-heading">Inventario</div>
 
                         <!-- Sidenav Accordion (Categorías)-->
                         <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseLayoutsCategories" aria-expanded="false" aria-controls="collapseLayoutsCategories">
-                            <div class="nav-link-icon"><i data-feather="layout"></i></div>
+                            <div class="nav-link-icon"><i class="fas fa-layer-group"></i></div>
                             Categorías
                             <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                         </a>
                         <div class="collapse" id="collapseLayoutsCategories" data-bs-parent="#accordionSidenav">
                             <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavLayoutCategories">
-                                <!-- Nested Sidenav Accordion (Categorías -> Nueva)-->
-                                <a class="nav-link collapsed" href="/looneytunes/admin/inventario/index.php?vista=category_new">
-                                    Nueva
+                                <a class="nav-link" href="/looneytunes/admin/inventario/index.php?vista=category_new">
+                                    <div class="nav-link-icon"><i class="fas fa-folder-plus"></i></div>
+                                    Nueva Categoría
                                 </a>
-                                <!-- Nested Sidenav Accordion (Categorías -> Lista)-->
-                                <a class="nav-link collapsed" href="/looneytunes/Admin/inventario/index.php?vista=category_list">
-                                    Lista
+                                <a class="nav-link" href="/looneytunes/admin/inventario/index.php?vista=category_list">
+                                    <div class="nav-link-icon"><i class="fas fa-folder-open"></i></div>
+                                    Lista Categorías
                                 </a>
-                                <!-- Nested Sidenav Accordion (Categorías -> Buscar)
-                                <a class="nav-link collapsed" href="/looneytunes/Admin/inventario/index.php?vista=category_search">
-                                    Buscar
-                                </a>-->
                             </nav>
                         </div>
 
                         <!-- Sidenav Accordion (Productos)-->
                         <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseLayoutsProducts" aria-expanded="false" aria-controls="collapseLayoutsProducts">
-                            <div class="nav-link-icon"><i data-feather="layout"></i></div>
+                            <div class="nav-link-icon"><i class="fas fa-box"></i></div>
                             Productos
                             <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                         </a>
                         <div class="collapse" id="collapseLayoutsProducts" data-bs-parent="#accordionSidenav">
                             <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavLayoutProducts">
-                                <!-- Nested Sidenav Accordion (Productos -> Nuevo)-->
-                                <a class="nav-link collapsed" href="/looneytunes/Admin/inventario/index.php?vista=product_new">
-                                    Nuevo
+                                <a class="nav-link" href="/looneytunes/admin/inventario/index.php?vista=product_new">
+                                    <div class="nav-link-icon"><i class="fas fa-plus-circle"></i></div>
+                                    Nuevo Producto
                                 </a>
-                                <!-- Nested Sidenav Accordion (Productos -> Lista)-->
-                                <a class="nav-link collapsed" href="/looneytunes/Admin/inventario/index.php?vista=product_list">
-                                    Lista
+                                <a class="nav-link" href="/looneytunes/admin/inventario/index.php?vista=product_list">
+                                    <div class="nav-link-icon"><i class="fas fa-list"></i></div>
+                                    Lista Productos
                                 </a>
-                                <!-- Nested Sidenav Accordion (Productos -> Por categorías)-->
-                                <a class="nav-link collapsed" href="/looneytunes/Admin/inventario/index.php?vista=product_category">
-                                    Por categorías
+                                <a class="nav-link" href="/looneytunes/admin/inventario/index.php?vista=product_category">
+                                    <div class="nav-link-icon"><i class="fas fa-tags"></i></div>
+                                    Por Categorías
                                 </a>
-                                <!-- Nested Sidenav Accordion (Productos -> Buscar)
-                                <a class="nav-link collapsed" href="/looneytunes/Admin/inventario/index.php?vista=product_search">
-                                    Buscar
-                                </a>-->
                             </nav>
                         </div>
-
-
                     </div>
                 </div>
 

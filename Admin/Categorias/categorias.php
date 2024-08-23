@@ -1,6 +1,12 @@
 <?php
+session_start();
 require_once('../../admin/configuracion/conexion.php');
+// Asegúrate de que el usuario esté autenticado
+if (!isset($_SESSION['user_id'])) {
+    die("No autorizado");
+}
 
+$user_id = $_SESSION['user_id'];
 // Procesar formulario de creación de categoría
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['crear_categoria'])) {
     try {
@@ -8,6 +14,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['crear_categoria'])) {
         $sql = "INSERT INTO tab_categorias (CATEGORIA) VALUES (?)";
         $stmt = $conn->prepare($sql);
         $stmt->execute([$nuevaCategoria]);
+
+        // Obtener la IP
+        $ip = $_SERVER['REMOTE_ADDR'];
+
+        // Registrar en tab_logs
+        $sqlLog = "INSERT INTO tab_logs (ID_USUARIO, EVENTO, HORA_LOG, DIA_LOG, IP, TIPO_EVENTO) VALUES (?, ?, CURRENT_TIME(), CURRENT_DATE(), ?, 'nueva_categoria_producto_creado')";
+        $stmtLog = $conn->prepare($sqlLog);
+        $stmtLog->execute([$user_id, "Nueva categoría: $nuevaCategoria", $ip]);
+
         $message = "Categoría creada exitosamente.";
     } catch (PDOException $e) {
         $message = "Error al crear la categoría: " . $e->getMessage();
@@ -20,9 +35,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['crear_categoria'])) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['eliminar_categoria'])) {
     try {
         $idCategoria = $_POST['id_categoria'];
+        
+        // Obtener el nombre de la categoría antes de eliminarla
+        $sqlSelect = "SELECT CATEGORIA FROM tab_categorias WHERE ID_CATEGORIA = ?";
+        $stmtSelect = $conn->prepare($sqlSelect);
+        $stmtSelect->execute([$idCategoria]);
+        $categoria = $stmtSelect->fetch(PDO::FETCH_ASSOC);
+        $nombreCategoria = $categoria['CATEGORIA'];
+        
+        // Eliminar categoría
         $sql = "DELETE FROM tab_categorias WHERE ID_CATEGORIA = ?";
         $stmt = $conn->prepare($sql);
         $stmt->execute([$idCategoria]);
+        
+        // Obtener la IP
+        $ip = $_SERVER['REMOTE_ADDR'];
+        
+        // Registrar en tab_logs
+        $sqlLog = "INSERT INTO tab_logs (ID_USUARIO, EVENTO, HORA_LOG, DIA_LOG, IP, TIPO_EVENTO) VALUES (?, ?, CURRENT_TIME(), CURRENT_DATE(), ?, 'categoria_deportista_eliminado')";
+        $stmtLog = $conn->prepare($sqlLog);
+        $stmtLog->execute([$user_id, "Categoría eliminada: $nombreCategoria", $ip]);
+
         $message = "Categoría eliminada exitosamente.";
     } catch (PDOException $e) {
         $message = "Error al eliminar la categoría: " . $e->getMessage();
