@@ -1,6 +1,5 @@
 <?php
-require_once('../conexion.php');
-
+require_once('../admin/configuracion/conexion.php');
 $tipo_reporte = $_POST['tipo_reporte'];
 $deportista = $_POST['deportista'];
 $fecha_inicio = $_POST['fecha_inicio'];
