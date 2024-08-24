@@ -2,22 +2,32 @@
 session_start();
 require_once('../conexion.php');
 
-$nombre = $_SESSION['nombre'] ?? 'Usuario';
+$nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
 
 // Incluye la cabecera y las dependencias CSS y JS necesarias
 include '../../includespro/header.php';
 ?>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4"></script>
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generación de Reportes de Pagos</title>
+    <link href="https://cdn.datatables.net/1.10.24/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
 
 <body class="nav-fixed">
     <main>
         <div class="container-fluid px-4">
             <h2 class="mt-4">Generación de Reportes de Pagos</h2>
 
-            <!-- Formulario de generación de reportes -->
             <div class="card mb-4">
                 <div class="card-header">
                     <i class="fas fa-chart-bar"></i> Parámetros del Reporte
@@ -39,37 +49,34 @@ include '../../includespro/header.php';
                                         <input type="date" class="form-control" id="fecha_fin" name="fecha_fin" required>
                                     </div>
 
-                                    <!-- Categoría -->
-                                    <div class="col-md-6 col-lg-3">
-                                        <label for="categoria" class="form-label">Categoría</label>
-                                        <select id="categoria" name="categoria" class="form-select">
-                                            <option value="">Todas las categorías</option>
-                                        </select>
-                                    </div>
-
-                                    <!-- Deportista -->
-                                    <div class="col-md-6 col-lg-3">
-                                        <label for="deportista" class="form-label">Deportista</label>
-                                        <select id="deportista" name="deportista" class="form-select">
-                                            <option value="">Todos los deportistas</option>
-                                        </select>
-                                    </div>
-
-                                    <!-- Representante -->
-                                    <div class="col-md-6 col-lg-3">
-                                        <label for="representante" class="form-label">Representante</label>
-                                        <select id="representante" name="representante" class="form-select">
-                                            <option value="">Todos los representantes</option>
-                                        </select>
-                                    </div>
-
                                     <!-- Tipo de Reporte -->
                                     <div class="col-md-6 col-lg-3">
                                         <label for="tipo_reporte" class="form-label">Tipo de Reporte</label>
                                         <select id="tipo_reporte" name="tipo_reporte" class="form-select" required>
                                             <option value="">Seleccione un tipo</option>
-                                            <option value="detallado">Detallado</option>
-                                            <option value="resumen">Resumen</option>
+                                            <option value="categoria">Categoría</option>
+                                            <option value="deportista">Deportista</option>
+                                            <option value="representante">Representante</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Opciones específicas (se mostrará según la selección) -->
+                                    <div class="col-md-6 col-lg-3" id="opciones_especificas" style="display:none;">
+                                        <label for="opcion_especifica" class="form-label">Seleccione</label>
+                                        <select id="opcion_especifica" name="opcion_especifica" class="form-select">
+                                            <option value="">Cargando opciones...</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Tipo de Informe -->
+                                    <div class="col-md-6 col-lg-3">
+                                        <label for="tipo_informe" class="form-label">Tipo de Informe</label>
+                                        <select id="tipo_informe" name="tipo_informe" class="form-select" required>
+                                            <option value="">Seleccione un tipo</option>
+                                            <option value="individual_dia">Reporte individual por categoría del deportista al día</option>
+                                            <option value="grupal_dia">Reporte grupal de categoría al día</option>
+                                            <option value="individual_nodia">Reporte de categoría individual no al día</option>
+                                            <option value="grupal_nodia">Reporte por categoría grupal no al día</option>
                                         </select>
                                     </div>
                                 </div>
@@ -97,32 +104,46 @@ include '../../includespro/header.php';
         </div>
     </main>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script>
         $(document).ready(function() {
             // Inicializar la fecha fin con la fecha actual
             const today = new Date().toISOString().split('T')[0];
             $('#fecha_fin').val(today);
 
-            // Cargar opciones para categorías, deportistas y representantes
-            ['categoria', 'deportista', 'representante'].forEach(function(filtro) {
-                cargarOpciones(filtro);
+            // Manejar el cambio en el tipo de reporte
+            $('#tipo_reporte').change(function() {
+                const tipoReporte = $(this).val();
+                if (tipoReporte) {
+                    $('#opciones_especificas').show();
+                    cargarOpciones(tipoReporte);
+                } else {
+                    $('#opciones_especificas').hide();
+                }
             });
 
-            // Función para cargar opciones
-            function cargarOpciones(filtro) {
+            function cargarOpciones(tipoReporte) {
                 $.ajax({
                     url: 'obtener_opciones.php',
                     type: 'POST',
-                    data: {
-                        filtro: filtro
-                    },
+                    data: { tipo: tipoReporte },
+                    dataType: 'json',
                     success: function(response) {
-                        $('#' + filtro).html(response);
+                        if (response.error) {
+                            console.error("Error al cargar opciones:", response.error);
+                            Swal.fire('Error', 'Hubo un problema al cargar las opciones: ' + response.error, 'error');
+                            return;
+                        }
+
+                        var select = $('#opcion_especifica');
+                        select.empty().append('<option value="">Seleccione una opción</option>');
+
+                        $.each(response, function(index, item) {
+                            select.append('<option value="' + item.id + '">' + item.nombre + '</option>');
+                        });
                     },
                     error: function(xhr, status, error) {
-                        console.log("Error al cargar opciones para " + filtro + ":", status, error);
-                        Swal.fire('Error', 'Hubo un problema al cargar las opciones de ' + filtro, 'error');
+                        console.error("Error al cargar opciones:", status, error);
+                        Swal.fire('Error', 'Hubo un problema al cargar las opciones', 'error');
                     }
                 });
             }

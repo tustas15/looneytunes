@@ -1,38 +1,39 @@
 <?php
-session_start();
 require_once('../conexion.php');
 
-// Verificar el tipo de filtro enviado
-$filtro = $_POST['filtro'] ?? '';
+$tipo = $_POST['tipo'];
+$options = [];
 
-switch ($filtro) {
-    case 'categoria':
-        $sql = "SELECT ID_CATEGORIA, CATEGORIA FROM tab_categorias ORDER BY CATEGORIA";
-        break;
-    case 'deportista':
-        $sql = "SELECT ID_DEPORTISTA, CONCAT(NOMBRE_DEPO, ' ', APELLIDO_DEPO) AS nombre FROM tab_deportistas ORDER BY NOMBRE_DEPO";
-        break;
-    case 'representante':
-        $sql = "SELECT ID_REPRESENTANTE, CONCAT(NOMBRE_REPRE, ' ', APELLIDO_REPRE) AS nombre FROM tab_representantes ORDER BY NOMBRE_REPRE";
-        break;
-    default:
-        echo '<option value="">Seleccione una opción</option>';
-        exit;
+try {
+    switch ($tipo) {
+        case 'categoria':
+            $query = "SELECT DISTINCT c.ID_CATEGORIA as id, cat.CATEGORIA as nombre 
+                      FROM tab_categoria_deportista c 
+                      JOIN tab_categorias cat ON c.ID_CATEGORIA = cat.ID_CATEGORIA 
+                      ORDER BY cat.CATEGORIA";
+            break;
+        case 'deportista':
+            $query = "SELECT ID_DEPORTISTA as id, CONCAT(NOMBRE_DEPO, ' ', APELLIDO_DEPO) as nombre 
+                      FROM tab_deportistas 
+                      ORDER BY NOMBRE_DEPO";
+            break;
+        case 'representante':
+            $query = "SELECT ID_REPRESENTANTE as id, CONCAT(NOMBRE_REPRE, ' ', APELLIDO_REPRE) as nombre 
+                      FROM tab_representantes 
+                      ORDER BY NOMBRE_REPRE";
+            break;
+        default:
+            throw new Exception("Tipo de opción no válido");
+    }
+
+    $stmt = $conn->prepare($query);
+    $stmt->execute();
+
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $options[] = $row;
+    }
+
+    echo json_encode($options);
+} catch (Exception $e) {
+    echo json_encode(['error' => $e->getMessage()]);
 }
-
-$result = $conn->query($sql);
-
-if ($result === false) {
-    echo '<option value="">Error en la consulta: ' . $conn->error . '</option>';
-    exit;
-}
-
-$options = '<option value="">Seleccione una opción</option>';
-while ($row = $result->fetch_assoc()) {
-    $value = $row['ID_CATEGORIA'] ?? $row['ID_DEPORTISTA'] ?? $row['ID_REPRESENTANTE'];
-    $name = $row['CATEGORIA'] ?? $row['nombre'];
-    $options .= "<option value='{$value}'>{$name}</option>";
-}
-
-echo $options;
-?>

@@ -1,87 +1,97 @@
 <?php
-require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
+require_once('../conexion.php');
 
-// Obtener parámetros del formulario
 $fecha_inicio = $_POST['fecha_inicio'];
 $fecha_fin = $_POST['fecha_fin'];
-$categoria = $_POST['categoria'];
+$tipo_reporte = $_POST['tipo_reporte'];
+$opcion_especifica = $_POST['opcion_especifica'];
+$tipo_informe = $_POST['tipo_informe'];
 
-// Construir la consulta SQL
-$sql = "SELECT p.*, d.NOMBRE_DEPO, d.APELLIDO_DEPO, c.CATEGORIA
-        FROM tab_pagos p
-        JOIN tab_deportistas d ON p.ID_DEPORTISTA = d.ID_DEPORTISTA
-        JOIN tab_categoria_deportista cd ON d.ID_DEPORTISTA = cd.ID_DEPORTISTA
-        JOIN tab_categorias c ON cd.ID_CATEGORIA = c.ID_CATEGORIA
-        WHERE p.FECHA_PAGO BETWEEN ? AND ?";
+try {
+    $query = "SELECT p.ID_PAGO, r.NOMBRE_REPRE, r.APELLIDO_REPRE, d.NOMBRE_DEPO, 
+                     c.CATEGORIA, p.METODO_PAGO, p.MONTO, p.FECHA_PAGO, p.MOTIVO
+              FROM tab_pagos p
+              JOIN tab_deportistas d ON p.ID_DEPORTISTA = d.ID_DEPORTISTA
+              JOIN tab_categoria_deportista cd ON d.ID_DEPORTISTA = cd.ID_DEPORTISTA
+              JOIN tab_categorias c ON cd.ID_CATEGORIA = c.ID_CATEGORIA
+              JOIN tab_representantes r ON p.ID_REPRESENTANTE = r.ID_REPRESENTANTE
+              WHERE p.FECHA_PAGO BETWEEN :fecha_inicio AND :fecha_fin";
 
-$params = [$fecha_inicio, $fecha_fin];
+    $params = [':fecha_inicio' => $fecha_inicio, ':fecha_fin' => $fecha_fin];
 
-if (!empty($categoria)) {
-    $sql .= " AND c.ID_CATEGORIA = ?";
-    $params[] = $categoria;
-}
-
-$sql .= " ORDER BY p.FECHA_PAGO";
-
-// Preparar y ejecutar la consulta
-$stmt = $conn->prepare($sql);
-$stmt->bind_param(str_repeat('s', count($params)), ...$params);
-$stmt->execute();
-$result = $stmt->get_result();
-
-// Inicializar arrays para los datos del gráfico
-$labels = [];
-$data = [];
-
-// Generar la tabla HTML con los resultados
-$html = '<table id="tabla-reporte" class="table table-striped table-bordered">
-            <thead>
-                <tr>
-                    <th>Fecha</th>
-                    <th>Deportista</th>
-                    <th>Categoría</th>
-                    <th>Monto</th>
-                    <th>Método de Pago</th>
-                </tr>
-            </thead>
-            <tbody>';
-
-while ($row = $result->fetch_assoc()) {
-    $html .= '<tr>
-                <td>' . $row['FECHA_PAGO'] . '</td>
-                <td>' . $row['NOMBRE_DEPO'] . ' ' . $row['APELLIDO_DEPO'] . '</td>
-                <td>' . $row['CATEGORIA'] . '</td>
-                <td>$' . number_format($row['MONTO'], 2) . '</td>
-                <td>' . $row['METODO_PAGO'] . '</td>
-              </tr>';
-    
-    // Agregar datos para el gráfico
-    $mes = date('M Y', strtotime($row['FECHA_PAGO']));
-    if (!isset($data[$mes])) {
-        $data[$mes] = 0;
-        $labels[] = $mes;
+    if ($opcion_especifica) {
+        switch ($tipo_reporte) {
+            case 'categoria':
+                $query .= " AND c.ID_CATEGORIA = :opcion_id";
+                break;
+            case 'deportista':
+                $query .= " AND d.ID_DEPORTISTA = :opcion_id";
+                break;
+            case 'representante':
+                $query .= " AND r.ID_REPRESENTANTE = :opcion_id";
+                break;
+        }
+        $params[':opcion_id'] = $opcion_especifica;
     }
-    $data[$mes] += $row['MONTO'];
+
+    switch ($tipo_informe) {
+        case 'individual_dia':
+            $query .= " AND p.FECHA_PAGO = CURDATE()";
+            break;
+        case 'grupal_dia':
+            $query .= " AND p.FECHA_PAGO = CURDATE() GROUP BY c.ID_CATEGORIA";
+            break;
+        case 'individual_nodia':
+            $query .= " AND p.FECHA_PAGO < CURDATE()";
+            break;
+        case 'grupal_nodia':
+            $query .= " AND p.FECHA_PAGO < CURDATE() GROUP BY c.ID_CATEGORIA";
+            break;
+    }
+
+    $stmt = $conn->prepare($query);
+    $stmt->execute($params);
+
+    $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Generar tabla HTML con los resultados
+    $html = "<table id='tabla-reporte' class='table table-striped'>
+                <thead>
+                    <tr>
+                        <th>ID Pago</th>
+                        <th>Representante</th>
+                        <th>Deportista</th>
+                        <th>Categoría</th>
+                        <th>Método de Pago</th>
+                        <th>Monto</th>
+                        <th>Fecha de Pago</th>
+                        <th>Motivo</th>
+                    </tr>
+                </thead>
+                <tbody>";
+
+    foreach ($results as $row) {
+        $html .= "<tr>
+                    <td>{$row['ID_PAGO']}</td>
+                    <td>{$row['NOMBRE_REPRE']} {$row['APELLIDO_REPRE']}</td>
+                    <td>{$row['NOMBRE_DEPO']}</td>
+                    <td>{$row['CATEGORIA']}</td>
+                    <td>{$row['METODO_PAGO']}</td>
+                    <td>{$row['MONTO']}</td>
+                    <td>{$row['FECHA_PAGO']}</td>
+                    <td>{$row['MOTIVO']}</td>
+                  </tr>";
+    }
+
+    $html .= "</tbody></table>";
+
+    // Generar datos para el gráfico
+    $chartData = [
+        'labels' => array_column($results, 'CATEGORIA'),
+        'data' => array_column($results, 'MONTO')
+    ];
+
+    echo $html . '<script>var chartData = ' . json_encode($chartData) . ';</script>';
+} catch (Exception $e) {
+    echo "Error al procesar el reporte: " . $e->getMessage();
 }
-
-$html .= '</tbody></table>';
-
-// Preparar datos para el gráfico
-$chartData = [
-    'labels' => array_values(array_unique($labels)),
-    'datasets' => [
-        [
-            'label' => 'Monto total de pagos',
-            'data' => array_values($data),
-            'backgroundColor' => 'rgba(75, 192, 192, 0.2)',
-            'borderColor' => 'rgba(75, 192, 192, 1)',
-            'borderWidth' => 1
-        ]
-    ]
-];
-
-// Devolver los resultados como JSON
-echo json_encode([
-    'html' => $html,
-    'chartData' => $chartData
-]);
