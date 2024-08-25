@@ -1,39 +1,36 @@
 <?php
 require_once('../conexion.php');
 
-$tipo = $_POST['tipo'];
-$options = [];
+if (!isset($_POST['tipos'])) {
+    echo json_encode(['error' => 'No se especificaron tipos de reporte']);
+    exit;
+}
+$tipos = $_POST['tipos'];
+$response = [];
 
 try {
-    switch ($tipo) {
-        case 'categoria':
-            $query = "SELECT DISTINCT c.ID_CATEGORIA as id, cat.CATEGORIA as nombre 
-                      FROM tab_categoria_deportista c 
-                      JOIN tab_categorias cat ON c.ID_CATEGORIA = cat.ID_CATEGORIA 
-                      ORDER BY cat.CATEGORIA";
-            break;
-        case 'deportista':
-            $query = "SELECT ID_DEPORTISTA as id, CONCAT(NOMBRE_DEPO, ' ', APELLIDO_DEPO) as nombre 
-                      FROM tab_deportistas 
-                      ORDER BY NOMBRE_DEPO";
-            break;
-        case 'representante':
-            $query = "SELECT ID_REPRESENTANTE as id, CONCAT(NOMBRE_REPRE, ' ', APELLIDO_REPRE) as nombre 
-                      FROM tab_representantes 
-                      ORDER BY NOMBRE_REPRE";
-            break;
-        default:
-            throw new Exception("Tipo de opción no válido");
+    foreach ($tipos as $tipo) {
+        switch ($tipo) {
+            case 'categoria':
+                $stmt = $conn->query("SELECT ID_CATEGORIA as id, CATEGORIA as nombre FROM tab_categorias");
+                $response['categorias'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                break;
+            case 'deportista':
+                $stmt = $conn->query("SELECT ID_DEPORTISTA as id, CONCAT(NOMBRE_DEPO, ' ', APELLIDO_DEPO) as nombre FROM tab_deportistas");
+                $response['deportistas'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                break;
+            case 'representante':
+                // Ajuste para obtener opciones de representantes basadas en el ID del usuario
+                $stmt = $conn->query("SELECT u.ID_USUARIO as id, CONCAT(r.NOMBRE_REPRE, ' ', r.APELLIDO_REPRE) as nombre 
+                                      FROM tab_representantes r 
+                                      JOIN tab_usuarios u ON r.ID_USUARIO = u.ID_USUARIO");
+                $response['representantes'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                break;
+        }
     }
 
-    $stmt = $conn->prepare($query);
-    $stmt->execute();
-
-    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        $options[] = $row;
-    }
-
-    echo json_encode($options);
-} catch (Exception $e) {
-    echo json_encode(['error' => $e->getMessage()]);
+    echo json_encode($response);
+} catch (PDOException $e) {
+    echo json_encode(['error' => 'Error en la base de datos: ' . $e->getMessage()]);
 }
+?>
