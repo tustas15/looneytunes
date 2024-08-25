@@ -11,16 +11,8 @@ include '../../includespro/header.php';
 <link href="https://cdn.datatables.net/1.10.24/css/dataTables.bootstrap5.min.css" rel="stylesheet">
 <link href="https://cdn.datatables.net/buttons/1.7.0/css/buttons.bootstrap5.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<!-- Carga de jQuery antes que otros scripts -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
-<!-- DataTables CSS -->
-<link href="https://cdn.datatables.net/1.10.24/css/dataTables.bootstrap5.min.css" rel="stylesheet">
-<link href="https://cdn.datatables.net/buttons/1.7.0/css/buttons.bootstrap5.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-<!-- DataTables y otros scripts después de jQuery -->
 <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap5.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/1.7.0/js/dataTables.buttons.min.js"></script>
@@ -78,9 +70,14 @@ include '../../includespro/header.php';
             <div class="card-header">
                 <i class="fas fa-info-circle"></i> Resumen del Reporte
             </div>
-            <div class="card-body">
+            <div class="card-body" id="resumen-contenido">
                 <!-- El resumen se llenará dinámicamente con JavaScript -->
             </div>
+        </div>
+
+        <div id="botones-detalle" style="display:none;" class="mb-3">
+            <button id="btn-individual" class="btn btn-primary">Pagados al Día (Individual)</button>
+            <button id="btn-grupal" class="btn btn-primary">Pagados al Día (Grupal)</button>
         </div>
 
         <div class="row">
@@ -113,185 +110,249 @@ include '../../includespro/header.php';
 </main>
 
 <script>
-    $(document).ready(function() {
-        $('#tipo_reporte').select({
-            placeholder: "Seleccione tipo(s) de reporte",
-            allowClear: true
-        });
+$(document).ready(function() {
+    $('#tipo_reporte').select({
+        placeholder: "Seleccione tipo(s) de reporte",
+        allowClear: true
+    });
 
-        $('#opcion_especifica').select({
-            placeholder: "Seleccione opción(es) específica(s)",
-            allowClear: true
-        });
+    $('#opcion_especifica').select({
+        placeholder: "Seleccione opción(es) específica(s)",
+        allowClear: true
+    });
 
-        $('#tipo_reporte').change(function() {
-            const tiposReporte = $(this).val();
-            if (tiposReporte && tiposReporte.length > 0) {
-                $('#opciones_especificas').show();
-                cargarOpciones(tiposReporte);
-            } else {
-                $('#opciones_especificas').hide();
-            }
-        });
+    $('#tipo_reporte').change(function() {
+        const tiposReporte = $(this).val();
+        if (tiposReporte && tiposReporte.length > 0) {
+            $('#opciones_especificas').show();
+            cargarOpciones(tiposReporte);
+        } else {
+            $('#opciones_especificas').hide();
+        }
+    });
 
-        function cargarOpciones(tiposReporte) {
-            $.ajax({
-                url: 'obtener_opciones.php',
-                type: 'POST',
-                data: {
-                    tipos: tiposReporte
-                },
-                dataType: 'json',
-                success: function(response) {
-                    if (response.error) {
-                        console.error("Error al cargar opciones:", response.error);
-                        Swal.fire('Error', 'Hubo un problema al cargar las opciones: ' + response.error, 'error');
-                        return;
-                    }
+    function cargarOpciones(tiposReporte) {
+        $.ajax({
+            url: 'obtener_opciones.php',
+            type: 'POST',
+            data: { tipos: tiposReporte },
+            dataType: 'json',
+            success: function(response) {
+                if (response.error) {
+                    console.error("Error al cargar opciones:", response.error);
+                    Swal.fire('Error', 'Hubo un problema al cargar las opciones: ' + response.error, 'error');
+                    return;
+                }
 
-                    var select = $('#opcion_especifica');
-                    select.empty();
+                var select = $('#opcion_especifica');
+                select.empty();
 
-                    $.each(response, function(tipo, opciones) {
-                        var optgroup = $('<optgroup>').attr('label', tipo.charAt(0).toUpperCase() + tipo.slice(1));
-                        $.each(opciones, function(index, item) {
-                            optgroup.append($('<option>').val(tipo + '_' + item.id).text(item.nombre));
-                        });
-                        select.append(optgroup);
+                $.each(response, function(tipo, opciones) {
+                    var optgroup = $('<optgroup>').attr('label', tipo.charAt(0).toUpperCase() + tipo.slice(1));
+                    $.each(opciones, function(index, item) {
+                        optgroup.append($('<option>').val(tipo + '_' + item.id).text(item.nombre));
                     });
+                    select.append(optgroup);
+                });
 
-                    select.trigger('change');
-                },
-                error: function(xhr, status, error) {
-                    console.error("Error al cargar opciones:", status, error);
-                    Swal.fire('Error', 'Hubo un problema al cargar las opciones', 'error');
+                select.trigger('change');
+            },
+            error: function(xhr, status, error) {
+                console.error("Error al cargar opciones:", status, error);
+                Swal.fire('Error', 'Hubo un problema al cargar las opciones', 'error');
+            }
+        });
+    }
+
+    $('#reporte-form').on('submit', function(e) {
+        e.preventDefault();
+        var formData = $(this).serialize();
+
+        $.ajax({
+            type: 'POST',
+            url: 'generar_reporte_pagos.php',
+            data: formData,
+            dataType: 'json',
+            success: function(response) {
+                if (response.success) {
+                    actualizarResumen(response);
+                    inicializarTabla(response.datos);
+                    generarGrafico(response.datos);
+                    $('#botones-detalle').show();
+                    Swal.fire('Éxito', 'Reporte generado correctamente', 'success');
+                } else {
+                    Swal.fire('Error', response.error, 'error');
                 }
-            });
-        }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                Swal.fire('Error', 'Hubo un problema al procesar la solicitud', 'error');
+            }
+        });
+    });
 
+    function actualizarResumen(data) {
+        $('#resumen-reporte').show();
+        let resumenHTML = `
+            <p>Total Pagos: ${data.totalPagos}</p>
+            <p>Monto Total: $${data.montoTotal.toFixed(2)}</p>
+            <h4>Resumen de Pagos por Mes:</h4>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Mes</th>
+                        <th>Monto</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
 
-
-
-
-
-
-        
-        $('#reporte-form').on('submit', function(e) {
-            e.preventDefault();
-            var formData = $(this).serialize();
-
-            $.ajax({
-                type: 'POST',
-                url: 'generar_reporte_pagos.php',
-                data: formData,
-                dataType: 'json',
-                success: function(response) {
-                    if (response.success) {
-                        console.log(response.message);
-                        console.log('Total Pagos:', response.totalPagos);
-
-                        // Actualizar el resumen
-                        actualizarResumen(response);
-
-                        // Inicializar la tabla
-                        inicializarTabla(response.resultados);
-
-                        // Generar el gráfico
-                        generarGrafico(response.estadisticas);
-
-                        // Mostrar mensaje de éxito
-                        Swal.fire('Éxito', 'Reporte generado correctamente', 'success');
-                    } else {
-                        console.error('Error:', response.error);
-                        Swal.fire('Error', response.error, 'error');
-                    }
-                },
-                error: function(jqXHR, textStatus, errorThrown) {
-                    console.error('Error en la solicitud:', textStatus, errorThrown);
-                    Swal.fire('Error', 'Hubo un problema al procesar la solicitud', 'error');
-                }
-            });
+        Object.entries(data.estadisticas.pagosPorMes).forEach(([mes, monto]) => {
+            resumenHTML += `
+                <tr>
+                    <td>${mes}</td>
+                    <td>$${monto.toFixed(2)}</td>
+                </tr>
+            `;
         });
 
-        function actualizarResumen(data) {
-            $('#resumen-reporte').show();
-            $('.card-body', '#resumen-reporte').html(`
-        <p>Total Pagos: ${data.totalPagos}</p>
-        <p>Monto Total: $${data.montoTotal.toFixed(2)}</p>
-    `);
+        resumenHTML += `
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th>Total</th>
+                        <th>$${data.montoTotal.toFixed(2)}</th>
+                    </tr>
+                </tfoot>
+            </table>
+        `;
+
+        $('#resumen-contenido').html(resumenHTML);
+    }
+
+    $('#btn-individual').click(function() {
+        mostrarDetallesIndividuales();
+    });
+
+    $('#btn-grupal').click(function() {
+        mostrarDetallesGrupales();
+    });
+
+    function mostrarDetallesIndividuales() {
+        $.ajax({
+            type: 'POST',
+            url: 'obtener_detalles_individuales.php',
+            data: $('#reporte-form').serialize(),
+            dataType: 'json',
+            success: function(response) {
+                if (response.success) {
+                    inicializarTabla(response.datos);
+                    generarGrafico(response.datos);
+                } else {
+                    Swal.fire('Error', response.error, 'error');
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                Swal.fire('Error', 'Hubo un problema al procesar la solicitud', 'error');
+            }
+        });
+    }
+
+    function mostrarDetallesGrupales() {
+        $.ajax({
+            type: 'POST',
+            url: 'obtener_detalles_grupales.php',
+            data: $('#reporte-form').serialize(),
+            dataType: 'json',
+            success: function(response) {
+                if (response.success) {
+                    inicializarTabla(response.datos);
+                    generarGrafico(response.datos);
+                } else {
+                    Swal.fire('Error', response.error, 'error');
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                Swal.fire('Error', 'Hubo un problema al procesar la solicitud', 'error');
+            }
+        });
+    }
+
+    function inicializarTabla(datos) {
+        if ($.fn.DataTable.isDataTable('#tabla-reporte')) {
+            $('#tabla-reporte').DataTable().destroy();
         }
 
-        function inicializarTabla(datos) {
-            if ($.fn.DataTable.isDataTable('#tabla-reporte')) {
-                $('#tabla-reporte').DataTable().destroy();
+        $('#tabla-reporte').DataTable({
+            data: datos,
+            columns: [
+                { title: "Categoria", data: "categoria" },
+                { title: "Mes", data: "mes" },
+                { title: "Monto", data: "monto", render: $.fn.dataTable.render.number(',', '.', 2, '$') }
+            ],
+            responsive: true,
+            dom: 'Bfrtip',
+            buttons: ['copy', 'csv', 'excel', 'pdf', 'print'],
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json'
             }
+        });
+    }
 
-            $('#tabla-reporte').html('<thead><tr><th>ID</th><th>Monto</th><th>Fecha</th><th>Deportista</th><th>Categoría</th><th>Representante</th></tr></thead><tbody></tbody>');
+    function generarGrafico(datos) {
+        const ctx = document.getElementById('myChart').getContext('2d');
+        if (window.myChart instanceof Chart) {
+            window.myChart.destroy();
+        }
 
-            var tabla = $('#tabla-reporte').DataTable({
-                data: datos,
-                columns: [{
-                        data: 'ID_PAGO'
-                    },
-                    {
-                        data: 'MONTO',
-                        render: $.fn.dataTable.render.number(',', '.', 2, '$')
-                    },
-                    {
-                        data: 'FECHA_PAGO'
-                    },
-                    {
-                        data: null,
-                        render: function(data, type, row) {
-                            return row.NOMBRE_DEPO + ' ' + row.APELLIDO_DEPO;
+        // Agrupar datos por mes
+        const datosPorMes = datos.reduce((acc, item) => {
+            if (!acc[item.mes]) {
+                acc[item.mes] = 0;
+            }
+            acc[item.mes] += parseFloat(item.monto);
+            return acc;
+        }, {});
+
+        const labels = Object.keys(datosPorMes);
+        const valores = Object.values(datosPorMes);
+
+        window.myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Monto por Mes',
+                    data: valores,
+                    backgroundColor: 'rgba(54, 162, 235, 0.8)'
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Monto'
                         }
                     },
-                    {
-                        data: 'CATEGORIA'
-                    },
-                    {
-                        data: null,
-                        render: function(data, type, row) {
-                            return row.NOMBRE_REPRE + ' ' + row.APELLIDO_REPRE;
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Mes'
                         }
                     }
-                ],
-                responsive: true,
-                dom: 'Bfrtip',
-                buttons: ['copy', 'csv', 'excel', 'pdf', 'print'],
-                language: {
-                    url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json'
-                }
-            });
-        }
-
-        function generarGrafico(datos) {
-            const ctx = document.getElementById('myChart').getContext('2d');
-            if (window.myChart instanceof Chart) {
-                window.myChart.destroy();
-            }
-            window.myChart = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Pagado', 'No Pagado'],
-                    datasets: [{
-                        data: [datos.pagados, datos.noPagados],
-                        backgroundColor: ['#28a745', '#dc3545']
-                    }]
                 },
-                options: {
-                    responsive: true,
-                    legend: {
-                        position: 'bottom',
-                    },
+                plugins: {
                     title: {
                         display: true,
-                        text: 'Estado de Pagos'
+                        text: `Reporte del ${$('#fecha_inicio').val()} al ${$('#fecha_fin').val()}`
                     }
                 }
-            });
-        }
-    })
+            }
+        });
+    }
+});
 </script>
 
 <?php include '../../Includespro/footer.php'; ?>

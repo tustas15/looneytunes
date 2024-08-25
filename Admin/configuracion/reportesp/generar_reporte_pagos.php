@@ -56,14 +56,27 @@ try {
     $montoTotal = array_sum(array_column($results, 'MONTO'));
     $totalPagos = count($results);
 
-    $pagosPagados = count(array_filter($results, function($r) { return $r['ESTADO_PAGO'] == 'Pagado'; }));
-$pagosNoPagados = $totalPagos - $pagosPagados;
+    // Agrupar pagos por mes
+    $pagosPorMes = [];
+    foreach ($results as $pago) {
+        $mes = date('Y-m', strtotime($pago['FECHA_PAGO']));
+        if (!isset($pagosPorMes[$mes])) {
+            $pagosPorMes[$mes] = 0;
+        }
+        $pagosPorMes[$mes] += $pago['MONTO'];
+    }
 
-$estadisticas = [
-    'pagados' => $pagosPagados,
-    'noPagados' => $pagosNoPagados
-];
-    
+    // Ordenar por mes
+    ksort($pagosPorMes);
+
+    $pagosPagados = count(array_filter($results, function($r) { return $r['ESTADO_PAGO'] == 'Pagado'; }));
+    $pagosNoPagados = $totalPagos - $pagosPagados;
+
+    $estadisticas = [
+        'pagados' => $pagosPagados,
+        'noPagados' => $pagosNoPagados,
+        'pagosPorMes' => $pagosPorMes
+    ];
 
     header('Content-Type: application/json');
     echo json_encode([
@@ -73,7 +86,9 @@ $estadisticas = [
         'montoTotal' => $montoTotal,
         'resultados' => $results,
         'estadisticas' => $estadisticas
+        
     ]);
+
 
 } catch (PDOException $e) {
     header('Content-Type: application/json');
