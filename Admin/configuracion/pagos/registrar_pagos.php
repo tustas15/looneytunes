@@ -61,18 +61,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Obtener el ID del último pago registrado
         $last_insert_id = $conn->lastInsertId();
 
-        // Insertar en tab_logs
-        $sql_logs = "INSERT INTO tab_logs (ID_USUARIO, EVENTO, HORA_LOG, DIA_LOG, IP, TIPO_EVENTO) 
-                     VALUES (:id_usuario, :evento, :hora_log, :dia_log, :ip, :tipo_evento)";
-        $stmt_logs = $conn->prepare($sql_logs);
-        $stmt_logs->execute([
-            ':id_usuario' => $id_usuario,
-            ':evento' => "Nuevo pago registrado con ID: $last_insert_id",
-            ':hora_log' => date('H:i:s'),
-            ':dia_log' => date('Y-m-d'),
-            ':ip' => $_SERVER['REMOTE_ADDR'],
-            ':tipo_evento' => $tipo_evento
-        ]);
+        $stmt = $conn ->prepare("SELECT NOMBRE_REPRE from tab_representantes where ID_REPRESENTANTE = :id_representante");
+    $stmt->bindParam(':id_representante', $id_representante, PDO::PARAM_INT);
+    $stmt->execute();
+    $nom_repre = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    $ip = $_SERVER['REMOTE_ADDR'];
+    $evento = "Nuevo Pago de ".$nom_repre['NOMBRE_REPRE'];
+    $tipo_evento = "nuevo_pago_agregado";
+    $query = "INSERT INTO tab_logs (ID_USUARIO, EVENTO, HORA_LOG, DIA_LOG, IP,TIPO_EVENTO) VALUES (?, ?, CURRENT_TIME(), CURRENT_DATE(), ?,?)";
+    $stmt = $conn->prepare($query);
+    $stmt->execute([$_SESSION['user_id'], $evento, $ip,$tipo_evento]);
+
 
         $response = [
             'success' => true,

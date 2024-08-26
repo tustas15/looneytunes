@@ -1,7 +1,6 @@
 <?php
 // Incluir archivo de conexión a la base de datos
 require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
-
 try {
     // Consulta SQL modificada para obtener nombres de deportistas y representantes
     $sql = "
@@ -30,7 +29,6 @@ try {
                           '<button class="btn btn-danger btn-sm delete-btn" data-id="' . $pago['ID_PAGO'] . '"><i class="fas fa-trash"></i></button>'
         ];
     }
-
     // Devolver los datos en formato JSON
     echo json_encode(['data' => $data]);
 

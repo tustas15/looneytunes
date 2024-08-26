@@ -5,6 +5,10 @@ require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
 
 $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
 include '../../IncludesPro/header.php';
+
+
+
+
 ?>
 
 <link href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css" rel="stylesheet">
@@ -12,7 +16,7 @@ include '../../IncludesPro/header.php';
 <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.28.0/feather.min.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<body class="nav-fixed">
+<body class="nav-fixed">3
     <main>
         <div class="container-fluid px-4">
             <h1 class="mt-4">Gestión de Pagos</h1>

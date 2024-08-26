@@ -266,7 +266,7 @@ CREATE TABLE `tab_logs` (
   `HORA_LOG` time DEFAULT NULL,
   `DIA_LOG` date DEFAULT NULL,
   `IP` varchar(20) DEFAULT NULL,
-  `TIPO_EVENTO` enum('inicio_sesion','cierre_sesion','nuevo_usuario','subida_base_datos','nuevo_producto_creado','nueva_categoria_producto_creado','nueva_categoria_deportista_creado','nuevo_informe_enviado','nuevo_pago_agregado','nuevo_limite_categoria_deportistas_definido','usuario_inactivo','usuario_activo','actualizacion_perfil') DEFAULT 'inicio_sesion'
+  `TIPO_EVENTO` enum('inicio_sesion','cierre_sesion','nuevo_usuario','subida_base_datos','nuevo_producto_creado','nueva_categoria_producto_creado','nueva_categoria_deportista_creado','nuevo_informe_enviado','nuevo_pago_agregado','nuevo_limite_categoria_deportistas_definido','usuario_inactivo','usuario_activo','actualizacion_perfil,','reporte_pagos') DEFAULT 'inicio_sesion'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
