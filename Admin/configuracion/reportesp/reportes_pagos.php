@@ -11,8 +11,11 @@ include '../../includespro/header.php';
 <link href="https://cdn.datatables.net/1.10.24/css/dataTables.bootstrap5.min.css" rel="stylesheet">
 <link href="https://cdn.datatables.net/buttons/1.7.0/css/buttons.bootstrap5.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.10.24/r-2.2.7/b-1.7.0/b-html5-1.7.0/b-print-1.7.0/datatables.min.css"/>
+<script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.24/r-2.2.7/b-1.7.0/b-html5-1.7.0/b-print-1.7.0/datatables.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
 <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap5.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/1.7.0/js/dataTables.buttons.min.js"></script>
@@ -29,12 +32,49 @@ include '../../includespro/header.php';
     <div class="container-fluid px-4">
         <h2 class="mt-4">Generación de Reportes de Pagos</h2>
 
+        <!-- Tarjetas de Resumen -->
+        <div class="row mt-4">
+            <div class="col-xl-3 col-md-6">
+                <div class="card bg-primary text-white mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Pagos</h5>
+                        <h2 class="display-4" id="total-pagos">0</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6">
+                <div class="card bg-success text-white mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Monto Total</h5>
+                        <h2 class="display-4" id="monto-total">$0.00</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6">
+                <div class="card bg-warning text-white mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Deportistas al Día</h5>
+                        <h2 class="display-4" id="deportistas-al-dia">0</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6">
+                <div class="card bg-danger text-white mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Deportistas Atrasados</h5>
+                        <h2 class="display-4" id="deportistas-atrasados">0</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulario de Generación de Reportes -->
         <div class="card mb-4">
             <div class="card-header">
                 <i class="fas fa-chart-bar"></i> Parámetros del Reporte
             </div>
             <div class="card-body">
-                <form id="reporte-form" class="needs-validation" novalidate>
+                <form action="generar_tabla.php" method="post" needs-validation" novalidate>
                     <div class="row g-3">
                         <div class="col-md-3">
                             <label for="fecha_inicio" class="form-label">Fecha de Inicio</label>
@@ -46,7 +86,8 @@ include '../../includespro/header.php';
                         </div>
                         <div class="col-md-3">
                             <label for="tipo_reporte" class="form-label">Tipo de Reporte</label>
-                            <select id="tipo_reporte" name="tipo_reporte[]" class="form-select" multiple="multiple" required>
+                            <select id="tipo_reporte" name="tipo_reporte" class="form-select" required>
+                                <option value="">Seleccione tipo de reporte</option>
                                 <option value="categoria">Categoría</option>
                                 <option value="deportista">Deportista</option>
                                 <option value="representante">Representante</option>
@@ -54,7 +95,7 @@ include '../../includespro/header.php';
                         </div>
                         <div class="col-md-3" id="opciones_especificas" style="display:none;">
                             <label for="opcion_especifica" class="form-label">Seleccione</label>
-                            <select id="opcion_especifica" name="opcion_especifica[]" class="form-select" multiple="multiple">
+                            <select id="opcion_especifica" name="opcion_especifica[]" class="form-select">
                                 <option value="">Cargando opciones...</option>
                             </select>
                         </div>
@@ -66,78 +107,164 @@ include '../../includespro/header.php';
             </div>
         </div>
 
-        <div id="resumen-reporte" class="card mb-4" style="display:none;">
-            <div class="card-header">
-                <i class="fas fa-info-circle"></i> Resumen del Reporte
-            </div>
-            <div class="card-body" id="resumen-contenido">
-                <!-- El resumen se llenará dinámicamente con JavaScript -->
-            </div>
-        </div>
-
-        <div id="botones-detalle" style="display:none;" class="mb-3">
-            <button id="btn-individual" class="btn btn-primary">Pagados al Día (Individual)</button>
-            <button id="btn-grupal" class="btn btn-primary">Pagados al Día (Grupal)</button>
-        </div>
-
+        <!-- Resultados del Reporte -->
         <div class="row">
-            <div class="col-lg-8">
+            <div class="col-lg-12">
                 <div class="card mb-4">
                     <div class="card-header">
                         <i class="fas fa-table"></i> Resultados del Reporte
                     </div>
                     <div class="card-body">
-                        <div class="table-responsive">
-                            <table id="tabla-reporte" class="table table-striped table-hover">
-                                <!-- La tabla se llenará dinámicamente -->
-                            </table>
+                        <div id="tabla_reporte" style="display: none;">
+                            <div class="table-responsive">
+                                <table id="tabla-reporte" class="table table-striped table-hover dt-responsive nowrap" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th>Categoría</th>
+                                            <th>Deportista</th>
+                                            <th>Fecha</th>
+                                            <th>Monto</th>
+                                            <th>Estado</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Los datos se insertarán aquí dinámicamente -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <button id="generar_pdf" class="btn btn-secondary mt-3">Generar PDF</button>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-4">
-                <div class="card mb-4">
-                    <div class="card-header">
-                        <i class="fas fa-chart-pie"></i> Gráfico del Reporte
-                    </div>
-                    <div class="card-body">
-                        <canvas id="myChart"></canvas>
-                    </div>
+        
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-chart-pie"></i> Gráfico del Reporte
+                </div>
+                <div class="card-body">
+                    <canvas id="myChart"></canvas>
                 </div>
             </div>
         </div>
     </div>
+    </div>
 </main>
 
+
+
+
 <script>
-$(document).ready(function() {
-    $('#tipo_reporte').select({
-        placeholder: "Seleccione tipo(s) de reporte",
-        allowClear: true
+    $(document).ready(function() {
+        $('form').on('submit', function(e) {
+    e.preventDefault();
+    var formData = $(this).serialize();
+
+    $.ajax({
+        url: 'generar_tabla.php',
+        method: 'POST',
+        data: formData,
+        dataType: 'json',
+        success: function(response) {
+            console.log(response);
+            if (response.success) {
+                llenarTablaResultados(response.data);
+            } else {
+                alert(response.message);
+            }
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+    console.log("AJAX Error: " + textStatus + ' : ' + errorThrown);
+    console.log("Respuesta del servidor:", jqXHR.responseText);
+    alert("Ocurrió un error al procesar la solicitud. Por favor, revisa la consola para más detalles.");
+}
+    });
+});
+
+function llenarTablaResultados(data) {
+    console.log("Datos recibidos:", data);
+    var tabla = $('#tabla-reporte');
+    tabla.empty();
+
+    var thead = $('<thead>').appendTo(tabla);
+    var headerRow = $('<tr>').appendTo(thead);
+    $('<th>').text('Categoría').appendTo(headerRow);
+    $('<th>').text('Deportista').appendTo(headerRow);
+    $('<th>').text('Fecha').appendTo(headerRow);
+    $('<th>').text('Monto').appendTo(headerRow);
+    $('<th>').text('Estado').appendTo(headerRow);
+
+    var tbody = $('<tbody>').appendTo(tabla);
+    $.each(data, function(i, row) {
+        var tr = $('<tr>').appendTo(tbody);
+        $('<td>').text(row.categoria || '').appendTo(tr);
+        $('<td>').text(row.deportista || '').appendTo(tr);
+        $('<td>').text(row.fecha).appendTo(tr);
+        $('<td>').text('$' + parseFloat(row.monto).toFixed(2)).appendTo(tr);
+        $('<td>').text(row.estado).appendTo(tr);
     });
 
-    $('#opcion_especifica').select({
-        placeholder: "Seleccione opción(es) específica(s)",
-        allowClear: true
+    if ($.fn.DataTable.isDataTable('#tabla-reporte')) {
+        tabla.DataTable().destroy();
+    }
+
+    tabla.DataTable({
+        responsive: true,
+        language: {
+            url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json'
+        },
+        dom: 'Bfrtip',
+        buttons: [
+            'copy', 'csv', 'excel', 'pdf', 'print'
+        ]
     });
+
+    $('#resumen_reporte').show();
+}
+
+
+        $('#generar_pdf').on('click', function() {
+            var form = $('form');
+            form.attr('action', 'generar_pdf_reporte.php');
+            form.attr('method', 'post');
+            form.attr('target', '_blank');
+            form.submit();
+            form.attr('action', '');
+            form.attr('target', '');
+        });
+    });
+
+
+
+
+
 
     $('#tipo_reporte').change(function() {
-        const tiposReporte = $(this).val();
-        if (tiposReporte && tiposReporte.length > 0) {
+        const tipoReporte = $(this).val(); // Ahora es un solo valor, no un array
+        if (tipoReporte) {
             $('#opciones_especificas').show();
-            cargarOpciones(tiposReporte);
+            cargarOpciones(tipoReporte); // Enviar un solo tipo de reporte
         } else {
             $('#opciones_especificas').hide();
         }
     });
 
+
+
+
+
+
     function cargarOpciones(tiposReporte) {
         $.ajax({
             url: 'obtener_opciones.php',
             type: 'POST',
-            data: { tipos: tiposReporte },
+            data: {
+                tipos: tiposReporte // Envía el array de tipos
+            },
             dataType: 'json',
             success: function(response) {
+                console.log(response); // Verifica la respuesta del servidor
                 if (response.error) {
                     console.error("Error al cargar opciones:", response.error);
                     Swal.fire('Error', 'Hubo un problema al cargar las opciones: ' + response.error, 'error');
@@ -163,6 +290,15 @@ $(document).ready(function() {
             }
         });
     }
+
+
+
+
+
+
+
+
+
 
     $('#reporte-form').on('submit', function(e) {
         e.preventDefault();
@@ -277,26 +413,18 @@ $(document).ready(function() {
         });
     }
 
-    function inicializarTabla(datos) {
-        if ($.fn.DataTable.isDataTable('#tabla-reporte')) {
-            $('#tabla-reporte').DataTable().destroy();
-        }
 
-        $('#tabla-reporte').DataTable({
-            data: datos,
-            columns: [
-                { title: "Categoria", data: "categoria" },
-                { title: "Mes", data: "mes" },
-                { title: "Monto", data: "monto", render: $.fn.dataTable.render.number(',', '.', 2, '$') }
-            ],
-            responsive: true,
-            dom: 'Bfrtip',
-            buttons: ['copy', 'csv', 'excel', 'pdf', 'print'],
-            language: {
-                url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json'
-            }
-        });
-    }
+
+
+
+
+
+
+
+
+
+
+
 
     function generarGrafico(datos) {
         const ctx = document.getElementById('myChart').getContext('2d');
@@ -352,7 +480,6 @@ $(document).ready(function() {
             }
         });
     }
-});
 </script>
 
 <?php include '../../Includespro/footer.php'; ?>
