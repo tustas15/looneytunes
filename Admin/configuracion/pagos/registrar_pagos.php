@@ -25,7 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $ruta_destino = 'C:/xampp/htdocs/looneytunes/Admin/configuracion/pagos/comprobantes/';
             $ruta_completa = $ruta_destino . $nombre_archivo;
 
-            if (!move_uploaded_file($archivo['tmp_name'], $ruta_completa)){
+            if (!move_uploaded_file($archivo['tmp_name'], $ruta_completa)) {
                 $response = [
                     'success' => false,
                     'message' => 'Por favor, ingresa el comprobante'
@@ -58,6 +58,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ':entidad_origen' => $entidad_origen
         ]);
 
+<<<<<<< HEAD
+        // Obtener el ID del último pago registrado
+=======
         $stmt = $conn ->prepare("SELECT NOMBRE_REPRE from tab_representantes where ID_REPRESENTANTE = :id_representante");
     $stmt->bindParam(':id_representante', $id_representante, PDO::PARAM_INT);
     $stmt->execute();
@@ -69,6 +72,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $query = "INSERT INTO tab_logs (ID_USUARIO, EVENTO, HORA_LOG, DIA_LOG, IP,TIPO_EVENTO) VALUES (?, ?, CURRENT_TIME(), CURRENT_DATE(), ?,?)";
     $stmt = $conn->prepare($query);
     $stmt->execute([$_SESSION['user_id'], $evento, $ip,$tipo_evento]);
+>>>>>>> 86e776fca7086ef7704a344b0747b5704e041351
 
 
         $response = [
@@ -83,9 +87,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     header('Content-Type: application/json');
+
+    $stmt = $conn->prepare("SELECT NOMBRE_REPRE from tab_representantes where ID_REPRESENTANTE = :id_representante");
+    $stmt->bindParam(':id_representante', $id_representante, PDO::PARAM_INT);
+    $stmt->execute();
+    $nom_repre = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    $ip = $_SERVER['REMOTE_ADDR'];
+    $evento = "Nuevo Pago de " . $nom_repre['NOMBRE_REPRE'];
+    $tipo_evento = "nuevo_pago_agregado";
+    $query = "INSERT INTO tab_logs (ID_USUARIO, EVENTO, HORA_LOG, DIA_LOG, IP,TIPO_EVENTO) VALUES (?, ?, CURRENT_TIME(), CURRENT_DATE(), ?,?)";
+    $stmt = $conn->prepare($query);
+    $stmt->execute([$_SESSION['user_id'], $evento, $ip, $tipo_evento]);
+
+
     echo json_encode($response);
 } else {
     header('HTTP/1.1 405 Method Not Allowed');
     echo json_encode(['success' => false, 'message' => 'Método no permitido']);
 }
-?>
