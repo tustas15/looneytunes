@@ -14,7 +14,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
     <title>Dashboard </title>
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/litepicker/dist/css/litepicker.css" rel="stylesheet" />
-    <link href="/looneytunes/Assets/css/styles.css" rel="stylesheet" />
+    <link href="../Assets/css/styles.css" rel="stylesheet" />
     <link rel="icon" type="image/x-icon" href="/looneytunes/AssetsFree/img/logo.png" />
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
@@ -31,7 +31,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
         <!-- * * Tip * * You can use text or an image for your navbar brand.-->
         <!-- * * * * * * When using an image, we recommend the SVG format.-->
         <!-- * * * * * * Dimensions: Maximum height: 32px, maximum width: 240px-->
-        <a class="navbar-brand pe-3 ps-4 ps-lg-2" href="/looneytunes/index.php">Dashboard</a>
+        <a class="navbar-brand pe-3 ps-4 ps-lg-2" href="../index.php">Dashboard</a>
         <!-- Navbar Search Input-->
         <!-- * * Note: * * Visible only on and above the lg breakpoint-->
 
@@ -81,7 +81,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                             </a>
                         <?php endforeach; ?>
                     <?php else: ?>
-                        <p class="dropdown-item-text">No hay informes disponibles</p>
+                        <p class="dropdown-item-text">No hay Observaciones disponibles</p>
                     <?php endif; ?>
 
                     <!-- Footer Link-->
@@ -94,21 +94,21 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                 <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownUserImage" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img class="img-fluid" src="/looneytunes/Assets/img/illustrations/profiles/profile-1.png" /></a>
                 <div class="dropdown-menu dropdown-menu-end border-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownUserImage">
                     <h6 class="dropdown-header d-flex align-items-center">
-                        <img class="dropdown-user-img" src="/looneytunes/Assets/img/illustrations/profiles/profile-1.png" />
+                        <img class="dropdown-user-img" src="../Assets/img/illustrations/profiles/profile-1.png" />
                         <div class="dropdown-user-details">
                             <div class="dropdown-user-details-name"><?= $nombre ?></div>
                         </div>
                     </h6>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="/looneytunes/Public/profile.php">
+                    <a class="dropdown-item" href="../Public/profile.php">
                         <div class="dropdown-item-icon"><i data-feather="settings"></i></div>
                         Cuenta
                     </a>
-                    <a class="dropdown-item" href="/looneytunes/public/logs.php">
+                    <a class="dropdown-item" href="../public/logs.php">
                         <div class="dropdown-item-icon"><i data-feather="file-text"></i></div>
                         Registro de Actividades
                     </a>
-                    <a class="dropdown-item" href="/looneytunes/Public/logout.php">
+                    <a class="dropdown-item" href="../Public/logout.php">
                         <div class="dropdown-item-icon"><i data-feather="log-out"></i></div>
                         Logout
                     </a>
@@ -124,24 +124,17 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                         <!-- Sidenav Menu Heading (Account)-->
                         <!-- * * Note: * * Visible only on and above the sm breakpoint-->
                         <div class="sidenav-menu-heading d-sm-none">Account</div>
-                        <!-- Sidenav Link (Alerts)-->
                         <!-- * * Note: * * Visible only on and above the sm breakpoint-->
-                        <a class="nav-link d-sm-none" href="#!">
-                            <div class="nav-link-icon"><i data-feather="bell"></i></div>
-                            Alerts
-                            <span class="badge bg-warning-soft text-warning ms-auto">4 New!</span>
+                        <a class="nav-link" href="javascript:void(0);" onclick="toggleInformesDeportistas()">
+                            <div class="nav-link-icon"><i data-feather="file-text"></i></div>
+                                Informes Deportistas
                         </a>
-                        <!-- Sidenav Link (Messages)-->
-                        <!-- * * Note: * * Visible only on and above the sm breakpoint-->
-                        <a class="nav-link d-sm-none" href="#!">
-                            <div class="nav-link-icon"><i data-feather="mail"></i></div>
-                            Messages
-                            <span class="badge bg-success-soft text-success ms-auto">2 New!</span>
-                        </a>
+
+
                         <!-- Sidenav Menu Heading (Core)-->
                         <div class="sidenav-menu-heading">Core</div>
                         <!-- Sidenav Accordion (Dashboard)-->
-                        <a class="nav-link" href=" /looneytunes/index.php">
+                        <a class="nav-link" href=" ../index.php">
                             <div class="nav-link-icon"><i data-feather="home"></i></div>
                             Dashboard
                         </a>
