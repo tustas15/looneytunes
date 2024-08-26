@@ -36,15 +36,14 @@ $pdf->SetAutoPageBreak(true, 20);
 
 // Consulta para obtener los deportistas por categoría seleccionada
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $categorias = isset($_POST['categorias']) ? $_POST['categorias'] : [];
+    // Asegúrate de que solo se haya enviado una categoría
+    $categoria = isset($_POST['categorias']) ? $_POST['categorias'] : '';
 
-    if (empty($categorias)) {
-        die('Debe seleccionar al menos una categoría.');
+    if (empty($categoria)) {
+        die('Debe seleccionar una categoría.');
     }
 
     try {
-        $placeholders = implode(',', array_fill(0, count($categorias), '?'));
-
         $queryDeportistas = "
             SELECT c.CATEGORIA, d.NOMBRE_DEPO, d.APELLIDO_DEPO, r.CORREO_REPRE
             FROM tab_deportistas d
@@ -52,12 +51,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             INNER JOIN tab_categorias c ON cd.ID_CATEGORIA = c.ID_CATEGORIA
             INNER JOIN tab_representantes_deportistas rd ON d.ID_DEPORTISTA = rd.ID_DEPORTISTA
             INNER JOIN tab_representantes r ON rd.ID_REPRESENTANTE = r.ID_REPRESENTANTE
-            WHERE c.ID_CATEGORIA IN ($placeholders)
+            WHERE c.ID_CATEGORIA = ?
             ORDER BY c.CATEGORIA, d.APELLIDO_DEPO
         ";
 
         $stmtDeportistas = $conn->prepare($queryDeportistas);
-        $stmtDeportistas->execute($categorias);
+        $stmtDeportistas->execute([$categoria]);
         $resultDeportistas = $stmtDeportistas->fetchAll(PDO::FETCH_ASSOC);
 
         // Encabezado de la tabla en PDF
