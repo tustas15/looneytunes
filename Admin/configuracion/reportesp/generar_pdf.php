@@ -1,14 +1,14 @@
 <?php
-require('fpdf.php');
+require('../../reportes/fpdf/fpdf.php');
 require_once('../conexion.php');
 
 // Recibir los parámetros del reporte
-$fecha_rango = $_GET['fecha_rango'];
-$tipo_reporte = $_GET['tipo_reporte'];
-$opcion_especifica = $_GET['opcion_especifica'];
-$tipo_informe = $_GET['tipo_informe'];
+$fecha_inicio = $_POST['fecha_inicio'];
+$fecha_fin = $_POST['fecha_fin'];
+$tipo_reporte = $_POST['tipo_reporte'];
+$opcion_especifica = $_POST['opcion_especifica'];
 
-// Aquí deberías generar los datos del reporte basado en los parámetros recibidos
+// Aquí debes hacer la misma consulta que en generar_tabla.php para obtener los datos
 
 class PDF extends FPDF
 {
@@ -32,12 +32,26 @@ $pdf->AliasNbPages();
 $pdf->AddPage();
 $pdf->SetFont('Arial','',12);
 
-// Añadir los datos del reporte al PDF
-$pdf->Cell(0,10,'Rango de fechas: '.$fecha_rango,0,1);
+$pdf->Cell(0,10,'Rango de fechas: '.$fecha_inicio.' a '.$fecha_fin,0,1);
 $pdf->Cell(0,10,'Tipo de reporte: '.$tipo_reporte,0,1);
-// ... Añadir más datos según sea necesario
 
-// Aquí deberías añadir la tabla de datos y posiblemente una representación del gráfico
+// Añadir la tabla de datos
+$pdf->SetFont('Arial','B',10);
+$pdf->Cell(40,7,'Categoría',1);
+$pdf->Cell(40,7,'Deportista',1);
+$pdf->Cell(30,7,'Fecha',1);
+$pdf->Cell(30,7,'Monto',1);
+$pdf->Cell(30,7,'Estado',1);
+$pdf->Ln();
+
+$pdf->SetFont('Arial','',10);
+foreach($resultados as $row) {
+    $pdf->Cell(40,6,$row['categoria'],1);
+    $pdf->Cell(40,6,$row['deportista'],1);
+    $pdf->Cell(30,6,$row['fecha'],1);
+    $pdf->Cell(30,6,'$'.number_format($row['monto'], 2),1);
+    $pdf->Cell(30,6,$row['estado'],1);
+    $pdf->Ln();
+}
 
 $pdf->Output();
-?>
