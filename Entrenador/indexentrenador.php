@@ -173,28 +173,20 @@ function timeElapsedString($datetime, $full = false) {
             </div>
 
             <?php
-$tarjetas = [
-    "MOSQUITOS" => ["color" => "bg-primary", "icon" => "users"],
-    "PRE MINI" => ["color" => "bg-warning", "icon" => "users"],
-    "MINI DAMAS" => ["color" => "bg-success", "icon" => "users"],
-    "MINI HOMBRES" => ["color" => "bg-danger", "icon" => "users"],
-    "U13 DAMAS" => ["color" => "bg-info", "icon" => "users"],
-    "U13 HOMBRES" => ["color" => "bg-secondary", "icon" => "users"],
-    "U15 DAMAS" => ["color" => "bg-dark", "icon" => "users"],
-    "U15 HOMBRES" => ["color" => "bg-primary", "icon" => "users"]
-];
+// Otras partes del código...
 
 $categorias_entrenador = $_SESSION['entrenador_categorias'] ?? [];
-$counter = 0; // Para limitar el número de tarjetas a 8
 
-foreach ($tarjetas as $nombre => $config) :
-    if (!in_array($nombre, $categorias_entrenador)) continue; // Mostrar solo las categorías del entrenador
-    if ($counter >= 8) break; // Limitar a 8 tarjetas
+foreach ($categorias_entrenador as $nombre) {
     $categoria_id = array_search($nombre, $categorias);
     $cantidad = isset($categorias_count[$categoria_id]) ? $categorias_count[$categoria_id] : 0;
+
+    // Asignar un color e ícono a cada tarjeta
+    $color = 'bg-primary'; // Puedes cambiar el color si lo deseas
+    $icon = 'users'; // Cambia el ícono si lo prefieres
 ?>
     <div class="col-lg-6 col-xl-3 mb-4">
-        <div class="card <?php echo $config['color']; ?> text-white h-100">
+        <div class="card <?php echo $color; ?> text-white h-100">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
                     <div class="me-3">
@@ -203,7 +195,7 @@ foreach ($tarjetas as $nombre => $config) :
                             <?php echo $cantidad; ?>
                         </div>
                     </div>
-                    <i class="feather-xl text-white-50" data-feather="<?php echo $config['icon']; ?>"></i>
+                    <i class="feather-xl text-white-50" data-feather="<?php echo $icon; ?>"></i>
                 </div>
             </div>
             <div class="card-footer d-flex align-items-center justify-content-between small">
@@ -213,50 +205,16 @@ foreach ($tarjetas as $nombre => $config) :
         </div>
     </div>
 <?php
-    $counter++;
-endforeach;
+}
 ?>
 
 
 
 
 
+
         </div>
-        <!-- CARDS 2 -->
-        <div class="row">
-            <?php foreach ($categorias as $categoria_id => $nombre_categoria) :
-                if ($counter >= 12) break; // Limitar a 12 tarjetas en total
-                // Asegúrate de que cada categoría no se repita en las tarjetas 2
-                if (!array_key_exists($nombre_categoria, $tarjetas)) :
-                    $color = isset($tarjetas[$nombre_categoria]['color']) ? $tarjetas[$nombre_categoria]['color'] : 'bg-secondary';
-                    $icon = isset($tarjetas[$nombre_categoria]['icon']) ? $tarjetas[$nombre_categoria]['icon'] : 'file-text';
-                    $cantidad = isset($categorias_count[$categoria_id]) ? $categorias_count[$categoria_id] : 0;
-            ?>
-                    <div class="col-lg-6 col-xl-3 mb-4">
-                        <div class="card <?php echo $color; ?> text-white h-100">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div class="me-3">
-                                        <div class="text-white-75 small"><?php echo $nombre_categoria; ?></div>
-                                        <div class="text-lg fw-bold number" data-role="<?php echo strtolower(str_replace(' ', '_', $nombre_categoria)); ?>">
-                                            <?php echo $cantidad; ?>
-                                        </div>
-                                    </div>
-                                    <i class="feather-xl text-white-50" data-feather="<?php echo $icon; ?>"></i>
-                                </div>
-                            </div>
-                            <div class="card-footer d-flex align-items-center justify-content-between small">
-                                <a class="text-white stretched-link" href="report_<?php echo strtolower(str_replace(' ', '_', $nombre_categoria)); ?>.php">View Report</a>
-                                <div class="text-white"><i class="fas fa-angle-right"></i></div>
-                            </div>
-                        </div>
-                    </div>
-            <?php
-                    $counter++;
-                endif;
-            endforeach;
-            ?>
-        </div>
+        
         <div class="row">
           
             <!-- logs -->
