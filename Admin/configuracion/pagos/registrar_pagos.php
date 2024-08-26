@@ -37,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         } elseif ($metodo_pago === 'efectivo') {
             // No se maneja archivo para efectivo
             $nombre_archivo = null; // No se usa archivo
-            $entidad_origen = null;
+        $entidad_origen = null;
         }
     }
 
@@ -57,9 +57,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ':nombre_archivo' => $nombre_archivo,
             ':entidad_origen' => $entidad_origen
         ]);
-
-        // Obtener el ID del último pago registrado
-        $last_insert_id = $conn->lastInsertId();
 
         $stmt = $conn ->prepare("SELECT NOMBRE_REPRE from tab_representantes where ID_REPRESENTANTE = :id_representante");
     $stmt->bindParam(':id_representante', $id_representante, PDO::PARAM_INT);

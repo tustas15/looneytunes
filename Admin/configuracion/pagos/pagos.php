@@ -16,7 +16,7 @@ include '../../IncludesPro/header.php';
 <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.28.0/feather.min.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<body class="nav-fixed">3
+<body class="nav-fixed">
     <main>
         <div class="container-fluid px-4">
             <h1 class="mt-4">Gestión de Pagos</h1>
@@ -613,35 +613,7 @@ include '../../IncludesPro/header.php';
                 $('#motivo').val('Pago del mes de ' + mes);
             });
 
-            // Registrar pago
-            $('#paymentForm').submit(function(e) {
-                e.preventDefault();
-                var formData = new FormData(this);
-
-                $.ajax({
-                    url: 'registrar_pagos.php',
-                    method: 'POST',
-                    data: formData,
-                    contentType: false,
-                    processData: false,
-                    dataType: 'json',
-                    success: function(response) {
-                        console.log("Respuesta exitosa:", response);
-                        if (response.success) {
-                            $('#message').html('<div class="alert alert-success">' + response.message + '</div>');
-                            table.ajax.reload();
-                            $('#paymentForm')[0].reset();
-                        } else {
-                            $('#message').html('<div class="alert alert-danger">' + response.message + '</div>');
-                        }
-                    },
-                    // error: function(xhr, status, error) {
-                    // console.error("Error en la llamada AJAX:", status, error);
-                    // console.log("Respuesta del servidor:", xhr.responseText);
-                    // $('#message').html('<div class="alert alert-danger">Error al procesar la solicitud</div>');
-                    // }
-                });
-            });
+            
 
             // Funcionalidad para los botones de eliminar y editar
             $('#historial_pagos').on('click', '.delete-btn', function() {
