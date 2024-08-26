@@ -10,6 +10,30 @@
         </div>
     </div>
 </footer>
+
+<!-- Modal para Subir Hoja de Vida -->
+<div class="modal fade" id="ObservacionesModal" tabindex="-1" aria-labelledby="ObservacionModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <h6 class="dropdown-header dropdown-notifications-header"> 
+                        Mensajes de Observaciones
+                    </h6>
+        <?php if (!empty($informes)): ?>
+                        <?php foreach ($informes as $informe): ?>
+                            <a class="dropdown-item dropdown-notification-item" href="#">
+                                <div class="dropdown-notification-item-content">
+                                    <div class="dropdown-notification-item-title"><?= htmlspecialchars($informe['informe']); ?></div>
+                                    <div class="dropdown-notification-item-time"><?= htmlspecialchars($informe['fecha_creacion']); ?></div>
+                                </div>
+                            </a>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <p class="dropdown-item-text">No hay informes disponibles</p>
+                    <?php endif; ?>
+        </div>
+    </div>
+</div>
+
 </div>
 </div>
 <script>

@@ -125,9 +125,9 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                         <!-- * * Note: * * Visible only on and above the sm breakpoint-->
                         <div class="sidenav-menu-heading d-sm-none">Account</div>
                         <!-- * * Note: * * Visible only on and above the sm breakpoint-->
-                        <a class="nav-link" href="javascript:void(0);" onclick="toggleInformesDeportistas()">
-                            <div class="nav-link-icon"><i data-feather="file-text"></i></div>
-                                Informes Deportistas
+                        <a class="nav-link d-sm-none" href="#!" data-bs-toggle="modal" data-bs-target="#ObservacionesModal">
+                            <div class="nav-link-icon"><i data-feather="mail"></i></div>
+                            Observaciones
                         </a>
 
 

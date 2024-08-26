@@ -47,6 +47,36 @@
     </div>
 </div>
 
+<!-- Modal para Subir Hoja de Vida -->
+<div class="modal fade" id="ObservacionesModal" tabindex="-1" aria-labelledby="ObservacionModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <h6 class="dropdown-header dropdown-notifications-header"> 
+                        Mensajes de Observaciones
+                    </h6>
+                    <?php if (!empty($informes)): ?>
+                        <?php foreach ($informes as $informe): ?>
+                            <a class="dropdown-item dropdown-notification-item" href="#">
+                                <div class="dropdown-notification-item-content">
+                                    <div class="dropdown-notification-item-title">
+                                        <?php echo htmlspecialchars($informe['NOMBRE_DEPO'] . ' ' . $informe['APELLIDO_DEPO'], ENT_QUOTES, 'UTF-8'); ?>
+                                    </div>
+                                    <div class="dropdown-notification-item-description">
+                                        <?php echo htmlspecialchars($informe['informe'], ENT_QUOTES, 'UTF-8'); ?>
+                                    </div>
+                                    <div class="dropdown-notification-item-time">
+                                        <?php echo htmlspecialchars($informe['fecha_creacion'], ENT_QUOTES, 'UTF-8'); ?>
+                                    </div>
+                                </div>
+                            </a>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <p class="dropdown-item-text">No hay Observaciones disponibles</p>
+                    <?php endif; ?>
+        </div>
+    </div>
+</div>
+
 </footer>
 <!-- Upload Backup Modal -->
 <div class="modal fade" id="uploadBackupModal" tabindex="-1" role="dialog" aria-labelledby="uploadBackupModalLabel" aria-hidden="true">

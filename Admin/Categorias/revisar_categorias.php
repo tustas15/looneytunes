@@ -7,7 +7,7 @@ date_default_timezone_set('America/Guayaquil'); // Ajusta a tu zona horaria
 
 // Verifica si el usuario está autenticado
 if (!isset($_SESSION['user_id'])) {
-    header("Location: ../Public/login.php");
+    header("Location: ../public/login.php");
     exit();
 }
 
