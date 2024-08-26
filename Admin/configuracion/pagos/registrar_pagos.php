@@ -58,7 +58,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ':entidad_origen' => $entidad_origen
         ]);
 
-        $stmt = $conn ->prepare("SELECT NOMBRE_REPRE from tab_representantes where ID_REPRESENTANTE = :id_representante");
+    $stmt = $conn ->prepare("SELECT NOMBRE_REPRE from tab_representantes where ID_REPRESENTANTE = :id_representante");
     $stmt->bindParam(':id_representante', $id_representante, PDO::PARAM_INT);
     $stmt->execute();
     $nom_repre = $stmt->fetch(PDO::FETCH_ASSOC);

@@ -185,6 +185,11 @@ include '../../includespro/header.php';
 function llenarTablaResultados(data) {
     console.log("Datos recibidos:", data);
     var tabla = $('#tabla-reporte');
+    
+    if ($.fn.DataTable.isDataTable('#tabla-reporte')) {
+        tabla.DataTable().destroy();
+    }
+
     tabla.empty();
 
     var thead = $('<thead>').appendTo(tabla);
@@ -205,10 +210,6 @@ function llenarTablaResultados(data) {
         $('<td>').text(row.estado).appendTo(tr);
     });
 
-    if ($.fn.DataTable.isDataTable('#tabla-reporte')) {
-        tabla.DataTable().destroy();
-    }
-
     tabla.DataTable({
         responsive: true,
         language: {
@@ -216,11 +217,21 @@ function llenarTablaResultados(data) {
         },
         dom: 'Bfrtip',
         buttons: [
-            'copy', 'csv', 'excel', 'pdf', 'print'
+            'copy', 'csv', 'excel', 
+            {
+                extend: 'pdfHtml5',
+                text: 'PDF',
+                filename: 'Reporte_de_Pagos',
+                title: 'Reporte de Pagos',
+                customize: function(doc) {
+                    // Aquí puedes personalizar el PDF
+                }
+            }, 
+            'print'
         ]
     });
 
-    $('#resumen_reporte').show();
+    $('#tabla_reporte').show();
 }
 
 

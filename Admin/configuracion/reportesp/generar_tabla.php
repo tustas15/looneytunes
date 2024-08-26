@@ -14,33 +14,35 @@ $opcion_especifica = $_POST['opcion_especifica'];
 
 switch ($tipo_reporte) {
     case 'categoria':
-        $sql = "
-        SELECT 
-            c.CATEGORIA AS categoria, 
-            CONCAT(d.NOMBRE_DEPO, ' ', d.APELLIDO_DEPO) AS deportista, 
-            DATE_FORMAT(ep.FECHA, '%M %Y') AS fecha, 
-            IFNULL(SUM(p.MONTO), 0) AS monto,
-            ep.ESTADO AS estado
-        FROM 
-            tab_estado_pagos ep
-        JOIN 
-            tab_deportistas d ON ep.ID_DEPORTISTA = d.ID_DEPORTISTA
-        JOIN 
-            tab_categoria_deportista cd ON d.ID_DEPORTISTA = cd.ID_DEPORTISTA
-        JOIN 
-            tab_categorias c ON cd.ID_CATEGORIA = c.ID_CATEGORIA
-        LEFT JOIN 
-            tab_pagos p ON p.ID_DEPORTISTA = d.ID_DEPORTISTA AND p.FECHA_PAGO BETWEEN :fecha_inicio AND :fecha_fin
-        WHERE 
-            c.ID_CATEGORIA = :opcion_especifica
-            AND ep.FECHA BETWEEN :fecha_inicio AND :fecha_fin
-        GROUP BY 
-            c.CATEGORIA, d.ID_DEPORTISTA, ep.FECHA, ep.ESTADO
-        ORDER BY 
-            categoria, deportista, fecha;
-        ";
-        break;
+        // ... (código anterior)
 
+$sql = "
+SELECT 
+    c.CATEGORIA AS categoria, 
+    CONCAT(d.NOMBRE_DEPO, ' ', d.APELLIDO_DEPO) AS deportista, 
+    DATE_FORMAT(ep.FECHA, '%M-%Y') AS fecha, 
+    IFNULL(SUM(p.MONTO), 0) AS monto,
+    ep.ESTADO AS estado
+FROM 
+    tab_estado_pagos ep
+JOIN 
+    tab_deportistas d ON ep.ID_DEPORTISTA = d.ID_DEPORTISTA
+JOIN 
+    tab_categoria_deportista cd ON d.ID_DEPORTISTA = cd.ID_DEPORTISTA
+JOIN 
+    tab_categorias c ON cd.ID_CATEGORIA = c.ID_CATEGORIA
+LEFT JOIN 
+    tab_pagos p ON p.ID_DEPORTISTA = d.ID_DEPORTISTA AND p.FECHA_PAGO BETWEEN :fecha_inicio AND :fecha_fin
+WHERE 
+    c.ID_CATEGORIA = :opcion_especifica
+    AND ep.FECHA BETWEEN :fecha_inicio AND :fecha_fin
+GROUP BY 
+    c.CATEGORIA, d.ID_DEPORTISTA, ep.FECHA, ep.ESTADO
+ORDER BY 
+    categoria, deportista, fecha;
+";
+
+break;
     case 'deportista':
         $sql = "
         SELECT 
