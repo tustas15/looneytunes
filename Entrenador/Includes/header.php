@@ -140,6 +140,11 @@ $categorias_entrenador = [];
                     <div class="nav accordion" id="accordionSidenav">
                         <!-- * * Note: * * Visible only on and above the sm breakpoint-->
                         <div class="sidenav-menu-heading d-sm-none">Account</div>
+                        <a class="nav-link d-sm-none" href="#!">
+                            <div class="nav-link-icon"><i data-feather="mail"></i></div>
+                            Observaciones
+                            <span class="badge bg-success-soft text-success ms-auto">2 New!</span>
+                        </a>
                         
                        
                         <!-- Sidenav Menu Heading (Core)-->

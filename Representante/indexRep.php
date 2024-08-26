@@ -1,6 +1,6 @@
 <?php
 // Conexión a la base de datos
-require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
+require_once('../admin/configuracion/conexion.php');
 
 date_default_timezone_set('America/Guayaquil');
 
@@ -92,7 +92,7 @@ try {
         FROM tab_informes inf
         JOIN tab_deportistas dep ON inf.id_deportista = dep.ID_DEPORTISTA
         WHERE inf.id_representante = :id_representante
-        ORDER BY inf.fecha_creacion DESC
+        ORDER BY inf.fecha_creacion DESC LIMIT 5
     ");
     $stmtInformes->bindParam(':id_representante', $representante['ID_REPRESENTANTE'], PDO::PARAM_INT);
     $stmtInformes->execute();

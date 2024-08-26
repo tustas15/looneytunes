@@ -83,7 +83,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                         <p class="dropdown-item-text">No hay informes disponibles</p>
                     <?php endif; ?>
                     <!-- Footer Link-->
-                    <a class="dropdown-item dropdown-notifications-footer" href="#!">Read All Messages</a>
+                    <a class="dropdown-item dropdown-notifications-footer" href="#!">Todas las Observaciones</a>
                 </div>
             </li>
             <!-- User Dropdown-->
@@ -122,10 +122,9 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                         <!-- * * Note: * * Visible only on and above the sm breakpoint-->
                         <div class="sidenav-menu-heading d-sm-none">Account</div>
                         <!-- * * Note: * * Visible only on and above the sm breakpoint-->
-                        <a class="nav-link d-sm-none" href="#!">
+                        <a class="nav-link d-sm-none" href="#!" data-bs-toggle="modal" data-bs-target="#ObservacionesModal">
                             <div class="nav-link-icon"><i data-feather="mail"></i></div>
                             Observaciones
-                            <span class="badge bg-success-soft text-success ms-auto">2 New!</span>
                         </a>
                         <!-- Sidenav Menu Heading (Core)-->
                         <div class="sidenav-menu-heading">Core</div>
