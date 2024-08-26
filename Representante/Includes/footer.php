@@ -10,6 +10,43 @@
             </div>
         </div>
     </div>
+
+    <!-- Ventana flotante para los informes -->
+<div id="informesDeportistasModal" class="modal fade" tabindex="-1" aria-labelledby="informesDeportistasLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="informesDeportistasLabel">Informes de Deportistas</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <?php if (!empty($informes)): ?>
+                    <?php foreach ($informes as $informe): ?>
+                        <div class="dropdown-notification-item">
+                            <div class="dropdown-notification-item-content">
+                                <div class="dropdown-notification-item-title">
+                                    <?php echo htmlspecialchars($informe['NOMBRE_DEPO'] . ' ' . $informe['APELLIDO_DEPO'], ENT_QUOTES, 'UTF-8'); ?>
+                                </div>
+                                <div class="dropdown-notification-item-description">
+                                    <?php echo htmlspecialchars($informe['informe'], ENT_QUOTES, 'UTF-8'); ?>
+                                </div>
+                                <div class="dropdown-notification-item-time">
+                                    <?php echo htmlspecialchars($informe['fecha_creacion'], ENT_QUOTES, 'UTF-8'); ?>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <p>No hay informes disponibles</p>
+                <?php endif; ?>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 </footer>
 <!-- Upload Backup Modal -->
 <div class="modal fade" id="uploadBackupModal" tabindex="-1" role="dialog" aria-labelledby="uploadBackupModalLabel" aria-hidden="true">
@@ -94,16 +131,21 @@
     document.getElementById('backupFile').addEventListener('change', function() {
         document.getElementById('uploadBackupForm').submit();
     });
+
+    function toggleInformesDeportistas() {
+        var modal = new bootstrap.Modal(document.getElementById('informesDeportistasModal'));
+        modal.show();
+    }
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-<script src="/looneytunes/Assets/js/scripts.js"></script>
+<script src="../Assets/js/scripts.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" crossorigin="anonymous"></script>
-<script src="/looneytunes/Assets/demo/chart-area-demo.js"></script>
-<script src="/looneytunes/Assets/demo/chart-bar-demo.js"></script>
+<script src="../Assets/demo/chart-area-demo.js"></script>
+<script src="../Assets/demo/chart-bar-demo.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" crossorigin="anonymous"></script>
-<script src="/looneytunes/Assets/js/datatables/datatables-simple-demo.js"></script>
+<script src="../Assets/js/datatables/datatables-simple-demo.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/litepicker/dist/bundle.js" crossorigin="anonymous"></script>
-<script src="/looneytunes/Assets/js/litepicker.js"></script>
+<script src="../Assets/js/litepicker.js"></script>
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

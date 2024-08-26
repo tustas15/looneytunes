@@ -121,18 +121,10 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                         <!-- Sidenav Menu Heading (Account)-->
                         <!-- * * Note: * * Visible only on and above the sm breakpoint-->
                         <div class="sidenav-menu-heading d-sm-none">Account</div>
-                        <!-- Sidenav Link (Alerts)-->
-                        <!-- * * Note: * * Visible only on and above the sm breakpoint-->
-                        <a class="nav-link d-sm-none" href="#!">
-                            <div class="nav-link-icon"><i data-feather="bell"></i></div>
-                            Alerts
-                            <span class="badge bg-warning-soft text-warning ms-auto">4 New!</span>
-                        </a>
-                        <!-- Sidenav Link (Messages)-->
                         <!-- * * Note: * * Visible only on and above the sm breakpoint-->
                         <a class="nav-link d-sm-none" href="#!">
                             <div class="nav-link-icon"><i data-feather="mail"></i></div>
-                            Messages
+                            Observaciones
                             <span class="badge bg-success-soft text-success ms-auto">2 New!</span>
                         </a>
                         <!-- Sidenav Menu Heading (Core)-->
@@ -160,29 +152,6 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
 
                         </div>
 
-                    </div>
-                </div>
-                <!-- Modal para Subir Backup -->
-                <div class="modal fade" id="uploadBackupModal" tabindex="-1" aria-labelledby="uploadBackupModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="uploadBackupModalLabel">Subir Respaldo</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <form id="uploadBackupForm" action="/Uploads/uploadBackup.php" method="POST" enctype="multipart/form-data">
-                                <div class="modal-body">
-                                    <div class="mb-3">
-                                        <label for="backupFile" class="form-label">Selecciona el archivo de respaldo</label>
-                                        <input type="file" class="form-control" id="backupFile" name="backupFile" required>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                                    <button type="submit" class="btn btn-primary">Subir</button>
-                                </div>
-                            </form>
-                        </div>
                     </div>
                 </div>
                 <!-- Sidenav Footer -->
