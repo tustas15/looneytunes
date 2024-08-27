@@ -7,24 +7,26 @@ $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
 // Incluye la cabecera y las dependencias CSS y JS necesarias
 include '../../includespro/header.php';
 ?>
-    <link href="https://cdn.datatables.net/1.10.24/css/dataTables.bootstrap5.min.css" rel="stylesheet">
-    <link href="https://cdn.datatables.net/buttons/1.7.0/css/buttons.bootstrap5.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap5.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.7.0/js/dataTables.buttons.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.7.0/js/buttons.bootstrap5.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.7.0/js/buttons.html5.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.7.0/js/buttons.print.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!-- DataTables -->
+<script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap5.min.js"></script>
 
-    <main>
+<!-- DataTables Buttons -->
+<script src="https://cdn.datatables.net/buttons/1.7.0/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.7.0/js/buttons.bootstrap5.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.7.0/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.7.0/js/buttons.print.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.7.0/js/buttons.colVis.min.js"></script>
+<!-- DataTables CSS -->
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/datatables.net@1.10.24/css/jquery.dataTables.css">
+<script type="text/javascript" charset="utf8" src="https://cdn.jsdelivr.net/npm/datatables.net@1.10.24/js/jquery.dataTables.js"></script>
+<main>
     <div class="container-fluid px-4">
         <h2 class="mt-4">Generación de Reportes de Pagos</h2>
 
@@ -145,87 +147,189 @@ include '../../includespro/header.php';
         fechaFin.value = hoy;
     });
 
-    
-        $('#tipo_informe').on('change', function() {
-            var tipo = $(this).val();
-            console.log('Tipo de informe seleccionado:', tipo);
+    $('#tipo_informe').on('change', function() {
+        var tipo = $(this).val();
+        console.log('Tipo de informe seleccionado:', tipo);
 
-            if (tipo) {
-                $.ajax({
-                    url: 'get_options.php',
-                    type: 'POST',
-                    data: { tipo: tipo },
-                    success: function(response) {
-                        console.log('Respuesta de get_options.php:', response);
-                        $('#id_especifico').html(response);
-                        $('#id_especifico').prop('disabled', false);
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Error en la solicitud AJAX:', status, error);
+        if (tipo) {
+            $.ajax({
+                url: 'get_options.php',
+                type: 'POST',
+                data: {
+                    tipo: tipo
+                },
+                success: function(response) {
+                    console.log('Respuesta de get_options.php:', response);
+                    $('#id_especifico').html(response);
+                    $('#id_especifico').prop('disabled', false);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error en la solicitud AJAX:', status, error);
+                }
+            });
+        } else {
+            $('#id_especifico').html('<option value="">Seleccione una opción</option>');
+            $('#id_especifico').prop('disabled', true);
+        }
+    });
+
+
+
+
+
+    $(document).ready(function() {
+        console.log('jQuery version:', $.fn.jquery);
+        console.log('DataTables available:', typeof $.fn.DataTable !== 'undefined');
+        $('#reportForm').on('submit', function(e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+
+            $.ajax({
+                url: 'generar_tabla.php',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                dataType: 'json',
+                success: function(response) {
+                    console.log('Respuesta del servidor:', response);
+
+                    if (response.error) {
+                        Swal.fire('Error', response.error, 'error');
+                        return;
                     }
-                });
-            } else {
-                $('#id_especifico').html('<option value="">Seleccione una opción</option>');
-                $('#id_especifico').prop('disabled', true);
-            }
+                    if (response.message) {
+                        Swal.fire('Información', response.message, 'info');
+                        return;
+                    }
+
+                    var tipo = response.tipo_informe;
+                    var columns;
+
+                    if (tipo == 'categoria') {
+                        columns = [{
+                                title: "Nombre de la categoría",
+                                data: "NOMBRE"
+                            },
+                            {
+                                title: "Deportista",
+                                data: "NOMBRE_COMPLETO"
+                            },
+                            {
+                                title: "Mes/Año",
+                                data: "MES_ANIO"
+                            },
+                            {
+                                title: "Monto pagado",
+                                data: "MONTO"
+                            },
+                            {
+                                title: "Estado",
+                                data: "ESTADO"
+                            }
+                        ];
+                    } else if (tipo == 'deportista') {
+                        columns = [{
+                                title: "Deportista",
+                                data: "NOMBRE_COMPLETO"
+                            },
+                            {
+                                title: "Mes/Año",
+                                data: "MES_ANIO"
+                            },
+                            {
+                                title: "Monto pagado",
+                                data: "MONTO"
+                            },
+                            {
+                                title: "Estado",
+                                data: "ESTADO"
+                            }
+                        ];
+                    } else if (tipo == 'representante') {
+                        columns = [{
+                                title: "Nombre del representante",
+                                data: "NOMBRE_COMPLETO_REPRE"
+                            },
+                            {
+                                title: "Deportista",
+                                data: "NOMBRE_COMPLETO_DEPO"
+                            },
+                            {
+                                title: "Mes/Año",
+                                data: "MES_ANIO"
+                            },
+                            {
+                                title: "Monto pagado",
+                                data: "MONTO"
+                            },
+                            {
+                                title: "Estado",
+                                data: "ESTADO"
+                            }
+                        ];
+                    }
+
+
+
+                    $('#reporteContainer').show();
+                    // Destruir la tabla si ya existe
+                    if ($.fn.DataTable && $.fn.DataTable.isDataTable) {
+                        if (typeof $.fn.DataTable === 'undefined') {
+                            console.log('DataTables no está cargado. Intentando cargar dinámicamente...');
+                            $.getScript('https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js', function() {
+                                console.log('DataTables cargado dinámicamente.');
+                                // Aquí puedes inicializar tu DataTable o cualquier otra lógica que dependa de DataTables
+                            });
+                        } else {
+                            console.log('DataTables ya está cargado.');
+                        }
+
+                        // Inicializar la tabla DataTables
+                        ('#reporteTable').DataTable({
+                            data: reponse.data,
+                            columns: columns,
+                            responsive: true,
+                            dom: 'Bfrtip',
+                            buttons: ['copy', 'csv', 'excel', 'pdf', 'print'],
+                            language: {
+                                url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json'
+                            }
+                        });
+                    } else {
+                        // Si DataTables no está disponible, crea una tabla HTML simple
+                        var tableHtml = '<table class="table"><thead><tr>';
+                        columns.forEach(function(column) {
+                            tableHtml += '<th>' + column.title + '</th>';
+                        });
+                        tableHtml += '</tr></thead><tbody>';
+                        response.data.forEach(function(row) {
+                            tableHtml += '<tr>';
+                            columns.forEach(function(column) {
+                                tableHtml += '<td>' + row[column.data] + '</td>';
+                            });
+                            tableHtml += '</tr>';
+                        });
+                        tableHtml += '</tbody></table>';
+                        $('#reporteTable').html(tableHtml);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error en la solicitud AJAX:', status, error);
+                    Swal.fire('Error', 'Hubo un problema al generar el reporte. Por favor, intenta de nuevo.', 'error');
+                }
+            });
         });
- 
-
-    $('#reportForm').on('submit', function(e) {
-        e.preventDefault();
-        
-        $.ajax({
-            url: 'generar_tabla.php',
-            type: 'POST',
-            data: $(this).serialize(),
-            dataType: 'json',
-            success: function(data) {
-                console.log('Datos recibidos del servidor:', data);
-                if(data.error) {
-                    Swal.fire('Error', data.error, 'error');
-                    return;
-                }
-                if(data.message) {
-                    Swal.fire('Información', data.message, 'info');
-                    return;
-                }
-                
-                var tipo = $('#tipo_informe').val();
-                var columns;
-
-                if(tipo == 'categoria') {
-                    columns = [
-                        { title: "Nombre de la categoría", data: "NOMBRE" },
-                        { title: "Nombre del deportista", data: "NOMBRE_DEPO" },
-                        { title: "Mes/Año", data: "MES_ANIO" },
-                        { title: "Monto pagado", data: "MONTO" },
-                        { title: "Estado", data: "ESTADO" }
-                    ];
-                } else if(tipo == 'deportista') {
-                    columns = [
-                        { title: "Nombre del deportista", data: "NOMBRE" },
-                        { title: "Mes/Año", data: "MES_ANIO" },
-                        { title: "Monto pagado", data: "MONTO" },
-                        { title: "Estado", data: "ESTADO" }
-                    ];
-                } else if(tipo == 'representante') {
-                    columns = [
-                        { title: "Nombre del representante", data: "NOMBRE" },
-                        { title: "Nombre del deportista", data: "NOMBRE_DEPO" },
-                        { title: "Mes/Año", data: "MES_ANIO" },
-                        { title: "Monto pagado", data: "MONTO" },
-                        { title: "Estado", data: "ESTADO" }
-                    ];
-                }
-
-            }
-        })
-    })
-
-
+        if (!Array.isArray(response.data)) {
+            console.error('La respuesta del servidor no es un array:', response.data);
+            Swal.fire('Error', 'La respuesta del servidor no tiene el formato esperado.', 'error');
+            return;
+        }
+    });
 </script>
 
-   
-    <?php include '../../Includespro/footer.php'; ?>
+
+<?php include '../../Includespro/footer.php'; ?>
 </body>
+
 </html>
