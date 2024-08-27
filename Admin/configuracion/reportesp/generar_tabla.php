@@ -15,10 +15,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
+    // Parte común de la consulta SQL para formatear la fecha
+    $fecha_formato = "CONCAT(ELT(MONTH(p.FECHA_PAGO), 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'), '-', YEAR(p.FECHA_PAGO)) AS MES_ANIO";
+
     if ($tipo_informe === 'categoria') {
         $sql = "SELECT c.CATEGORIA AS NOMBRE, 
                         CONCAT(d.NOMBRE_DEPO, ' ', d.APELLIDO_DEPO) AS NOMBRE_COMPLETO,
-                        DATE_FORMAT(p.FECHA_PAGO, '%m/%Y') AS MES_ANIO,
+                        $fecha_formato,
                         p.MONTO, ep.ESTADO
                 FROM tab_categoria_deportista cd
                 JOIN tab_deportistas d ON cd.ID_DEPORTISTA = d.ID_DEPORTISTA
@@ -28,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 WHERE c.ID_CATEGORIA = :id AND p.FECHA_PAGO BETWEEN :fecha_inicio AND :fecha_fin";
     } elseif ($tipo_informe === 'deportista') {
         $sql = "SELECT CONCAT(d.NOMBRE_DEPO, ' ', d.APELLIDO_DEPO) AS NOMBRE_COMPLETO,
-                        DATE_FORMAT(p.FECHA_PAGO, '%m/%Y') AS MES_ANIO,
+                        $fecha_formato,
                         p.MONTO, ep.ESTADO
                 FROM tab_deportistas d
                 LEFT JOIN tab_pagos p ON d.ID_DEPORTISTA = p.ID_DEPORTISTA
@@ -37,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif ($tipo_informe === 'representante') {
         $sql = "SELECT CONCAT(r.NOMBRE_REPRE, ' ', r.APELLIDO_REPRE) AS NOMBRE_COMPLETO_REPRE, 
                         CONCAT(d.NOMBRE_DEPO, ' ', d.APELLIDO_DEPO) AS NOMBRE_COMPLETO_DEPO,
-                        DATE_FORMAT(p.FECHA_PAGO, '%m/%Y') AS MES_ANIO,
+                        $fecha_formato,
                         p.MONTO, ep.ESTADO
                 FROM tab_representantes_deportistas rd
                 JOIN tab_deportistas d ON rd.ID_DEPORTISTA = d.ID_DEPORTISTA
@@ -59,21 +62,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-
-
-
-
         if (empty($data)) {
             echo json_encode([
-            "message" => "No se encontraron datos para los criterios seleccionados.",
-            "tipo_informe" => $tipo_informe
+                "message" => "No se encontraron datos para los criterios seleccionados.",
+                "tipo_informe" => $tipo_informe
             ]);
-
         } else {
-                echo json_encode(["data" => $data, "tipo_informe" => $tipo_informe]);
-            }
-            
-        
+            echo json_encode(["data" => $data, "tipo_informe" => $tipo_informe]);
+        }
     } catch (PDOException $e) {
         echo json_encode(["error" => "Error en la base de datos: " . $e->getMessage()]);
     }
