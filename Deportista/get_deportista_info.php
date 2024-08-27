@@ -1,5 +1,9 @@
 <?php
 session_start();
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../public/login.php");
+    exit();
+}
 require_once('../admin/configuracion/conexion.php');
 
 if (!isset($_SESSION['user_id']) || $_SESSION['tipo_usuario'] != 3) {
