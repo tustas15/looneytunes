@@ -1,4 +1,9 @@
 <?php
+session_start();
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../public/login.php");
+    exit();
+}
 // Habilitar la visualización de errores para depuración
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -7,7 +12,7 @@ ini_set('display_errors', 1);
 require_once('../admin/configuracion/conexion.php');
 
 // Iniciar la sesión
-session_start();
+
 $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
 $tipo_usuario = $_SESSION['tipo_usuario'];
 
