@@ -1,4 +1,10 @@
 <?php
+
+session_start();
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../public/login.php");
+    exit();
+}
 // Conexión a la base de datos
 require_once('../admin/configuracion/conexion.php');
 
@@ -10,7 +16,7 @@ if ($conn === null) {
 }
 
 // Inicio de sesión
-session_start();
+
 
 // Comprobamos si el usuario está logueado
 if (!isset($_SESSION['user_id'])) {

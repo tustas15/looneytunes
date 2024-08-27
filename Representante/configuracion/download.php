@@ -1,5 +1,9 @@
 <?php
 session_start();
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../public/login.php");
+    exit();
+}
 require_once('../../admin/configuracion/conexion.php'); 
 
 // Verificar si se ha proporcionado el id_usuario a través de la URL
