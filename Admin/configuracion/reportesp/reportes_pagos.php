@@ -26,6 +26,7 @@ include '../../includespro/header.php';
 <!-- DataTables CSS -->
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/datatables.net@1.10.24/css/jquery.dataTables.css">
 <script type="text/javascript" charset="utf8" src="https://cdn.jsdelivr.net/npm/datatables.net@1.10.24/js/jquery.dataTables.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <main>
     <div class="container-fluid px-4">
         <h2 class="mt-4">Generación de Reportes de Pagos</h2>
@@ -130,14 +131,13 @@ include '../../includespro/header.php';
         <div class="col-lg-12">
             <div class="card mb-4" id="chartContainer" style="display:none;">
                 <div class="card-header">
-                    <i class="fas fa-chart-pie"></i> Gráfico del Reporte
+                    <i class="fas fa-chart-bar"></i> Gráfico de Pagos por Mes
                 </div>
                 <div class="card-body">
                     <canvas id="myChart"></canvas>
                 </div>
             </div>
         </div>
-    </div>
 </main>
 
 <script>
@@ -313,6 +313,59 @@ include '../../includespro/header.php';
                         tableHtml += '</tbody></table>';
                         $('#reporteTable').html(tableHtml);
                     }
+                    let chartData = {};
+response.data.forEach(function(row) {
+    if (row.MES_ANIO && row.MONTO) {
+        if (chartData[row.MES_ANIO]) {
+            chartData[row.MES_ANIO] += parseFloat(row.MONTO);
+        } else {
+            chartData[row.MES_ANIO] = parseFloat(row.MONTO);
+        }
+    }
+});
+
+let labels = Object.keys(chartData).sort();
+let data = labels.map(label => chartData[label]);
+
+// Crear el gráfico
+let ctx = document.getElementById('myChart').getContext('2d');
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: labels,
+        datasets: [{
+            label: 'Monto total por mes',
+            data: data,
+            backgroundColor: 'rgba(75, 192, 192, 0.6)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true,
+                title: {
+                    display: true,
+                    text: 'Monto ($)'
+                }
+            },
+            x: {
+                title: {
+                    display: true,
+                    text: 'Mes/Año'
+                }
+            }
+        }
+    }
+});
+
+// Mostrar el contenedor del gráfico
+$('#chartContainer').show();
+
+
+
                 },
                 error: function(xhr, status, error) {
                     console.error('Error en la solicitud AJAX:', status, error);
@@ -325,6 +378,10 @@ include '../../includespro/header.php';
             Swal.fire('Error', 'La respuesta del servidor no tiene el formato esperado.', 'error');
             return;
         }
+
+
+      
+
     });
 </script>
 
