@@ -58,18 +58,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ':entidad_origen' => $entidad_origen
         ]);
 
-    $stmt = $conn ->prepare("SELECT NOMBRE_REPRE from tab_representantes where ID_REPRESENTANTE = :id_representante");
-    $stmt->bindParam(':id_representante', $id_representante, PDO::PARAM_INT);
-    $stmt->execute();
-    $nom_repre = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    $ip = $_SERVER['REMOTE_ADDR'];
-    $evento = "Nuevo Pago de ".$nom_repre['NOMBRE_REPRE'];
-    $tipo_evento = "nuevo_pago_agregado";
-    $query = "INSERT INTO tab_logs (ID_USUARIO, EVENTO, HORA_LOG, DIA_LOG, IP,TIPO_EVENTO) VALUES (?, ?, CURRENT_TIME(), CURRENT_DATE(), ?,?)";
-    $stmt = $conn->prepare($query);
-    $stmt->execute([$_SESSION['user_id'], $evento, $ip,$tipo_evento]);
-
 
         $response = [
             'success' => true,
