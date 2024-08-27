@@ -1,35 +1,38 @@
 <?php
-require_once('../conexion.php');
+require('../conexion.php');
+//error_log("POST data en get_options.php: " . print_r($_POST, true));
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['types'])) {
-    $types = $_POST['types'];
-    $response = [];
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $tipo = isset($_POST['tipo']) ? $_POST['tipo'] : '';
+
+    $sql = "";
+    if ($tipo == 'categoria') {
+        $sql = "SELECT ID_CATEGORIA, CATEGORIA FROM tab_categorias";
+    } elseif ($tipo == 'deportista') {
+        $sql = "SELECT ID_DEPORTISTA, concat( NOMBRE_DEPO, '  ',APELLIDO_DEPO,'') FROM tab_deportistas";
+    } elseif ($tipo == 'representante') {
+        $sql = "SELECT ID_REPRESENTANTE, concat(NOMBRE_REPRE,'  ',APELLIDO_REPRE,'') FROM tab_representantes";
+    } else {
+        echo "<option value=''>Tipo de informe no válido</option>";
+        exit;
+    }
 
     try {
-        foreach ($types as $type) {
-            switch ($type) {
-                case 'categoria':
-                    $stmt = $pdo->query("SELECT id, nombre_categoria as nombre FROM categorias");
-                    $response['Categorías'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                    break;
-                case 'deportista':
-                    $stmt = $pdo->query("SELECT id, nombre FROM deportistas");
-                    $response['Deportistas'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                    break;
-                case 'representante':
-                    $stmt = $pdo->query("SELECT id, nombre FROM representantes");
-                    $response['Representantes'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                    break;
-            }
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+
+        $options = "<option value=''>Seleccione una opción</option>";
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $id = $row[array_keys($row)[0]];
+            $nombre = $row[array_keys($row)[1]];
+            $options .= "<option value='" . htmlspecialchars($id) . "'>" . htmlspecialchars($nombre) . "</option>";
         }
 
-        header('Content-Type: application/json');
-        echo json_encode($response);
+        echo $options;
     } catch (PDOException $e) {
-        header('HTTP/1.1 500 Internal Server Error');
-        echo json_encode(['error' => 'Error de base de datos: ' . $e->getMessage()]);
+        echo "<option value=''>Error: " . $e->getMessage() . "</option>";
     }
 } else {
-    header('HTTP/1.1 400 Bad Request');
-    echo json_encode(['error' => 'Solicitud inválida']);
+    echo "<option value=''>Método de solicitud no válido</option>";
 }
+?>

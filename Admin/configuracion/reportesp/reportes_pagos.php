@@ -7,28 +7,24 @@ $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
 // Incluye la cabecera y las dependencias CSS y JS necesarias
 include '../../includespro/header.php';
 ?>
+    <link href="https://cdn.datatables.net/1.10.24/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/buttons/1.7.0/css/buttons.bootstrap5.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-<link href="https://cdn.datatables.net/1.10.24/css/dataTables.bootstrap5.min.css" rel="stylesheet">
-<link href="https://cdn.datatables.net/buttons/1.7.0/css/buttons.bootstrap5.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.7.0/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.7.0/js/buttons.bootstrap5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.7.0/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.7.0/js/buttons.print.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.10.24/r-2.2.7/b-1.7.0/b-html5-1.7.0/b-print-1.7.0/datatables.min.css" />
-<script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.24/r-2.2.7/b-1.7.0/b-html5-1.7.0/b-print-1.7.0/datatables.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-
-<script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap5.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/1.7.0/js/dataTables.buttons.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/1.7.0/js/buttons.bootstrap5.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
-<script src="https://cdn.datatables.net/buttons/1.7.0/js/buttons.html5.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/1.7.0/js/buttons.print.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-<main>
+    <main>
     <div class="container-fluid px-4">
         <h2 class="mt-4">Generación de Reportes de Pagos</h2>
 
@@ -74,7 +70,7 @@ include '../../includespro/header.php';
                 <i class="fas fa-chart-bar"></i> Parámetros del Reporte
             </div>
             <div class="card-body">
-                <form action="generar_tabla.php" method="post">
+                <form id="reportForm" method="POST">
                     <div class="row g-3">
                         <div class="col-md-3">
                             <label for="fecha_inicio" class="form-label">Fecha de Inicio</label>
@@ -85,18 +81,18 @@ include '../../includespro/header.php';
                             <input type="date" class="form-control" id="fecha_fin" name="fecha_fin" required>
                         </div>
                         <div class="col-md-3">
-                            <label for="tipo_reporte" class="form-label">Tipo de Reporte</label>
-                            <select id="tipo_reporte" name="tipo_reporte" class="form-select" required>
+                            <label for="tipo_informe" class="form-label">Tipo de Reporte</label>
+                            <select id="tipo_informe" name="tipo_informe" class="form-select" required>
                                 <option value="">Seleccione tipo de reporte</option>
                                 <option value="categoria">Categoría</option>
                                 <option value="deportista">Deportista</option>
                                 <option value="representante">Representante</option>
                             </select>
                         </div>
-                        <div class="col-md-3" id="opciones_especificas" style="display:none;">
-                            <label for="opcion_especifica" class="form-label">Seleccione</label>
-                            <select id="opcion_especifica" name="opcion_especifica[]" class="form-select">
-                                <option value="">Cargando opciones...</option>
+                        <div class="col-md-3">
+                            <label for="id_especifico" class="form-label">Seleccione</label>
+                            <select id="id_especifico" name="id_especifico" class="form-select" disabled>
+                                <option value="">Seleccione una opción</option>
                             </select>
                         </div>
                     </div>
@@ -107,21 +103,17 @@ include '../../includespro/header.php';
             </div>
         </div>
 
-        <!-- Resultados del Reporte -->
-        <div class="card mb-4">
+        <!-- Tabla de Reportes -->
+        <div class="card mb-4" id="reporteContainer" style="display:none;">
             <div class="card-header">
-                <i class="fas fa-table"></i> Resultados del Reporte
+                <i class="fas fa-table"></i> Tabla de Reportes
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table id="tabla-reporte" class="table table-striped table-bordered" style="width:100%">
+                    <table id="reporteTable" class="table table-striped table-bordered" style="width:100%">
                         <thead>
                             <tr>
-                                <th>Categoría</th>
-                                <th>Deportista</th>
-                                <th>Fecha</th>
-                                <th>Monto</th>
-                                <th>Estado</th>
+                                <!-- Las columnas se generarán dinámicamente -->
                             </tr>
                         </thead>
                         <tbody>
@@ -132,8 +124,9 @@ include '../../includespro/header.php';
             </div>
         </div>
 
-        <div class="col-lg-4">
-            <div class="card mb-4">
+        <!-- Gráfico del Reporte -->
+        <div class="col-lg-12">
+            <div class="card mb-4" id="chartContainer" style="display:none;">
                 <div class="card-header">
                     <i class="fas fa-chart-pie"></i> Gráfico del Reporte
                 </div>
@@ -146,138 +139,93 @@ include '../../includespro/header.php';
 </main>
 
 <script>
-    $(document).ready(function() {
-        $('form').on('submit', function(e) {
-            e.preventDefault();
-            var formData = $(this).serialize();
+    document.addEventListener("DOMContentLoaded", function() {
+        const fechaFin = document.getElementById('fecha_fin');
+        const hoy = new Date().toISOString().split('T')[0];
+        fechaFin.value = hoy;
+    });
 
-            $.ajax({
-                url: 'generar_tabla.php',
-                method: 'POST',
-                data: formData,
-                dataType: 'json',
-                success: function(response) {
-                    if (response.success) {
-                        llenarTablaResultados(response.data);
-                       
-                        //generarGrafico(response.data);
-                    } else {
-                        Swal.fire('Error', response.message, 'error');
+    
+        $('#tipo_informe').on('change', function() {
+            var tipo = $(this).val();
+            console.log('Tipo de informe seleccionado:', tipo);
+
+            if (tipo) {
+                $.ajax({
+                    url: 'get_options.php',
+                    type: 'POST',
+                    data: { tipo: tipo },
+                    success: function(response) {
+                        console.log('Respuesta de get_options.php:', response);
+                        $('#id_especifico').html(response);
+                        $('#id_especifico').prop('disabled', false);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error en la solicitud AJAX:', status, error);
                     }
-                },
-                error: function(jqXHR, textStatus, errorThrown) {
-                    console.log("AJAX Error: " + textStatus + ' : ' + errorThrown);
-                    Swal.fire('Error', "Ocurrió un error al procesar la solicitud.", 'error');
-                }
-            });
-        });
-
-        function llenarTablaResultados(data) {
-            function llenarTablaResultados(data) {
-    var columns = [];
-    var tipoReporte = $('#tipo_reporte').val();
-
-    // Definir columnas basadas en el tipo de reporte
-    if (tipoReporte === 'categoria') {
-        columns = [
-            { data: 'categoria', title: 'Categoría' },
-            { data: 'deportista', title: 'Deportista' },
-            { data: 'fecha', title: 'Fecha' },
-            { data: 'monto', title: 'Monto', render: $.fn.dataTable.render.number(',', '.', 2, '$') },
-            { data: 'estado', title: 'Estado' }
-        ];
-    } else if (tipoReporte === 'deportista') {
-        columns = [
-            { data: 'deportista', title: 'Deportista' },
-            { data: 'fecha', title: 'Fecha' },
-            { data: 'monto', title: 'Monto', render: $.fn.dataTable.render.number(',', '.', 2, '$') },
-            { data: 'estado', title: 'Estado' }
-        ];
-    } else if (tipoReporte === 'representante') {
-        columns = [
-            { data: 'representante', title: 'Representante' },
-            { data: 'fecha', title: 'Fecha' },
-            { data: 'monto', title: 'Monto', render: $.fn.dataTable.render.number(',', '.', 2, '$') },
-            { data: 'estado', title: 'Estado' }
-        ];
-    }
-
-    var tabla = $('#tabla-reporte').DataTable({
-        destroy: true,
-        data: data,
-        columns: columns,
-        responsive: true,
-        language: {
-            url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json'
-        },
-        dom: 'Bfrtip',
-        buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
-    });
-}
-        }
-
-        $('#tipo_reporte').change(function() {
-    var tipoReporte = $(this).val();
-    if (tipoReporte) {
-        $('#opciones_especificas').show();
-        cargarOpciones([tipoReporte]);
-    } else {
-        $('#opciones_especificas').hide();
-    }
-});
-
-
-    $('#generar_pdf').on('click', function() {
-        var form = $('form');
-        form.attr('action', 'generar_pdf_reporte.php');
-        form.attr('method', 'post');
-        form.attr('target', '_blank');
-        form.submit();
-        form.attr('action', '');
-        form.attr('target', '');
-    });
-
-
-  
-
-
-
-
-   
-        $.ajax({
-            url: 'obtener_opciones.php',
-            type: 'POST',
-            data: {
-                tipos: tiposReporte // Envía el array de tipos
-            },
-            dataType: 'json',
-            success: function(response) {
-                console.log(response); // Verifica la respuesta del servidor
-                if (response.error) {
-                    console.error("Error al cargar opciones:", response.error);
-                    Swal.fire('Error', 'Hubo un problema al cargar las opciones: ' + response.error, 'error');
-                    return;
-                }
-
-                var select = $('#opcion_especifica');
-                select.empty();
-
-                $.each(response, function(tipo, opciones) {
-                    var optgroup = $('<optgroup>').attr('label', tipo.charAt(0).toUpperCase() + tipo.slice(1));
-                    $.each(opciones, function(index, item) {
-                        optgroup.append($('<option>').val(tipo + '_' + item.id).text(item.nombre));
-                    });
-                    select.append(optgroup);
                 });
-
-                select.trigger('change');
-            },
-            error: function(xhr, status, error) {
-                console.error("Error al cargar opciones:", status, error);
-                Swal.fire('Error', 'Hubo un problema al cargar las opciones', 'error');
+            } else {
+                $('#id_especifico').html('<option value="">Seleccione una opción</option>');
+                $('#id_especifico').prop('disabled', true);
             }
         });
+ 
+
+    $('#reportForm').on('submit', function(e) {
+        e.preventDefault();
+        
+        $.ajax({
+            url: 'generar_tabla.php',
+            type: 'POST',
+            data: $(this).serialize(),
+            dataType: 'json',
+            success: function(data) {
+                console.log('Datos recibidos del servidor:', data);
+                if(data.error) {
+                    Swal.fire('Error', data.error, 'error');
+                    return;
+                }
+                if(data.message) {
+                    Swal.fire('Información', data.message, 'info');
+                    return;
+                }
+                
+                var tipo = $('#tipo_informe').val();
+                var columns;
+
+                if(tipo == 'categoria') {
+                    columns = [
+                        { title: "Nombre de la categoría", data: "NOMBRE" },
+                        { title: "Nombre del deportista", data: "NOMBRE_DEPO" },
+                        { title: "Mes/Año", data: "MES_ANIO" },
+                        { title: "Monto pagado", data: "MONTO" },
+                        { title: "Estado", data: "ESTADO" }
+                    ];
+                } else if(tipo == 'deportista') {
+                    columns = [
+                        { title: "Nombre del deportista", data: "NOMBRE" },
+                        { title: "Mes/Año", data: "MES_ANIO" },
+                        { title: "Monto pagado", data: "MONTO" },
+                        { title: "Estado", data: "ESTADO" }
+                    ];
+                } else if(tipo == 'representante') {
+                    columns = [
+                        { title: "Nombre del representante", data: "NOMBRE" },
+                        { title: "Nombre del deportista", data: "NOMBRE_DEPO" },
+                        { title: "Mes/Año", data: "MES_ANIO" },
+                        { title: "Monto pagado", data: "MONTO" },
+                        { title: "Estado", data: "ESTADO" }
+                    ];
+                }
+
+            }
+        })
     })
+
+
 </script>
 
-<?php include '../../Includespro/footer.php'; ?>
+   
+    <?php include '../../Includespro/footer.php'; ?>
+</body>
+</html>
