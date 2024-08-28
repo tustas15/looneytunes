@@ -628,58 +628,56 @@ include './IncludesPro/header.php';
             <div class="card mb-4">
                 <div class="card-body py-5">
                     <div class="d-flex flex-column justify-content-center">
-                        <img class="img-fluid mb-4" src="../assets/img/illustrations/data-report.svg" alt="" style="height: 10rem" />
                         <div class="text-center px-0 px-lg-5">
-                            <h5>¡Genera Reportes ahora!</h5>
-                            <p class="mb-4">Nuestro sistema de generación de reportes ya está en línea. Puede comenzar a crear reportes personalizados para excel y pdf disponible en su cuenta.</p>
-                            <button type="button" class="btn btn-primary p-3" data-bs-toggle="modal" data-bs-target="#reportModal">
-                                Empezar
-                            </button>
+                            <?php include('graficas/get_table_historial.php'); ?>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
 
-            <!-- Modal -->
-            <div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="reportModalLabel">Generar Informe</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="reportModalLabel">Generar Informe</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="reportForm" method="POST" action="./configuracion/generate_report.php">
+                        <div class="mb-3">
+                            <label for="reportType" class="form-label">Tipo de Informe</label>
+                            <select class="form-select" id="reportType" name="report_type" required>
+                                <option value="">Seleccione...</option>
+                                <option value="administradores">Administradores</option>
+                                <option value="entrenadores">Entrenadores</option>
+                                <option value="representantes">Representantes</option>
+                                <option value="deportistas">Deportistas</option>
+                                <option value="inventario">Inventario</option>
+                                <option value="categorias">Categorías Deportistas</option>
+                            </select>
                         </div>
-                        <div class="modal-body">
-                            <form id="reportForm" method="POST" action="./configuracion/generate_report.php">
-                                <div class="mb-3">
-                                    <label for="reportType" class="form-label">Tipo de Informe</label>
-                                    <select class="form-select" id="reportType" name="report_type" required>
-                                        <option value="">Seleccione...</option>
-                                        <option value="administradores">Administradores</option>
-                                        <option value="entrenadores">Entrenadores</option>
-                                        <option value="representantes">Representantes</option>
-                                        <option value="deportistas">Deportistas</option>
-                                        <option value="inventario">Inventario</option>
-                                        <option value="categorias">Categorías Deportistas</option>
-                                    </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="reportFormat" class="form-label">Formato de Informe</label>
-                                    <select class="form-select" id="reportFormat" name="report_format" required>
-                                        <option value="">Seleccione...</option>
-                                        <option value="csv">CSV</option>
-                                        <option value="pdf">PDF</option>
-                                    </select>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                                    <button type="submit" class="btn btn-primary">Generar</button>
-                                </div>
-                            </form>
+                        <div class="mb-3">
+                            <label for="reportFormat" class="form-label">Formato de Informe</label>
+                            <select class="form-select" id="reportFormat" name="report_format" required>
+                                <option value="">Seleccione...</option>
+                                <option value="csv">CSV</option>
+                                <option value="pdf">PDF</option>
+                            </select>
                         </div>
-                    </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-primary">Generar</button>
+                        </div>
+                    </form>
                 </div>
             </div>
-            </body>
-            <?php
-            include './includespro/footer.php';
-            ?>
+        </div>
+    </div>
+    </body>
+    <?php
+    include './includespro/footer.php';
+    ?>
