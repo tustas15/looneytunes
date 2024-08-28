@@ -18,7 +18,22 @@ if (!isset($_SESSION['tipo_usuario'])) {
 $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
 $tipo_usuario = $_SESSION['tipo_usuario'];
 $usuario = isset($_SESSION['usuario']) ? $_SESSION['usuario'] : 'Usuario';
+// ID del usuario actual
+$user_id = $_SESSION['user_id'];
 
+// Consulta para obtener la foto del usuario
+$sql = "
+    SELECT f.FOTO 
+    FROM tab_fotos_usuario f
+    JOIN tab_usu_tipo ut ON ut.ID_TIPO = f.ID_TIPO
+    WHERE ut.ID_USUARIO = :user_id
+";
+$stmt = $conn->prepare($sql);
+$stmt->execute(['user_id' => $user_id]);
+$foto = $stmt->fetchColumn();
+
+// Codificar la foto en base64
+$foto_src = $foto ? 'data:image/jpeg;base64,' . base64_encode($foto) : '/looneytunes/Assets/img/illustrations/profiles/profile-1.png';
 try {
     // Consulta SQL para obtener todas las categorías y el número de deportistas por categoría
     $sql = "SELECT c.ID_CATEGORIA, c.CATEGORIA, c.LIMITE_DEPORTISTAS, COUNT(cd.id_deportista) AS num_deportistas
@@ -624,14 +639,69 @@ include './IncludesPro/header.php';
                 </script>
             </div>
 
-            <!-- Tarjeta para generar Informes -->
+            <!-- Example DataTable for Dashboard Demo-->
             <div class="card mb-4">
-                <div class="card-body py-5">
-                    <div class="d-flex flex-column justify-content-center">
-                        <div class="text-center px-0 px-lg-5">
-                            <?php include('graficas/get_table_historial.php'); ?>
-                        </div>
-                    </div>
+                <div class="card-header">Personnel Management</div>
+                <div class="card-body">
+                    <table id="datatablesSimple">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Position</th>
+                                <th>Office</th>
+                                <th>Age</th>
+                                <th>Start date</th>
+                                <th>Salary</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <tr>
+                                <th>Name</th>
+                                <th>Position</th>
+                                <th>Office</th>
+                                <th>Age</th>
+                                <th>Start date</th>
+                                <th>Salary</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </tfoot>
+                        <tbody>
+
+                            <tr>
+                                <td>Michael Bruce</td>
+                                <td>Javascript Developer</td>
+                                <td>Singapore</td>
+                                <td>29</td>
+                                <td>2011/06/27</td>
+                                <td>$183,000</td>
+                                <td>
+                                    <div class="badge bg-primary text-white rounded-pill">Full-time</div>
+                                </td>
+                                <td>
+                                    <button class="btn btn-datatable btn-icon btn-transparent-dark me-2"><i data-feather="more-vertical"></i></button>
+                                    <button class="btn btn-datatable btn-icon btn-transparent-dark"><i data-feather="trash-2"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Donna Snider</td>
+                                <td>Customer Support</td>
+                                <td>New York</td>
+                                <td>27</td>
+                                <td>2011/01/25</td>
+                                <td>$112,000</td>
+                                <td>
+                                    <div class="badge bg-secondary text-white rounded-pill">Part-time</div>
+                                </td>
+                                <td>
+                                    <button class="btn btn-datatable btn-icon btn-transparent-dark me-2"><i data-feather="more-vertical"></i></button>
+                                    <button class="btn btn-datatable btn-icon btn-transparent-dark"><i data-feather="trash-2"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
