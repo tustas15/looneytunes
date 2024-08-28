@@ -552,7 +552,7 @@ include './IncludesPro/header.php';
                         <div class="card-header">Mes de Pagos</div>
                         <div class="card-body">
                             <div id="myChartContainer">
-                                <canvas id="Chart"></canvas>
+                                <canvas id="Chart"></canvas width="200" height="400">
                             </div>
 
                             <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -561,7 +561,6 @@ include './IncludesPro/header.php';
                         </div>
                     </div>
                 </div>
-
 
                 <div class="col-xl-6 mb-4">
                     <!-- Pie chart with legend example-->

@@ -2,10 +2,10 @@
 // <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 // Función para obtener los datos de pagos
-function fetchPaymentData() {
+function fetchPaymentData(filterOption = null) {
     // Realiza una solicitud AJAX a tu servidor para obtener los datos de tab_pagos
     fetch('graficas/get_datos.php')
-       .then(response => {
+        .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
@@ -15,16 +15,15 @@ function fetchPaymentData() {
             console.log('Respuesta del servidor:', text); // Ver el contenido recibido
             try {
                 const data = JSON.parse(text); // Intentar convertir el texto a JSON
-                updateChart(processPaymentData(data));
+                updateChart(processPaymentData(data, filterOption));
             } catch (e) {
                 console.error('Error al parsear JSON:', e);
             }
         })
         .catch(error => console.log('Error:', error));
-
 }
 
-function processPaymentData(data) {
+function processPaymentData(data, filterOption) {
     const monthlyData = {};
     const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
@@ -41,16 +40,32 @@ function processPaymentData(data) {
         monthlyData[month].count += 1;
     });
 
-    const processedData = monthNames.map((month, index) => ({
+    let processedData = monthNames.map((month, index) => ({
         month: month,
         totalPayments: Math.round(monthlyData[index] ? monthlyData[index].totalAmount : 0),
         paymentCount: monthlyData[index] ? monthlyData[index].count : 0
     }));
 
+    // Aplicar filtro si se selecciona uno
+    if (filterOption) {
+        switch (filterOption) {
+            case 'ultimoPago':
+                processedData = processedData.filter(data => data.paymentCount > 0).slice(-1);
+                break;
+            case 'mesAlto':
+                processedData = processedData.reduce((max, data) => data.totalPayments > max.totalPayments ? data : max, processedData[0]);
+                processedData = [processedData];
+                break;
+            case 'todo':
+            default:
+                // No se aplica filtro, se muestra todo
+                break;
+        }
+    }
+
     console.log('Datos procesados:', processedData); // Imprime los datos procesados
     return processedData;
 }
-
 
 // Variable global para almacenar la instancia del gráfico
 let myChart;
@@ -71,7 +86,8 @@ function updateChart(monthlyData) {
                 label: 'Total de Pagos Mensuales',
                 data: monthlyData.map(data => data.totalPayments),
                 fill: false,
-                borderColor: 'rgb(75, 192, 192)',
+                borderColor: 'blue', // Cambia la línea a color azul
+                borderWidth: 3, // Aumenta el grosor de la línea
                 tension: 0.1
             }]
         },
@@ -81,6 +97,9 @@ function updateChart(monthlyData) {
                 y: {
                     beginAtZero: true,
                     min: 0,
+                    grid: {
+                        display: false, // Quitar líneas del grid
+                    },
                     ticks: {
                         stepSize: 10,
                         callback: function(value) {
@@ -93,6 +112,9 @@ function updateChart(monthlyData) {
                     }
                 },
                 x: {
+                    grid: {
+                        display: false, // Quitar líneas del grid
+                    },
                     title: {
                         display: true,
                         text: 'Meses'
@@ -118,6 +140,12 @@ function updateChart(monthlyData) {
         }
     });
 }
+
+// Función para manejar el filtrado
+function handleFilter(option) {
+    fetchPaymentData(option);
+}
+
 
 
 // Función para actualizar el gráfico periódicamente
