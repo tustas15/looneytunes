@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['modificar_limite'])) 
         $ip = $_SERVER['REMOTE_ADDR']; // Asegúrate de que la IP esté correctamente obtenida
 
         // Registra la acción en tab_logs
-        $log_action = "Límite modificado ". $nuevoLimite ." en "  . $categoria;;
+        $log_action = "Límite modificado " . $nuevoLimite . " en "  . $categoria;;
         $sqlLog = "INSERT INTO tab_logs (ID_USUARIO, EVENTO, HORA_LOG, DIA_LOG, IP, TIPO_EVENTO) VALUES (:user_id, :evento, CURRENT_TIME(), CURRENT_DATE(), :ip, 'nuevo_limite_categoria_deportistas_definido')";
         $stmtLog = $conn->prepare($sqlLog);
         $stmtLog->bindParam(':user_id', $user_id);
@@ -188,7 +188,7 @@ function timeElapsedString($datetime, $full = false)
     return $string ? '' . implode(', ', $string) : 'justo ahora';
 }
 
-include './includespro/header.php';
+include './IncludesPro/header.php';
 ?>
 <style>
     .bg-green {
@@ -283,7 +283,7 @@ include './includespro/header.php';
                 <div class="card card-header-actions h-100">
                     <div class="card-header">
                         Actividades Recientes
-                        
+
                     </div>
                     <div class="card-body">
                         <div class="timeline timeline-xs">
@@ -544,30 +544,25 @@ include './includespro/header.php';
                     </div>
                 </div>
             </div>
-
             <!-- Example Charts for Dashboard Demo-->
             <div class="row">
                 <div class="col-xl-6 mb-4">
-                    <div class="card card-header-actions h-100">
-                        <div class="card-header">
-                            Desgloce de Ganancias
-                            <div class="dropdown no-caret">
-                                <button class="btn btn-transparent-dark btn-icon dropdown-toggle" id="areaChartDropdownExample" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="text-gray-500" data-feather="more-vertical"></i></button>
-                                <div class="dropdown-menu dropdown-menu-end animated--fade-in-up" aria-labelledby="areaChartDropdownExample">
-                                    <a class="dropdown-item" href="#!">Last 12 Months</a>
-                                    <a class="dropdown-item" href="#!">Last 30 Days</a>
-                                    <a class="dropdown-item" href="#!">Last 7 Days</a>
-                                    <a class="dropdown-item" href="#!">This Month</a>
-                                    <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="#!">Custom Range</a>
-                                </div>
-                            </div>
-                        </div>
+                    <!-- Pie chart with legend example-->
+                    <div class="card h-100">
+                        <div class="card-header">Mes de Pagos</div>
                         <div class="card-body">
-                            <div class="chart-area"><canvas id="myAreaChart" width="100%" height="30"></canvas></div>
+                            <div id="myChartContainer">
+                                <canvas id="Chart"></canvas>
+                            </div>
+
+                            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+                            <script src="pagos.js"></script>
+
                         </div>
                     </div>
                 </div>
+
+
                 <div class="col-xl-6 mb-4">
                     <!-- Pie chart with legend example-->
                     <div class="card h-100">
@@ -685,7 +680,7 @@ include './includespro/header.php';
                     </div>
                 </div>
             </div>
-
+            </body>
             <?php
             include './includespro/footer.php';
             ?>

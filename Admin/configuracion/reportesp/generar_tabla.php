@@ -61,7 +61,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute();
 
         $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
         if (empty($data)) {
             echo json_encode([
                 "message" => "No se encontraron datos para los criterios seleccionados.",
