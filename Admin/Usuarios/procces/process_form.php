@@ -5,7 +5,7 @@ session_start(); // Asegúrate de que la sesión esté iniciada
 
 try {
     // Verificar que todos los campos están completos
-    if (!isset($_POST['nombre'], $_POST['apellido'], $_POST['experiencia'], $_POST['celular'], $_POST['correo'], $_POST['direccion'], $_POST['cedula'], $_POST['categoria'])) {
+    if (!isset($_POST['nombre'], $_POST['apellido'], $_POST['celular'], $_POST['correo'], $_POST['direccion'], $_POST['cedula'], $_POST['categoria'])) {
         throw new Exception('Todos los campos son obligatorios.');
     }
 
@@ -57,12 +57,11 @@ try {
     $stmt->execute();
 
     // Preparar la consulta SQL para insertar los datos en tab_entrenadores
-    $stmt = $conn->prepare('INSERT INTO tab_entrenadores (id_usuario, nombre_entre, apellido_entre, experiencia_entre, celular_entre, correo_entre, direccion_entre, cedula_entre) 
-    VALUES (:id_usuario, :nombre_entre, :apellido_entre, :experiencia_entre, :celular_entre, :correo_entre, :direccion_entre, :cedula_entre)');
+    $stmt = $conn->prepare('INSERT INTO tab_entrenadores (id_usuario, nombre_entre, apellido_entre, celular_entre, correo_entre, direccion_entre, cedula_entre) 
+    VALUES (:id_usuario, :nombre_entre, :apellido_entre, :celular_entre, :correo_entre, :direccion_entre, :cedula_entre)');
     $stmt->bindParam(':id_usuario', $id_usuario);
     $stmt->bindParam(':nombre_entre', $_POST['nombre']);
     $stmt->bindParam(':apellido_entre', $_POST['apellido']);
-    $stmt->bindParam(':experiencia_entre', $_POST['experiencia']);
     $stmt->bindParam(':celular_entre', $_POST['celular']);
     $stmt->bindParam(':correo_entre', $_POST['correo']);
     $stmt->bindParam(':direccion_entre', $_POST['direccion']);

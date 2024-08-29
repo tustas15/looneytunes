@@ -94,11 +94,6 @@ if (isset($_GET['message'])) {
                                             <label class="small mb-1" for="apellido">Apellido</label>
                                             <input class="form-control" id="apellido" name="apellido" type="text" placeholder="Ingrese el apellido" required />
                                         </div>
-                                        <!-- Form Group (experiencia) -->
-                                        <div class="mb-3">
-                                            <label class="small mb-1" for="experiencia">Experiencia</label>
-                                            <input class="form-control" id="experiencia" name="experiencia" type="text" placeholder="Ingrese la experiencia" required />
-                                        </div>
                                         <!-- Form Group (celular) -->
                                         <div class="mb-3">
                                             <label class="small mb-1" for="celular">Celular</label>

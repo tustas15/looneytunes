@@ -59,9 +59,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         // Determina qué botón fue presionado
         if (isset($_POST['vaciar_inicios'])) {
-            $deleteQuery = "DELETE FROM tab_logs WHERE ID_USUARIO = ? AND EVENTO = 'Inicio de Sesión'";
+            $deleteQuery = "DELETE FROM tab_logs WHERE ID_USUARIO = ? AND tipo_evento = 'inicio_sesion'";
         } elseif (isset($_POST['vaciar_cierres'])) {
-            $deleteQuery = "DELETE FROM tab_logs WHERE ID_USUARIO = ? AND EVENTO = 'Cierre de Sesión'";
+            $deleteQuery = "DELETE FROM tab_logs WHERE ID_USUARIO = ? AND tipo_evento = 'cierre_sesion'";
         } else {
             throw new Exception("Acción no válida.");
         }
@@ -74,9 +74,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Activa la variable para mostrar el modal
         $showModal = true;
 
-        // Redirige para evitar reenvíos del formulario
-        // header("Refresh: 2; url=logs.php");
-        // exit();
+        // Redirige para evitar reenvíos del formulario y recargar la página
+        header("Refresh: 3; url=logs.php");
+        exit();
     } catch (Exception $e) {
         echo "<p class='alert alert-danger'>Hubo un problema al eliminar los registros: " . $e->getMessage() . "</p>";
     }
@@ -104,6 +104,14 @@ $conn = null;
         .modal-backdrop.show {
             opacity: 0.5;
         }
+        .spinner {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1050;
+        }
     </style>
 </head>
 <body class="bg-gradient-primary">
@@ -122,7 +130,7 @@ $conn = null;
                                                     <h1 class="h4 text-gray-900 mb-4">Registro de Actividades</h1>
                                                 </div>
                                                 <!-- Formulario para vaciar los registros -->
-                                                <form method="post">
+                                                <form id="deleteForm" method="post" onsubmit="showSpinner()">
                                                     <button type="submit" name="vaciar_inicios" class="btn btn-warning btn-user btn-block">Eliminar Registros de Inicio de Sesión</button>
                                                     <button type="submit" name="vaciar_cierres" class="btn btn-danger btn-user btn-block">Eliminar Registros de Cierre de Sesión</button>
                                                 <table class="table mt-4">
@@ -178,6 +186,13 @@ $conn = null;
         </div>
     </div>
 
+    <!-- Spinner de carga -->
+    <div id="spinner" class="spinner">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Cargando...</span>
+        </div>
+    </div>
+
     <!-- Modal de éxito -->
     <?php if ($showModal): ?>
         <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
@@ -197,14 +212,23 @@ $conn = null;
             </div>
         </div>
         <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                var successModal = new bootstrap.Modal(document.getElementById('successModal'));
-                successModal.show();
-            });
+            // Mostrar el modal de éxito
+            var successModal = new bootstrap.Modal(document.getElementById('successModal'));
+            successModal.show();
         </script>
     <?php endif; ?>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-    <script src="js/scripts.js"></script>
+    <script>
+        // Muestra el spinner de carga cuando se envía el formulario
+        function showSpinner() {
+            document.getElementById('spinner').style.display = 'block';
+        }
+
+        // Mostrar el año actual en el footer
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
 </body>
 </html>
