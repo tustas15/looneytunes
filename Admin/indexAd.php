@@ -203,7 +203,7 @@ function timeElapsedString($datetime, $full = false)
     return $string ? '' . implode(', ', $string) : 'justo ahora';
 }
 
-include './IncludesPro/header.php';
+include './includespro/header.php';
 ?>
 <style>
     .bg-green {
