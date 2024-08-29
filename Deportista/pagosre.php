@@ -670,6 +670,12 @@ include './includes/header.php';
             });
         });
 
+
+
+
+
+
+        
         // Funcionalidad para los botones de eliminar y editar
         $('#historial_pagos').on('click', '.delete-btn', function() {
             var id = $(this).data('id');

@@ -69,6 +69,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             'message' => 'Error al registrar el pago: ' . $e->getMessage()
         ];
     }
+    
 
     header('Content-Type: application/json');
 

@@ -607,13 +607,16 @@ include '../../IncludesPro/header.php';
             })
 
 
+
+
+
+
+            
             // Actualizar motivo al cambiar el mes
             $('#mes').change(function() {
                 var mes = $(this).find('option:selected').text();
                 $('#motivo').val('Pago del mes de ' + mes);
             });
-
-            
 
             // Funcionalidad para los botones de eliminar y editar
             $('#historial_pagos').on('click', '.delete-btn', function() {
@@ -627,10 +630,6 @@ include '../../IncludesPro/header.php';
             });
         
     </script>
-    
-
-   
- 
 
 </body>
 

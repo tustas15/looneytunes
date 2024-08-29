@@ -1,23 +1,15 @@
 <?php
 // Conexión a la base de datos
 session_start();
-if (!isset($_SESSION['user_id'])) {
-    header("Location: ../public/login.php");
-    exit();
-}
 require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
 
+
+
 $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
-include './Includes/header.php';
+include './includes/header.php';
 ?>
 
-
-
-
-
 <link href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css" rel="stylesheet">
-<script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.28.0/feather.min.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <body class="nav-fixed">
@@ -38,20 +30,8 @@ include './Includes/header.php';
                         <input type="hidden" id="id_pago" name="id_pago">
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <div class="form-floating mb-3 mb-md-0">
-                                    <select id="representante" name="representante" class="form-select" required>
-                                        <option value="">Seleccionar</option>
-                                        <!-- Opciones se llenarán dinámicamente -->
-                                    </select>
-                                    <label for="representante">Apellido del Representante</label>
-                                </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="form-floating">
-                                    <input type="text" id="cedula_representante" class="form-control" readonly>
-                                    <label for="cedula_representante">Cédula del Representante</label>
-                                </div>
-                            </div>
+
                         </div>
                         <div class="row mb-3">
                             <div class="col-md-6">
@@ -181,7 +161,7 @@ include './Includes/header.php';
             </div>
         </div>
     </main>
-    <?php include '../Includes/footer.php'; ?>
+    <?php include '../includes/footer.php'; ?>
 
     <script>
         document.getElementById('paymentForm').addEventListener('submit', function(event) {
@@ -262,7 +242,6 @@ include './Includes/header.php';
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-    <script src="/looneytunes/Assets/js/scripts.js"></script>
     <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.6.2/js/dataTables.buttons.min.js"></script>
