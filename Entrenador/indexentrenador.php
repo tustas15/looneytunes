@@ -1,13 +1,6 @@
 <?php
-
 session_start();
-if (!isset($_SESSION['user_id'])) {
-    header("Location: ../public/login.php");
-    exit();
-}
-// Conexión a la base de datos
-include './includes/header.php';
-
+require_once('../admin/configuracion/conexion.php');
 // ID del usuario actual
 $user_id = $_SESSION['user_id'];
 
@@ -25,6 +18,8 @@ $foto = $stmt->fetchColumn();
 // Codificar la foto en base64
 $foto_src = $foto ? 'data:image/jpeg;base64,' . base64_encode($foto) : '/looneytunes/Assets/img/illustrations/profiles/profile-1.png';
 
+// Conexión a la base de datos
+include './includes/header.php';
 
 date_default_timezone_set('America/Guayaquil'); // Ajusta a tu zona horaria
 
@@ -32,8 +27,6 @@ date_default_timezone_set('America/Guayaquil'); // Ajusta a tu zona horaria
 if ($conn === null) {
     die("Error de conexión a la base de datos.");
 }
-
-
 
 // Comprobamos si el usuario está logueado
 if (!isset($_SESSION['user_id'])) {

@@ -9,20 +9,20 @@ $id_usuarios = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
 
 // Obtener las categorías del entrenador
 $categorias_entrenador = [];
-    try {
-        $stmt = $conn->prepare("
+try {
+    $stmt = $conn->prepare("
             SELECT c.ID_CATEGORIA, c.CATEGORIA
             FROM tab_categorias c
             INNER JOIN tab_entrenador_categoria ec ON c.ID_CATEGORIA = ec.ID_CATEGORIA
             INNER JOIN tab_entrenadores e ON ec.ID_ENTRENADOR = e.ID_ENTRENADOR
             WHERE e.ID_USUARIO = :id_usuario
         ");
-        $stmt->execute(['id_usuario' => $id_usuarios]);
-        $categorias_entrenador = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    } catch (PDOException $e) {
-        error_log("Error al obtener categorías del entrenador: " . $e->getMessage());
-        // Podrías manejar el error mostrando un mensaje al usuario
-    }
+    $stmt->execute(['id_usuario' => $id_usuarios]);
+    $categorias_entrenador = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    error_log("Error al obtener categorías del entrenador: " . $e->getMessage());
+    // Podrías manejar el error mostrando un mensaje al usuario
+}
 
 ?>
 <!DOCTYPE html>
@@ -64,23 +64,23 @@ $categorias_entrenador = [];
                     <i class="fas fa-chevron-right dropdown-arrow"></i>
                 </a>
                 <div class="dropdown-menu dropdown-menu-end py-0 me-sm-n15 me-lg-0 o-hidden animated--fade-in-up" aria-labelledby="navbarDropdownDocs">
-<!-- Botón para abrir el Modal de Subida -->
-<a class="dropdown-item py-3" href="#" data-bs-toggle="modal" data-bs-target="#uploadModal">
-    <div class="icon-stack bg-primary-soft text-primary me-4"><i data-feather="upload"></i></div>
-    <div>
-        <div class="small text-gray-500">Subir Hoja de vida</div>
-        Haz click para subir tu Hoja de vida (PDF)
-    </div>
-</a>
-    <!-- Botón para Descargar Hoja de Vida -->
-    <a class="dropdown-item py-3" href="./configuracion/download.php">
-    <div class="icon-stack bg-primary-soft text-primary me-4"><i data-feather="download"></i></div>
-    <div>
-        <div class="small text-gray-500">Descargar Hoja de vida</div>
-        Haz click para descargar tu Hoja de vida
-    </div>
-</a>
-</div>
+                    <!-- Botón para abrir el Modal de Subida -->
+                    <a class="dropdown-item py-3" href="#" data-bs-toggle="modal" data-bs-target="#uploadModal">
+                        <div class="icon-stack bg-primary-soft text-primary me-4"><i data-feather="upload"></i></div>
+                        <div>
+                            <div class="small text-gray-500">Subir Hoja de vida</div>
+                            Haz click para subir tu Hoja de vida (PDF)
+                        </div>
+                    </a>
+                    <!-- Botón para Descargar Hoja de Vida -->
+                    <a class="dropdown-item py-3" href="./configuracion/download.php">
+                        <div class="icon-stack bg-primary-soft text-primary me-4"><i data-feather="download"></i></div>
+                        <div>
+                            <div class="small text-gray-500">Descargar Hoja de vida</div>
+                            Haz click para descargar tu Hoja de vida
+                        </div>
+                    </a>
+                </div>
             </li>
             <!-- * * Note: * * Visible only below the lg breakpoint-->
             <li class="nav-item dropdown no-caret me-3 d-lg-none">
@@ -95,7 +95,7 @@ $categorias_entrenador = [];
                     </form>
                 </div>
             </li>
-            
+
             <!-- Messages Dropdown-->
             <li class="nav-item dropdown no-caret d-none d-sm-block me-3 dropdown-notifications">
                 <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownMessages" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i data-feather="mail"></i></a>
@@ -107,32 +107,32 @@ $categorias_entrenador = [];
                 </div>
             </li>
             <!-- User Dropdown-->
-<li class="nav-item dropdown no-caret dropdown-user me-3 me-lg-4">
-    <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownUserImage" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <img class="img-fluid" src="<?= $foto_src ?>" alt="Foto de Usuario" />
-    </a>
-    <div class="dropdown-menu dropdown-menu-end border-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownUserImage">
-        <h6 class="dropdown-header d-flex align-items-center">
-            <img class="dropdown-user-img" src="<?= $foto_src ?>" alt="Foto de Usuario" />
-            <div class="dropdown-user-details">
-                <div class="dropdown-user-details-name"><?= $nombre ?></div>
-            </div>
-        </h6>
-        <div class="dropdown-divider"></div>
-        <a class="dropdown-item" href="/looneytunes/public/profile.php">
-            <div class="dropdown-item-icon"><i data-feather="settings"></i></div>
-            Cuenta
-        </a>
-        <a class="dropdown-item" href="/looneytunes/public/logs.php">
-            <div class="dropdown-item-icon"><i data-feather="file-text"></i></div>
-            Registro de Actividades
-        </a>
-        <a class="dropdown-item" href="/looneytunes/public/logout.php">
-            <div class="dropdown-item-icon"><i data-feather="log-out"></i></div>
-            Logout
-        </a>
-    </div>
-</li>
+            <li class="nav-item dropdown no-caret dropdown-user me-3 me-lg-4">
+                <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownUserImage" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <img class="img-fluid" src="<?= $foto_src ?>" alt="Foto de Usuario" />
+                </a>
+                <div class="dropdown-menu dropdown-menu-end border-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownUserImage">
+                    <h6 class="dropdown-header d-flex align-items-center">
+                        <img class="dropdown-user-img" src="<?= $foto_src ?>" alt="Foto de Usuario" />
+                        <div class="dropdown-user-details">
+                            <div class="dropdown-user-details-name"><?= $nombre ?></div>
+                        </div>
+                    </h6>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="/looneytunes/public/profile.php">
+                        <div class="dropdown-item-icon"><i data-feather="settings"></i></div>
+                        Cuenta
+                    </a>
+                    <a class="dropdown-item" href="/looneytunes/public/logs.php">
+                        <div class="dropdown-item-icon"><i data-feather="file-text"></i></div>
+                        Registro de Actividades
+                    </a>
+                    <a class="dropdown-item" href="/looneytunes/public/logout.php">
+                        <div class="dropdown-item-icon"><i data-feather="log-out"></i></div>
+                        Logout
+                    </a>
+                </div>
+            </li>
         </ul>
     </nav>
     <div id="layoutSidenav">
@@ -147,8 +147,8 @@ $categorias_entrenador = [];
                             Observaciones
                             <span class="badge bg-success-soft text-success ms-auto">2 New!</span>
                         </a>
-                        
-                       
+
+
                         <!-- Sidenav Menu Heading (Core)-->
                         <div class="sidenav-menu-heading">Core</div>
                         <!-- Sidenav Accordion (Dashboard)-->
@@ -173,7 +173,7 @@ $categorias_entrenador = [];
                         <?php endif; ?>
                     </div>
                 </div>
-                
+
                 <!-- Sidenav Footer -->
                 <div class="sidenav-footer">
                     <div class="sidenav-footer-content">

@@ -149,7 +149,7 @@ $storedPass = isset($_COOKIE['pass']) ? $_COOKIE['pass'] : '';
         }
 
         .card-header img {
-            max-width: 50px;
+            max-width: 100px;
             /* Ajusta el tamaño según sea necesario */
             margin-right: 10px;
             /* Espacio entre el logo y el texto */
@@ -167,7 +167,7 @@ $storedPass = isset($_COOKIE['pass']) ? $_COOKIE['pass'] : '';
                             <div class="card shadow-lg border-0 rounded-lg mt-5">
                                 <div class="card-header">
                                     <img src="../Assets/img/logo_sinfondo.png" alt="Logo de la Empresa" />
-                                    <h3 class="fw-light my-4">Login</h3>
+                                    
                                 </div>
                                 <div class="card-body">
                                     <form method="POST" action="">
