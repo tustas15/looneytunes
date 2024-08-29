@@ -120,6 +120,7 @@ include './includes/header.php';
                                     <?= htmlspecialchars($deportista['NOMBRE_ENTRE']) . ' ' . htmlspecialchars($deportista['APELLIDO_ENTRE']) ?>
                                 </a>
                             </p>
+                            <div class="table-responsive">
                             <table id="detallesTable" class="table table-striped">
                                 <thead>
                                     <tr>
@@ -153,6 +154,7 @@ include './includes/header.php';
                         <?php else: ?>
                             <p>No se encontraron datos para este deportista.</p>
                         <?php endif; ?>
+                        </div>
                     </div>
                 </div>
             </div>
