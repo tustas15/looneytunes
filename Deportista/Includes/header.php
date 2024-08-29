@@ -132,7 +132,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                         <!-- Sidenav Menu Heading (Core)-->
                         <div class="sidenav-menu-heading">Core</div>
                         <!-- Sidenav Accordion (Dashboard)-->
-                        <a class="nav-link" href=" /index.php">
+                        <a class="nav-link" href=" /looneytunes/index.php">
                             <div class="nav-link-icon"><i data-feather="home"></i></div>
                             Dashboard
                         </a>
