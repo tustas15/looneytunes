@@ -1,16 +1,31 @@
 <?php
-
+require_once('../admin/configuracion/conexion.php');
 session_start();
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../public/login.php");
     exit();
 }
+
+// ID del usuario actual
+$user_id = $_SESSION['user_id'];
+
+// Consulta para obtener la foto del usuario
+$sql = "
+    SELECT f.FOTO 
+    FROM tab_fotos_usuario f
+    JOIN tab_usu_tipo ut ON ut.ID_TIPO = f.ID_TIPO
+    WHERE ut.ID_USUARIO = :user_id
+";
+$stmt = $conn->prepare($sql);
+$stmt->execute(['user_id' => $user_id]);
+$foto = $stmt->fetchColumn();
+
+// Codificar la foto en base64
+$foto_src = $foto ? 'data:image/jpeg;base64,' . base64_encode($foto) : '/looneytunes/Assets/img/illustrations/profiles/profile-1.png';
 // Habilitar la visualización de errores para depuración
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// Incluir el archivo de conexión a la base de datos
-require_once('../admin/configuracion/conexion.php');
 
 // Iniciar la sesión
 
@@ -120,6 +135,7 @@ include './includes/header.php';
                                     <?= htmlspecialchars($deportista['NOMBRE_ENTRE']) . ' ' . htmlspecialchars($deportista['APELLIDO_ENTRE']) ?>
                                 </a>
                             </p>
+                            <div class="table-responsive">
                             <table id="detallesTable" class="table table-striped">
                                 <thead>
                                     <tr>
@@ -153,6 +169,7 @@ include './includes/header.php';
                         <?php else: ?>
                             <p>No se encontraron datos para este deportista.</p>
                         <?php endif; ?>
+                        </div>
                     </div>
                 </div>
             </div>

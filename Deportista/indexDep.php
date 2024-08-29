@@ -1,6 +1,20 @@
 <?php
 session_start();
 require_once('../admin/configuracion/conexion.php');
+
+
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../public/login.php");
+    exit();
+}
+// Conexión a la base de datos
+require_once('../admin/configuracion/conexion.php');
+
+// Verificar que la conexión se estableció correctamente
+if ($conn === null) {
+    die("Error de conexión a la base de datos.");
+}
+
 // ID del usuario actual
 $user_id = $_SESSION['user_id'];
 
@@ -17,18 +31,6 @@ $foto = $stmt->fetchColumn();
 
 // Codificar la foto en base64
 $foto_src = $foto ? 'data:image/jpeg;base64,' . base64_encode($foto) : '/looneytunes/Assets/img/illustrations/profiles/profile-1.png';
-
-if (!isset($_SESSION['user_id'])) {
-    header("Location: ../public/login.php");
-    exit();
-}
-// Conexión a la base de datos
-require_once('../admin/configuracion/conexion.php');
-
-// Verificar que la conexión se estableció correctamente
-if ($conn === null) {
-    die("Error de conexión a la base de datos.");
-}
 
 // Inicio de sesión
 

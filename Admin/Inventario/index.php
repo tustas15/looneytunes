@@ -3,6 +3,8 @@ session_start();
 
 $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
 $usuario = isset($_SESSION['usuario']) ? $_SESSION['usuario'] : 'Usuario';
+
+
 ?>
 <!DOCTYPE html>
 <html>

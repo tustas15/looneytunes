@@ -77,6 +77,7 @@ include './includes/header.php';
                 <div class="card h-100">
                     <div class="card-body">
                         <?php if (!empty($jugadores)): ?>
+                            <div class="table-responsive">
                             <table class="table table-striped">
                                 <thead>
                                     <tr>
@@ -106,6 +107,7 @@ include './includes/header.php';
                         <?php else: ?>
                             <p>No hay jugadores en esta categoría.</p>
                         <?php endif; ?>
+                        </div>
                     </div>
                 </div>
             </div>

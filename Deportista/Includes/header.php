@@ -1,6 +1,7 @@
 <?php
 $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
 $tipo_usuario = $_SESSION['tipo_usuario'];
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -11,7 +12,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>Dashboard </title>
+    <title>CASF </title>
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/litepicker/dist/css/litepicker.css" rel="stylesheet" />
     <link href="../Assets/css/styles.css" rel="stylesheet" />
@@ -131,7 +132,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                         <!-- Sidenav Menu Heading (Core)-->
                         <div class="sidenav-menu-heading">Core</div>
                         <!-- Sidenav Accordion (Dashboard)-->
-                        <a class="nav-link" href=" /index.php">
+                        <a class="nav-link" href=" /looneytunes/index.php">
                             <div class="nav-link-icon"><i data-feather="home"></i></div>
                             Dashboard
                         </a>

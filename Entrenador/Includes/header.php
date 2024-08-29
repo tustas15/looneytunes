@@ -23,7 +23,22 @@ try {
     error_log("Error al obtener categorías del entrenador: " . $e->getMessage());
     // Podrías manejar el error mostrando un mensaje al usuario
 }
+// ID del usuario actual
+$user_id = $_SESSION['user_id'];
 
+// Consulta para obtener la foto del usuario
+$sql = "
+    SELECT f.FOTO 
+    FROM tab_fotos_usuario f
+    JOIN tab_usu_tipo ut ON ut.ID_TIPO = f.ID_TIPO
+    WHERE ut.ID_USUARIO = :user_id
+";
+$stmt = $conn->prepare($sql);
+$stmt->execute(['user_id' => $user_id]);
+$foto = $stmt->fetchColumn();
+
+// Codificar la foto en base64
+$foto_src = $foto ? 'data:image/jpeg;base64,' . base64_encode($foto) : '/looneytunes/Assets/img/illustrations/profiles/profile-1.png';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -34,7 +49,7 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>Dashboard </title>
+    <title>CASF </title>
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/litepicker/dist/css/litepicker.css" rel="stylesheet" />
     <link href="../Assets/css/styles.css" rel="stylesheet" />

@@ -7,22 +7,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 require_once('../admin/configuracion/conexion.php');
-// ID del usuario actual
-$user_id = $_SESSION['user_id'];
 
-// Consulta para obtener la foto del usuario
-$sql = "
-    SELECT f.FOTO 
-    FROM tab_fotos_usuario f
-    JOIN tab_usu_tipo ut ON ut.ID_TIPO = f.ID_TIPO
-    WHERE ut.ID_USUARIO = :user_id
-";
-$stmt = $conn->prepare($sql);
-$stmt->execute(['user_id' => $user_id]);
-$foto = $stmt->fetchColumn();
-
-// Codificar la foto en base64
-$foto_src = $foto ? 'data:image/jpeg;base64,' . base64_encode($foto) : '/looneytunes/Assets/img/illustrations/profiles/profile-1.png';
 
 date_default_timezone_set('America/Guayaquil');
 
@@ -52,7 +37,22 @@ if ($tipo_usuario != '3') {
     exit();
 }
 
+// ID del usuario actual
+$user_id = $_SESSION['user_id'];
 
+// Consulta para obtener la foto del usuario
+$sql = "
+    SELECT f.FOTO 
+    FROM tab_fotos_usuario f
+    JOIN tab_usu_tipo ut ON ut.ID_TIPO = f.ID_TIPO
+    WHERE ut.ID_USUARIO = :user_id
+";
+$stmt = $conn->prepare($sql);
+$stmt->execute(['user_id' => $user_id]);
+$foto = $stmt->fetchColumn();
+
+// Codificar la foto en base64
+$foto_src = $foto ? 'data:image/jpeg;base64,' . base64_encode($foto) : '/looneytunes/Assets/img/illustrations/profiles/profile-1.png';
 
 // Obtener información del representante
 $stmt = $conn->prepare("SELECT * FROM tab_representantes WHERE ID_USUARIO = :id_usuario");
@@ -124,7 +124,7 @@ try {
     exit();
 }
 
-$conn = null;
+
 
 // Función para calcular el tiempo transcurrido en formato legible
 function timeElapsedString($datetime, $full = false) {
@@ -210,7 +210,7 @@ include './Includes/header.php';
                             </div>
                         </div>
                         <div class="card-footer d-flex align-items-center justify-content-between small">
-                            <a class="text-white stretched-link" href="../Deportista/perfil.php?id_deportista=<?php echo htmlspecialchars($hijo['ID_DEPORTISTA'], ENT_QUOTES, 'UTF-8'); ?>">Ver perfil</a>
+                            <a class="text-white stretched-link" href="./perfil.php?id_deportista=<?php echo htmlspecialchars($hijo['ID_DEPORTISTA'], ENT_QUOTES, 'UTF-8'); ?>">Ver perfil</a>
                             <div class="text-white"><i class="fas fa-angle-right"></i></div>
                         </div>
                     </div>
