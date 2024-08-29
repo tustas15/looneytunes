@@ -1,6 +1,22 @@
 <?php
 $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
 $tipo_usuario = $_SESSION['tipo_usuario'];
+// ID del usuario actual
+$user_id = $_SESSION['user_id'];
+
+// Consulta para obtener la foto del usuario
+$sql = "
+    SELECT f.FOTO 
+    FROM tab_fotos_usuario f
+    JOIN tab_usu_tipo ut ON ut.ID_TIPO = f.ID_TIPO
+    WHERE ut.ID_USUARIO = :user_id
+";
+$stmt = $conn->prepare($sql);
+$stmt->execute(['user_id' => $user_id]);
+$foto = $stmt->fetchColumn();
+
+// Codificar la foto en base64
+$foto_src = $foto ? 'data:image/jpeg;base64,' . base64_encode($foto) : '/looneytunes/Assets/img/illustrations/profiles/profile-1.png';
 ?>
 <!DOCTYPE html>
 <html lang="en">
