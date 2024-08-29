@@ -23,6 +23,20 @@ $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
 $tipo_usuario = $_SESSION['tipo_usuario'];
 $usuario = isset($_SESSION['usuario']) ? $_SESSION['usuario'] : 'Usuario';
 
+
+// Consulta para obtener la foto del usuario
+$sql = "
+    SELECT f.FOTO 
+    FROM tab_fotos_usuario f
+    JOIN tab_usu_tipo ut ON ut.ID_TIPO = f.ID_TIPO
+    WHERE ut.ID_USUARIO = :user_id
+";
+$stmt = $conn->prepare($sql);
+$stmt->execute(['user_id' => $user_id]);
+$foto = $stmt->fetchColumn();
+
+// Codificar la foto en base64
+$foto_src = $foto ? 'data:image/jpeg;base64,' . base64_encode($foto) : '/looneytunes/Assets/img/illustrations/profiles/profile-1.png';
 try {
     // Consulta SQL para obtener las categorías y los nombres de deportistas y entrenadores en cada una
     $sqlCategorias = "SELECT c.ID_CATEGORIA, c.CATEGORIA, c.limite_deportistas,
@@ -388,20 +402,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </li>
             <!-- User Dropdown-->
             <li class="nav-item dropdown no-caret dropdown-user me-3 me-lg-4">
-                <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownUserImage" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img class="img-fluid" src="/looneytunes/Assets/img/illustrations/profiles/profile-1.png" /></a>
+                <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownUserImage" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <img class="img-fluid" src="<?= $foto_src ?>" alt="Foto de Usuario" />
+                </a>
                 <div class="dropdown-menu dropdown-menu-end border-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownUserImage">
                     <h6 class="dropdown-header d-flex align-items-center">
-                        <img class="dropdown-user-img" src="/looneytunes/Assets/img/illustrations/profiles/profile-1.png" />
+                        <img class="dropdown-user-img" src="<?= $foto_src ?>" alt="Foto de Usuario" />
                         <div class="dropdown-user-details">
                             <div class="dropdown-user-details-name"><?= $nombre ?></div>
                         </div>
                     </h6>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="/looneytunes/Public/profile.php">
+                    <a class="dropdown-item" href="/looneytunes/public/profile.php">
                         <div class="dropdown-item-icon"><i data-feather="settings"></i></div>
                         Cuenta
                     </a>
-                    <a class="dropdown-item" href="/looneytunes/Public/logout.php">
+                    <a class="dropdown-item" href="/looneytunes/public/logs.php">
+                        <div class="dropdown-item-icon"><i data-feather="file-text"></i></div>
+                        Registro de Actividades
+                    </a>
+                    <a class="dropdown-item" href="/looneytunes/public/logout.php">
                         <div class="dropdown-item-icon"><i data-feather="log-out"></i></div>
                         Logout
                     </a>
