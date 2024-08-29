@@ -54,7 +54,7 @@ try {
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Administrador - Dashboard</title>
+    <title>CASF</title>
 
 
     <!-- Custom fonts for this template-->
