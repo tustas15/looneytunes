@@ -31,7 +31,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
         <a class="navbar-brand pe-3 ps-4 ps-lg-2" href="/looneytunes/index.php">Dashboard</a>
         <!-- Navbar Items-->
         <ul class="navbar-nav align-items-center ms-auto">
-            
+
 
             <!-- Navbar Search Dropdown-->
             <!-- Navbar Search Dropdown-->
@@ -136,20 +136,23 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
 
                         <!-- Sidenav Heading (App Views)-->
                         <div class="sidenav-menu-heading">Interfaz</div>
-
-                        <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
-                            <div class="nav-link-icon"><i class="fas fa-fw fa-chart-area"></i></div>
-                            Gráfica
-                            <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                        <a class="nav-link collapsed" href="../deportista/pagosre.php">
+                            <div class="nav-link-icon"><i class="fas fa-fw fa-cog"></i></div>
+                            Registrar Pago
                         </a>
-                        <div class="collapse" id="collapsePages" aria-labelledby="headingTwo" data-bs-parent="#accordionSidenav">
-                            <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPagesMenu">
-                                <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#imcModal">
-                                    IMC
-                                </a>
-                            </nav>
+                            <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
+                                <div class="nav-link-icon"><i class="fas fa-fw fa-chart-area"></i></div>
+                                Gráfica
+                                <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="collapsePages" aria-labelledby="headingTwo" data-bs-parent="#accordionSidenav">
+                                <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPagesMenu">
+                                    <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#imcModal">
+                                        IMC
+                                    </a>
+                                </nav>
 
-                        </div>
+                            </div>
 
                     </div>
                 </div>
