@@ -195,7 +195,7 @@ include './Includes/header.php';
                             </div>
                         </div>
                         <div class="card-footer d-flex align-items-center justify-content-between small">
-                            <a class="text-white stretched-link" href="../Deportista/perfil.php?id_deportista=<?php echo htmlspecialchars($hijo['ID_DEPORTISTA'], ENT_QUOTES, 'UTF-8'); ?>">Ver perfil</a>
+                            <a class="text-white stretched-link" href="./perfil.php?id_deportista=<?php echo htmlspecialchars($hijo['ID_DEPORTISTA'], ENT_QUOTES, 'UTF-8'); ?>">Ver perfil</a>
                             <div class="text-white"><i class="fas fa-angle-right"></i></div>
                         </div>
                     </div>

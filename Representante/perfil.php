@@ -26,8 +26,6 @@ $foto_src = $foto ? 'data:image/jpeg;base64,' . base64_encode($foto) : '/looneyt
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// Incluir el archivo de conexión a la base de datos
-require_once('../admin/configuracion/conexion.php');
 
 // Iniciar la sesión
 
