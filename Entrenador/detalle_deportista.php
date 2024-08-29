@@ -107,6 +107,7 @@ $jsonDataPoints = json_encode($dataPoints);
             <div class="col-lg-12 mb-4">
                 <div class="card h-100">
                     <div class="card-body">
+                    
                         <?php
                         $stmt->execute();
                         $deportista = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -118,7 +119,8 @@ $jsonDataPoints = json_encode($dataPoints);
                             <h2><?= htmlspecialchars($deportista['NOMBRE_DEPO'] . ' ' . $deportista['APELLIDO_DEPO']) . ' (' . $edad . ' años)' ?></h2>
                             <p><?= htmlspecialchars($deportista['CATEGORIA']) ?></p>
                             <p><?= htmlspecialchars($deportista['CEDULA_DEPO'])?></p>
-                            <table id="detallesTable" class="table table-striped">
+                            <div class="table-responsive">
+                            <table id="detallesTable"  class="table table-bordered">
                                 <thead>
                                     <tr>
                                         <th>Fecha de Ingreso</th>
@@ -153,6 +155,7 @@ $jsonDataPoints = json_encode($dataPoints);
                         <?php else: ?>
                             <p>No se encontraron datos para este deportista.</p>
                         <?php endif; ?>
+                    </div>
                     </div>
                 </div>
             </div>
