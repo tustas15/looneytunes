@@ -1,10 +1,6 @@
 <?php
 // Conexión a la base de datos
 session_start();
-if (!isset($_SESSION['user_id'])) {
-    header("Location: ../public/login.php");
-    exit();
-}
 require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
 
 $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';

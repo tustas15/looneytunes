@@ -3,9 +3,7 @@
 session_start();
 require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
 
-
-
-$nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
+$nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'tipo_usuario';
 include './includes/header.php';
 ?>
 
@@ -255,6 +253,85 @@ include './includes/header.php';
     <script>
         $(document).ready(function() {
             setFechaYMesActual();
+                console.log("Documento listo. Iniciando carga de deportistas...");
+
+                // Cargar deportistas asociados al representante actual
+                $.ajax({
+                    url: 'get_deportistas_representante.php',
+                    method: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        console.log("Datos de deportistas recibidos:", data);
+                        var select = $('#deportista');
+                        select.empty();
+                        select.append('<option value="">Seleccionar</option>');
+                        if (data.length > 0) {
+                            $.each(data, function(index, deportista) {
+                                select.append('<option value="' + deportista.ID_DEPORTISTA + '">' +
+                                    deportista.APELLIDO_DEPO + ' ' + deportista.NOMBRE_DEPO + '</option>');
+                            });
+                            console.log("Deportistas cargados exitosamente. Total:", data.length);
+                        } else {
+                            console.log("No se encontraron deportistas asociados al representante.");
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error al cargar deportistas:");
+                        console.error("Estado:", status);
+                        console.error("Error:", error);
+                        console.error("Respuesta del servidor:", xhr.responseText);
+                        alert("Hubo un error al cargar los deportistas. Por favor, revisa la consola para más detalles.");
+                    }
+                });
+
+                // Evento al cambiar el deportista
+                $('#deportista').on('change', function() {
+                    var id_deportista = $(this).val();
+                    console.log("Deportista seleccionado. ID:", id_deportista);
+
+                    if (id_deportista) {
+                        console.log("Cargando cédula del deportista...");
+                        $.ajax({
+                            url: '../Admin/configuracion/pagos/get_cedula_deportista.php',
+                            method: 'GET',
+                            data: {
+                                id_deportista: id_deportista
+                            },
+                            dataType: 'json',
+                            success: function(data) {
+                                console.log("Datos de cédula recibidos:", data);
+                                if (data && data.CEDULA_DEPO) {
+                                    $('#cedula_deportista').val(data.CEDULA_DEPO);
+                                    console.log("Cédula cargada exitosamente.");
+                                } else {
+                                    console.log("No se recibió una cédula válida.");
+                                    $('#cedula_deportista').val('');
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                console.error("Error al cargar cédula del deportista:");
+                                console.error("Estado:", status);
+                                console.error("Error:", error);
+                                console.error("Respuesta del servidor:", xhr.responseText);
+                                alert("Hubo un error al cargar la cédula del deportista. Por favor, revisa la consola para más detalles.");
+                            }
+                        });
+                    } else {
+                        console.log("No se seleccionó ningún deportista. Limpiando campo de cédula.");
+                        $('#cedula_deportista').val('');
+                    }
+                });
+
+                console.log("Inicialización completa.");
+            
+
+
+
+
+
+
+
+
 
             var table = $('#historial_pagos').DataTable({
                 ajax: {
@@ -283,9 +360,8 @@ include './includes/header.php';
                         data: 'acciones'
                     }
                 ],
-                language: {
-                    url: '//cdn.datatables.net/plug-ins/1.10.20/i18n/Spanish.json'
-                },
+
+
                 dom: 'Bfrtip',
                 buttons: [{
                         extend: 'copy',
@@ -427,242 +503,144 @@ include './includes/header.php';
             }
 
             $('#mes, #anio').on('change', actualizarMotivo);
-        })
 
 
-        $('#historial_pagos').on('click', '.delete-btn', function() {
-            var id = $(this).data('id');
-            Swal.fire({
-                title: '¿Estás seguro?',
-                text: "No podrás revertir esto!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Sí, eliminar!',
-                cancelButtonText: 'Cancelar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url: '../Admin/configuracion/pagos/eliminar.php',
-                        type: 'POST',
-                        data: {
-                            id: id
-                        },
-                        dataType: 'json',
-                        success: function(response) {
-                            if (response.success) {
-                                Swal.fire(
-                                    'Eliminado!',
-                                    'El pago ha sido eliminado.',
-                                    'success'
-                                );
-                                table.ajax.reload();
-                            } else {
+
+            $('#historial_pagos').on('click', '.delete-btn', function() {
+                var id = $(this).data('id');
+                Swal.fire({
+                    title: '¿Estás seguro?',
+                    text: "No podrás revertir esto!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Sí, eliminar!',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: '../Admin/configuracion/pagos/eliminar.php',
+                            type: 'POST',
+                            data: {
+                                id: id
+                            },
+                            dataType: 'json',
+                            success: function(response) {
+                                if (response.success) {
+                                    Swal.fire(
+                                        'Eliminado!',
+                                        'El pago ha sido eliminado.',
+                                        'success'
+                                    );
+                                    table.ajax.reload();
+                                } else {
+                                    Swal.fire(
+                                        'Error!',
+                                        'Error al eliminar el pago: ' + response.message,
+                                        'error'
+                                    );
+                                }
+                            },
+                            error: function(xhr, status, error) {
                                 Swal.fire(
                                     'Error!',
-                                    'Error al eliminar el pago: ' + response.message,
+                                    'Error al procesar la solicitud',
                                     'error'
                                 );
                             }
-                        },
-                        error: function(xhr, status, error) {
-                            Swal.fire(
-                                'Error!',
-                                'Error al procesar la solicitud',
-                                'error'
-                            );
-                        }
-                    });
-                }
-            })
-        })
-
-        // Cargar bancos
-        $.ajax({
-            url: '../Admin/configuracion/pagos/get_bancos.php',
-            method: 'GET',
-            dataType: 'json',
-            success: function(data) {
-                $('#banco').empty().append('<option value="">Seleccionar</option>');
-                if (data.length > 0) {
-                    data.forEach(function(banco) {
-                        $('#banco').append(`<option value="${banco.ID_BANCO}">${banco.NOMBRE}</option>`);
-                    });
-                } else {
-                    console.log("No se encontraron bancos activos");
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error("Error al cargar bancos:", status, error);
-            }
-        });
-
-        // Cargar representantes
-        $.ajax({
-            url: '../Admin/configuracion/pagos/get_representantes.php',
-            method: 'GET',
-            dataType: 'json',
-            success: function(data) {
-                var select = $('#representante');
-                select.empty();
-                select.append('<option value="">Seleccionar</option>');
-                $.each(data, function(index, representante) {
-                    select.append('<option value="' + representante.ID_REPRESENTANTE + '">' +
-                        representante.APELLIDO_REPRE + ' ' + representante.NOMBRE_REPRE + '</option>');
-                });
-            },
-            error: function(xhr, status, error) {
-                console.error("Error al cargar representantes:", status, error);
-            }
-        });
-
-        // Evento al cambiar el representante
-        $('#representante').on('change', function() {
-            var id_representante = $(this).val();
-            if (id_representante) {
-                // Cargar cédula del representante
-                $.ajax({
-                    url: '../Admin/configuracion/pagos/get_nombre_representante.php',
-                    method: 'GET',
-                    data: {
-                        id_representante: id_representante
-                    },
-                    dataType: 'json',
-                    success: function(data) {
-                        $('#cedula_representante').val(data.CEDULA_REPRE);
-                    },
-                    error: function(xhr, status, error) {
-                        console.error("Error al cargar cédula del representante:", status, error);
-                    }
-                });
-
-                // Cargar deportistas asociados
-                $.ajax({
-                    url: '../Admin/configuracion/pagos/get_deportistas.php',
-                    method: 'GET',
-                    data: {
-                        id_representante: id_representante
-                    },
-                    dataType: 'json',
-                    success: function(data) {
-                        $('#deportista').empty().append('<option value="">Seleccionar</option>');
-                        data.forEach(function(deportista) {
-                            $('#deportista').append(`<option value="${deportista.ID_DEPORTISTA}">${deportista.APELLIDO_DEPO} ${deportista.NOMBRE_DEPO}</option>`);
                         });
-                    },
-                    error: function(xhr, status, error) {
-                        console.error("Error al cargar deportistas:", status, error);
                     }
-                });
-            } else {
-                $('#cedula_representante').val('');
-                $('#deportista').empty().append('<option value="">Seleccionar</option>');
-                $('#cedula_deportista').val('');
-            }
-        });
-
-        // Evento al cambiar el deportista
-        $('#deportista').on('change', function() {
-            var id_deportista = $(this).val();
-            if (id_deportista) {
-                $.ajax({
-                    url: '../Admin/configuracion/pagos/get_cedula_deportista.php',
-                    method: 'GET',
-                    data: {
-                        id_deportista: id_deportista
-                    },
-                    dataType: 'json',
-                    success: function(data) {
-                        $('#cedula_deportista').val(data.CEDULA_DEPO);
-                    },
-                    error: function(xhr, status, error) {
-                        console.error("Error al cargar cédula del deportista:", status, error);
-                    }
-                });
-            } else {
-                $('#cedula_deportista').val('');
-            }
-        });
-
-        // Cambio de método de pago
-        $('#metodo_pago').change(function() {
-            var metodo = $(this).val();
-            if (metodo === 'transferencia') {
-                $('#banco_section').show();
-                $('#comprobante_section').show();
-                $('#entidad_section').show();
-
-            } else {
-                $('#banco_section').hide();
-                $('#comprobante_section').hide();
-                $('#entidad_section').hide();
-            }
-        });
-
-        //para manejar los campos que se deben imprimir por cada metodo de pago 
-        $(document).ready(function() {
-            $('#metodo_pago').change(function() {
-                var metodo = $(this).val();
-                if (metodo === 'efectivo') {
-                    $('#banco').val(o).hide();
-                    $('#entidad_origen').removeAttr('required').prop('disabled', true).hide();
-                    $('#nombre_archivo').removeAttr('required').prop('disabled', true).hide();
-                } else if (metodo === 'transferencia') {
-                    $('#banco').val('').show(); // Asegurarse de que el campo banco sea requerido
-                    $('#entidad_origen').attr('required', true).prop('disabled', false).show();
-                    $('#nombre_archivo').attr('required', true).prop('disabled', false).show();
-                }
-            }).trigger('change');
-        })
+                })
+            })
 
 
-        // Actualizar motivo al cambiar el mes
-        $('#mes').change(function() {
-            var mes = $(this).find('option:selected').text();
-            $('#motivo').val('Pago del mes de ' + mes);
-        });
 
-        // Registrar pago
-        $('#paymentForm').submit(function(e) {
-            e.preventDefault();
-            var formData = new FormData(this);
 
+
+
+
+
+            // Cargar bancos
             $.ajax({
-                url: 'registrar_pago.php',
-                method: 'POST',
-                data: formData,
-                contentType: false,
-                processData: false,
+                url: '../Admin/configuracion/pagos/get_bancos.php',
+                method: 'GET',
                 dataType: 'json',
-                success: function(response) {
-                    console.log("Respuesta exitosa:", response);
-                    if (response.success) {
-                        $('#message').html('<div class="alert alert-success">' + response.message + '</div>');
-                        table.ajax.reload();
-                        $('#paymentForm')[0].reset();
+                success: function(data) {
+                    $('#banco').empty().append('<option value="">Seleccionar</option>');
+                    if (data.length > 0) {
+                        data.forEach(function(banco) {
+                            $('#banco').append(`<option value="${banco.ID_BANCO}">${banco.NOMBRE}</option>`);
+                        });
                     } else {
-                        $('#message').html('<div class="alert alert-danger">' + response.message + '</div>');
+                        console.log("No se encontraron bancos activos");
                     }
                 },
-                // error: function(xhr, status, error) {
-                // console.error("Error en la llamada AJAX:", status, error);
-                // console.log("Respuesta del servidor:", xhr.responseText);
-                // $('#message').html('<div class="alert alert-danger">Error al procesar la solicitud</div>');
-                // }
+                error: function(xhr, status, error) {
+                    console.error("Error al cargar bancos:", status, error);
+                }
+            });
+
+            // Cambio de método de pago
+            $('#metodo_pago').change(function() {
+                var metodo = $(this).val();
+                if (metodo === 'transferencia') {
+                    $('#banco_section').show();
+                    $('#comprobante_section').show();
+                    $('#entidad_section').show();
+
+                } else {
+                    $('#banco_section').hide();
+                    $('#comprobante_section').hide();
+                    $('#entidad_section').hide();
+                }
+            });
+
+            //para manejar los campos que se deben imprimir por cada metodo de pago 
+                $('#metodo_pago').change(function() {
+                    var metodo = $(this).val();
+                    if (metodo === 'efectivo') {
+                        $('#banco').val('').hide();
+                        $('#entidad_origen').removeAttr('required').prop('disabled', true).hide();
+                        $('#nombre_archivo').removeAttr('required').prop('disabled', true).hide();
+                    } else if (metodo === 'transferencia') {
+                        $('#banco').val('').show(); // Asegurarse de que el campo banco sea requerido
+                        $('#entidad_origen').attr('required', true).prop('disabled', false).show();
+                        $('#nombre_archivo').attr('required', true).prop('disabled', false).show();
+                    }
+                }).trigger('change');
+            
+            
+
+            // Actualizar motivo al cambiar el mes
+            $('#mes').change(function() {
+                var mes = $(this).find('option:selected').text();
+                $('#motivo').val('Pago del mes de ' + mes);
+            });
+
+            // Registrar pago
+            $('#paymentForm').submit(function(e) {
+                e.preventDefault();
+                var formData = new FormData(this);
+
+                $.ajax({
+                    url: 'registrar_pago.php',
+                    method: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    dataType: 'json',
+                    success: function(response) {
+                        console.log("Respuesta exitosa:", response);
+                        if (response.success) {
+                            $('#message').html('<div class="alert alert-success">' + response.message + '</div>');
+                            table.ajax.reload();
+                            $('#paymentForm')[0].reset();
+                        } else {
+                            $('#message').html('<div class="alert alert-danger">' + response.message + '</div>');
+                        }
+                    },
+                });
             });
         });
-
-        // Funcionalidad para los botones de eliminar y editar
-        $('#historial_pagos').on('click', '.delete-btn', function() {
-            var id = $(this).data('id');
-            // Implementar lógica para eliminar el pago
-        });
-
-        $('#historial_pagos').on('click', '.edit-btn', function() {
-            var id = $(this).data('id');
-            // Implementar lógica para editar el pago
-        });
     </script>
-
-    

@@ -1,12 +1,9 @@
 <?php
 session_start();
-if (!isset($_SESSION['user_id'])) {
-    header("Location: ../public/login.php");
-    exit();
-}
 require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $id_representante = $_SESSION['id_representante'];
+    $id_representante = $_SESSION['tipo_usuario'] ?? null;
     $id_deportista = $_POST['deportista'] ?? '';
     $metodo_pago = $_POST['metodo_pago'] ?? '';
     $monto = $_POST['monto'] ?? '';

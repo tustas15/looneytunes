@@ -1,10 +1,12 @@
 <?php
 session_start();
-if (!isset($_SESSION['user_id'])) {
-    header("Location: ../public/login.php");
+require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
+
+if (!isset($_SESSION['tipo_usuario']) || !isset($_SESSION['id_representante'])) {
+    echo json_encode(['success' => false, 'message' => 'Sesión no válida']);
     exit();
 }
-require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id_representante = $_POST['id_representante'];
     $id_deportista = $_SESSION['deportista'] ?? '';
