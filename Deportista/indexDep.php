@@ -1,6 +1,5 @@
 <?php
 session_start();
-require_once('../admin/configuracion/conexion.php');
 
 
 if (!isset($_SESSION['user_id'])) {

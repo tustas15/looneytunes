@@ -1,6 +1,7 @@
 <?php
 // Conexión a la base de datos
 require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
+
 $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'tipo_usuario';
 include './includes/header.php';
 ?>

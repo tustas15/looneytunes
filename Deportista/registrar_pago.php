@@ -3,8 +3,7 @@ session_start();
 require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $id_representante = $_POST['representante'] ??'';
-    $id_deportista = $_SESSION['tipo_usuario'] ?? null;
+    $id_representante = $_POST['representante'] ?? '';
     $metodo_pago = $_POST['metodo_pago'] ?? '';
     $monto = $_POST['monto'] ?? '';
     $fecha_pago = $_POST['fecha'] ?? '';
