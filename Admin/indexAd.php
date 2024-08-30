@@ -326,7 +326,7 @@ include './includespro/header.php';
                                                                                                 echo 'bg-teal';
                                                                                                 break;
                                                                                             case 'nuevo_pago_agregado':
-                                                                                                echo 'bg-gray';
+                                                                                                echo 'bg-blue';
                                                                                                 break;
                                                                                             case 'nuevo_limite_categoria_deportistas_definido':
                                                                                                 echo 'bg-green';

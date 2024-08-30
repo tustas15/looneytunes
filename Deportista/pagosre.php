@@ -1,6 +1,10 @@
 <?php
 // Conexión a la base de datos
 session_start();
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../public/login.php");
+    exit();
+}
 require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
 
 $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
@@ -254,7 +258,6 @@ include './includes/header.php';
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-    <script src="/looneytunes/Assets/js/scripts.js"></script>
     <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.6.2/js/dataTables.buttons.min.js"></script>

@@ -8,11 +8,6 @@ include '../../IncludesPro/header.php';
 
 ?>
 
-<link href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css" rel="stylesheet">
-<script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.28.0/feather.min.js" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 <body class="nav-fixed">
     <main>
         <div class="container-fluid px-4">
@@ -253,9 +248,10 @@ include '../../IncludesPro/header.php';
     </div>
 
     <!-- Scripts -->
+    <link href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-    <script src="/looneytunes/Assets/js/scripts.js"></script>
     <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.6.2/js/dataTables.buttons.min.js"></script>
@@ -334,6 +330,9 @@ include '../../IncludesPro/header.php';
                 ]
             });
 
+
+
+
             $('#paymentForm').submit(function(e) {
                 e.preventDefault();
 
@@ -361,6 +360,8 @@ include '../../IncludesPro/header.php';
                             setFechaYMesActual();
                             $('button[type="submit"]').text('Registrar Pago');
                             $('#id_pago').val(''); // Limpiar el campo oculto del ID
+                            // Enviar mensaje de WhatsApp
+                            enviarMensajeWhatsApp(isUpdating);
                         } else {
                             Swal.fire({
                                 icon: 'error',
@@ -379,6 +380,48 @@ include '../../IncludesPro/header.php';
                 });
             });
 
+            function enviarMensajeWhatsApp(isUpdating) {
+                var formData = new FormData($('#paymentForm')[0]);
+                formData.append('isUpdating', isUpdating);
+
+                $.ajax({
+                    url: '/looneytunes/admin/configuracion/whatsapp/index.php',
+                    method: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    dataType: 'json',
+                    success: function(data) {
+                        if (data.status === 'success') {
+                            console.log(isUpdating ? "Mensaje de actualización enviado" : "Mensaje de nuevo pago enviado");
+
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Mensaje de WhatsApp enviado',
+                                text: isUpdating ? 'Notificación de actualización enviada' : 'Notificación de nuevo pago enviada'
+                            });
+                        } else {
+                            console.error("Error al enviar mensaje de WhatsApp:", data.message);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Error al enviar mensaje de WhatsApp: ' + data.message
+                            });
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error al enviar mensaje de WhatsApp:", status, error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Error al enviar mensaje de WhatsApp: ' + error
+
+                        });
+                    }
+
+                });
+            }
+
             // Edit button logic
             $('#historial_pagos').on('click', '.edit-btn', function() {
                 var id = $(this).data('id');
@@ -394,31 +437,35 @@ include '../../IncludesPro/header.php';
                     },
                     dataType: 'json',
                     success: function(data) {
-                        $('#id_pago').val(data.ID_PAGO);
-                        $('#representante').val(data.ID_REPRESENTANTE);
-                        $('#deportista').val(data.ID_DEPORTISTA);
-                        $('#metodo_pago').val(data.METODO_PAGO);
-                        $('#monto').val(data.MONTO);
-                        $('#fecha').val(data.FECHA_PAGO);
-                        $('#mes').val(data.MES);
-                        $('#anio').val(data.ANIO);
-                        $('#motivo').val(data.MOTIVO);
+                        console.log(data); // Esto te ayudará a ver la estructura de los datos recibidos
 
-                        $('button[type="submit"]').text('Guardar Cambios');
+                        if (data.ID_PAGO) {
+                            $('#id_pago').val(data.ID_PAGO);
+                            $('#representante').val(data.ID_REPRESENTANTE);
+                            $('#deportista').val(data.ID_DEPORTISTA);
+                            $('#metodo_pago').val(data.METODO_PAGO);
+                            $('#monto').val(data.MONTO);
+                            $('#fecha').val(data.FECHA_PAGO);
+                            $('#mes').val(data.MES);
+                            $('#anio').val(data.ANIO);
+                            $('#motivo').val(data.MOTIVO);
 
-                        $('html, body').animate({
-                            scrollTop: $("#paymentForm").offset().top
-                        }, 500);
-                    },
-                    error: function() {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'Error al cargar los datos del pago'
-                        });
+                            $('button[type="submit"]').text('Guardar Cambios');
+
+                            $('html, body').animate({
+                                scrollTop: $("#paymentForm").offset().top
+                            }, 500);
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Pago no encontrado'
+                            });
+                        }
                     }
-                });
+                })
             }
+
 
             // Funciones auxiliares
             function setFechaYMesActual() {
@@ -642,13 +689,6 @@ include '../../IncludesPro/header.php';
                 $('#nombre_archivo').attr('required', true).prop('disabled', false).show();
             }
         }).trigger('change');
-
-
-
-
-
-
-
 
         // Actualizar motivo al cambiar el mes
         $('#mes').change(function() {

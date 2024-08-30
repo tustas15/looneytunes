@@ -22,9 +22,9 @@ if (isset($_GET['id'])) {
                     <label for="fecha">Fecha:</label>
                     <input type="date" id="fecha" name="fecha" value="<?php echo $pago['FECHA_PAGO']; ?>" required>
                 </div>
-                <!-- Agrega más campos según sea necesario -->
                 <button type="submit">Guardar Cambios</button>
             </form>
+
             <script>
                 $('#editPaymentForm').submit(function(e) {
                     e.preventDefault();
@@ -36,9 +36,8 @@ if (isset($_GET['id'])) {
                         success: function(response) {
                             if (response.success) {
                                 alert('Pago actualizado con éxito');
-                                $('#editFormContainer').empty(); // Limpiar el contenedor
-                                // Opcionalmente, recargar la tabla o realizar otras acciones
-                                // Ejemplo para recargar la tabla:
+                                $('#editFormContainer').empty();
+                                // Recargar tabla si es necesario
                                 // table.ajax.reload();
                             } else {
                                 alert('Error al actualizar el pago: ' + response.message);

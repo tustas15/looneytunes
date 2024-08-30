@@ -15,7 +15,7 @@ include './includes/header.php';
         <div class="container-fluid px-4">
             <h1 class="mt-4">Gestión de Pagos</h1>
             <ol class="breadcrumb mb-4">
-                <li class="breadcrumb-item"><a href="/looneytunes/admin/indexad.php">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="/looneytunes/admin/indexRep.php">Dashboard</a></li>
                 <li class="breadcrumb-item active">Pagos</li>
             </ol>
             <div class="card mb-4">
@@ -234,8 +234,6 @@ include './includes/header.php';
         document.getElementById('mes').addEventListener('change', actualizarMotivo);
         document.getElementById('anio').addEventListener('change', actualizarMotivo);
     </script>
-    </div>
-    </div>
 
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -253,77 +251,77 @@ include './includes/header.php';
     <script>
         $(document).ready(function() {
             setFechaYMesActual();
-                console.log("Documento listo. Iniciando carga de deportistas...");
+            console.log("Documento listo. Iniciando carga de deportistas...");
 
-                // Cargar deportistas asociados al representante actual
-                $.ajax({
-                    url: 'get_deportistas_representante.php',
-                    method: 'GET',
-                    dataType: 'json',
-                    success: function(data) {
-                        console.log("Datos de deportistas recibidos:", data);
-                        var select = $('#deportista');
-                        select.empty();
-                        select.append('<option value="">Seleccionar</option>');
-                        if (data.length > 0) {
-                            $.each(data, function(index, deportista) {
-                                select.append('<option value="' + deportista.ID_DEPORTISTA + '">' +
-                                    deportista.APELLIDO_DEPO + ' ' + deportista.NOMBRE_DEPO + '</option>');
-                            });
-                            console.log("Deportistas cargados exitosamente. Total:", data.length);
-                        } else {
-                            console.log("No se encontraron deportistas asociados al representante.");
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error("Error al cargar deportistas:");
-                        console.error("Estado:", status);
-                        console.error("Error:", error);
-                        console.error("Respuesta del servidor:", xhr.responseText);
-                        alert("Hubo un error al cargar los deportistas. Por favor, revisa la consola para más detalles.");
-                    }
-                });
-
-                // Evento al cambiar el deportista
-                $('#deportista').on('change', function() {
-                    var id_deportista = $(this).val();
-                    console.log("Deportista seleccionado. ID:", id_deportista);
-
-                    if (id_deportista) {
-                        console.log("Cargando cédula del deportista...");
-                        $.ajax({
-                            url: '../Admin/configuracion/pagos/get_cedula_deportista.php',
-                            method: 'GET',
-                            data: {
-                                id_deportista: id_deportista
-                            },
-                            dataType: 'json',
-                            success: function(data) {
-                                console.log("Datos de cédula recibidos:", data);
-                                if (data && data.CEDULA_DEPO) {
-                                    $('#cedula_deportista').val(data.CEDULA_DEPO);
-                                    console.log("Cédula cargada exitosamente.");
-                                } else {
-                                    console.log("No se recibió una cédula válida.");
-                                    $('#cedula_deportista').val('');
-                                }
-                            },
-                            error: function(xhr, status, error) {
-                                console.error("Error al cargar cédula del deportista:");
-                                console.error("Estado:", status);
-                                console.error("Error:", error);
-                                console.error("Respuesta del servidor:", xhr.responseText);
-                                alert("Hubo un error al cargar la cédula del deportista. Por favor, revisa la consola para más detalles.");
-                            }
+            // Cargar deportistas asociados al representante actual
+            $.ajax({
+                url: 'get_deportistas_representante.php',
+                method: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    console.log("Datos de deportistas recibidos:", data);
+                    var select = $('#deportista');
+                    select.empty();
+                    select.append('<option value="">Seleccionar</option>');
+                    if (data.length > 0) {
+                        $.each(data, function(index, deportista) {
+                            select.append('<option value="' + deportista.ID_DEPORTISTA + '">' +
+                                deportista.APELLIDO_DEPO + ' ' + deportista.NOMBRE_DEPO + '</option>');
                         });
+                        console.log("Deportistas cargados exitosamente. Total:", data.length);
                     } else {
-                        console.log("No se seleccionó ningún deportista. Limpiando campo de cédula.");
-                        $('#cedula_deportista').val('');
+                        console.log("No se encontraron deportistas asociados al representante.");
                     }
-                });
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error al cargar deportistas:");
+                    console.error("Estado:", status);
+                    console.error("Error:", error);
+                    console.error("Respuesta del servidor:", xhr.responseText);
+                    alert("Hubo un error al cargar los deportistas. Por favor, revisa la consola para más detalles.");
+                }
+            });
 
-                console.log("Inicialización completa.");
-            
+            // Evento al cambiar el deportista
+            $('#deportista').on('change', function() {
+                var id_deportista = $(this).val();
+                console.log("Deportista seleccionado. ID:", id_deportista);
+
+                if (id_deportista) {
+                    console.log("Cargando cédula del deportista...");
+                    $.ajax({
+                        url: '../Admin/configuracion/pagos/get_cedula_deportista.php',
+                        method: 'GET',
+                        data: {
+                            id_deportista: id_deportista
+                        },
+                        dataType: 'json',
+                        success: function(data) {
+                            console.log("Datos de cédula recibidos:", data);
+                            if (data && data.CEDULA_DEPO) {
+                                $('#cedula_deportista').val(data.CEDULA_DEPO);
+                                console.log("Cédula cargada exitosamente.");
+                            } else {
+                                console.log("No se recibió una cédula válida.");
+                                $('#cedula_deportista').val('');
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("Error al cargar cédula del deportista:");
+                            console.error("Estado:", status);
+                            console.error("Error:", error);
+                            console.error("Respuesta del servidor:", xhr.responseText);
+                            alert("Hubo un error al cargar la cédula del deportista. Por favor, revisa la consola para más detalles.");
+                        }
+                    });
+                } else {
+                    console.log("No se seleccionó ningún deportista. Limpiando campo de cédula.");
+                    $('#cedula_deportista').val('');
+                }
+            });
+
+            console.log("Inicialización completa.");
+
 
 
 
@@ -597,20 +595,20 @@ include './includes/header.php';
             });
 
             //para manejar los campos que se deben imprimir por cada metodo de pago 
-                $('#metodo_pago').change(function() {
-                    var metodo = $(this).val();
-                    if (metodo === 'efectivo') {
-                        $('#banco').val('').hide();
-                        $('#entidad_origen').removeAttr('required').prop('disabled', true).hide();
-                        $('#nombre_archivo').removeAttr('required').prop('disabled', true).hide();
-                    } else if (metodo === 'transferencia') {
-                        $('#banco').val('').show(); // Asegurarse de que el campo banco sea requerido
-                        $('#entidad_origen').attr('required', true).prop('disabled', false).show();
-                        $('#nombre_archivo').attr('required', true).prop('disabled', false).show();
-                    }
-                }).trigger('change');
-            
-            
+            $('#metodo_pago').change(function() {
+                var metodo = $(this).val();
+                if (metodo === 'efectivo') {
+                    $('#banco').val('').hide();
+                    $('#entidad_origen').removeAttr('required').prop('disabled', true).hide();
+                    $('#nombre_archivo').removeAttr('required').prop('disabled', true).hide();
+                } else if (metodo === 'transferencia') {
+                    $('#banco').val('').show(); // Asegurarse de que el campo banco sea requerido
+                    $('#entidad_origen').attr('required', true).prop('disabled', false).show();
+                    $('#nombre_archivo').attr('required', true).prop('disabled', false).show();
+                }
+            }).trigger('change');
+
+
 
             // Actualizar motivo al cambiar el mes
             $('#mes').change(function() {

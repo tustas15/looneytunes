@@ -5,6 +5,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['id'])) {
     $id_pago = $_POST['id'];
 
     try {
+        // Eliminar los registros dependientes en tab_estado_pagos
+        $sql = "DELETE FROM tab_estado_pagos WHERE ID_PAGO = :id";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([':id' => $id_pago]);
+
+        // Luego eliminar el registro en tab_pagos
         $sql = "DELETE FROM tab_pagos WHERE ID_PAGO = :id";
         $stmt = $conn->prepare($sql);
         $stmt->execute([':id' => $id_pago]);
