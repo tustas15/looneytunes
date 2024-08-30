@@ -129,6 +129,7 @@ include './includes/header.php';
                     Historial de Pagos
                 </div>
                 <div class="card-body">
+                <div class="table-responsive">
                     <table id="historial_pagos" class="table table-striped table-bordered">
                         <thead>
                             <tr>
@@ -145,6 +146,7 @@ include './includes/header.php';
                             <!-- Los datos se cargarán aquí dinámicamente -->
                         </tbody>
                     </table>
+                </div>
                 </div>
             </div>
         </div>
