@@ -172,42 +172,57 @@ include '../../IncludesPro/header.php';
     <?php include '../../Includespro/footer.php'; ?>
 
     <script>
-        document.getElementById('paymentForm').addEventListener('submit', function(event) {
-            event.preventDefault();
+       document.getElementById('paymentForm').addEventListener('submit', function(event) {
+    event.preventDefault();
 
-            const formData = new FormData(this);
+    const formData = new FormData(this);
+    const isUpdating = formData.has('id_pago'); // Verifica si el formulario incluye un campo de ID para saber si es actualización
 
-            fetch('/looneytunes/admin/configuracion/whatsapp/index.php', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        Swal.fire({
-                            title: 'Éxito',
-                            text: data.message,
-                            icon: 'success',
-                            confirmButtonText: 'Aceptar'
-                        });
-                    } else {
-                        Swal.fire({
-                            title: 'Error',
-                            text: data.message,
-                            icon: 'error',
-                            confirmButtonText: 'Aceptar'
-                        });
-                    }
-                })
-                .catch(error => {
-                    Swal.fire({
-                        title: 'Error',
-                        text: 'Ocurrió un error al enviar el formulario.',
-                        icon: 'error',
-                        confirmButtonText: 'Aceptar'
-                    });
+    formData.append('isUpdating', isUpdating); // Añade esta información al FormData
+
+    fetch('/looneytunes/admin/configuracion/whatsapp/index.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                // Lógica para mostrar el mensaje de éxito
+                console.log(isUpdating ? "Mensaje de actualización enviado" : "Mensaje de nuevo pago enviado");
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Mensaje de WhatsApp enviado',
+                    text: isUpdating ? 'Notificación de actualización enviada' : 'Notificación de nuevo pago enviada',
+                    confirmButtonText: 'Aceptar'
                 });
+            } else {
+                // Lógica para manejar el error
+                console.error("Error al enviar mensaje de WhatsApp:", data.message);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error al enviar mensaje de WhatsApp: ' + data.message,
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+        })
+        .catch(error => {
+            // Lógica para manejar el error en la conexión o servidor
+            console.error("Error al enviar mensaje de WhatsApp:", error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Error al enviar mensaje de WhatsApp: ' + error,
+                confirmButtonText: 'Aceptar'
+            });
         });
+});
+
+
+
+
+
 
         // Asegúrate de que estas funciones estén presentes en tu código
         function setFechaYMesActual() {
@@ -380,47 +395,20 @@ include '../../IncludesPro/header.php';
                 });
             });
 
-            function enviarMensajeWhatsApp(isUpdating) {
-                var formData = new FormData($('#paymentForm')[0]);
-                formData.append('isUpdating', isUpdating);
+           
+           
+           
+           
 
-                $.ajax({
-                    url: '/looneytunes/admin/configuracion/whatsapp/index.php',
-                    method: 'POST',
-                    data: formData,
-                    contentType: false,
-                    processData: false,
-                    dataType: 'json',
-                    success: function(data) {
-                        if (data.status === 'success') {
-                            console.log(isUpdating ? "Mensaje de actualización enviado" : "Mensaje de nuevo pago enviado");
 
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Mensaje de WhatsApp enviado',
-                                text: isUpdating ? 'Notificación de actualización enviada' : 'Notificación de nuevo pago enviada'
-                            });
-                        } else {
-                            console.error("Error al enviar mensaje de WhatsApp:", data.message);
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: 'Error al enviar mensaje de WhatsApp: ' + data.message
-                            });
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error("Error al enviar mensaje de WhatsApp:", status, error);
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'Error al enviar mensaje de WhatsApp: ' + error
 
-                        });
-                    }
 
-                });
-            }
+
+
+
+
+
+
 
             // Edit button logic
             $('#historial_pagos').on('click', '.edit-btn', function() {
@@ -449,7 +437,14 @@ include '../../IncludesPro/header.php';
                             $('#mes').val(data.MES);
                             $('#anio').val(data.ANIO);
                             $('#motivo').val(data.MOTIVO);
-
+                            if (data.METODO_PAGO === 'transferencia') {
+                    $('#banco').val(data.ID_BANCO);
+                    $('#entidad_origen').val(data.ENTIDAD_ORIGEN);
+                    // Mostrar el nombre del archivo si existe
+                    if (data.NOMBRE_ARCHIVO) {
+                        $('#nombre_archivo').siblings('.custom-file-label').addClass("selected").html(data.NOMBRE_ARCHIVO);
+                    }
+                }
                             $('button[type="submit"]').text('Guardar Cambios');
 
                             $('html, body').animate({
@@ -519,7 +514,7 @@ include '../../IncludesPro/header.php';
                                     'El pago ha sido eliminado.',
                                     'success'
                                 );
-                                table.ajax.reload();
+                                $('#historial_pagos').DataTable().ajax.reload();
                             } else {
                                 Swal.fire(
                                     'Error!',

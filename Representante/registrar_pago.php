@@ -53,6 +53,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ':nombre_archivo' => $nombre_archivo,
             ':entidad_origen' => $entidad_origen
         ]);
+        $response = [
+            'success' => true,
+            'message' => 'Pago registrado correctamente'
+        ];
+    } catch (PDOException $e) {
+        $response = [
+            'success' => false,
+            'message' => 'Error al registrar el pago: ' . $e->getMessage()
+        ];
+    }
+    
+
+    header('Content-Type: application/json');
         $stmt = $conn->prepare("SELECT NOMBRE_REPRE from tab_representantes where ID_REPRESENTANTE = :id_representante");
         $stmt->bindParam(':id_representante', $id_representante, PDO::PARAM_INT);
         $stmt->execute();
@@ -65,19 +78,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt = $conn->prepare($query);
         $stmt->execute([$_SESSION['user_id'], $evento, $ip, $tipo_evento]);
 
-        echo json_encode([
-            'success' => true,
-            'message' => 'Pago registrado correctamente'
-
-
-
-        ]);
-    } catch (PDOException $e) {
-        echo json_encode([
-            'success' => false,
-            'message' => 'Error al registrar el pago: ' . $e->getMessage()
-        ]);
+        echo json_encode($response);
+    } else {
+        header('HTTP/1.1 405 Method Not Allowed');
+        echo json_encode(['success' => false, 'message' => 'Método no permitido']);
     }
-} else {
-    echo json_encode(['success' => false, 'message' => 'Método no permitido']);
-}

@@ -7,9 +7,6 @@ $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'tipo_usuario';
 include './includes/header.php';
 ?>
 
-<link href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 <body class="nav-fixed">
     <main>
         <div class="container-fluid px-4">
@@ -166,6 +163,9 @@ include './includes/header.php';
             event.preventDefault();
 
             const formData = new FormData(this);
+            const isUpdating = formData.has('id_pago'); // Verifica si el formulario incluye un campo de ID para saber si es actualización
+
+            formData.append('isUpdating', isUpdating); // Añade esta información al FormData
 
             fetch('/looneytunes/admin/configuracion/whatsapp/index.php', {
                     method: 'POST',
@@ -174,30 +174,38 @@ include './includes/header.php';
                 .then(response => response.json())
                 .then(data => {
                     if (data.status === 'success') {
+                        // Lógica para mostrar el mensaje de éxito
+                        console.log(isUpdating ? "Mensaje de actualización enviado" : "Mensaje de nuevo pago enviado");
+
                         Swal.fire({
-                            title: 'Éxito',
-                            text: data.message,
                             icon: 'success',
+                            title: 'Mensaje de WhatsApp enviado',
+                            text: isUpdating ? 'Notificación de actualización enviada' : 'Notificación de nuevo pago enviada',
                             confirmButtonText: 'Aceptar'
                         });
                     } else {
+                        // Lógica para manejar el error
+                        console.error("Error al enviar mensaje de WhatsApp:", data.message);
                         Swal.fire({
-                            title: 'Error',
-                            text: data.message,
                             icon: 'error',
+                            title: 'Error',
+                            text: 'Error al enviar mensaje de WhatsApp: ' + data.message,
                             confirmButtonText: 'Aceptar'
                         });
                     }
                 })
                 .catch(error => {
+                    // Lógica para manejar el error en la conexión o servidor
+                    console.error("Error al enviar mensaje de WhatsApp:", error);
                     Swal.fire({
-                        title: 'Error',
-                        text: 'Ocurrió un error al enviar el formulario.',
                         icon: 'error',
+                        title: 'Error',
+                        text: 'Error al enviar mensaje de WhatsApp: ' + error,
                         confirmButtonText: 'Aceptar'
                     });
                 });
         });
+
 
         // Asegúrate de que estas funciones estén presentes en tu código
         function setFechaYMesActual() {
@@ -236,6 +244,8 @@ include './includes/header.php';
     </script>
 
     <!-- Scripts -->
+    <link href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
@@ -251,7 +261,71 @@ include './includes/header.php';
     <script>
         $(document).ready(function() {
             setFechaYMesActual();
-            console.log("Documento listo. Iniciando carga de deportistas...");
+            var table = $('#historial_pagos').DataTable({
+                ajax: {
+                    url: 'historial_pagos.php',
+                    dataSrc: 'data'
+                },
+                columns: [{
+                        data: 'deportista'
+                    },
+                    {
+                        data: 'representante'
+                    },
+                    {
+                        data: 'metodo_pago'
+                    },
+                    {
+                        data: 'fecha_pago'
+                    },
+                    {
+                        data: 'motivo'
+                    },
+                    {
+                        data: 'monto'
+                    },
+                    {
+                        data: 'acciones'
+                    }
+                ],
+
+
+                dom: 'Bfrtip',
+                buttons: [{
+                        extend: 'copy',
+                        exportOptions: {
+                            columns: ':not(:last-child)'
+                        }
+                    },
+                    {
+                        extend: 'csv',
+                        exportOptions: {
+                            columns: ':not(:last-child)'
+                        }
+                    },
+                    {
+                        extend: 'excel',
+                        exportOptions: {
+                            columns: ':not(:last-child)'
+                        }
+                    },
+                    {
+                        extend: 'pdf',
+                        exportOptions: {
+                            columns: ':not(:last-child)'
+                        }
+                    },
+                    {
+                        extend: 'print',
+                        exportOptions: {
+                            columns: ':not(:last-child)'
+                        }
+                    }
+                ]
+            });
+
+
+
 
             // Cargar deportistas asociados al representante actual
             $.ajax({
@@ -320,79 +394,9 @@ include './includes/header.php';
                 }
             });
 
-            console.log("Inicialización completa.");
 
 
 
-
-
-
-
-
-
-
-            var table = $('#historial_pagos').DataTable({
-                ajax: {
-                    url: 'historial_pagos.php',
-                    dataSrc: 'data'
-                },
-                columns: [{
-                        data: 'deportista'
-                    },
-                    {
-                        data: 'representante'
-                    },
-                    {
-                        data: 'metodo_pago'
-                    },
-                    {
-                        data: 'fecha_pago'
-                    },
-                    {
-                        data: 'motivo'
-                    },
-                    {
-                        data: 'monto'
-                    },
-                    {
-                        data: 'acciones'
-                    }
-                ],
-
-
-                dom: 'Bfrtip',
-                buttons: [{
-                        extend: 'copy',
-                        exportOptions: {
-                            columns: ':not(:last-child)'
-                        }
-                    },
-                    {
-                        extend: 'csv',
-                        exportOptions: {
-                            columns: ':not(:last-child)'
-                        }
-                    },
-                    {
-                        extend: 'excel',
-                        exportOptions: {
-                            columns: ':not(:last-child)'
-                        }
-                    },
-                    {
-                        extend: 'pdf',
-                        exportOptions: {
-                            columns: ':not(:last-child)'
-                        }
-                    },
-                    {
-                        extend: 'print',
-                        exportOptions: {
-                            columns: ':not(:last-child)'
-                        }
-                    }
-                ]
-            });
 
             $('#paymentForm').submit(function(e) {
                 e.preventDefault();
@@ -421,6 +425,9 @@ include './includes/header.php';
                             setFechaYMesActual();
                             $('button[type="submit"]').text('Registrar Pago');
                             $('#id_pago').val(''); // Limpiar el campo oculto del ID
+                            // Enviar mensaje de WhatsApp
+                            enviarMensajeWhatsApp(isUpdating);
+
                         } else {
                             Swal.fire({
                                 icon: 'error',
@@ -439,12 +446,14 @@ include './includes/header.php';
                 });
             });
 
-            // Edit button logic
-            $('#historial_pagos').on('click', '.edit-btn', function() {
+
+
+
+             // Edit button logic
+             $('#historial_pagos').on('click', '.edit-btn', function() {
                 var id = $(this).data('id');
                 editarPago(id);
             });
-
             function editarPago(id) {
                 $.ajax({
                     url: '../Admin/configuracion/pagos/obtener_pago.php',
@@ -454,30 +463,41 @@ include './includes/header.php';
                     },
                     dataType: 'json',
                     success: function(data) {
-                        $('#id_pago').val(data.ID_PAGO);
-                        $('#representante').val(data.ID_REPRESENTANTE);
-                        $('#deportista').val(data.ID_DEPORTISTA);
-                        $('#metodo_pago').val(data.METODO_PAGO);
-                        $('#monto').val(data.MONTO);
-                        $('#fecha').val(data.FECHA_PAGO);
-                        $('#mes').val(data.MES);
-                        $('#anio').val(data.ANIO);
-                        $('#motivo').val(data.MOTIVO);
+                        console.log("Datos del pago recibidos:", data);
 
-                        $('button[type="submit"]').text('Guardar Cambios');
+                        if (data.ID_PAGO) {
+                            $('#id_pago').val(data.ID_PAGO);
+                            $('#representante').val(data.ID_REPRESENTANTE);
+                            $('#deportista').val(data.ID_DEPORTISTA);
+                            $('#metodo_pago').val(data.METODO_PAGO);
+                            $('#monto').val(data.MONTO);
+                            $('#fecha').val(data.FECHA_PAGO);
+                            $('#mes').val(data.MES);
+                            $('#anio').val(data.ANIO);
+                            $('#motivo').val(data.MOTIVO);
+                            if (data.METODO_PAGO === 'transferencia') {
+                    $('#banco').val(data.ID_BANCO);
+                    $('#entidad_origen').val(data.ENTIDAD_ORIGEN);
+                    // Mostrar el nombre del archivo si existe
+                    if (data.NOMBRE_ARCHIVO) {
+                        $('#nombre_archivo').siblings('.custom-file-label').addClass("selected").html(data.NOMBRE_ARCHIVO);
+                    }
+                }
+
+                            $('button[type="submit"]').text('Guardar Cambios');
 
                         $('html, body').animate({
                             scrollTop: $("#paymentForm").offset().top
                         }, 500);
-                    },
-                    error: function() {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'Error al cargar los datos del pago'
-                        });
+                      } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Pago no encontrado'
+                            });
+                        }
                     }
-                });
+                })
             }
 
             // Funciones auxiliares
@@ -501,6 +521,10 @@ include './includes/header.php';
             }
 
             $('#mes, #anio').on('change', actualizarMotivo);
+
+
+
+
 
 
 
@@ -531,7 +555,7 @@ include './includes/header.php';
                                         'El pago ha sido eliminado.',
                                         'success'
                                     );
-                                    table.ajax.reload();
+                                    $('#historial_pagos').DataTable().ajax.reload();
                                 } else {
                                     Swal.fire(
                                         'Error!',
@@ -549,8 +573,8 @@ include './includes/header.php';
                             }
                         });
                     }
-                })
-            })
+                });
+            });
 
 
 
@@ -614,31 +638,6 @@ include './includes/header.php';
             $('#mes').change(function() {
                 var mes = $(this).find('option:selected').text();
                 $('#motivo').val('Pago del mes de ' + mes);
-            });
-
-            // Registrar pago
-            $('#paymentForm').submit(function(e) {
-                e.preventDefault();
-                var formData = new FormData(this);
-
-                $.ajax({
-                    url: 'registrar_pago.php',
-                    method: 'POST',
-                    data: formData,
-                    contentType: false,
-                    processData: false,
-                    dataType: 'json',
-                    success: function(response) {
-                        console.log("Respuesta exitosa:", response);
-                        if (response.success) {
-                            $('#message').html('<div class="alert alert-success">' + response.message + '</div>');
-                            table.ajax.reload();
-                            $('#paymentForm')[0].reset();
-                        } else {
-                            $('#message').html('<div class="alert alert-danger">' + response.message + '</div>');
-                        }
-                    },
-                });
             });
         });
     </script>

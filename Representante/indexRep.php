@@ -261,6 +261,9 @@ include './Includes/header.php';
                                                                                         case 'subida_base_datos':
                                                                                             echo 'bg-yellow';
                                                                                             break;
+                                                                                            case 'nuevo_pago_agregado':
+                                                                                                echo 'bg-blue';
+                                                                                                break;
                                                                                         default:
                                                                                             echo 'bg-gray';
                                                                                             break;
