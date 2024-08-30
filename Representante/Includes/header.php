@@ -155,6 +155,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                     </div>
                 </div>
 
+                
                 <!-- Sidenav Footer -->
                 <div class="sidenav-footer">
                     <div class="sidenav-footer-content">
