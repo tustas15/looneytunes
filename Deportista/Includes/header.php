@@ -16,7 +16,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/litepicker/dist/css/litepicker.css" rel="stylesheet" />
     <link href="../Assets/css/styles.css" rel="stylesheet" />
-    <link rel="icon" type="image/x-icon" href="../AssetsFree/img/logo.png" />
+    <link rel="icon" type="image/x-icon" href="../Assets/img/logo.png" />
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>
@@ -29,7 +29,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
         <!-- Sidenav Toggle Button-->
         <button class="btn btn-icon btn-transparent-dark order-1 order-lg-0 me-2 ms-lg-2 me-lg-0" id="sidebarToggle"><i data-feather="menu"></i></button>
         <!-- Navbar Brand-->
-        <a class="navbar-brand pe-3 ps-4 ps-lg-2" href="/looneytunes/index.php">Dashboard</a>
+        <a class="navbar-brand pe-3 ps-4 ps-lg-2" href="/looneytunes/indexDep.php">Dashboard</a>
         <!-- Navbar Items-->
         <ul class="navbar-nav align-items-center ms-auto">
 
@@ -139,7 +139,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
 
                         <!-- Sidenav Heading (App Views)-->
                         <div class="sidenav-menu-heading">Interfaz</div>
-                        <a class="nav-link collapsed" href="../deportista/pagosre.php">
+                        <a class="nav-link collapsed" href="../deportista/pagosdepo.php">
                             <div class="nav-link-icon"><i class="fas fa-fw fa-cog"></i></div>
                             Registrar Pago
                         </a>

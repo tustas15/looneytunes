@@ -53,6 +53,44 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ':nombre_archivo' => $nombre_archivo,
             ':entidad_origen' => $entidad_origen
         ]);
+
+
+$id_pago = $conn->lastInsertId(); // Obtener el ID del pago recién insertado
+
+        // Determinar el estado del pago
+        $dia_pago = 8; // Día límite de pago
+        $estado = '';
+
+        $fecha_actual = date('Y-m-d');
+        $dia_actual = date('d', strtotime($fecha_actual));
+
+        if ($dia_actual < $dia_pago) {
+            $estado = 'pagado';
+        } elseif ($dia_actual == $dia_pago) {
+            $estado = 'mes no pagado';
+        } else {
+            $estado = 'pago retrasado';
+        }
+
+        // Insertar en la tabla tab_estado_pagos
+        $sql_estado = "INSERT INTO tab_estado_pagos (ID_DEPORTISTA, ID_CATEGORIA, ID_PAGO, FECHA, ESTADO)
+                       VALUES (:id_deportista, :id_categoria, :id_pago, :fecha, :estado)";
+        $stmt_estado = $conn->prepare($sql_estado);
+        $stmt_estado->execute([
+            ':id_deportista' => $id_deportista,
+            ':id_categoria' => $id_categoria, // Asegúrate de tener este valor disponible
+            ':id_pago' => $id_pago,
+            ':fecha' => $fecha_pago,
+            ':estado' => $estado
+        ]);
+
+
+
+
+
+
+
+
         $response = [
             'success' => true,
             'message' => 'Pago registrado correctamente'

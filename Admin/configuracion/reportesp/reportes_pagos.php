@@ -2,11 +2,43 @@
 session_start();
 require_once('../conexion.php');
 $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
+// Incluye la cabecera y las dependencias CSS y JS necesarias
 
-    // Incluye la cabecera y las dependencias CSS y JS necesarias
+// Obtener estadísticas
+function obtenerEstadisticas($conn)
+{
+    $stats = [];
+
+    // Ejemplo de consulta para deportistas al día
+    $stmt = $conn->query("SELECT COUNT(*) AS COUNT FROM TAB_PAGOS WHERE FECHA_PAGO <= DATE_SUB(CURDATE(), INTERVAL 8 DAY)");
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    $stats['deportistas_al_dia'] = $row['COUNT'];
+
+    // Ejemplo de consulta para deportistas no al día
+    $stmt = $conn->query("SELECT COUNT(*) AS COUNT FROM TAB_PAGOS WHERE FECHA_PAGO > DATE_SUB(CURDATE(), INTERVAL 8 DAY) OR FECHA_PAGO IS NULL");
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    $stats['deportistas_no_al_dia'] = $row['COUNT'];
+
+
+
+    // Ejemplo de consulta para total meses pagados
+    $stmt = $conn->query("SELECT COUNT(DISTINCT MONTH(FECHA_PAGO)) AS COUNT FROM TAB_PAGOS WHERE FECHA_PAGO IS NOT NULL");
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    $stats['categoria_mayor_atraso'] = $row['COUNT'];
+
+    // Ejemplo de consulta para total meses pagados
+    $stmt = $conn->query("SELECT COUNT(DISTINCT MONTH(FECHA_PAGO)) AS COUNT FROM TAB_PAGOS WHERE FECHA_PAGO IS NOT NULL");
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    $stats['total_meses_pagados'] = $row['COUNT'];
+
+    return $stats;
+}
+
+$stats = obtenerEstadisticas($conn);
 include '../../IncludesPro/header.php';
 
 ?>
+
 <!-- jQuery -->
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 
@@ -32,144 +64,375 @@ include '../../IncludesPro/header.php';
     <div class="container-fluid px-4">
         <h2 class="mt-4">Generación de Reportes de Pagos</h2>
 
-        <!-- Tarjetas de Resumen Actualizadas -->
-        <div class="col-xl-3 col-md-6">
-            <div class="card bg-success text-white mb-4">
-                <div class="card-body">
-                    <h5 class="card-title">Monto Total</h5>
-                    <h2 class="display-4" id="monto-total">$</h2>
-                </div>
-            </div>
-        </div>
-        <div class="row mt-4">
+        <div class="row">
             <div class="col-xl-3 col-md-6">
                 <div class="card bg-success text-white mb-4">
                     <div class="card-body">
                         <h5 class="card-title">Deportistas al Día</h5>
-                        <h2 class="display-4" id="deportistas-al-dia">0</h2>
-                        <button class="btn btn-light mt-2" id="ver-al-dia">Ver Listado</button>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xl-3 col-md-6">
-                <div class="card bg-danger text-white mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title">Deportistas Atrasados</h5>
-                        <h2 class="display-4" id="deportistas-atrasados">0</h2>
-                        <button class="btn btn-light mt-2" id="ver-atrasados">Ver Listado</button>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xl-3 col-md-6">
-                <div class="card bg-secondary text-white mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title">Categoría Más Atrasada</h5>
-                        <h2 class="display-4" id="categoria-atrasada">-</h2>
+                        <h2 class="display-4" id="deportistas-al-dia"><?php echo $stats['deportistas_al_dia']; ?></h2>
+                        <button class="btn btn-light mt-2" onclick="mostrarListado('al-dia')">Ver Listado</button>
                     </div>
                 </div>
             </div>
 
-            <!-- Modal para mostrar listados -->
-            <div class="modal fade" id="listadoModal" tabindex="-1" aria-labelledby="listadoModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="listadoModalLabel">Listado de Deportistas</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <table class="table table-striped" id="listadoTable">
-                                <thead>
-                                    <tr>
-                                        <th>Nombre</th>
-                                        <th>Categoría</th>
-                                        <th>Estado</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <!-- El contenido se llenará dinámicamente -->
-                                </tbody>
-                            </table>
-                        </div>
+            <div class="col-xl-3 col-md-6">
+                <div class="card bg-warning text-white mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Deportistas No al Día</h5>
+                        <h2 class="display-4" id="deportistas-no-al-dia"><?php echo $stats['deportistas_no_al_dia']; ?></h2>
+                        <button class="btn btn-light mt-2" onclick="mostrarListado('atrasados')">Ver Listado</button>
                     </div>
                 </div>
             </div>
-            <!-- Formulario de Generación de Reportes -->
-            <div class="card mb-4">
-                <div class="card-header">
-                    <i class="fas fa-chart-bar"></i> Parámetros del Reporte
-                </div>
-                <div class="card-body">
-                    <form id="reportForm" method="POST">
-                        <div class="row g-3">
-                            <div class="col-md-3">
-                                <label for="fecha_inicio" class="form-label">Fecha de Inicio</label>
-                                <input type="date" class="form-control" id="fecha_inicio" name="fecha_inicio" required>
-                            </div>
-                            <div class="col-md-3">
-                                <label for="fecha_fin" class="form-label">Fecha Límite</label>
-                                <input type="date" class="form-control" id="fecha_fin" name="fecha_fin" required>
-                            </div>
-                            <div class="col-md-3">
-                                <label for="tipo_informe" class="form-label">Tipo de Reporte</label>
-                                <select id="tipo_informe" name="tipo_informe" class="form-select" required>
-                                    <option value="">Seleccione tipo de reporte</option>
-                                    <option value="categoria">Categoría</option>
-                                    <option value="deportista">Deportista</option>
-                                    <option value="representante">Representante</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <label for="id_especifico" class="form-label">Seleccione</label>
-                                <select id="id_especifico" name="id_especifico" class="form-select" disabled>
-                                    <option value="">Seleccione una opción</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="mt-3">
-                            <button type="submit" class="btn btn-primary">Generar Reporte</button>
-                        </div>
-                    </form>
+
+
+
+
+              <!-- Card para Categoría con Mayor Número de Pagos Atrasados -->
+    <div class="col-xl-3 col-md-6">
+        <div class="card bg-info text-white mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Categoría con Mayor Pagos Atrasados</h5>
+                <h2 class="display-4" id="categoria-mayor-atraso"><?php echo $stats['categoria_mayor_atraso']; ?></h2>
+                <button class="btn btn-light mt-2" onclick="mostrarListado('categoria-mayor-atraso')">Ver Listado</button>
+            </div>
+        </div>
+    </div>
+
+        <div class="col-xl-3 col-md-6">
+                <div class="card bg-blue text-white mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Meses Pagados</h5>
+                        <h2 class="display-4" id="total-meses-pagados"><?php echo $stats['total_meses_pagados']; ?></h2>
+                        <button class="btn btn-light mt-2" onclick="mostrarListado('meses-pagados')">Ver Listado</button>
+                    </div>
                 </div>
             </div>
+        </div>
+
+
 
 
 
 
             
-            <!-- Tabla de Reportes -->
-            <div class="card mb-4" id="reporteContainer" style="display:none;">
-                <div class="card-header">
-                    <i class="fas fa-table"></i> Tabla de Reportes
-                    <button type="submit" class="btn btn-primary float-end">Generar PDF</button>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table id="reporteTable" class="table table-striped table-bordered" style="width:100%">
+
+        <div class="modal fade" id="deportistasAlDiaModal" tabindex="-1" aria-labelledby="deportistasAlDiaModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deportistasAlDiaModalLabel">Listado de Deportistas al Día</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table table-striped" id="deportistasAlDiaTable">
                             <thead>
                                 <tr>
-                                    <!-- Las columnas se generarán dinámicamente -->
+                                    <th>Deportista</th>
+                                    <th>Categoría</th>
+                                    <th>Monto</th>
+                                    <th>Fecha</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- Los datos se insertarán aquí dinámicamente -->
+                                <!-- El contenido se llenará dinámicamente -->
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Gráfico del Reporte -->
-            <div class="col-lg-12">
-                <div class="card mb-4" id="chartContainer" style="display:none;">
-                    <div class="card-header">
-                        <i class="fas fa-chart-bar"></i> Gráfico de Pagos por Mes
+
+        <div class="modal fade" id="deportistasNoAlDiaModal" tabindex="-1" aria-labelledby="deportistasNoAlDiaModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deportistasNoAlDiaModalLabel">Listado de Deportistas No al Día</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="card-body">
-                        <canvas id="myChart"></canvas>
+                    <div class="modal-body">
+                        <table class="table table-striped" id="deportistasNoAlDiaTable">
+                            <thead>
+                                <tr>
+                                    <th>Deportista</th>
+                                    <th>Categoría</th>
+                                    <th>Monto</th>
+                                    <th>Fecha</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- El contenido se llenará dinámicamente -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
+        </div>
+
+
+
+
+
+
+<!-- Modal para la categoría con mayor número de pagos atrasados -->
+<div class="modal fade" id="categoriaMayorAtrasoModal" tabindex="-1" aria-labelledby="categoriaMayorAtrasoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="categoriaMayorAtrasoModalLabel">Categoría con Mayor Número de Pagos Atrasados</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Categoría</th>
+                            <th>Fecha</th>
+                            <th>Cantidad de Atrasos</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- El contenido se llenará dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+      
+
+
+
+        <div class="modal fade" id="mesesPagadosModal" tabindex="-1" aria-labelledby="mesesPagadosModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="mesesPagadosModalLabel">Listado de Meses Pagados</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table table-striped" id="mesesPagadosTable">
+                            <thead>
+                                <tr>
+                                    <th>Mes</th>
+                                    <th>Año</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- El contenido se llenará dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+function mostrarListado(tipo, categoria = null) {
+    const modalIds = {
+        'al-dia': '#deportistasAlDiaModal',
+        'atrasados': '#deportistasNoAlDiaModal',
+        'categoria-mayor-atraso': '#categoriaMayorAtrasoModal',
+        'meses-pagados': '#mesesPagadosModal',
+    };
+
+    const modalId = modalIds[tipo];
+    if (!modalId) {
+        console.error("Tipo de listado desconocido:", tipo);
+        return;
+    }
+
+    const modal = new bootstrap.Modal(document.querySelector(modalId));
+    const tbody = document.querySelector(`${modalId} tbody`);
+    const thead = document.querySelector(`${modalId} thead`);
+    tbody.innerHTML = '<tr><td colspan="4">Cargando...</td></tr>';
+
+    let url = `reportes_modal.php?action=getListado&tipo=${tipo}`;
+    if (categoria) url += `&categoria=${encodeURIComponent(categoria)}`;
+
+    console.log("Fetching URL: ", url);
+
+    fetch(url)
+        .then(response => {
+            if (!response.ok) throw new Error("Error en la respuesta: " + response.statusText);
+            return response.json();
+        })
+        .then(response => {
+            console.log("Server response:", response);  // Log the entire response for debugging
+            
+            if (!response.success) {
+                throw new Error(response.error || "Error desconocido en el servidor");
+            }
+            
+            const data = response.data;
+            tbody.innerHTML = '';
+            
+            if (!Array.isArray(data)) {
+                throw new Error("Los datos recibidos no son un array");
+            }
+            
+            if (data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4">No se encontraron datos</td></tr>';
+                return;
+            }
+            
+            if (tipo === 'meses-pagados') {
+                thead.innerHTML = `
+                    <tr>
+                        <th>Año</th>
+                        <th>Mes</th>
+                        <th>Total Pagado</th>
+                    </tr>
+                `;
+                data.forEach(d => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${d.ANIO}</td>
+                        <td>${d.MES}</td>
+                        <td>$${parseFloat(d.TOTAL).toFixed(2)}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } else if (tipo === 'categoria-mayor-atraso') {
+                thead.innerHTML = `
+                    <tr>
+                        <th>Categoría</th>
+                        <th>Fecha</th>
+                        <th>Cantidad de Atrasos</th>
+                    </tr>
+                `;
+                data.forEach(d => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${d.CATEGORIA}</td>
+                        <td>${d.FECHA}</td>
+                        <td>${d.CANTIDAD_ATRASOS}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } else {
+                thead.innerHTML = `
+                    <tr>
+                        <th>Deportista</th>
+                        <th>Categoría</th>
+                        <th>Monto</th>
+                        <th>Fecha</th>
+                    </tr>
+                `;
+                data.forEach(d => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${d.DEPORTISTA}</td>
+                        <td>${d.CATEGORIA}</td>
+                        <td>$${parseFloat(d.MONTO).toFixed(2)}</td>
+                        <td>${d.FECHA}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+        })
+        .catch(err => {
+            console.error("Error al cargar los datos: ", err);
+            tbody.innerHTML = `<tr><td colspan="4">Error al cargar los datos: ${err.message}</td></tr>`;
+        });
+
+    modal.show();
+}
+
+
+
+
+
+
+
+
+</script>
+        <!-- Formulario de Generación de Reportes -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-chart-bar"></i> Parámetros del Reporte
+            </div>
+            <div class="card-body">
+                <form id="reportForm" method="POST">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label for="fecha_inicio" class="form-label">Fecha de Inicio</label>
+                            <input type="date" class="form-control" id="fecha_inicio" name="fecha_inicio" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="fecha_fin" class="form-label">Fecha Límite</label>
+                            <input type="date" class="form-control" id="fecha_fin" name="fecha_fin" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="tipo_informe" class="form-label">Tipo de Reporte</label>
+                            <select id="tipo_informe" name="tipo_informe" class="form-select" required>
+                                <option value="">Seleccione tipo de reporte</option>
+                                <option value="categoria">Categoría</option>
+                                <option value="deportista">Deportista</option>
+                                <option value="representante">Representante</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="id_especifico" class="form-label">Seleccione</label>
+                            <select id="id_especifico" name="id_especifico" class="form-select" disabled>
+                                <option value="">Seleccione una opción</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <button type="submit" class="btn btn-primary">Generar Reporte</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
+
+
+
+        <!-- Tabla de Reportes -->
+        <div class="card mb-4" id="reporteContainer" style="display:none;">
+            <div class="card-header">
+                <i class="fas fa-table"></i> Tabla de Reportes
+                <button type="submit" class="btn btn-primary float-end">Generar PDF</button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="reporteTable" class="table table-striped table-bordered" style="width:100%">
+                        <thead>
+                            <tr>
+                                <!-- Las columnas se generarán dinámicamente -->
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Los datos se insertarán aquí dinámicamente -->
+                        </tbody>
+                        <tfoot>
+                            <!-- La fila de total se insertará aquí -->
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gráfico del Reporte -->
+        <div class="col-lg-12">
+            <div class="card mb-4" id="chartContainer" style="display:none;">
+                <div class="card-header">
+                    <i class="fas fa-chart-bar"></i> Gráfico de Pagos por Mes
+                </div>
+                <div class="card-body">
+                    <canvas id="myChart"></canvas>
+                </div>
+            </div>
+        </div>
 </main>
 
 
@@ -241,7 +504,7 @@ include '../../IncludesPro/header.php';
 
                     if (tipo == 'categoria') {
                         columns = [{
-                                title: "Nombre de la categoría",
+                                title: "Categoría",
                                 data: "NOMBRE"
                             },
                             {
@@ -264,7 +527,7 @@ include '../../IncludesPro/header.php';
                     } else if (tipo == 'deportista') {
                         columns = [{
                                 title: "Deportista",
-                                data: "NOMBRE_COMPLETO"
+                                data: "NOMBRE_COMPLETOS"
                             },
                             {
                                 title: "Mes/Año",
@@ -281,7 +544,7 @@ include '../../IncludesPro/header.php';
                         ];
                     } else if (tipo == 'representante') {
                         columns = [{
-                                title: "Nombre del representante",
+                                title: "Representante",
                                 data: "NOMBRE_COMPLETO_REPRE"
                             },
                             {
@@ -303,9 +566,29 @@ include '../../IncludesPro/header.php';
                         ];
                     }
 
-
-
                     $('#reporteContainer').show();
+
+                    // Calcular el total de montos
+                    var total = response.data.reduce((sum, row) => sum + parseFloat(row.MONTO || 0), 0);
+
+                    // Crear la fila de total adaptada al tipo de informe
+                    var totalRow = {};
+                    columns.forEach(column => {
+                        if (column.data === "MONTO") {
+                            totalRow[column.data] = total.toFixed(2);
+                        } else if (column.data === "NOMBRE" || column.data === "NOMBRE_COMPLETOS" || column.data === "NOMBRE_COMPLETO_REPRE") {
+                            totalRow[column.data] = "Total";
+                        } else {
+                            totalRow[column.data] = "";
+                        }
+                    });
+
+
+                    response.data.push(totalRow);
+
+
+
+
                     // Destruir la tabla si ya existe
                     if ($.fn.DataTable && $.fn.DataTable.isDataTable) {
                         if (typeof $.fn.DataTable === 'undefined') {
@@ -327,7 +610,20 @@ include '../../IncludesPro/header.php';
                             buttons: ['copy', 'csv', 'excel', 'pdf', 'print'],
                             language: {
                                 url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json'
+                            },
+                            drawCallback: function(settings) {
+                                var api = this.api();
+                                var totalColumnIndex = columns.findIndex(col => col.data === "MONTO");
+                                $(api.table().footer()).html(
+                                    '<tr>' +
+                                    columns.map((col, index) =>
+                                        index === 0 ? '<th>Total:</th>' :
+                                        index === totalColumnIndex ? `<th>${total.toFixed(2)}</th>` : '<th></th>'
+                                    ).join('') +
+                                    '</tr>'
+                                );
                             }
+
                         });
                     } else {
                         // Si DataTables no está disponible, crea una tabla HTML simple
@@ -348,11 +644,14 @@ include '../../IncludesPro/header.php';
                     }
                     let chartData = {};
                     response.data.forEach(function(row) {
-                        if (row.MES_ANIO && row.MONTO) {
-                            if (chartData[row.MES_ANIO]) {
-                                chartData[row.MES_ANIO] += parseFloat(row.MONTO);
-                            } else {
-                                chartData[row.MES_ANIO] = parseFloat(row.MONTO);
+                        if (row.MES_ANIO && row.MONTO && row.MONTO !== total.toFixed(2)) {
+
+                            if (row.MES_ANIO && row.MONTO) {
+                                if (chartData[row.MES_ANIO]) {
+                                    chartData[row.MES_ANIO] += parseFloat(row.MONTO);
+                                } else {
+                                    chartData[row.MES_ANIO] = parseFloat(row.MONTO);
+                                }
                             }
                         }
                     });
@@ -409,82 +708,82 @@ include '../../IncludesPro/header.php';
 
 
                     // Agregar evento al botón de generar PDF
-$('.btn-primary.float-end').on('click', function(e) {
-    console.log('Botón de generar PDF clickeado'); // Verificar si el botón fue clickeado
-    e.preventDefault();
+                    $('.btn-primary.float-end').on('click', function(e) {
+                        console.log('Botón de generar PDF clickeado'); // Verificar si el botón fue clickeado
+                        e.preventDefault();
 
-    var formData = new FormData($('#reportForm')[0]);
-    console.log('Datos del formulario:', formData); // Mostrar los datos del formulario para verificar que se están enviando correctamente
+                        var formData = new FormData($('#reportForm')[0]);
+                        console.log('Datos del formulario:', formData); // Mostrar los datos del formulario para verificar que se están enviando correctamente
 
-    $.ajax({
-        url: 'generar_pdf.php',
-        type: 'POST',
-        data: formData,
-        processData: false,
-        contentType: false,
-        xhrFields: {
-            responseType: 'blob' // to avoid binary data being mangled on charset conversion
-        },
-        success: function(blob, status, xhr) {
-            console.log('PDF generado con éxito'); // Confirmar que se generó el PDF correctamente
-            console.log('Estado de la respuesta:', status); // Mostrar el estado de la respuesta
-            console.log('XHR:', xhr); // Verificar el objeto XHR para más detalles
+                        $.ajax({
+                            url: 'generar_pdf.php',
+                            type: 'POST',
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            xhrFields: {
+                                responseType: 'blob' // to avoid binary data being mangled on charset conversion
+                            },
+                            success: function(blob, status, xhr) {
+                                console.log('PDF generado con éxito'); // Confirmar que se generó el PDF correctamente
+                                console.log('Estado de la respuesta:', status); // Mostrar el estado de la respuesta
+                                console.log('XHR:', xhr); // Verificar el objeto XHR para más detalles
 
-            // Check for a filename
-            var filename = "";
-            var disposition = xhr.getResponseHeader('Content-Disposition');
-            console.log('Content-Disposition:', disposition); // Verificar el header Content-Disposition
+                                // Check for a filename
+                                var filename = "";
+                                var disposition = xhr.getResponseHeader('Content-Disposition');
+                                console.log('Content-Disposition:', disposition); // Verificar el header Content-Disposition
 
-            if (disposition && disposition.indexOf('attachment') !== -1) {
-                var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
-                var matches = filenameRegex.exec(disposition);
-                if (matches != null && matches[1]) {
-                    filename = matches[1].replace(/['"]/g, '');
-                    console.log('Nombre del archivo:', filename); // Mostrar el nombre del archivo
-                }
-            }
+                                if (disposition && disposition.indexOf('attachment') !== -1) {
+                                    var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+                                    var matches = filenameRegex.exec(disposition);
+                                    if (matches != null && matches[1]) {
+                                        filename = matches[1].replace(/['"]/g, '');
+                                        console.log('Nombre del archivo:', filename); // Mostrar el nombre del archivo
+                                    }
+                                }
 
-            if (typeof window.navigator.msSaveBlob !== 'undefined') {
-                // IE workaround for "HTML7007: One or more blob URLs were revoked by closing the blob for which they were created. These URLs will no longer resolve as the data backing the URL has been freed."
-                console.log('Usando msSaveBlob para IE'); // Indicar que se está usando la solución para IE
-                window.navigator.msSaveBlob(blob, filename);
-            } else {
-                var URL = window.URL || window.webkitURL;
-                var downloadUrl = URL.createObjectURL(blob);
-                console.log('URL de descarga:', downloadUrl); // Mostrar la URL de descarga
+                                if (typeof window.navigator.msSaveBlob !== 'undefined') {
+                                    // IE workaround for "HTML7007: One or more blob URLs were revoked by closing the blob for which they were created. These URLs will no longer resolve as the data backing the URL has been freed."
+                                    console.log('Usando msSaveBlob para IE'); // Indicar que se está usando la solución para IE
+                                    window.navigator.msSaveBlob(blob, filename);
+                                } else {
+                                    var URL = window.URL || window.webkitURL;
+                                    var downloadUrl = URL.createObjectURL(blob);
+                                    console.log('URL de descarga:', downloadUrl); // Mostrar la URL de descarga
 
-                if (filename) {
-                    // Use HTML5 a[download] attribute to specify filename
-                    var a = document.createElement("a");
-                    // Safari doesn't support this yet
-                    if (typeof a.download === 'undefined') {
-                        console.log('Safari detectado, redirigiendo a la URL de descarga');
-                        window.location.href = downloadUrl;
-                    } else {
-                        a.href = downloadUrl;
-                        a.download = filename;
-                        document.body.appendChild(a);
-                        console.log('Iniciando descarga del archivo'); // Confirmar que la descarga se está iniciando
-                        a.click();
-                    }
-                } else {
-                    console.log('Descarga sin nombre de archivo, redirigiendo directamente');
-                    window.location.href = downloadUrl;
-                }
+                                    if (filename) {
+                                        // Use HTML5 a[download] attribute to specify filename
+                                        var a = document.createElement("a");
+                                        // Safari doesn't support this yet
+                                        if (typeof a.download === 'undefined') {
+                                            console.log('Safari detectado, redirigiendo a la URL de descarga');
+                                            window.location.href = downloadUrl;
+                                        } else {
+                                            a.href = downloadUrl;
+                                            a.download = filename;
+                                            document.body.appendChild(a);
+                                            console.log('Iniciando descarga del archivo'); // Confirmar que la descarga se está iniciando
+                                            a.click();
+                                        }
+                                    } else {
+                                        console.log('Descarga sin nombre de archivo, redirigiendo directamente');
+                                        window.location.href = downloadUrl;
+                                    }
 
-                setTimeout(function() {
-                    console.log('Revocando URL de descarga'); // Confirmar que se está revocando la URL de descarga
-                    URL.revokeObjectURL(downloadUrl);
-                }, 100); // Cleanup
-            }
-        },
-        error: function(xhr, status, error) {
-            console.error('Error al generar el PDF:', status, error); // Mostrar detalles del error
-            console.log('XHR:', xhr); // Mostrar el objeto XHR para más detalles
-            alert('Hubo un problema al generar el PDF. Por favor, intenta de nuevo.');
-        }
-    });
-});
+                                    setTimeout(function() {
+                                        console.log('Revocando URL de descarga'); // Confirmar que se está revocando la URL de descarga
+                                        URL.revokeObjectURL(downloadUrl);
+                                    }, 100); // Cleanup
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                console.error('Error al generar el PDF:', status, error); // Mostrar detalles del error
+                                console.log('XHR:', xhr); // Mostrar el objeto XHR para más detalles
+                                alert('Hubo un problema al generar el PDF. Por favor, intenta de nuevo.');
+                            }
+                        });
+                    });
 
 
 

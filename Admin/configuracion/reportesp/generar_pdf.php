@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 LEFT JOIN tab_estado_pagos ep ON p.ID_PAGO = ep.ID_PAGO
                 WHERE c.ID_CATEGORIA = :id AND p.FECHA_PAGO BETWEEN :fecha_inicio AND :fecha_fin";
     } elseif ($tipo_informe === 'deportista') {
-        $sql = "SELECT CONCAT(d.NOMBRE_DEPO, ' ', d.APELLIDO_DEPO) AS NOMBRE_COMPLETO,
+        $sql = "SELECT CONCAT(d.NOMBRE_DEPO, ' ', d.APELLIDO_DEPO) AS NOMBRE_COMPLETOS,
                         $fecha_formato,
                         p.MONTO, ep.ESTADO
                 FROM tab_deportistas d

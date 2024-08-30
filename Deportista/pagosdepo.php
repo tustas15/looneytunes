@@ -1,20 +1,9 @@
 <?php
 // Conexión a la base de datos
-session_start();
-if (!isset($_SESSION['user_id'])) {
-    header("Location: ../public/login.php");
-    exit();
-}
 require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
-
-$nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
+$nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'tipo_usuario';
 include './includes/header.php';
 ?>
-
-<link href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css" rel="stylesheet">
-<script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.28.0/feather.min.js" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <body class="nav-fixed">
     <main>
@@ -46,23 +35,6 @@ include './includes/header.php';
                                 <div class="form-floating">
                                     <input type="text" id="cedula_representante" class="form-control" readonly>
                                     <label for="cedula_representante">Cédula del Representante</label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <div class="form-floating mb-3 mb-md-0">
-                                    <select id="deportista" name="deportista" class="form-select" required>
-                                        <option value="">Seleccionar</option>
-                                        <!-- Opciones se llenarán dinámicamente -->
-                                    </select>
-                                    <label for="deportista">Deportista</label>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-floating">
-                                    <input type="text" id="cedula_deportista" class="form-control" readonly>
-                                    <label for="cedula_deportista">Cédula del Deportista</label>
                                 </div>
                             </div>
                         </div>
@@ -177,45 +149,60 @@ include './includes/header.php';
             </div>
         </div>
     </main>
-    <?php include '../includes/footer.php'; ?>
+    <?php include './includes/footer.php'; ?>
 
     <script>
-        document.getElementById('paymentForm').addEventListener('submit', function(event) {
-            event.preventDefault();
+       document.getElementById('paymentForm').addEventListener('submit', function(event) {
+    event.preventDefault();
 
-            const formData = new FormData(this);
+    const formData = new FormData(this);
+    const isUpdating = formData.has('id_pago'); // Verifica si el formulario incluye un campo de ID para saber si es actualización
 
-            fetch('/looneytunes/admin/configuracion/whatsapp/index.php', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        Swal.fire({
-                            title: 'Éxito',
-                            text: data.message,
-                            icon: 'success',
-                            confirmButtonText: 'Aceptar'
-                        });
-                    } else {
-                        Swal.fire({
-                            title: 'Error',
-                            text: data.message,
-                            icon: 'error',
-                            confirmButtonText: 'Aceptar'
-                        });
-                    }
-                })
-                .catch(error => {
-                    Swal.fire({
-                        title: 'Error',
-                        text: 'Ocurrió un error al enviar el formulario.',
-                        icon: 'error',
-                        confirmButtonText: 'Aceptar'
-                    });
+    formData.append('isUpdating', isUpdating); // Añade esta información al FormData
+
+    fetch('/looneytunes/admin/configuracion/whatsapp/index.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                // Lógica para mostrar el mensaje de éxito
+                console.log(isUpdating ? "Mensaje de actualización enviado" : "Mensaje de nuevo pago enviado");
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Mensaje de WhatsApp enviado',
+                    text: isUpdating ? 'Notificación de actualización enviada' : 'Notificación de nuevo pago enviada',
+                    confirmButtonText: 'Aceptar'
                 });
+            } else {
+                // Lógica para manejar el error
+                console.error("Error al enviar mensaje de WhatsApp:", data.message);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error al enviar mensaje de WhatsApp: ' + data.message,
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+        })
+        .catch(error => {
+            // Lógica para manejar el error en la conexión o servidor
+            console.error("Error al enviar mensaje de WhatsApp:", error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Error al enviar mensaje de WhatsApp: ' + error,
+                confirmButtonText: 'Aceptar'
+            });
         });
+});
+
+
+
+
+
 
         // Asegúrate de que estas funciones estén presentes en tu código
         function setFechaYMesActual() {
@@ -256,6 +243,8 @@ include './includes/header.php';
     </div>
 
     <!-- Scripts -->
+    <link href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
@@ -336,12 +325,15 @@ include './includes/header.php';
                 ]
             });
 
+
+
+
             $('#paymentForm').submit(function(e) {
                 e.preventDefault();
 
                 var formData = new FormData(this);
                 var isUpdating = $('#id_pago').val() !== "";
-                var url = isUpdating ? '../Admin/configuracion/pagos/actualizar.php' : 'registrar_pago.php';
+                var url = isUpdating ? '../Admin/configuracion/pagos/actualizar.php' : 'registrar_pagos.php';
                 var successMessage = isUpdating ? 'Pago actualizado correctamente' : 'Pago registrado correctamente';
 
                 $.ajax({
@@ -363,6 +355,8 @@ include './includes/header.php';
                             setFechaYMesActual();
                             $('button[type="submit"]').text('Registrar Pago');
                             $('#id_pago').val(''); // Limpiar el campo oculto del ID
+                            // Enviar mensaje de WhatsApp
+                            enviarMensajeWhatsApp(isUpdating);
                         } else {
                             Swal.fire({
                                 icon: 'error',
@@ -381,6 +375,21 @@ include './includes/header.php';
                 });
             });
 
+           
+           
+           
+           
+
+
+
+
+
+
+
+
+
+
+
             // Edit button logic
             $('#historial_pagos').on('click', '.edit-btn', function() {
                 var id = $(this).data('id');
@@ -396,31 +405,42 @@ include './includes/header.php';
                     },
                     dataType: 'json',
                     success: function(data) {
-                        $('#id_pago').val(data.ID_PAGO);
-                        $('#representante').val(data.ID_REPRESENTANTE);
-                        $('#deportista').val(data.ID_DEPORTISTA);
-                        $('#metodo_pago').val(data.METODO_PAGO);
-                        $('#monto').val(data.MONTO);
-                        $('#fecha').val(data.FECHA_PAGO);
-                        $('#mes').val(data.MES);
-                        $('#anio').val(data.ANIO);
-                        $('#motivo').val(data.MOTIVO);
+                        console.log(data); // Esto te ayudará a ver la estructura de los datos recibidos
 
-                        $('button[type="submit"]').text('Guardar Cambios');
-
-                        $('html, body').animate({
-                            scrollTop: $("#paymentForm").offset().top
-                        }, 500);
-                    },
-                    error: function() {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'Error al cargar los datos del pago'
-                        });
+                        if (data.ID_PAGO) {
+                            $('#id_pago').val(data.ID_PAGO);
+                            $('#representante').val(data.ID_REPRESENTANTE);
+                            $('#deportista').val(data.ID_DEPORTISTA);
+                            $('#metodo_pago').val(data.METODO_PAGO);
+                            $('#monto').val(data.MONTO);
+                            $('#fecha').val(data.FECHA_PAGO);
+                            $('#mes').val(data.MES);
+                            $('#anio').val(data.ANIO);
+                            $('#motivo').val(data.MOTIVO);
+                            if (data.METODO_PAGO === 'transferencia') {
+                    $('#banco').val(data.ID_BANCO);
+                    $('#entidad_origen').val(data.ENTIDAD_ORIGEN);
+                    // Mostrar el nombre del archivo si existe
+                    if (data.NOMBRE_ARCHIVO) {
+                        $('#nombre_archivo').siblings('.custom-file-label').addClass("selected").html(data.NOMBRE_ARCHIVO);
                     }
-                });
+                }
+                            $('button[type="submit"]').text('Guardar Cambios');
+
+                            $('html, body').animate({
+                                scrollTop: $("#paymentForm").offset().top
+                            }, 500);
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Pago no encontrado'
+                            });
+                        }
+                    }
+                })
             }
+
 
             // Funciones auxiliares
             function setFechaYMesActual() {
@@ -444,6 +464,7 @@ include './includes/header.php';
 
             $('#mes, #anio').on('change', actualizarMotivo);
         })
+
 
 
         $('#historial_pagos').on('click', '.delete-btn', function() {
@@ -473,7 +494,7 @@ include './includes/header.php';
                                     'El pago ha sido eliminado.',
                                     'success'
                                 );
-                                table.ajax.reload();
+                                $('#historial_pagos').DataTable().ajax.reload();
                             } else {
                                 Swal.fire(
                                     'Error!',
@@ -491,8 +512,22 @@ include './includes/header.php';
                         }
                     });
                 }
-            })
-        })
+            });
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         // Cargar bancos
         $.ajax({
@@ -553,53 +588,20 @@ include './includes/header.php';
                     }
                 });
 
-                // Cargar deportistas asociados
-                $.ajax({
-                    url: '../Admin/configuracion/pagos/get_deportistas.php',
-                    method: 'GET',
-                    data: {
-                        id_representante: id_representante
-                    },
-                    dataType: 'json',
-                    success: function(data) {
-                        $('#deportista').empty().append('<option value="">Seleccionar</option>');
-                        data.forEach(function(deportista) {
-                            $('#deportista').append(`<option value="${deportista.ID_DEPORTISTA}">${deportista.APELLIDO_DEPO} ${deportista.NOMBRE_DEPO}</option>`);
-                        });
-                    },
-                    error: function(xhr, status, error) {
-                        console.error("Error al cargar deportistas:", status, error);
-                    }
-                });
-            } else {
-                $('#cedula_representante').val('');
-                $('#deportista').empty().append('<option value="">Seleccionar</option>');
-                $('#cedula_deportista').val('');
             }
-        });
+            })
 
-        // Evento al cambiar el deportista
-        $('#deportista').on('change', function() {
-            var id_deportista = $(this).val();
-            if (id_deportista) {
-                $.ajax({
-                    url: '../Admin/configuracion/pagos/get_cedula_deportista.php',
-                    method: 'GET',
-                    data: {
-                        id_deportista: id_deportista
-                    },
-                    dataType: 'json',
-                    success: function(data) {
-                        $('#cedula_deportista').val(data.CEDULA_DEPO);
-                    },
-                    error: function(xhr, status, error) {
-                        console.error("Error al cargar cédula del deportista:", status, error);
-                    }
-                });
-            } else {
-                $('#cedula_deportista').val('');
-            }
-        });
+
+
+
+
+
+
+
+
+
+
+
 
         // Cambio de método de pago
         $('#metodo_pago').change(function() {
@@ -617,74 +619,22 @@ include './includes/header.php';
         });
 
         //para manejar los campos que se deben imprimir por cada metodo de pago 
-        $(document).ready(function() {
-            $('#metodo_pago').change(function() {
-                var metodo = $(this).val();
-                if (metodo === 'efectivo') {
-                    $('#banco').val(o).hide();
-                    $('#entidad_origen').removeAttr('required').prop('disabled', true).hide();
-                    $('#nombre_archivo').removeAttr('required').prop('disabled', true).hide();
-                } else if (metodo === 'transferencia') {
-                    $('#banco').val('').show(); // Asegurarse de que el campo banco sea requerido
-                    $('#entidad_origen').attr('required', true).prop('disabled', false).show();
-                    $('#nombre_archivo').attr('required', true).prop('disabled', false).show();
-                }
-            }).trigger('change');
-        })
-
+        $('#metodo_pago').change(function() {
+            var metodo = $(this).val();
+            if (metodo === 'efectivo') {
+                $('#banco').val('').hide();
+                $('#entidad_origen').removeAttr('required').prop('disabled', true).hide();
+                $('#nombre_archivo').removeAttr('required').prop('disabled', true).hide();
+            } else if (metodo === 'transferencia') {
+                $('#banco').val('').show(); // Asegurarse de que el campo banco sea requerido
+                $('#entidad_origen').attr('required', true).prop('disabled', false).show();
+                $('#nombre_archivo').attr('required', true).prop('disabled', false).show();
+            }
+        }).trigger('change');
 
         // Actualizar motivo al cambiar el mes
         $('#mes').change(function() {
             var mes = $(this).find('option:selected').text();
             $('#motivo').val('Pago del mes de ' + mes);
         });
-
-        // Registrar pago
-        $('#paymentForm').submit(function(e) {
-            e.preventDefault();
-            var formData = new FormData(this);
-
-            $.ajax({
-                url: 'registrar_pago.php',
-                method: 'POST',
-                data: formData,
-                contentType: false,
-                processData: false,
-                dataType: 'json',
-                success: function(response) {
-                    console.log("Respuesta exitosa:", response);
-                    if (response.success) {
-                        $('#message').html('<div class="alert alert-success">' + response.message + '</div>');
-                        table.ajax.reload();
-                        $('#paymentForm')[0].reset();
-                    } else {
-                        $('#message').html('<div class="alert alert-danger">' + response.message + '</div>');
-                    }
-                },
-                // error: function(xhr, status, error) {
-                // console.error("Error en la llamada AJAX:", status, error);
-                // console.log("Respuesta del servidor:", xhr.responseText);
-                // $('#message').html('<div class="alert alert-danger">Error al procesar la solicitud</div>');
-                // }
-            });
-        });
-
-
-
-
-
-
-        
-        // Funcionalidad para los botones de eliminar y editar
-        $('#historial_pagos').on('click', '.delete-btn', function() {
-            var id = $(this).data('id');
-            // Implementar lógica para eliminar el pago
-        });
-
-        $('#historial_pagos').on('click', '.edit-btn', function() {
-            var id = $(this).data('id');
-            // Implementar lógica para editar el pago
-        });
     </script>
-
-    
