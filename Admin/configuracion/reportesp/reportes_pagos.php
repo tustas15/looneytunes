@@ -88,18 +88,18 @@ include '../../IncludesPro/header.php';
 
 
 
-              <!-- Card para Categoría con Mayor Número de Pagos Atrasados -->
-    <div class="col-xl-3 col-md-6">
-        <div class="card bg-info text-white mb-4">
-            <div class="card-body">
-                <h5 class="card-title">Categoría con Mayor Pagos Atrasados</h5>
-                <h2 class="display-4" id="categoria-mayor-atraso"><?php echo $stats['categoria_mayor_atraso']; ?></h2>
-                <button class="btn btn-light mt-2" onclick="mostrarListado('categoria-mayor-atraso')">Ver Listado</button>
+            <!-- Card para Categoría con Mayor Número de Pagos Atrasados -->
+            <div class="col-xl-3 col-md-6">
+                <div class="card bg-info text-white mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Categoría con Mayor Pagos Atrasados</h5>
+                        <h2 class="display-4" id="categoria-mayor-atraso"><?php echo $stats['categoria_mayor_atraso']; ?></h2>
+                        <button class="btn btn-light mt-2" onclick="mostrarListado('categoria-mayor-atraso')">Ver Listado</button>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
 
-        <div class="col-xl-3 col-md-6">
+            <div class="col-xl-3 col-md-6">
                 <div class="card bg-blue text-white mb-4">
                     <div class="card-body">
                         <h5 class="card-title">Meses Pagados</h5>
@@ -115,7 +115,7 @@ include '../../IncludesPro/header.php';
 
 
 
-            
+
 
         <div class="modal fade" id="deportistasAlDiaModal" tabindex="-1" aria-labelledby="deportistasAlDiaModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
@@ -175,37 +175,37 @@ include '../../IncludesPro/header.php';
 
 
 
-<!-- Modal para la categoría con mayor número de pagos atrasados -->
-<div class="modal fade" id="categoriaMayorAtrasoModal" tabindex="-1" aria-labelledby="categoriaMayorAtrasoModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="categoriaMayorAtrasoModalLabel">Categoría con Mayor Número de Pagos Atrasados</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Categoría</th>
-                            <th>Fecha</th>
-                            <th>Cantidad de Atrasos</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- El contenido se llenará dinámicamente -->
-                    </tbody>
-                </table>
+        <!-- Modal para la categoría con mayor número de pagos atrasados -->
+        <div class="modal fade" id="categoriaMayorAtrasoModal" tabindex="-1" aria-labelledby="categoriaMayorAtrasoModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="categoriaMayorAtrasoModalLabel">Categoría con Mayor Número de Pagos Atrasados</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Categoría</th>
+                                    <th>Fecha</th>
+                                    <th>Cantidad de Atrasos</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- El contenido se llenará dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</div>
 
 
 
 
 
-      
+
 
 
 
@@ -235,90 +235,90 @@ include '../../IncludesPro/header.php';
         </div>
 
         <script>
-function mostrarListado(tipo, categoria = null) {
-    const modalIds = {
-        'al-dia': '#deportistasAlDiaModal',
-        'atrasados': '#deportistasNoAlDiaModal',
-        'categoria-mayor-atraso': '#categoriaMayorAtrasoModal',
-        'meses-pagados': '#mesesPagadosModal',
-    };
+            function mostrarListado(tipo, categoria = null) {
+                const modalIds = {
+                    'al-dia': '#deportistasAlDiaModal',
+                    'atrasados': '#deportistasNoAlDiaModal',
+                    'categoria-mayor-atraso': '#categoriaMayorAtrasoModal',
+                    'meses-pagados': '#mesesPagadosModal',
+                };
 
-    const modalId = modalIds[tipo];
-    if (!modalId) {
-        console.error("Tipo de listado desconocido:", tipo);
-        return;
-    }
+                const modalId = modalIds[tipo];
+                if (!modalId) {
+                    console.error("Tipo de listado desconocido:", tipo);
+                    return;
+                }
 
-    const modal = new bootstrap.Modal(document.querySelector(modalId));
-    const tbody = document.querySelector(`${modalId} tbody`);
-    const thead = document.querySelector(`${modalId} thead`);
-    tbody.innerHTML = '<tr><td colspan="4">Cargando...</td></tr>';
+                const modal = new bootstrap.Modal(document.querySelector(modalId));
+                const tbody = document.querySelector(`${modalId} tbody`);
+                const thead = document.querySelector(`${modalId} thead`);
+                tbody.innerHTML = '<tr><td colspan="4">Cargando...</td></tr>';
 
-    let url = `reportes_modal.php?action=getListado&tipo=${tipo}`;
-    if (categoria) url += `&categoria=${encodeURIComponent(categoria)}`;
+                let url = `reportes_modal.php?action=getListado&tipo=${tipo}`;
+                if (categoria) url += `&categoria=${encodeURIComponent(categoria)}`;
 
-    console.log("Fetching URL: ", url);
+                console.log("Fetching URL: ", url);
 
-    fetch(url)
-        .then(response => {
-            if (!response.ok) throw new Error("Error en la respuesta: " + response.statusText);
-            return response.json();
-        })
-        .then(response => {
-            console.log("Server response:", response);  // Log the entire response for debugging
-            
-            if (!response.success) {
-                throw new Error(response.error || "Error desconocido en el servidor");
-            }
-            
-            const data = response.data;
-            tbody.innerHTML = '';
-            
-            if (!Array.isArray(data)) {
-                throw new Error("Los datos recibidos no son un array");
-            }
-            
-            if (data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4">No se encontraron datos</td></tr>';
-                return;
-            }
-            
-            if (tipo === 'meses-pagados') {
-                thead.innerHTML = `
+                fetch(url)
+                    .then(response => {
+                        if (!response.ok) throw new Error("Error en la respuesta: " + response.statusText);
+                        return response.json();
+                    })
+                    .then(response => {
+                        console.log("Server response:", response); // Log the entire response for debugging
+
+                        if (!response.success) {
+                            throw new Error(response.error || "Error desconocido en el servidor");
+                        }
+
+                        const data = response.data;
+                        tbody.innerHTML = '';
+
+                        if (!Array.isArray(data)) {
+                            throw new Error("Los datos recibidos no son un array");
+                        }
+
+                        if (data.length === 0) {
+                            tbody.innerHTML = '<tr><td colspan="4">No se encontraron datos</td></tr>';
+                            return;
+                        }
+
+                        if (tipo === 'meses-pagados') {
+                            thead.innerHTML = `
                     <tr>
                         <th>Año</th>
                         <th>Mes</th>
                         <th>Total Pagado</th>
                     </tr>
                 `;
-                data.forEach(d => {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
+                            data.forEach(d => {
+                                const tr = document.createElement('tr');
+                                tr.innerHTML = `
                         <td>${d.ANIO}</td>
                         <td>${d.MES}</td>
                         <td>$${parseFloat(d.TOTAL).toFixed(2)}</td>
                     `;
-                    tbody.appendChild(tr);
-                });
-            } else if (tipo === 'categoria-mayor-atraso') {
-                thead.innerHTML = `
+                                tbody.appendChild(tr);
+                            });
+                        } else if (tipo === 'categoria-mayor-atraso') {
+                            thead.innerHTML = `
                     <tr>
                         <th>Categoría</th>
                         <th>Fecha</th>
                         <th>Cantidad de Atrasos</th>
                     </tr>
                 `;
-                data.forEach(d => {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
+                            data.forEach(d => {
+                                const tr = document.createElement('tr');
+                                tr.innerHTML = `
                         <td>${d.CATEGORIA}</td>
                         <td>${d.FECHA}</td>
                         <td>${d.CANTIDAD_ATRASOS}</td>
                     `;
-                    tbody.appendChild(tr);
-                });
-            } else {
-                thead.innerHTML = `
+                                tbody.appendChild(tr);
+                            });
+                        } else {
+                            thead.innerHTML = `
                     <tr>
                         <th>Deportista</th>
                         <th>Categoría</th>
@@ -326,34 +326,26 @@ function mostrarListado(tipo, categoria = null) {
                         <th>Fecha</th>
                     </tr>
                 `;
-                data.forEach(d => {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
+                            data.forEach(d => {
+                                const tr = document.createElement('tr');
+                                tr.innerHTML = `
                         <td>${d.DEPORTISTA}</td>
                         <td>${d.CATEGORIA}</td>
                         <td>$${parseFloat(d.MONTO).toFixed(2)}</td>
                         <td>${d.FECHA}</td>
                     `;
-                    tbody.appendChild(tr);
-                });
+                                tbody.appendChild(tr);
+                            });
+                        }
+                    })
+                    .catch(err => {
+                        console.error("Error al cargar los datos: ", err);
+                        tbody.innerHTML = `<tr><td colspan="4">Error al cargar los datos: ${err.message}</td></tr>`;
+                    });
+
+                modal.show();
             }
-        })
-        .catch(err => {
-            console.error("Error al cargar los datos: ", err);
-            tbody.innerHTML = `<tr><td colspan="4">Error al cargar los datos: ${err.message}</td></tr>`;
-        });
-
-    modal.show();
-}
-
-
-
-
-
-
-
-
-</script>
+        </script>
         <!-- Formulario de Generación de Reportes -->
         <div class="card mb-4">
             <div class="card-header">
@@ -390,6 +382,7 @@ function mostrarListado(tipo, categoria = null) {
                         <button type="submit" class="btn btn-primary">Generar Reporte</button>
                     </div>
                 </form>
+
             </div>
         </div>
 
@@ -704,9 +697,6 @@ function mostrarListado(tipo, categoria = null) {
 
 
 
-
-
-
                     // Agregar evento al botón de generar PDF
                     $('.btn-primary.float-end').on('click', function(e) {
                         console.log('Botón de generar PDF clickeado'); // Verificar si el botón fue clickeado
@@ -725,80 +715,62 @@ function mostrarListado(tipo, categoria = null) {
                                 responseType: 'blob' // to avoid binary data being mangled on charset conversion
                             },
                             success: function(blob, status, xhr) {
-                                console.log('PDF generado con éxito'); // Confirmar que se generó el PDF correctamente
-                                console.log('Estado de la respuesta:', status); // Mostrar el estado de la respuesta
-                                console.log('XHR:', xhr); // Verificar el objeto XHR para más detalles
+                                console.log('PDF generado con éxito');
+                                console.log('Estado de la respuesta:', status);
+                                console.log('XHR:', xhr);
 
-                                // Check for a filename
+                                if (blob.size === 0) {
+                                    console.error('El archivo generado está vacío.');
+                                    alert('Hubo un problema al generar el PDF. El archivo parece estar vacío.');
+                                    return;
+                                }
+
                                 var filename = "";
                                 var disposition = xhr.getResponseHeader('Content-Disposition');
-                                console.log('Content-Disposition:', disposition); // Verificar el header Content-Disposition
+                                console.log('Content-Disposition:', disposition);
 
                                 if (disposition && disposition.indexOf('attachment') !== -1) {
                                     var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
                                     var matches = filenameRegex.exec(disposition);
                                     if (matches != null && matches[1]) {
                                         filename = matches[1].replace(/['"]/g, '');
-                                        console.log('Nombre del archivo:', filename); // Mostrar el nombre del archivo
+                                        console.log('Nombre del archivo:', filename);
                                     }
                                 }
 
-                                if (typeof window.navigator.msSaveBlob !== 'undefined') {
-                                    // IE workaround for "HTML7007: One or more blob URLs were revoked by closing the blob for which they were created. These URLs will no longer resolve as the data backing the URL has been freed."
-                                    console.log('Usando msSaveBlob para IE'); // Indicar que se está usando la solución para IE
-                                    window.navigator.msSaveBlob(blob, filename);
-                                } else {
-                                    var URL = window.URL || window.webkitURL;
-                                    var downloadUrl = URL.createObjectURL(blob);
-                                    console.log('URL de descarga:', downloadUrl); // Mostrar la URL de descarga
+                                var URL = window.URL || window.webkitURL;
+                                var downloadUrl = URL.createObjectURL(blob);
+                                console.log('URL de descarga:', downloadUrl);
 
-                                    if (filename) {
-                                        // Use HTML5 a[download] attribute to specify filename
-                                        var a = document.createElement("a");
-                                        // Safari doesn't support this yet
-                                        if (typeof a.download === 'undefined') {
-                                            console.log('Safari detectado, redirigiendo a la URL de descarga');
-                                            window.location.href = downloadUrl;
-                                        } else {
-                                            a.href = downloadUrl;
-                                            a.download = filename;
-                                            document.body.appendChild(a);
-                                            console.log('Iniciando descarga del archivo'); // Confirmar que la descarga se está iniciando
-                                            a.click();
-                                        }
-                                    } else {
-                                        console.log('Descarga sin nombre de archivo, redirigiendo directamente');
+                                if (filename) {
+                                    var a = document.createElement("a");
+                                    if (typeof a.download === 'undefined') {
+                                        console.log('Safari detectado, redirigiendo a la URL de descarga');
                                         window.location.href = downloadUrl;
+                                    } else {
+                                        a.href = downloadUrl;
+                                        a.download = filename;
+                                        document.body.appendChild(a);
+                                        console.log('Iniciando descarga del archivo');
+                                        a.click();
                                     }
-
-                                    setTimeout(function() {
-                                        console.log('Revocando URL de descarga'); // Confirmar que se está revocando la URL de descarga
-                                        URL.revokeObjectURL(downloadUrl);
-                                    }, 100); // Cleanup
+                                } else {
+                                    console.log('Descarga sin nombre de archivo, redirigiendo directamente');
+                                    window.location.href = downloadUrl;
                                 }
+
+                                setTimeout(function() {
+                                    console.log('Revocando URL de descarga');
+                                    URL.revokeObjectURL(downloadUrl);
+                                }, 100);
                             },
-                            error: function(xhr, status, error) {
-                                console.error('Error al generar el PDF:', status, error); // Mostrar detalles del error
-                                console.log('XHR:', xhr); // Mostrar el objeto XHR para más detalles
-                                alert('Hubo un problema al generar el PDF. Por favor, intenta de nuevo.');
-                            }
+
                         });
                     });
-
-
-
-
-
-
-                },
-                error: function(xhr, status, error) {
-                    console.error('Error en la solicitud AJAX:', status, error);
-                    Swal.fire('Error', 'Hubo un problema al generar el reporte. Por favor, intenta de nuevo.', 'error');
                 }
-            });
-        });
-
-    });
+            })
+        })
+    })
 </script>
 
 

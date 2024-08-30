@@ -1,41 +1,43 @@
 <?php
 session_start();
 include_once('../../configuracion/conexion.php');
-require('../reportes/fpdf/fpdf.php');
+require('../../reportes/fpdf/fpdf.php');
+header('Content-Type: application/pdf');
+header('Content-Disposition: attachment; filename="reporte.pdf"');
+echo $pdfContent; // Suponiendo que $pdfContent contiene los datos binarios del PDF
 
 class PDF extends FPDF
 {
+    // Cabecera de página
     function Header()
     {
         $this->SetFont('Times', 'B', 20);
-        $this->Image('../img/triangulosrecortadosnaranja.png', 0, 0, 70); // imagen(archivo, png/jpg || x,y,tamaño)
+        $this->Image('../img/triangulosrecortadosnaranja.png', 0, 0, 70);
         $this->SetXY(60, 15);
-        $this->Cell(100, 8, 'Reporte de Inventario', 0, 1, 'C', 0);
-        $this->Image('../img/logo_sinfondo.png', 160, 10, 35); // imagen(archivo, png/jpg || x,y,tamaño)
+        $this->Cell(100, 8, 'Reporte de Pagos', 0, 1, 'C', 0);
+        $this->Image('../img/logo_sinfondo.png', 160, 10, 35);
         $this->Ln(40);
     }
 
     // Pie de página
     function Footer()
     {
-        // Posición: a 1,5 cm del final
         $this->SetY(-15);
-        // Arial italic 8
         $this->SetFont('Arial', 'B', 10);
-        // Número de página
         $this->Cell(170, 10, 'Todos los derechos reservados', 0, 0, 'C', 0);
         $this->Cell(25, 10, utf8_decode('Página ') . $this->PageNo() . '/{nb}', 0, 0, 'C');
     }
-    
 }
-// Creación del objeto de la clase heredada
-$pdf = new PDF(); // hacemos una instancia de la clase
-$pdf->AliasNbPages();
-$pdf->AddPage(); // añade la página / en blanco
-$pdf->SetMargins(10, 10, 10);
-$pdf->SetAutoPageBreak(true, 20); // salto de página automático
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+// Creación del objeto de la clase heredada
+$pdf = new PDF();
+$pdf->AliasNbPages();
+$pdf->AddPage();
+$pdf->SetMargins(10, 10, 10);
+$pdf->SetAutoPageBreak(true, 20);
+
+// Procesar los datos del formulario
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $tipo_informe = $_POST['tipo_informe'] ?? '';
     $id_especifico = $_POST['id_especifico'] ?? '';
     $fecha_inicio = $_POST['fecha_inicio'] ?? '';
@@ -43,12 +45,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Validación de datos
     if (empty($tipo_informe) || empty($id_especifico) || empty($fecha_inicio) || empty($fecha_fin)) {
-        die("Todos los campos son obligatorios.");
+        die('Todos los campos son obligatorios.');
     }
 
     // Parte común de la consulta SQL para formatear la fecha
     $fecha_formato = "CONCAT(ELT(MONTH(p.FECHA_PAGO), 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'), '-', YEAR(p.FECHA_PAGO)) AS MES_ANIO";
 
+    // Definir la consulta SQL según el tipo de informe
     if ($tipo_informe === 'categoria') {
         $sql = "SELECT c.CATEGORIA AS NOMBRE, 
                         CONCAT(d.NOMBRE_DEPO, ' ', d.APELLIDO_DEPO) AS NOMBRE_COMPLETO,
@@ -80,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 LEFT JOIN tab_estado_pagos ep ON p.ID_PAGO = ep.ID_PAGO
                 WHERE r.ID_REPRESENTANTE = :id AND p.FECHA_PAGO BETWEEN :fecha_inicio AND :fecha_fin";
     } else {
-        die("Tipo de informe no válido.");
+        die('Tipo de informe no válido.');
     }
 
     try {
@@ -90,79 +93,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bindParam(':fecha_fin', $fecha_fin, PDO::PARAM_STR);
         $stmt->execute();
 
-        $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        if (empty($data)) {
-            die("No se encontraron datos para los criterios seleccionados.");
+        if (empty($resultados)) {
+            die('No se encontraron datos para los criterios seleccionados.');
         }
 
-        // Crear PDF
-        $pdf = new PDF();
-        $pdf->AliasNbPages();
-        $pdf->AddPage();
-        $pdf->SetFont('Arial', '', 12);
+        // Encabezado de la tabla en PDF
+        $pdf->SetFont('Helvetica', 'B', 12);
+        $pdf->SetFillColor(233, 229, 235);
+        $pdf->SetDrawColor(61, 61, 61);
 
-        // Añadir los datos al PDF
-        $pdf->Cell(0, 10, "Tipo de informe: " . ucfirst($tipo_informe), 0, 1);
-        $pdf->Cell(0, 10, "Período: $fecha_inicio a $fecha_fin", 0, 1);
-        $pdf->Ln(10);
-
-        // Encabezados de la tabla
-        $pdf->SetFont('Arial', 'B', 12);
-        if ($tipo_informe === 'categoria') {
-            $pdf->Cell(40, 10, 'Categoría', 1);
-            $pdf->Cell(50, 10, 'Deportista', 1);
-            $pdf->Cell(30, 10, 'Mes/Año', 1);
-            $pdf->Cell(30, 10, 'Monto', 1);
-            $pdf->Cell(30, 10, 'Estado', 1);
-        } elseif ($tipo_informe === 'deportista') {
-            $pdf->Cell(60, 10, 'Deportista', 1);
-            $pdf->Cell(40, 10, 'Mes/Año', 1);
-            $pdf->Cell(40, 10, 'Monto', 1);
-            $pdf->Cell(40, 10, 'Estado', 1);
-        } elseif ($tipo_informe === 'representante') {
-            $pdf->Cell(50, 10, 'Representante', 1);
-            $pdf->Cell(50, 10, 'Deportista', 1);
-            $pdf->Cell(30, 10, 'Mes/Año', 1);
-            $pdf->Cell(30, 10, 'Monto', 1);
-            $pdf->Cell(30, 10, 'Estado', 1);
+        // Ajustar el ancho de las columnas según el tipo de informe
+        if ($tipo_informe === 'categoria' || $tipo_informe === 'representante') {
+            $pdf->Cell(50, 8, 'Nombre', 1, 0, 'C', 1);
+            $pdf->Cell(50, 8, 'Deportista', 1, 0, 'C', 1);
+        } else {
+            $pdf->Cell(70, 8, 'Nombre', 1, 0, 'C', 1);
         }
-        $pdf->Ln();
+        $pdf->Cell(30, 8, 'Mes-Año', 1, 0, 'C', 1);
+        $pdf->Cell(20, 8, 'Monto', 1, 0, 'C', 1);
+        $pdf->Cell(20, 8, 'Estado', 1, 1, 'C', 1);
 
-        // Datos de la tabla
-        $pdf->SetFont('Arial', '', 12);
-        foreach ($data as $row) {
+        $pdf->SetFont('Arial', '', 10);
+
+        foreach ($resultados as $row) {
             if ($tipo_informe === 'categoria') {
-                $pdf->Cell(40, 10, $row['NOMBRE'], 1);
-                $pdf->Cell(50, 10, $row['NOMBRE_COMPLETO'], 1);
-                $pdf->Cell(30, 10, $row['MES_ANIO'], 1);
-                $pdf->Cell(30, 10, $row['MONTO'], 1);
-                $pdf->Cell(30, 10, $row['ESTADO'], 1);
+                $pdf->Cell(50, 8, utf8_decode($row['NOMBRE']), 1, 0, 'L');
+                $pdf->Cell(50, 8, utf8_decode($row['NOMBRE_COMPLETO']), 1, 0, 'L');
             } elseif ($tipo_informe === 'deportista') {
-                $pdf->Cell(60, 10, $row['NOMBRE_COMPLETO'], 1);
-                $pdf->Cell(40, 10, $row['MES_ANIO'], 1);
-                $pdf->Cell(40, 10, $row['MONTO'], 1);
-                $pdf->Cell(40, 10, $row['ESTADO'], 1);
+                $pdf->Cell(70, 8, utf8_decode($row['NOMBRE_COMPLETOS']), 1, 0, 'L');
             } elseif ($tipo_informe === 'representante') {
-                $pdf->Cell(50, 10, $row['NOMBRE_COMPLETO_REPRE'], 1);
-                $pdf->Cell(50, 10, $row['NOMBRE_COMPLETO_DEPO'], 1);
-                $pdf->Cell(30, 10, $row['MES_ANIO'], 1);
-                $pdf->Cell(30, 10, $row['MONTO'], 1);
-                $pdf->Cell(30, 10, $row['ESTADO'], 1);
+                $pdf->Cell(50, 8, utf8_decode($row['NOMBRE_COMPLETO_REPRE']), 1, 0, 'L');
+                $pdf->Cell(50, 8, utf8_decode($row['NOMBRE_COMPLETO_DEPO']), 1, 0, 'L');
             }
-            $pdf->Ln();
+            $pdf->Cell(30, 8, $row['MES_ANIO'], 1, 0, 'C');
+            $pdf->Cell(20, 8, '$' . number_format($row['MONTO'], 2), 1, 0, 'R');
+            $pdf->Cell(20, 8, $row['ESTADO'], 1, 1, 'C');
         }
 
-        header('Content-Type: application/pdf');
-        header('Content-Disposition: attachment; filename="Reporte_Pagos.pdf"');
-        header('Content-Length: ' . strlen($pdf->Output('S'))); // Si necesitas conocer la longitud del archivo
-
-        $pdf->Output('D', 'Reporte_Pagos.pdf');
-        file_put_contents('debug_pdf.pdf', $pdf->Output('S')); // Guarda el PDF en un archivo temporal para revisarlo
-
+        // Salida del PDF
+        $pdf->Output('F', 'Reporte_Pagos.pdf');
     } catch (PDOException $e) {
-        die("Error en la base de datos: " . $e->getMessage());
+        die("Error en la consulta: " . $e->getMessage());
     }
 } else {
-    die("Método no permitido");
+    die('Método de solicitud no permitido.');
 }
+?>
