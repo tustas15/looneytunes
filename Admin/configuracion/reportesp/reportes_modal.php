@@ -22,21 +22,24 @@ try {
             $query = "SELECT D.NOMBRE_DEPO AS DEPORTISTA, C.CATEGORIA, P.MONTO, DATE_FORMAT(P.FECHA_PAGO, '%m/%Y') AS FECHA
                           FROM tab_pagos P
                           JOIN tab_deportistas D ON P.ID_DEPORTISTA = D.ID_DEPORTISTA
-                          JOIN tab_categorias C ON D.ID_CATEGORIA = C.ID_CATEGORIA
+                          JOIN tab_categoria_deportista CD ON D.ID_DEPORTISTA = CD.ID_DEPORTISTA
+                          JOIN tab_categorias C ON CD.ID_CATEGORIA = C.ID_CATEGORIA
                           WHERE P.FECHA_PAGO <= DATE_SUB(CURDATE(), INTERVAL 8 DAY)
                           ORDER BY D.NOMBRE_DEPO";
         } elseif ($tipo === 'atrasados') {
             $query = "SELECT D.NOMBRE_DEPO AS DEPORTISTA, C.CATEGORIA, P.MONTO, DATE_FORMAT(P.FECHA_PAGO, '%m/%Y') AS FECHA
                       FROM tab_pagos P
                       JOIN tab_deportistas D ON P.ID_DEPORTISTA = D.ID_DEPORTISTA
-                      JOIN tab_categorias C ON D.ID_CATEGORIA = C.ID_CATEGORIA
+                          JOIN tab_categoria_deportista CD ON D.ID_DEPORTISTA = CD.ID_DEPORTISTA
+                          JOIN tab_categorias C ON CD.ID_CATEGORIA = C.ID_CATEGORIA
                       WHERE P.FECHA_PAGO > DATE_SUB(CURDATE(), INTERVAL 8 DAY)
                       ORDER BY D.NOMBRE_DEPO";
         } elseif ($tipo === 'categoria-mayor-atraso') {
             $query = "SELECT C.CATEGORIA, DATE_FORMAT(P.FECHA_PAGO, '%m/%Y') AS FECHA, COUNT(*) AS CANTIDAD_ATRASOS
                       FROM tab_pagos P
                       JOIN tab_deportistas D ON P.ID_DEPORTISTA = D.ID_DEPORTISTA
-                      JOIN tab_categorias C ON D.ID_CATEGORIA = C.ID_CATEGORIA
+                          JOIN tab_categoria_deportista CD ON D.ID_DEPORTISTA = CD.ID_DEPORTISTA
+                          JOIN tab_categorias C ON CD.ID_CATEGORIA = C.ID_CATEGORIA
                       WHERE P.FECHA_PAGO > DATE_SUB(CURDATE(), INTERVAL 1 MONTH)
                       GROUP BY C.CATEGORIA, FECHA
                       ORDER BY CANTIDAD_ATRASOS DESC";
