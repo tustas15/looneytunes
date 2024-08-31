@@ -10,19 +10,47 @@ function obtenerEstadisticas($conn)
     $stats = [];
 
     // Ejemplo de consulta para deportistas al día
-    $stmt = $conn->query("SELECT COUNT(*) AS COUNT FROM TAB_PAGOS WHERE FECHA_PAGO <= DATE_SUB(CURDATE(), INTERVAL 8 DAY)");
+    $stmt = $conn->query("SELECT COUNT(*) AS COUNT
+FROM (
+    SELECT ID_DEPORTISTA
+    FROM TAB_PAGOS
+    WHERE FECHA_PAGO >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)
+    GROUP BY ID_DEPORTISTA
+) AS Pagos_Ultimo_Mes;");
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
     $stats['deportistas_al_dia'] = $row['COUNT'];
 
     // Ejemplo de consulta para deportistas no al día
-    $stmt = $conn->query("SELECT COUNT(*) AS COUNT FROM TAB_PAGOS WHERE FECHA_PAGO > DATE_SUB(CURDATE(), INTERVAL 8 DAY) OR FECHA_PAGO IS NULL");
+    $stmt = $conn->query("SELECT COUNT(*) AS COUNT
+FROM (
+    SELECT ID_DEPORTISTA
+    FROM TAB_PAGOS
+    WHERE FECHA_PAGO = (
+        SELECT MAX(FECHA_PAGO)
+        FROM TAB_PAGOS AS T2
+        WHERE T2.ID_DEPORTISTA = TAB_PAGOS.ID_DEPORTISTA
+    )
+    GROUP BY ID_DEPORTISTA
+    HAVING MAX(FECHA_PAGO) <= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)
+) AS UltimosRegistros;");
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
     $stats['deportistas_no_al_dia'] = $row['COUNT'];
 
 
 
     // Ejemplo de consulta para total meses pagados
-    $stmt = $conn->query("SELECT COUNT(DISTINCT MONTH(FECHA_PAGO)) AS COUNT FROM TAB_PAGOS WHERE FECHA_PAGO IS NOT NULL");
+    $stmt = $conn->query("SELECT COUNT(*) AS COUNT
+FROM (
+    SELECT ID_DEPORTISTA
+    FROM TAB_PAGOS
+    WHERE FECHA_PAGO = (
+        SELECT MAX(FECHA_PAGO)
+        FROM TAB_PAGOS AS T2
+        WHERE T2.ID_DEPORTISTA = TAB_PAGOS.ID_DEPORTISTA
+    )
+    GROUP BY ID_DEPORTISTA
+    HAVING MAX(FECHA_PAGO) <= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)
+) AS UltimosRegistros;");
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
     $stats['categoria_mayor_atraso'] = $row['COUNT'];
 
@@ -92,7 +120,7 @@ include '../../IncludesPro/header.php';
             <div class="col-xl-3 col-md-6">
                 <div class="card bg-info text-white mb-4">
                     <div class="card-body">
-                        <h5 class="card-title">Categoría con Mayor Pagos Atrasados</h5>
+                        <h5 class="card-title">Atrasados por Categoria</h5>
                         <h2 class="display-4" id="categoria-mayor-atraso"><?php echo $stats['categoria_mayor_atraso']; ?></h2>
                         <button class="btn btn-light mt-2" onclick="mostrarListado('categoria-mayor-atraso')">Ver Listado</button>
                     </div>
@@ -180,7 +208,7 @@ include '../../IncludesPro/header.php';
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="categoriaMayorAtrasoModalLabel">Categoría con Mayor Número de Pagos Atrasados</h5>
+                        <h5 class="modal-title" id="categoriaMayorAtrasoModalLabel">Atrasados por Categoria</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -188,7 +216,6 @@ include '../../IncludesPro/header.php';
                             <thead>
                                 <tr>
                                     <th>Categoría</th>
-                                    <th>Fecha</th>
                                     <th>Cantidad de Atrasos</th>
                                 </tr>
                             </thead>
@@ -284,27 +311,32 @@ include '../../IncludesPro/header.php';
                         }
 
                         if (tipo === 'meses-pagados') {
-                            thead.innerHTML = `
-                    <tr>
-                        <th>Año</th>
-                        <th>Mes</th>
-                        <th>Total Pagado</th>
-                    </tr>
-                `;
-                            data.forEach(d => {
-                                const tr = document.createElement('tr');
-                                tr.innerHTML = `
-                        <td>${d.ANIO}</td>
-                        <td>${d.MES}</td>
-                        <td>$${parseFloat(d.TOTAL).toFixed(2)}</td>
-                    `;
-                                tbody.appendChild(tr);
-                            });
-                        } else if (tipo === 'categoria-mayor-atraso') {
+    const meses = [
+        'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+        'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+    ];
+
+    thead.innerHTML = `
+        <tr>
+            <th>Año</th>
+            <th>Mes</th>
+            <th>Total Pagado</th>
+        </tr>
+    `;
+    
+    data.forEach(d => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${d.ANIO}</td>
+            <td>${meses[d.MES - 1]}</td> <!-- Convertimos el número del mes al nombre del mes -->
+            <td>$${parseFloat(d.TOTAL).toFixed(2)}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+} else if (tipo === 'categoria-mayor-atraso') {
                             thead.innerHTML = `
                     <tr>
                         <th>Categoría</th>
-                        <th>Fecha</th>
                         <th>Cantidad de Atrasos</th>
                     </tr>
                 `;
@@ -312,7 +344,6 @@ include '../../IncludesPro/header.php';
                                 const tr = document.createElement('tr');
                                 tr.innerHTML = `
                         <td>${d.CATEGORIA}</td>
-                        <td>${d.FECHA}</td>
                         <td>${d.CANTIDAD_ATRASOS}</td>
                     `;
                                 tbody.appendChild(tr);
@@ -323,7 +354,7 @@ include '../../IncludesPro/header.php';
                         <th>Deportista</th>
                         <th>Categoría</th>
                         <th>Monto</th>
-                        <th>Fecha</th>
+                        <th>Ultimo Pago</th>
                     </tr>
                 `;
                             data.forEach(d => {
