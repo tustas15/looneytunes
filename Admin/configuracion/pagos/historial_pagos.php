@@ -9,6 +9,7 @@ try {
         FROM tab_pagos p
         INNER JOIN tab_representantes r ON p.ID_REPRESENTANTE = r.ID_REPRESENTANTE
         INNER JOIN tab_deportistas d ON p.ID_DEPORTISTA = d.ID_DEPORTISTA
+
         ORDER BY p.FECHA_PAGO DESC";
         
     $stmt = $conn->prepare($sql);

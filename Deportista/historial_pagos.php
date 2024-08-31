@@ -1,18 +1,23 @@
 <?php
 // Incluir archivo de conexión a la base de datos
 require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
+
 try {
-    // Consulta SQL modificada para obtener nombres de deportistas y representantes
+    // Consultar todos los pagos con información detallada
     $sql = "
         SELECT p.ID_PAGO, r.NOMBRE_REPRE, r.APELLIDO_REPRE, d.NOMBRE_DEPO, d.APELLIDO_DEPO, 
                p.FECHA_PAGO, p.METODO_PAGO, p.MONTO, p.MOTIVO
         FROM tab_pagos p
         INNER JOIN tab_representantes r ON p.ID_REPRESENTANTE = r.ID_REPRESENTANTE
         INNER JOIN tab_deportistas d ON p.ID_DEPORTISTA = d.ID_DEPORTISTA
+        WHERE p.REGISTRADO_POR = :tipo_usuario AND p.ID_DEPORTISTA = :id_deportista
         ORDER BY p.FECHA_PAGO DESC";
         
     $stmt = $conn->prepare($sql);
-    $stmt->execute();
+    $stmt->execute([
+        ':tipo_usuario' => 'DEPORTISTA', // Valor fijo para el tipo de usuario
+        ':id_deportista' => $_SESSION['user_id'] // Obtener ID del deportista desde la sesión
+    ]);
     $pagos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Preparar los datos para DataTables
@@ -35,3 +40,7 @@ try {
 } catch (PDOException $e) {
     echo json_encode(['error' => 'Error al obtener los pagos: ' . $e->getMessage()]);
 }
+
+// Cerrar la conexión a la base de datos
+$conn = null;
+?>

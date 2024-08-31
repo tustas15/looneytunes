@@ -1,6 +1,6 @@
 <?php
 $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
-
+//$tipo_usuario = $_SESSION['tipo_usuario'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -16,8 +16,7 @@ $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
     <link href="https://cdn.jsdelivr.net/npm/litepicker/dist/css/litepicker.css" rel="stylesheet" />
     <link href="../Assets/css/styles.css" rel="stylesheet" />
     <link rel="icon" type="image/x-icon" href="../Assets/img/logo.png" />
-    <!-- Bootstrap CSS -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap CSS -->    
     <script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.28.0/feather.min.js" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
@@ -28,7 +27,7 @@ $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
         <!-- Sidenav Toggle Button-->
         <button class="btn btn-icon btn-transparent-dark order-1 order-lg-0 me-2 ms-lg-2 me-lg-0" id="sidebarToggle"><i data-feather="menu"></i></button>
         <!-- Navbar Brand-->
-        <a class="navbar-brand pe-3 ps-4 ps-lg-2" href="/looneytunes/indexDep.php">Dashboard</a>
+        <a class="navbar-brand pe-3 ps-4 ps-lg-2" href="indexDep.php">Dashboard</a>
         <!-- Navbar Items-->
         <ul class="navbar-nav align-items-center ms-auto">
 
@@ -131,17 +130,18 @@ $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
                         <!-- Sidenav Menu Heading (Core)-->
                         <div class="sidenav-menu-heading">Core</div>
                         <!-- Sidenav Accordion (Dashboard)-->
-                        <a class="nav-link" href=" /looneytunes/index.php">
+                        <a class="nav-link" href="indexDep.php">
                             <div class="nav-link-icon"><i data-feather="home"></i></div>
                             Dashboard
                         </a>
-
-                        <!-- Sidenav Heading (App Views)-->
-                        <div class="sidenav-menu-heading">Interfaz</div>
-                        <a class="nav-link collapsed" href="../deportista/pagosdepo.php">
-                            <div class="nav-link-icon"><i class="fas fa-fw fa-cog"></i></div>
-                            Registrar Pago
+                        <a class="nav-link" href="pagosdepo.php">
+                            <div class="nav-link-icon"><i data-feather="home"></i></div>
+                            Pagos
                         </a>
+
+                        <!-- Sidenav Accordion (Productos)-->
+
+
                             <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
                                 <div class="nav-link-icon"><i class="fas fa-fw fa-chart-area"></i></div>
                                 Gráfica
