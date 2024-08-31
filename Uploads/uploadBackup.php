@@ -9,25 +9,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $ip = $_SERVER['REMOTE_ADDR']; // Obtener la IP del cliente
         $userId = $_SESSION['user_id']; // Asegúrate de tener el ID del usuario en la sesión
 
-        // Leer el contenido del archivo SQL
-        $sql = file_get_contents($backupFile);
-
-        // Verificar si el archivo se pudo leer correctamente
-        if ($sql === false) {
-            $_SESSION['message'] = "Error al leer el archivo de respaldo.";
-            $_SESSION['message_type'] = 'danger';
-            header('Location: ' . $_SERVER['HTTP_REFERER']);
-            exit();
-        }
-
-        // Dividir el contenido en múltiples declaraciones SQL
-        $sqlCommands = explode(";", $sql);
-
         try {
             // Deshabilitar las verificaciones de clave externa
             $conn->query('SET foreign_key_checks = 0');
 
-            // Vaciar todas las tablas antes de restaurar
+            // Eliminar todas las tablas antes de restaurar
             $tables = $conn->query("SHOW TABLES");
             if ($tables === false) {
                 $_SESSION['message'] = "Error al obtener la lista de tablas.";
@@ -37,20 +23,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
 
             while ($row = $tables->fetch(PDO::FETCH_ASSOC)) {
-                $tableName = $row['Tables_in_looneytunes']; // Obtener el nombre de la tabla usando FETCH_ASSOC
-                $conn->query('TRUNCATE TABLE `' . $tableName . '`');
+                $tableName = $row['Tables_in_looneytunes']; // Ajusta según el nombre de tu base de datos
+                $conn->query('DROP TABLE IF EXISTS `' . $tableName . '`');
             }
 
-            // Ejecutar cada declaración SQL
-            foreach ($sqlCommands as $command) {
-                if (!empty(trim($command))) {
-                    if ($conn->exec($command) === false) {
-                        $_SESSION['message'] = "Error ejecutando la consulta: " . $conn->errorInfo()[2];
-                        $_SESSION['message_type'] = 'danger';
-                        header('Location: ' . $_SERVER['HTTP_REFERER']);
-                        exit();
-                    }
-                }
+            // Leer y ejecutar el archivo SQL completo
+            $sql = file_get_contents($backupFile);
+            if ($conn->exec($sql) === false) {
+                $_SESSION['message'] = "Error ejecutando la restauración: " . $conn->errorInfo()[2];
+                $_SESSION['message_type'] = 'danger';
+                header('Location: ' . $_SERVER['HTTP_REFERER']);
+                exit();
             }
 
             // Rehabilitar las verificaciones de clave externa
