@@ -133,7 +133,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         // Salida del PDF
-        $pdf->Output('F', 'Reporte_Pagos.pdf');
+        $pdf->Output('D]Ln', 'Reporte_Pagos.pdf');
     } catch (PDOException $e) {
         die("Error en la consulta: " . $e->getMessage());
     }

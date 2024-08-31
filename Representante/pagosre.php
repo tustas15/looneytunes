@@ -3,7 +3,7 @@
 session_start();
 require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
 
-$nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'tipo_usuario';
+$nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
 include './includes/header.php';
 ?>
 
@@ -28,6 +28,8 @@ include './includes/header.php';
                             </div>
 
                         </div>
+                        <input type="hidden" id="representante" name="representante" value="<?php echo $_SESSION['user_id']; ?>">
+
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <div class="form-floating mb-3 mb-md-0">
@@ -136,24 +138,24 @@ include './includes/header.php';
                     Historial de Pagos
                 </div>
                 <div class="card-body">
-                <div class="table-responsive">
-                    <table id="historial_pagos" class="table table-striped table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Deportista</th>
-                                <th>Representante</th>
-                                <th>Tipo de Pago</th>
-                                <th>Fecha</th>
-                                <th>Motivo</th>
-                                <th>Monto</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Los datos se cargarán aquí dinámicamente -->
-                        </tbody>
-                    </table>
-                    </div>   
+                    <div class="table-responsive">
+                        <table id="historial_pagos" class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Deportista</th>
+                                    <th>Representante</th>
+                                    <th>Tipo de Pago</th>
+                                    <th>Fecha</th>
+                                    <th>Motivo</th>
+                                    <th>Monto</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Los datos se cargarán aquí dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -207,7 +209,6 @@ include './includes/header.php';
                     });
                 });
         });
-
 
         // Asegúrate de que estas funciones estén presentes en tu código
         function setFechaYMesActual() {
@@ -451,11 +452,12 @@ include './includes/header.php';
 
 
 
-             // Edit button logic
-             $('#historial_pagos').on('click', '.edit-btn', function() {
+            // Edit button logic
+            $('#historial_pagos').on('click', '.edit-btn', function() {
                 var id = $(this).data('id');
                 editarPago(id);
             });
+
             function editarPago(id) {
                 $.ajax({
                     url: '../Admin/configuracion/pagos/obtener_pago.php',
@@ -478,20 +480,20 @@ include './includes/header.php';
                             $('#anio').val(data.ANIO);
                             $('#motivo').val(data.MOTIVO);
                             if (data.METODO_PAGO === 'transferencia') {
-                    $('#banco').val(data.ID_BANCO);
-                    $('#entidad_origen').val(data.ENTIDAD_ORIGEN);
-                    // Mostrar el nombre del archivo si existe
-                    if (data.NOMBRE_ARCHIVO) {
-                        $('#nombre_archivo').siblings('.custom-file-label').addClass("selected").html(data.NOMBRE_ARCHIVO);
-                    }
-                }
+                                $('#banco').val(data.ID_BANCO);
+                                $('#entidad_origen').val(data.ENTIDAD_ORIGEN);
+                                // Mostrar el nombre del archivo si existe
+                                if (data.NOMBRE_ARCHIVO) {
+                                    $('#nombre_archivo').siblings('.custom-file-label').addClass("selected").html(data.NOMBRE_ARCHIVO);
+                                }
+                            }
 
                             $('button[type="submit"]').text('Guardar Cambios');
 
-                        $('html, body').animate({
-                            scrollTop: $("#paymentForm").offset().top
-                        }, 500);
-                      } else {
+                            $('html, body').animate({
+                                scrollTop: $("#paymentForm").offset().top
+                            }, 500);
+                        } else {
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Error',

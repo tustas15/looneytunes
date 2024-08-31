@@ -5,23 +5,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['id'])) {
     $id_pago = $_POST['id'];
 
     try {
-        // Eliminar los registros dependientes en tab_estado_pagos
-        $sql = "DELETE FROM tab_estado_pagos WHERE ID_PAGO = :id";
-        $stmt = $conn->prepare($sql);
-        $stmt->execute([':id' => $id_pago]);
+        // Verificar si el registro existe
+        $sql_check = "SELECT COUNT(*) FROM tab_pagos WHERE ID_PAGO = :id";
+        $stmt_check = $conn->prepare($sql_check);
+        $stmt_check->execute([':id' => $id_pago]);
+        $exists = $stmt_check->fetchColumn();
 
-        // Luego eliminar el registro en tab_pagos
-        $sql = "DELETE FROM tab_pagos WHERE ID_PAGO = :id";
-        $stmt = $conn->prepare($sql);
-        $stmt->execute([':id' => $id_pago]);
+        if ($exists) {
+            // Eliminar los registros dependientes en tab_estado_pagos
+            $sql_delete_estado = "DELETE FROM tab_estado_pagos WHERE ID_PAGO = :id";
+            $stmt_delete_estado = $conn->prepare($sql_delete_estado);
+            $stmt_delete_estado->execute([':id' => $id_pago]);
 
-        if ($stmt->rowCount() > 0) {
-            echo json_encode(['success' => true]);
+            // Luego eliminar el registro en tab_pagos
+            $sql_delete_pago = "DELETE FROM tab_pagos WHERE ID_PAGO = :id";
+            $stmt_delete_pago = $conn->prepare($sql_delete_pago);
+            $stmt_delete_pago->execute([':id' => $id_pago]);
+
+            if ($stmt_delete_pago->rowCount() > 0) {
+                echo json_encode(['success' => true, 'message' => 'Pago y registros relacionados eliminados correctamente']);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'No se pudo eliminar el pago']);
+            }
         } else {
-            echo json_encode(['success' => false, 'message' => 'No se encontró el pago o ya fue eliminado']);
+            echo json_encode(['success' => false, 'message' => 'El pago no existe']);
         }
     } catch (PDOException $e) {
-        echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        echo json_encode(['success' => false, 'message' => 'Error en la operación: ' . $e->getMessage()]);
     }
 } else {
     echo json_encode(['success' => false, 'message' => 'Solicitud inválida']);

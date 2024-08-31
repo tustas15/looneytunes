@@ -1,8 +1,10 @@
 <?php
+session_start();
+
 // Conexión a la base de datos
 require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
 
-$nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'tipo_usuario';
+$nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
 include './includes/header.php';
 ?>
 
@@ -22,6 +24,7 @@ include './includes/header.php';
                 <div class="card-body">
                     <form id="paymentForm" enctype="multipart/form-data">
                         <input type="hidden" id="id_pago" name="id_pago">
+                        <input type="hidden" id="deportista" name="deportista" value="<?php echo $deportista; ?>">                
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <div class="form-floating mb-3 mb-md-0">
@@ -152,61 +155,23 @@ include './includes/header.php';
             </div>
         </div>
     </main>
-    <?php include './includes/footer.php'; ?>
+    <?php include './includes/footer.php';?>
 
     <script>
-       document.getElementById('paymentForm').addEventListener('submit', function(event) {
-    event.preventDefault();
-
-    const formData = new FormData(this);
-    const isUpdating = formData.has('id_pago'); // Verifica si el formulario incluye un campo de ID para saber si es actualización
-
-    formData.append('isUpdating', isUpdating); // Añade esta información al FormData
-
-    fetch('/looneytunes/admin/configuracion/whatsapp/index.php', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
-                // Lógica para mostrar el mensaje de éxito
-                console.log(isUpdating ? "Mensaje de actualización enviado" : "Mensaje de nuevo pago enviado");
-
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Mensaje de WhatsApp enviado',
-                    text: isUpdating ? 'Notificación de actualización enviada' : 'Notificación de nuevo pago enviada',
-                    confirmButtonText: 'Aceptar'
-                });
-            } else {
-                // Lógica para manejar el error
-                console.error("Error al enviar mensaje de WhatsApp:", data.message);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Error al enviar mensaje de WhatsApp: ' + data.message,
-                    confirmButtonText: 'Aceptar'
-                });
-            }
-        })
-        .catch(error => {
-            // Lógica para manejar el error en la conexión o servidor
-            console.error("Error al enviar mensaje de WhatsApp:", error);
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Error al enviar mensaje de WhatsApp: ' + error,
-                confirmButtonText: 'Aceptar'
-            });
-        });
-});
+      
 
 
 
 
 
 
+
+
+
+
+
+
+      
         // Asegúrate de que estas funciones estén presentes en tu código
         function setFechaYMesActual() {
             var today = new Date();
@@ -336,47 +301,53 @@ include './includes/header.php';
 
                 var formData = new FormData(this);
                 var isUpdating = $('#id_pago').val() !== "";
-                var url = isUpdating ? '../Admin/configuracion/pagos/actualizar.php' : 'registrar_pagos.php';
+                var url = isUpdating ? '../Admin/configuracion/pagos/actualizar.php' : 'registrar_pago.php';
                 var successMessage = isUpdating ? 'Pago actualizado correctamente' : 'Pago registrado correctamente';
 
                 $.ajax({
-                    url: url,
-                    method: 'POST',
-                    data: formData,
-                    contentType: false,
-                    processData: false,
-                    dataType: 'json',
-                    success: function(response) {
-                        if (response.success) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Éxito',
-                                text: successMessage
-                            });
-                            table.ajax.reload(null, false); // Recargar la tabla sin perder la página actual
-                            $('#paymentForm')[0].reset();
-                            setFechaYMesActual();
-                            $('button[type="submit"]').text('Registrar Pago');
-                            $('#id_pago').val(''); // Limpiar el campo oculto del ID
-                            // Enviar mensaje de WhatsApp
-                            enviarMensajeWhatsApp(isUpdating);
-                        } else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: response.message
-                            });
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'Error al procesar la solicitud'
-                        });
-                    }
-                });
+    url: url,
+    method: 'POST',
+    data: formData,
+    contentType: false,
+    processData: false,
+    dataType: 'json',
+    success: function(response) {
+        console.log(response); // Añade esto para ver la respuesta en la consola
+        if (response.success) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Éxito',
+                text: successMessage
             });
+            table.ajax.reload(null, false); // Recargar la tabla sin perder la página actual
+            $('#paymentForm')[0].reset();
+            setFechaYMesActual();
+            $('button[type="submit"]').text('Registrar Pago');
+            $('#id_pago').val(''); // Limpiar el campo oculto del ID
+            // Enviar mensaje de WhatsApp
+            enviarMensajeWhatsApp(isUpdating);
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: response.message
+            });
+        }
+    },
+    error: function(xhr, status, error) {
+        console.error(xhr.responseText); // Añade esto para ver el error detallado
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Error al procesar la solicitud'
+        });
+    }
+});
+            })
+
+
+
+
 
            
            
