@@ -149,7 +149,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
 
                         <!-- Enlace a Pago directamente -->
                         <a class="nav-link" href="../representante/pagosre.php">
-                            <div class="nav-link-icon"><i class="fas fa-fw fa-cog"></i></div>
+                            <div class="nav-link-icon"><i class="fas fa-dollar-sign"></i></div>
                             Pago
                         </a>
                     </div>

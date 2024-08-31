@@ -135,7 +135,7 @@ $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
                             Dashboard
                         </a>
                         <a class="nav-link" href="pagosdepo.php">
-                            <div class="nav-link-icon"><i data-feather="home"></i></div>
+                            <div class="nav-link-icon"><i class="fas fa-dollar-sign"></i></div>
                             Pagos
                         </a>
 
