@@ -825,7 +825,6 @@ include './includespro/header.php';
                 <th>Fecha</th>
                 <th>Motivo</th>
                 <th>Monto</th>
-                <th>Actions</th>
             </tr>
         </thead>
         <tfoot>
@@ -836,7 +835,6 @@ include './includespro/header.php';
                 <th>Fecha</th>
                 <th>Motivo</th>
                 <th>Monto</th>
-                <th>Actions</th>
             </tr>
         </tfoot>
         <tbody>
@@ -850,11 +848,6 @@ if (!empty($resultapago)) {
         echo "<td>" . htmlspecialchars(date('d/m/Y', strtotime($row['FECHA_PAGO']))) . "</td>";
         echo "<td>" . htmlspecialchars($row["MOTIVO"]) . "</td>";
         echo "<td>" . htmlspecialchars(number_format($row['MONTO'], 2)) . "</td>";
-        echo '<td>
-                <button class="btn btn-primary btn-sm edit-btn" data-id="' . $row['ID_PAGO'] . '"><i class="fas fa-pencil-alt"></i></button> 
-                <button class="btn btn-danger btn-sm delete-btn" data-id="' . $row['ID_PAGO'] . '"><i class="fas fa-trash"></i></button>
-              </td>';
-        echo "</tr>";
     }
 } else {
     echo "<tr><td colspan='7'>No se encontraron resultados</td></tr>";

@@ -394,7 +394,7 @@ include '../../IncludesPro/header.php';
         <div class="card mb-4" id="reporteContainer" style="display:none;">
             <div class="card-header">
                 <i class="fas fa-table"></i> Tabla de Reportes
-                <button type="submit" class="btn btn-primary float-end">Generar PDF</button>
+               <!-- <button type="submit" class="btn btn-primary float-end">Generar PDF</button>-->
             </div>
             <div class="card-body">
                 <div class="table-responsive">
