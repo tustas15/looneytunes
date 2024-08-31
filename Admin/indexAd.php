@@ -844,8 +844,8 @@ include './includespro/header.php';
 if (!empty($resultapago)) {
     foreach($resultapago as $row) {
         echo "<tr>";
-        echo "<td>" . htmlspecialchars($row["NOMBRE_DEPO"]) . "</td>";
-        echo "<td>" . htmlspecialchars($row["NOMBRE_REPRE"]) . "</td>";
+        echo "<td>" . htmlspecialchars($row["NOMBRE_DEPO"]) . ' ' . $row['APELLIDO_DEPO']. "</td>";
+        echo "<td>" . htmlspecialchars($row["NOMBRE_REPRE"]) . ' ' . $row['APELLIDO_REPRE']. "</td>";
         echo "<td>" . htmlspecialchars($row["METODO_PAGO"]) . "</td>";
         echo "<td>" . htmlspecialchars(date('d/m/Y', strtotime($row['FECHA_PAGO']))) . "</td>";
         echo "<td>" . htmlspecialchars($row["MOTIVO"]) . "</td>";
