@@ -188,6 +188,31 @@ function timeElapsedString($datetime, $full = false)
     return $string ? '' . implode(', ', $string) : 'justo ahora';
 }
 
+try {
+    // Consulta SQL para obtener los datos de tab_pagos
+    $sql = "SELECT p.ID_PAGO, r.NOMBRE_REPRE, r.APELLIDO_REPRE, d.NOMBRE_DEPO, d.APELLIDO_DEPO, 
+               p.FECHA_PAGO, p.METODO_PAGO, p.MONTO, p.MOTIVO
+        FROM tab_pagos p
+        INNER JOIN tab_representantes r ON p.ID_REPRESENTANTE = r.ID_REPRESENTANTE
+        INNER JOIN tab_deportistas d ON p.ID_DEPORTISTA = d.ID_DEPORTISTA
+        ORDER BY p.FECHA_PAGO DESC";
+
+    // Preparar y ejecutar la consulta
+    $stmt = $conn->prepare($sql);
+    if (!$stmt) {
+        throw new PDOException("Error al preparar la consulta.");
+    }
+    $stmt->execute();
+
+    // Obtener el resultado como un array asociativo
+    $resultapago = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+} catch(PDOException $e) {
+    echo "Error: " . $e->getMessage();
+}
+
+
+
 include './includespro/header.php';
 ?>
 <style>
@@ -790,66 +815,54 @@ include './includespro/header.php';
             <div class="card mb-4">
                 <div class="card-header">Personnel Management</div>
                 <div class="card-body">
-                    <div class="table-responsive">
-                        <table id="datatablesSimple" class="table table-striped table-bordered table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Position</th>
-                                    <th>Office</th>
-                                    <th>Age</th>
-                                    <th>Start date</th>
-                                    <th>Salary</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tfoot>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Position</th>
-                                    <th>Office</th>
-                                    <th>Age</th>
-                                    <th>Start date</th>
-                                    <th>Salary</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </tfoot>
-                            <tbody>
-                                <tr>
-                                    <td>Michael Bruce</td>
-                                    <td>Javascript Developer</td>
-                                    <td>Singapore</td>
-                                    <td>29</td>
-                                    <td>2011/06/27</td>
-                                    <td>$183,000</td>
-                                    <td>
-                                        <div class="badge bg-primary text-white rounded-pill">Full-time</div>
-                                    </td>
-                                    <td>
-                                        <button class="btn btn-datatable btn-icon btn-transparent-dark me-2"><i data-feather="more-vertical"></i></button>
-                                        <button class="btn btn-datatable btn-icon btn-transparent-dark"><i data-feather="trash-2"></i></button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Donna Snider</td>
-                                    <td>Customer Support</td>
-                                    <td>New York</td>
-                                    <td>27</td>
-                                    <td>2011/01/25</td>
-                                    <td>$112,000</td>
-                                    <td>
-                                        <div class="badge bg-secondary text-white rounded-pill">Part-time</div>
-                                    </td>
-                                    <td>
-                                        <button class="btn btn-datatable btn-icon btn-transparent-dark me-2"><i data-feather="more-vertical"></i></button>
-                                        <button class="btn btn-datatable btn-icon btn-transparent-dark"><i data-feather="trash-2"></i></button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                <div class="table-responsive">
+    <table id="datatablesSimple" class="table table-striped table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Deportista</th>
+                <th>Representante</th>
+                <th>Tipo de Pago</th>
+                <th>Fecha</th>
+                <th>Motivo</th>
+                <th>Monto</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                <th>Deportista</th>
+                <th>Representante</th>
+                <th>Tipo de Pago</th>
+                <th>Fecha</th>
+                <th>Motivo</th>
+                <th>Monto</th>
+                <th>Actions</th>
+            </tr>
+        </tfoot>
+        <tbody>
+        <?php
+if (!empty($resultapago)) {
+    foreach($resultapago as $row) {
+        echo "<tr>";
+        echo "<td>" . htmlspecialchars($row["NOMBRE_DEPO"]) . ' ' . $row['APELLIDO_DEPO']. "</td>";
+        echo "<td>" . htmlspecialchars($row["NOMBRE_REPRE"]) . ' ' . $row['APELLIDO_REPRE']. "</td>";
+        echo "<td>" . htmlspecialchars($row["METODO_PAGO"]) . "</td>";
+        echo "<td>" . htmlspecialchars(date('d/m/Y', strtotime($row['FECHA_PAGO']))) . "</td>";
+        echo "<td>" . htmlspecialchars($row["MOTIVO"]) . "</td>";
+        echo "<td>" . htmlspecialchars(number_format($row['MONTO'], 2)) . "</td>";
+        echo '<td>
+                <button class="btn btn-primary btn-sm edit-btn" data-id="' . $row['ID_PAGO'] . '"><i class="fas fa-pencil-alt"></i></button> 
+                <button class="btn btn-danger btn-sm delete-btn" data-id="' . $row['ID_PAGO'] . '"><i class="fas fa-trash"></i></button>
+              </td>';
+        echo "</tr>";
+    }
+} else {
+    echo "<tr><td colspan='7'>No se encontraron resultados</td></tr>";
+}
+?>
+        </tbody>
+    </table>
+</div>
                 </div>
             </div>
 
