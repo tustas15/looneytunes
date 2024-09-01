@@ -1,8 +1,30 @@
 <?php
 session_start();
 require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
-$tipo_usuario = isset($_SESSION['user_type']) ? $_SESSION['user_type'] : 'REPRE';
 
+if (!isset($_SESSION['user_id'])) {
+    die("ID de usuario no disponible en la sesión.");
+}
+
+// Obtener el ID del representante usando el ID del usuario
+$id_usuario = $_SESSION['user_id'];
+$sql_representante = "SELECT ID_REPRESENTANTE FROM tab_representantes WHERE ID_USUARIO = :id_usuario";
+
+try {
+    $stmt = $conn->prepare($sql_representante);
+    $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
+    $stmt->execute();
+    $representante = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$representante) {
+        die("No se encontró el representante para el usuario actual.");
+    }
+
+    $id_representante = $representante['ID_REPRESENTANTE'];
+
+} catch (PDOException $e) {
+    die("Error al obtener el ID del representante: " . $e->getMessage());
+}
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id_deportista = $_POST['deportista'] ?? '';
@@ -12,10 +34,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $motivo = $_POST['motivo'] ?? '';
     $nombre_archivo = '';
     $entidad_origen = $_POST['entidad_origen'] ?? '';
-    $tipo_evento = 'nuevo_pago_agregado'; // Tipo de evento para log
-    $id_usuario = $_SESSION['user_id'] ?? null;
-
-
+    $tipo_usuario = $_SESSION['user_type'] ?? 'REPRE';
+    
     if ($metodo_pago === 'efectivo') {
         $id_banco = 0; // ID del banco "Efectivo"
     } else {
@@ -47,7 +67,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 VALUES (:id_representante, :id_deportista, :id_banco, :metodo_pago, :monto, :fecha_pago, :motivo, :nombre_archivo, :entidad_origen, :tipo_usuario)";
         $stmt = $conn->prepare($sql);
         $stmt->execute([
-            ':id_representante' => $id_usuario,
+            ':id_representante' => $id_representante,
             ':id_deportista' => $id_deportista,
             ':id_banco' => $id_banco,
             ':metodo_pago' => $metodo_pago,
@@ -57,26 +77,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ':nombre_archivo' => $nombre_archivo,
             ':entidad_origen' => $entidad_origen,
             ':tipo_usuario' => $tipo_usuario
-
         ]);
 
         $id_pago = $conn->lastInsertId(); // Obtener el ID del pago recién insertado
 
         // Determinar el estado del pago
-        $dia_pago = 8; // Día límite de pago
-        $estado = '';
-
-        $fecha_actual = date('Y-m-d');
-        $dia_actual = date('d', strtotime($fecha_actual));
-
-        if ($dia_actual < $dia_pago) {
-            $estado = 'pagado';
-        } elseif ($dia_actual == $dia_pago) {
-            $estado = 'mes no pagado';
-        } else {
-            $estado = 'pago retrasado';
-        }
-
+        $fecha_pago_datetime = new DateTime($fecha_pago);
+        $estado = ($fecha_pago_datetime->format('d') <= 8) ? 'Pagado' : 'Pago Atrasado';
 
         // Obtener el ID_CATEGORIA basándose en el ID_DEPORTISTA
         $stmt_categoria = $conn->prepare("SELECT ID_CATEGORIA FROM tab_categoria_deportista WHERE ID_DEPORTISTA = :id_deportista");
@@ -85,40 +92,36 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $categoria = $stmt_categoria->fetch(PDO::FETCH_ASSOC);
         $id_categoria = $categoria['ID_CATEGORIA'] ?? null;
 
-        // Determinar el estado del pago
-        $fecha_pago_datetime = new DateTime($fecha_pago);
-        $estado = ($fecha_pago_datetime->format('d') <= 8) ? 'Pagado' : 'Pago Atrasado';
-
-
         // Insertar en la tabla tab_estado_pagos
         $sql_estado = "INSERT INTO tab_estado_pagos (ID_DEPORTISTA, ID_CATEGORIA, ID_PAGO, FECHA, ESTADO)
                        VALUES (:id_deportista, :id_categoria, :id_pago, :fecha, :estado)";
         $stmt_estado = $conn->prepare($sql_estado);
         $stmt_estado->execute([
             ':id_deportista' => $id_deportista,
-            ':id_categoria' => $id_categoria, // Asegúrate de tener este valor disponible
+            ':id_categoria' => $id_categoria,
             ':id_pago' => $id_pago,
             ':fecha' => $fecha_pago,
             ':estado' => $estado
-
-
-
-
-
-
         ]);
 
+        // Registro de log
+        $stmt = $conn->prepare("SELECT NOMBRE_REPRE from tab_representantes where ID_REPRESENTANTE = :id_representante");
+        $stmt->bindParam(':id_representante', $id_representante, PDO::PARAM_INT);
+        $stmt->execute();
+        $nom_repre = $stmt->fetch(PDO::FETCH_ASSOC);
 
-
-
-
-
-
+        $ip = $_SERVER['REMOTE_ADDR'];
+        $evento = "Pago registrado " . $nom_repre['NOMBRE_REPRE'];
+        $tipo_evento = "nuevo_pago_agregado";
+        $query = "INSERT INTO tab_logs (ID_USUARIO, EVENTO, HORA_LOG, DIA_LOG, IP, TIPO_EVENTO) VALUES (?, ?, CURRENT_TIME(), CURRENT_DATE(), ?, ?)";
+        $stmt = $conn->prepare($query);
+        $stmt->execute([$_SESSION['user_id'], $evento, $ip, $tipo_evento]);
 
         $response = [
             'success' => true,
             'message' => 'Pago registrado correctamente'
         ];
+
     } catch (PDOException $e) {
         $response = [
             'success' => false,
@@ -126,22 +129,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         ];
     }
 
-
     header('Content-Type: application/json');
-    $stmt = $conn->prepare("SELECT NOMBRE_REPRE from tab_representantes where ID_REPRESENTANTE = :id_representante");
-    $stmt->bindParam(':id_representante', $id_representante, PDO::PARAM_INT);
-    $stmt->execute();
-    $nom_repre = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    $ip = $_SERVER['REMOTE_ADDR'];
-    $evento = "Pago registrado " . $nom_repre['NOMBRE_REPRE'];
-    $tipo_evento = "nuevo_pago_agregado";
-    $query = "INSERT INTO tab_logs (ID_USUARIO, EVENTO, HORA_LOG, DIA_LOG, IP,TIPO_EVENTO) VALUES (?, ?, CURRENT_TIME(), CURRENT_DATE(), ?,?)";
-    $stmt = $conn->prepare($query);
-    $stmt->execute([$_SESSION['user_id'], $evento, $ip, $tipo_evento]);
-
     echo json_encode($response);
 } else {
     header('HTTP/1.1 405 Method Not Allowed');
     echo json_encode(['success' => false, 'message' => 'Método no permitido']);
 }
+?>

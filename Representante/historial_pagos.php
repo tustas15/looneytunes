@@ -2,24 +2,43 @@
 session_start(); // Asegúrate de iniciar la sesión
 require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
 
-$tipo_usuario = 'REPRESENTANTE'; // Valor fijo si estás en la vista de representante
-$id_representante = $_SESSION['user_id']; // ID del representante, obtenido desde la sesión
+// Verifica si el ID del usuario está disponible en la sesión
+if (!isset($_SESSION['user_id'])) {
+    die("ID de usuario no disponible en la sesión.");
+}
+
+// Obtén el ID del usuario desde la sesión
+$id_usuario = $_SESSION['user_id'];
 
 try {
-    // Consulta SQL para obtener pagos registrados por el representante actual
+    // Consulta para obtener el ID del representante usando el ID del usuario
+    $sql_representante = "SELECT ID_REPRESENTANTE FROM tab_representantes WHERE ID_USUARIO = :id_usuario";
+    $stmt = $conn->prepare($sql_representante);
+    $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
+    $stmt->execute();
+    $representante = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$representante) {
+        echo json_encode(['error' => 'No se encontró el representante para el usuario actual.']);
+        exit;
+    }
+
+    $id_representante = $representante['ID_REPRESENTANTE'];
+
+    // Consulta para obtener los pagos registrados por el representante actual
     $sql = "
         SELECT p.ID_PAGO, r.NOMBRE_REPRE, r.APELLIDO_REPRE, d.NOMBRE_DEPO, d.APELLIDO_DEPO, 
                p.FECHA_PAGO, p.METODO_PAGO, p.MONTO, p.MOTIVO
         FROM tab_pagos p
         INNER JOIN tab_representantes r ON p.ID_REPRESENTANTE = r.ID_REPRESENTANTE
         INNER JOIN tab_deportistas d ON p.ID_DEPORTISTA = d.ID_DEPORTISTA
-        WHERE p.REGISTRADO_POR = :tipo_usuario AND p.ID_REPRESENTANTE = :id_representante
+        WHERE p.ID_REPRESENTANTE = :id_representante
+        AND p.REGISTRADO_POR NOT IN ('ADMIN', 'DEPO')
         ORDER BY p.FECHA_PAGO DESC";
 
     $stmt = $conn->prepare($sql);
     $stmt->execute([
-        ':tipo_usuario' => $tipo_usuario,
-        ':id_representante' => $id_usuario
+        ':id_representante' => $id_representante
     ]);
     
     $pagos = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -43,6 +62,7 @@ try {
     echo json_encode(['data' => $data]);
 
 } catch (PDOException $e) {
+    // Manejo de errores en la consulta
     echo json_encode(['error' => 'Error al obtener los pagos: ' . $e->getMessage()]);
 }
 ?>
