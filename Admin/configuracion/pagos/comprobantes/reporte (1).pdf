@@ -1,0 +1,14 @@
+<br />
+<b>Warning</b>:  Undefined variable $pdfContent in <b>C:\xampp\htdocs\looneytunes\Admin\configuracion\reportesp\generar_pdf.php</b> on line <b>7</b><br />
+<br />
+<b>Warning</b>:  fopen(../img/triangulosrecortadosnaranja.png): Failed to open stream: No such file or directory in <b>C:\xampp\htdocs\looneytunes\Admin\reportes\fpdf\fpdf.php</b> on line <b>1274</b><br />
+<br />
+<b>Fatal error</b>:  Uncaught Exception: FPDF error: Can't open image file: ../img/triangulosrecortadosnaranja.png in C:\xampp\htdocs\looneytunes\Admin\reportes\fpdf\fpdf.php:267
+Stack trace:
+#0 C:\xampp\htdocs\looneytunes\Admin\reportes\fpdf\fpdf.php(1276): FPDF-&gt;Error('Can't open imag...')
+#1 C:\xampp\htdocs\looneytunes\Admin\reportes\fpdf\fpdf.php(890): FPDF-&gt;_parsepng('../img/triangul...')
+#2 C:\xampp\htdocs\looneytunes\Admin\configuracion\reportesp\generar_pdf.php(15): FPDF-&gt;Image('../img/triangul...', 0, 0, 70)
+#3 C:\xampp\htdocs\looneytunes\Admin\reportes\fpdf\fpdf.php(330): PDF-&gt;Header()
+#4 C:\xampp\htdocs\looneytunes\Admin\configuracion\reportesp\generar_pdf.php(35): FPDF-&gt;AddPage()
+#5 {main}
+  thrown in <b>C:\xampp\htdocs\looneytunes\Admin\reportes\fpdf\fpdf.php</b> on line <b>267</b><br />

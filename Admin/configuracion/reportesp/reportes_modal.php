@@ -19,7 +19,7 @@ try {
     
     if ($action === 'getListado') {
         if ($tipo === 'al-dia') {
-            $query = "SELECT D.NOMBRE_DEPO AS DEPORTISTA, C.CATEGORIA, P.MONTO, DATE_FORMAT(P.FECHA_PAGO, '%m/%Y') AS FECHA
+            $query = "SELECT D.NOMBRE_DEPO AS DEPORTISTA, C.CATEGORIA, P.MONTO, DATE_FORMAT(P.FECHA_PAGO, '%d/%m/%Y') AS FECHA
                           FROM tab_pagos P
                           JOIN tab_deportistas D ON P.ID_DEPORTISTA = D.ID_DEPORTISTA
                           JOIN tab_categoria_deportista CD ON D.ID_DEPORTISTA = CD.ID_DEPORTISTA
@@ -32,7 +32,7 @@ try {
     D.NOMBRE_DEPO AS DEPORTISTA, 
     C.CATEGORIA, 
     P.MONTO, 
-    DATE_FORMAT(P.FECHA_PAGO, '%m/%Y') AS FECHA
+    DATE_FORMAT(P.FECHA_PAGO, '%d/%m/%Y') AS FECHA
 FROM 
     tab_pagos P
     JOIN tab_deportistas D ON P.ID_DEPORTISTA = D.ID_DEPORTISTA
