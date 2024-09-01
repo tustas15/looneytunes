@@ -1,6 +1,6 @@
 <?php
 $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
-//$tipo_usuario = $_SESSION['tipo_usuario'];
+$tipo_usuario = $_SESSION['tipo_usuario'];
 ?>
 <!DOCTYPE html>
 <html lang="en">

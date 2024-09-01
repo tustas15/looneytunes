@@ -23,13 +23,9 @@ include './includes/header.php';
                 <div class="card-body">
                     <form id="paymentForm" enctype="multipart/form-data">
                         <input type="hidden" id="id_pago" name="id_pago">
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                            </div>
+                        <input type="hidden" id="representante" name="representante">
 
-                        </div>
-                        <input type="hidden" id="representante" name="representante" value="<?php echo $_SESSION['user_id']; ?>">
-
+                        
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <div class="form-floating mb-3 mb-md-0">
@@ -329,35 +325,37 @@ include './includes/header.php';
 
 
 
+            var idRepresentanteActual = <?php echo json_encode($_SESSION['id_representante']); ?>;
+    
+    // Establecer el ID del representante en el campo oculto
+    $('#representante').val(idRepresentanteActual);
 
-            // Cargar deportistas asociados al representante actual
-            $.ajax({
-                url: 'get_deportistas_representante.php',
-                method: 'GET',
-                dataType: 'json',
-                success: function(data) {
-                    console.log("Datos de deportistas recibidos:", data);
-                    var select = $('#deportista');
-                    select.empty();
-                    select.append('<option value="">Seleccionar</option>');
-                    if (data.length > 0) {
-                        $.each(data, function(index, deportista) {
-                            select.append('<option value="' + deportista.ID_DEPORTISTA + '">' +
-                                deportista.APELLIDO_DEPO + ' ' + deportista.NOMBRE_DEPO + '</option>');
-                        });
-                        console.log("Deportistas cargados exitosamente. Total:", data.length);
-                    } else {
-                        console.log("No se encontraron deportistas asociados al representante.");
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error("Error al cargar deportistas:");
-                    console.error("Estado:", status);
-                    console.error("Error:", error);
-                    console.error("Respuesta del servidor:", xhr.responseText);
-                    alert("Hubo un error al cargar los deportistas. Por favor, revisa la consola para más detalles.");
-                }
+    $.ajax({
+    url: 'get_deportistas_representante.php',
+    method: 'GET',
+    dataType: 'json',
+    success: function(response) {
+        console.log("Respuesta recibida:", response);
+        var select = $('#deportista');
+        select.empty();
+        select.append('<option value="">Seleccionar</option>');
+        
+        if (response.deportistas && response.deportistas.length > 0) {
+            $.each(response.deportistas, function(index, deportista) {
+                select.append(`<option value="${deportista.ID_DEPORTISTA}">
+                    ${deportista.APELLIDO_DEPO} ${deportista.NOMBRE_DEPO}
+                </option>`);
             });
+            console.log("Deportistas cargados exitosamente. Total:", response.deportistas.length);
+        } else {
+            console.log(response.message || "No se encontraron deportistas asociados al representante.");
+        }
+    },
+    error: function(xhr, status, error) {
+        console.error("Error al cargar deportistas:", status, error);
+        alert("Hubo un error al cargar los deportistas. Por favor, intente de nuevo más tarde.");
+    }
+});
 
             // Evento al cambiar el deportista
             $('#deportista').on('change', function() {

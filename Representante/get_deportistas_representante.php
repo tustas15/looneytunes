@@ -4,11 +4,17 @@ require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
 
 header('Content-Type: application/json');
 
-// Asegúrate de que el ID del representante esté almacenado en la sesión
-$id_representante = $_SESSION['tipo_usuario'] ?? null;
+// Verificar si el usuario está autenticado y es un representante
+if (!isset($_SESSION['tipo_usuario']) || $_SESSION['tipo_usuario'] !== 'Representante') {
+    echo json_encode(['error' => 'Acceso no autorizado']);
+    exit;
+}
+
+// Obtener el ID del representante de la sesión
+$id_representante = $_SESSION['id_usuario'] ?? null;
 
 if (!$id_representante) {
-    echo json_encode(['error' => 'No se ha identificado al representante', 'session' => $_SESSION]);
+    echo json_encode(['error' => 'ID de representante no encontrado en la sesión']);
     exit;
 }
 
@@ -27,18 +33,19 @@ try {
     if (empty($deportistas)) {
         echo json_encode([
             'message' => 'No se encontraron deportistas asociados a este representante',
-            'id_representante' => $id_representante,
-            'sql' => $sql
+            'deportistas' => []
         ]);
     } else {
-        echo json_encode($deportistas);
+        echo json_encode([
+            'message' => 'Deportistas encontrados',
+            'deportistas' => $deportistas
+        ]);
     }
 } catch (PDOException $e) {
+    error_log('Error en get_deportistas_representante.php: ' . $e->getMessage());
     echo json_encode([
         'error' => 'Error al obtener los deportistas',
-        'message' => $e->getMessage(),
-        'trace' => $e->getTraceAsString(),
-        'id_representante' => $id_representante,
-        'sql' => $sql
+        'message' => 'Ocurrió un error al procesar su solicitud. Por favor, inténtelo de nuevo más tarde.'
     ]);
 }
+?>

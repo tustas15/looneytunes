@@ -24,7 +24,6 @@ include './includes/header.php';
                 <div class="card-body">
                     <form id="paymentForm" enctype="multipart/form-data">
                         <input type="hidden" id="id_pago" name="id_pago">
-                        <input type="hidden" id="deportista" name="deportista" value="<?php echo $deportista; ?>">                
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <div class="form-floating mb-3 mb-md-0">
@@ -133,45 +132,31 @@ include './includes/header.php';
                     Historial de Pagos
                 </div>
                 <div class="card-body">
-                <div class="table-responsive">
-                    <table id="historial_pagos" class="table table-striped table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Deportista</th>
-                                <th>Representante</th>
-                                <th>Tipo de Pago</th>
-                                <th>Fecha</th>
-                                <th>Motivo</th>
-                                <th>Monto</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Los datos se cargarán aquí dinámicamente -->
-                        </tbody>
-                    </table>
-                </div>
+                    <div class="table-responsive">
+                        <table id="historial_pagos" class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Deportista</th>
+                                    <th>Representante</th>
+                                    <th>Tipo de Pago</th>
+                                    <th>Fecha</th>
+                                    <th>Motivo</th>
+                                    <th>Monto</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Los datos se cargarán aquí dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
     </main>
-    <?php include './includes/footer.php';?>
+    <?php include './includes/footer.php'; ?>
 
     <script>
-      
-
-
-
-
-
-
-
-
-
-
-
-
-      
         // Asegúrate de que estas funciones estén presentes en tu código
         function setFechaYMesActual() {
             var today = new Date();
@@ -305,54 +290,54 @@ include './includes/header.php';
                 var successMessage = isUpdating ? 'Pago actualizado correctamente' : 'Pago registrado correctamente';
 
                 $.ajax({
-    url: url,
-    method: 'POST',
-    data: formData,
-    contentType: false,
-    processData: false,
-    dataType: 'json',
-    success: function(response) {
-        console.log(response); // Añade esto para ver la respuesta en la consola
-        if (response.success) {
-            Swal.fire({
-                icon: 'success',
-                title: 'Éxito',
-                text: successMessage
-            });
-            table.ajax.reload(null, false); // Recargar la tabla sin perder la página actual
-            $('#paymentForm')[0].reset();
-            setFechaYMesActual();
-            $('button[type="submit"]').text('Registrar Pago');
-            $('#id_pago').val(''); // Limpiar el campo oculto del ID
-            // Enviar mensaje de WhatsApp
-            enviarMensajeWhatsApp(isUpdating);
-        } else {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: response.message
-            });
-        }
-    },
-    error: function(xhr, status, error) {
-        console.error(xhr.responseText); // Añade esto para ver el error detallado
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Error al procesar la solicitud'
-        });
-    }
-});
+                    url: url,
+                    method: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    dataType: 'json',
+                    success: function(response) {
+                        console.log(response); // Añade esto para ver la respuesta en la consola
+                        if (response.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Éxito',
+                                text: successMessage
+                            });
+                            table.ajax.reload(null, false); // Recargar la tabla sin perder la página actual
+                            $('#paymentForm')[0].reset();
+                            setFechaYMesActual();
+                            $('button[type="submit"]').text('Registrar Pago');
+                            $('#id_pago').val(''); // Limpiar el campo oculto del ID
+                            // Enviar mensaje de WhatsApp
+                            enviarMensajeWhatsApp(isUpdating);
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: response.message
+                            });
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(xhr.responseText); // Añade esto para ver el error detallado
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Error al procesar la solicitud'
+                        });
+                    }
+                });
             })
 
 
 
 
 
-           
-           
-           
-           
+
+
+
+
 
 
 
@@ -392,13 +377,13 @@ include './includes/header.php';
                             $('#anio').val(data.ANIO);
                             $('#motivo').val(data.MOTIVO);
                             if (data.METODO_PAGO === 'transferencia') {
-                    $('#banco').val(data.ID_BANCO);
-                    $('#entidad_origen').val(data.ENTIDAD_ORIGEN);
-                    // Mostrar el nombre del archivo si existe
-                    if (data.NOMBRE_ARCHIVO) {
-                        $('#nombre_archivo').siblings('.custom-file-label').addClass("selected").html(data.NOMBRE_ARCHIVO);
-                    }
-                }
+                                $('#banco').val(data.ID_BANCO);
+                                $('#entidad_origen').val(data.ENTIDAD_ORIGEN);
+                                // Mostrar el nombre del archivo si existe
+                                if (data.NOMBRE_ARCHIVO) {
+                                    $('#nombre_archivo').siblings('.custom-file-label').addClass("selected").html(data.NOMBRE_ARCHIVO);
+                                }
+                            }
                             $('button[type="submit"]').text('Guardar Cambios');
 
                             $('html, body').animate({
@@ -523,24 +508,42 @@ include './includes/header.php';
             }
         });
 
-        // Cargar representantes
+
         $.ajax({
-            url: '../Admin/configuracion/pagos/get_representantes.php',
+            url: 'get_cedula_representante.php',
             method: 'GET',
             dataType: 'json',
             success: function(data) {
+                console.log("Datos de representantes recibidos:", data);
                 var select = $('#representante');
                 select.empty();
                 select.append('<option value="">Seleccionar</option>');
-                $.each(data, function(index, representante) {
-                    select.append('<option value="' + representante.ID_REPRESENTANTE + '">' +
-                        representante.APELLIDO_REPRE + ' ' + representante.NOMBRE_REPRE + '</option>');
-                });
+                if (data.length > 0) {
+                    $.each(data, function(index, representante) {
+                        select.append('<option value="' + representante.ID_REPRESENTANTE + '">' +
+                            representante.APELLIDO_REPRE + ' ' + representante.NOMBRE_REPRE + '</option>');
+                    });
+                    console.log("Representantes cargados exitosamente. Total:", data.length);
+                } else {
+                    console.log("No se encontraron representantes asociados al deportista.");
+                }
             },
             error: function(xhr, status, error) {
-                console.error("Error al cargar representantes:", status, error);
+                console.error("Error al cargar representantes:");
+                console.error("Estado:", status);
+                console.error("Error:", error);
+                console.error("Respuesta del servidor:", xhr.responseText);
+                alert("Hubo un error al cargar los representantes. Por favor, revisa la consola para más detalles.");
             }
         });
+
+
+
+
+
+
+
+
 
         // Evento al cambiar el representante
         $('#representante').on('change', function() {
@@ -563,7 +566,7 @@ include './includes/header.php';
                 });
 
             }
-            })
+        })
 
 
 
