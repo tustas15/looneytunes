@@ -4,7 +4,47 @@ session_start();
 // Conexión a la base de datos
 require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
 
-$nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
+// Verifica que el ID del usuario esté disponible en la sesión
+if (!isset($_SESSION['user_id'])) {
+    die("ID de usuario no disponible en la sesión.");
+}
+$id_usuario = $_SESSION['user_id'];
+
+// Paso 1: Obtener el ID del representante usando el ID del usuario
+$sql_deportistas = "SELECT ID_DEPORTISTA 
+                      FROM tab_deportistas 
+                      WHERE ID_USUARIO = :id_usuario";
+
+try {
+    $stmt = $conn->prepare($sql_deportistas);
+    $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
+    $stmt->execute();
+    $deportista = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$deportista) {
+        die("No se encontró el representante para el usuario actual.");
+    }
+
+    $id_deportista = $deportista['ID_DEPORTISTA'];
+
+    // Paso 2: Obtener la lista de representantes asociados al deportista
+    $sql_representantes = "SELECT d.ID_REPRESENTANTE, d.NOMBRE_REPRE, d.APELLIDO_REPRE 
+                        FROM tab_representantes d
+                        INNER JOIN tab_representantes_deportistas rd ON d.ID_REPRESENTANTE = rd.ID_REPRESENTANTE
+                        WHERE rd.ID_DEPORTISTA = :id_deportista";
+
+    $stmt = $conn->prepare($sql_representantes);
+    $stmt->bindParam(':id_deportista', $id_deportista, PDO::PARAM_INT);
+    $stmt->execute();
+    $representantes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    if (empty($representantes)) {
+        echo "No se encontraron deportistas para el representante actual.";
+    }
+} catch (PDOException $e) {
+    echo "Error: " . $e->getMessage();
+}
+
 include './includes/header.php';
 ?>
 
@@ -24,14 +64,38 @@ include './includes/header.php';
                 <div class="card-body">
                     <form id="paymentForm" enctype="multipart/form-data">
                         <input type="hidden" id="id_pago" name="id_pago">
-                        <input type="hidden" id="representante" name="representante">
 
                         <div class="row mb-3">
                             <div class="col-md-6">
-                           
 
 
-                           
+
+
+
+
+                                <div class="form-floating mb-3 mb-md-0">
+                                    <select name="representante" id="representante" class="form-select">
+                                        <option value="">Selecciona un representante</option>
+                                        <?php foreach ($representantes as $representante): ?>
+                                            <option value="<?php echo htmlspecialchars($representante['ID_REPRESENTANTE']); ?>">
+                                                <?php echo htmlspecialchars($representante['NOMBRE_REPRE'] . ' ' . $representante['APELLIDO_REPRE']); ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                    <label for="deportista">Representante:</label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" id="cedula_representante" class="form-control" readonly>
+                                    <label for="cedula_representante">Cédula del Representante</label>
+                                </div>
+                            </div>
+                        </div>
+
+
+
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <div class="form-floating mb-3 mb-md-0">
@@ -321,53 +385,6 @@ include './includes/header.php';
                 });
             })
 
-
-
-
-
-            var idRepresentante = $('#representante').val();
-
-// Hacer la solicitud AJAX para obtener los deportistas
-$.ajax({
-    url: 'get_deportistas_representante.php',
-    method: 'GET',
-    data: { id_representante: idRepresentante },
-    dataType: 'json',
-    success: function(response) {
-        console.log("Respuesta recibida:", response);
-        var select = $('#deportista');
-        select.empty();
-        select.append('<option value="">Seleccionar</option>');
-        
-        if (response.deportistas && response.deportistas.length > 0) {
-            $.each(response.deportistas, function(index, deportista) {
-                select.append(`<option value="${deportista.ID_DEPORTISTA}">
-                    ${deportista.APELLIDO_DEPO} ${deportista.NOMBRE_DEPO}
-                </option>`);
-            });
-            console.log("Deportistas cargados exitosamente. Total:", response.deportistas.length);
-        } else {
-            console.log(response.message || "No se encontraron deportistas asociados al representante.");
-        }
-    },
-    error: function(xhr, status, error) {
-        console.error("Error al cargar deportistas:", status, error);
-        alert("Hubo un error al cargar los deportistas. Por favor, intente de nuevo más tarde.");
-    }
-});
-
-
-
-
-
-
-
-
-
-
-
-
-
             // Edit button logic
             $('#historial_pagos').on('click', '.edit-btn', function() {
                 var id = $(this).data('id');
@@ -528,33 +545,7 @@ $.ajax({
         });
 
 
-        $.ajax({
-            url: 'get_cedula_representante.php',
-            method: 'GET',
-            dataType: 'json',
-            success: function(data) {
-                console.log("Datos de representantes recibidos:", data);
-                var select = $('#representante');
-                select.empty();
-                select.append('<option value="">Seleccionar</option>');
-                if (data.length > 0) {
-                    $.each(data, function(index, representante) {
-                        select.append('<option value="' + representante.ID_REPRESENTANTE + '">' +
-                            representante.APELLIDO_REPRE + ' ' + representante.NOMBRE_REPRE + '</option>');
-                    });
-                    console.log("Representantes cargados exitosamente. Total:", data.length);
-                } else {
-                    console.log("No se encontraron representantes asociados al deportista.");
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error("Error al cargar representantes:");
-                console.error("Estado:", status);
-                console.error("Error:", error);
-                console.error("Respuesta del servidor:", xhr.responseText);
-                alert("Hubo un error al cargar los representantes. Por favor, revisa la consola para más detalles.");
-            }
-        });
+
 
 
 

@@ -66,7 +66,7 @@ include './includes/header.php';
                 <div class="card-body">
                     <form id="paymentForm" enctype="multipart/form-data">
                         <input type="hidden" id="id_pago" name="id_pago">
-                        <input type="hidden" id="id_representante" name="id_representante" value="<?php echo htmlspecialchars($id_representante); ?>">
+                        <input type="hidden" name="representante" id="representante" value="<?php echo htmlspecialchars($id_representante); ?>">
 
                         <div class="row mb-3">
                             <div class="col-md-6">
@@ -202,9 +202,16 @@ include './includes/header.php';
             </div>
         </div>
     </main>
+
     <?php include './includes/footer.php'; ?>
 
     <script>
+
+
+
+
+
+
         document.getElementById('paymentForm').addEventListener('submit', function(event) {
             event.preventDefault();
 

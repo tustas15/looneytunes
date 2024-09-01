@@ -2,29 +2,47 @@
 session_start();
 require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
 
+// Verifica que el ID del usuario esté disponible en la sesión
 if (!isset($_SESSION['user_id'])) {
     die("ID de usuario no disponible en la sesión.");
 }
-
-// Obtener el ID del representante usando el ID del usuario
 $id_usuario = $_SESSION['user_id'];
-$sql_representante = "SELECT ID_REPRESENTANTE FROM tab_representantes WHERE ID_USUARIO = :id_usuario";
+
+// Paso 1: Obtener el ID del representante usando el ID del usuario
+$sql_deportistas = "SELECT ID_DEPORTISTA 
+                      FROM tab_deportistas 
+                      WHERE ID_USUARIO = :id_usuario";
 
 try {
-    $stmt = $conn->prepare($sql_representante);
+    $stmt = $conn->prepare($sql_deportistas);
     $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
     $stmt->execute();
-    $representante = $stmt->fetch(PDO::FETCH_ASSOC);
+    $deportista = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if (!$representante) {
+    if (!$deportista) {
         die("No se encontró el representante para el usuario actual.");
     }
 
-    $id_representante = $representante['ID_REPRESENTANTE'];
+    $id_deportista = $deportista['ID_DEPORTISTA'];
 
+    // Paso 2: Obtener la lista de representantes asociados al deportista
+    $sql_representantes = "SELECT d.ID_REPRESENTANTE, d.NOMBRE_REPRE, d.APELLIDO_REPRE 
+                        FROM tab_representantes d
+                        INNER JOIN tab_representantes_deportistas rd ON d.ID_REPRESENTANTE = rd.ID_REPRESENTANTE
+                        WHERE rd.ID_DEPORTISTA = :id_deportista";
+
+    $stmt = $conn->prepare($sql_representantes);
+    $stmt->bindParam(':id_deportista', $id_deportista, PDO::PARAM_INT);
+    $stmt->execute();
+    $representantes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    if (empty($representantes)) {
+        echo "No se encontraron deportistas para el representante actual.";
+    }
 } catch (PDOException $e) {
-    die("Error al obtener el ID del representante: " . $e->getMessage());
+    echo "Error: " . $e->getMessage();
 }
+
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id_deportista = $_POST['deportista'] ?? '';
