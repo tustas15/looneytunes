@@ -1,6 +1,5 @@
 <?php
 $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Usuario';
-$tipo_usuario = $_SESSION['tipo_usuario'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -134,6 +133,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                             <div class="nav-link-icon"><i data-feather="home"></i></div>
                             Dashboard
                         </a>
+                        <div class="sidenav-menu-heading">Interfaz</div>
                         <a class="nav-link" href="pagosdepo.php">
                             <div class="nav-link-icon"><i class="fas fa-dollar-sign"></i></div>
                             Pagos
