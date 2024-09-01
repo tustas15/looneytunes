@@ -4,28 +4,23 @@ require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
 
 header('Content-Type: application/json');
 
-// Verificar si el usuario está autenticado y es un representante
-if (!isset($_SESSION['tipo_usuario']) || $_SESSION['tipo_usuario'] !== 'Representante') {
-    echo json_encode(['error' => 'Acceso no autorizado']);
-    exit;
-}
+// Obtener el ID del usuario de la sesión
+$idUsuario = isset($_SESSION['id_usuario']) ? intval($_SESSION['id_usuario']) : null;
 
-// Obtener el ID del representante de la sesión
-$id_representante = $_SESSION['id_usuario'] ?? null;
-
-if (!$id_representante) {
-    echo json_encode(['error' => 'ID de representante no encontrado en la sesión']);
+if (!$idUsuario) {
+    echo json_encode(['error' => 'Usuario no identificado']);
     exit;
 }
 
 try {
-    $sql = "SELECT d.ID_DEPORTISTA, d.NOMBRE_DEPO, d.APELLIDO_DEPO
+    $sql = "SELECT d.ID_DEPORTISTA, d.NOMBRE_DEPO, d.APELLIDO_DEPO, d.CEDULA_DEPO
             FROM tab_deportistas d
             INNER JOIN tab_representantes_deportistas rd ON d.ID_DEPORTISTA = rd.ID_DEPORTISTA
-            WHERE rd.ID_REPRESENTANTE = :id_representante";
+            INNER JOIN tab_representantes r ON rd.ID_REPRESENTANTE = r.ID_REPRESENTANTE
+            WHERE r.ID_USUARIO = :id_usuario";
     
     $stmt = $conn->prepare($sql);
-    $stmt->bindParam(':id_representante', $id_representante, PDO::PARAM_INT);
+    $stmt->bindParam(':id_usuario', $idUsuario, PDO::PARAM_INT);
     $stmt->execute();
     
     $deportistas = $stmt->fetchAll(PDO::FETCH_ASSOC);

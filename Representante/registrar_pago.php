@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once('/xampp/htdocs/looneytunes/admin/configuracion/conexion.php');
-$tipo_usuario = isset($_SESSION['user_type']) ? $_SESSION['user_type'] : 'REPRESENTANTE';
+$tipo_usuario = isset($_SESSION['user_type']) ? $_SESSION['user_type'] : 'REPRE';
 
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {

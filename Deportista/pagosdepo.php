@@ -26,20 +26,19 @@ include './includes/header.php';
                         <input type="hidden" id="id_pago" name="id_pago">
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <div class="form-floating mb-3 mb-md-0">
-                                    <select id="representante" name="representante" class="form-select" required>
-                                        <option value="">Seleccionar</option>
-                                        <!-- Opciones se llenarán dinámicamente -->
-                                    </select>
-                                    <label for="representante">Apellido del Representante</label>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-floating">
-                                    <input type="text" id="cedula_representante" class="form-control" readonly>
-                                    <label for="cedula_representante">Cédula del Representante</label>
-                                </div>
-                            </div>
+                           
+
+
+                            <div class="form-floating mb-3 mb-md-0">
+                            <input type="text" id="nombre_representante" name="nombre_representante" class="form-control" value="<?php echo htmlspecialchars($_SESSION['nombre'] . ' ' . $_SESSION['apellido']); ?>" readonly>
+                            <label for="nombre_representante">Nombre del Representante</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="text" id="cedula_representante" name="cedula_representante" class="form-control" value="<?php echo htmlspecialchars($_SESSION['cedula']); ?>" readonly>
+                            <label for="cedula_representante">Cédula del Representante</label>
+                        </div>
                         </div>
                         <div class="row mb-3">
                             <div class="col-md-6">
@@ -333,7 +332,33 @@ include './includes/header.php';
 
 
 
+            $(document).ready(function() {
+    $.ajax({
+        url: 'get_deportistas_representante.php',
+        type: 'GET',
+        dataType: 'json',
+        success: function(response) {
+            if (response.deportistas && response.deportistas.length > 0) {
+                var select = $('#deportista');
+                select.empty();
+                select.append('<option value="">Seleccionar</option>');
+                $.each(response.deportistas, function(i, deportista) {
+                    select.append('<option value="' + deportista.ID_DEPORTISTA + '" data-cedula="' + deportista.CEDULA_DEPO + '">' + deportista.NOMBRE_DEPO + ' ' + deportista.APELLIDO_DEPO + '</option>');
+                });
+            } else {
+                alert('No se encontraron deportistas asociados a este representante');
+            }
+        },
+        error: function() {
+            alert('Error al cargar los deportistas');
+        }
+    });
 
+    $('#deportista').change(function() {
+        var selectedOption = $(this).find('option:selected');
+        $('#cedula_deportista').val(selectedOption.data('cedula'));
+    });
+});
 
 
 
