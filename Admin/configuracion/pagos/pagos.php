@@ -172,59 +172,58 @@ include '../../IncludesPro/header.php';
     <?php include '../../Includespro/footer.php'; ?>
 
     <script>
-       document.getElementById('paymentForm').addEventListener('submit', function(event) {
-    event.preventDefault();
+        document.getElementById('paymentForm').addEventListener('submit', function(event) {
+            event.preventDefault();
 
-    const formData = new FormData(this);
-    const isUpdating = formData.has('id_pago'); // Verifica si el formulario incluye un campo de ID para saber si es actualización
+            const formData = new FormData(this);
+            const isUpdating = formData.has('id_pago'); // Verifica si el formulario incluye un campo de ID para saber si es actualización
 
-    formData.append('isUpdating', isUpdating); // Añade esta información al FormData
+            formData.append('isUpdating', isUpdating); // Añade esta información al FormData
 
-    fetch('/looneytunes/admin/configuracion/whatsapp/index.php', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
-                // Lógica para mostrar el mensaje de éxito
-                console.log(isUpdating ? "Mensaje de actualización enviado" : "Mensaje de nuevo pago enviado");
+            fetch('/looneytunes/admin/configuracion/whatsapp/index.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        // Lógica para mostrar el mensaje de éxito
+                        console.log(isUpdating ? "Mensaje de actualización enviado" : "Mensaje de nuevo pago enviado");
 
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Mensaje de WhatsApp enviado',
-                    text: isUpdating ? 'Notificación de actualización enviada' : 'Notificación de nuevo pago enviada',
-                    confirmButtonText: 'Aceptar'
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Mensaje de WhatsApp enviado',
+                            text: isUpdating ? 'Notificación de actualización enviada' : 'Notificación de nuevo pago enviada',
+                            confirmButtonText: 'Aceptar'
+                        });
+                    } else {
+                        // Lógica para manejar el error
+                        console.error("Error al enviar mensaje de WhatsApp:", data.message);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Error al enviar mensaje de WhatsApp: ' + data.message,
+                            confirmButtonText: 'Aceptar'
+                        });
+                    }
+                })
+                .catch(error => {
+                    // Lógica para manejar el error en la conexión o servidor
+                    console.error("Error al enviar mensaje de WhatsApp:", error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Error al enviar mensaje de WhatsApp: ' + error,
+                        confirmButtonText: 'Aceptar'
+                    });
                 });
-            } else {
-                // Lógica para manejar el error
-                console.error("Error al enviar mensaje de WhatsApp:", data.message);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Error al enviar mensaje de WhatsApp: ' + data.message,
-                    confirmButtonText: 'Aceptar'
-                });
-            }
-        })
-        .catch(error => {
-            // Lógica para manejar el error en la conexión o servidor
-            console.error("Error al enviar mensaje de WhatsApp:", error);
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Error al enviar mensaje de WhatsApp: ' + error,
-                confirmButtonText: 'Aceptar'
-            });
         });
-});
 
 
 
 
 
 
-        // Asegúrate de que estas funciones estén presentes en tu código
         function setFechaYMesActual() {
             var today = new Date();
             var dd = String(today.getDate()).padStart(2, '0');
@@ -241,21 +240,34 @@ include '../../IncludesPro/header.php';
             // Establecer el año actual
             document.getElementById('anio').value = yyyy;
 
-            // Actualizar el motivo
+            // Actualizar motivo
             actualizarMotivo();
         }
 
         function actualizarMotivo() {
             var mesSeleccionado = document.getElementById('mes');
             var mesTexto = mesSeleccionado.options[mesSeleccionado.selectedIndex].text;
-            //var anioSeleccionado = document.getElementById('anio').value;
+            var anioSeleccionado = document.getElementById('anio').value;
+
+            // Obtener el valor del mes seleccionado (con dos dígitos)
+            var mesValor = mesSeleccionado.value.padStart(2, '0');
+
+            // Obtener el día actual
+            var today = new Date();
+            var dd = String(today.getDate()).padStart(2, '0');
+
+            // Actualizar la fecha según el mes y año seleccionados
+            var nuevaFecha = anioSeleccionado + '-' + mesValor + '-' + dd;
+            document.getElementById('fecha').value = nuevaFecha;
+
+            // Actualizar motivo
             document.getElementById('motivo').value = 'Pago del mes de ' + mesTexto + ' ';
         }
 
         // Llamar a la función cuando se carga la página
         window.onload = setFechaYMesActual;
 
-        // Actualizar motivo cuando cambia el mes o el año
+        // Actualizar motivo y fecha cuando cambia el mes o el año
         document.getElementById('mes').addEventListener('change', actualizarMotivo);
         document.getElementById('anio').addEventListener('change', actualizarMotivo);
     </script>
@@ -395,10 +407,10 @@ include '../../IncludesPro/header.php';
                 });
             });
 
-           
-           
-           
-           
+
+
+
+
 
 
 
@@ -438,13 +450,13 @@ include '../../IncludesPro/header.php';
                             $('#anio').val(data.ANIO);
                             $('#motivo').val(data.MOTIVO);
                             if (data.METODO_PAGO === 'transferencia') {
-                    $('#banco').val(data.ID_BANCO);
-                    $('#entidad_origen').val(data.ENTIDAD_ORIGEN);
-                    // Mostrar el nombre del archivo si existe
-                    if (data.NOMBRE_ARCHIVO) {
-                        $('#nombre_archivo').siblings('.custom-file-label').addClass("selected").html(data.NOMBRE_ARCHIVO);
-                    }
-                }
+                                $('#banco').val(data.ID_BANCO);
+                                $('#entidad_origen').val(data.ENTIDAD_ORIGEN);
+                                // Mostrar el nombre del archivo si existe
+                                if (data.NOMBRE_ARCHIVO) {
+                                    $('#nombre_archivo').siblings('.custom-file-label').addClass("selected").html(data.NOMBRE_ARCHIVO);
+                                }
+                            }
                             $('button[type="submit"]').text('Guardar Cambios');
 
                             $('html, body').animate({
