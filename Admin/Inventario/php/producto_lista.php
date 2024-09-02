@@ -65,9 +65,9 @@ if ($total >= 1 && $pagina <= $Npaginas) {
                 <figure class="media-left">
                     <p class="image is-64x64">';
         if (is_file("./img/producto/" . $rows['producto_foto'])) {
-            $tabla .= '<img src="/xampp/htdocs/looneytunes/admin/inventario/img/producto/' . $rows['producto_foto'] . '">';
+            $tabla .= '<img src="./img/producto/' . $rows['producto_foto'] . '">';
         } else {
-            $tabla .= '<img src="/xampp/htdocs/looneytunes/admin/inventario/img/producto.png">';
+            $tabla .= '<img src="./img/producto.png">';
         }
         $tabla .= '</p>
                 </figure>
