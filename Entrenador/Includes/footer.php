@@ -84,7 +84,7 @@ $(document).ready(function() {
 
     document.addEventListener('DOMContentLoaded', function() {
 
-// Manejador para el botón de informes
+// Manejador para el botón de Observacion
 $('.btn-informes').click(function(e) {
     console.log('Botón informes clickeado');
     e.preventDefault();
@@ -98,7 +98,7 @@ $('.btn-informes').click(function(e) {
     $('#informesModal').modal('show');
 });
 
-// Manejador para enviar el informe
+// Manejador para enviar el Observacion
 $('#enviarInforme').click(function() {
 var deportistaId = $('#informeDeportistaId').val();
 var representanteId = $('#informeRepresentanteId').val();
@@ -112,17 +112,11 @@ $.ajax({
         representanteId: representanteId,
         informe: informe
     },
-    dataType: 'json',
     success: function(response) {
-        if (response.success) {
-            alert(response.message);
             $('#informesModal').modal('hide');
             $('#informe').val('');
-        } else {
-            console.error('Error al guardar el informe:', response.message);
-        }
     },
-    error: function(jqXHR, textStatus, errorThrown) {
+    error: function() {
         console.error('Error AJAX:', textStatus, errorThrown);
     }
 });
