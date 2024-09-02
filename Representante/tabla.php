@@ -31,38 +31,17 @@ try {
         exit();
     }
 
-    // Paso 2: Obtener la lista de deportistas asociados al representante
-    $sql_deportistas = "
-        SELECT d.ID_DEPORTISTA, d.NOMBRE_DEPO, d.APELLIDO_DEPO 
-        FROM tab_deportistas d
-        INNER JOIN tab_representantes_deportistas rd 
-            ON d.ID_DEPORTISTA = rd.ID_DEPORTISTA
-        WHERE rd.ID_REPRESENTANTE = :id_representante
-    ";
-
-    $stmt = $conn->prepare($sql_deportistas);
-    $stmt->bindParam(':id_representante', $id_representante, PDO::PARAM_INT);
-    $stmt->execute();
-    $deportistas = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    // Verificar si se obtuvieron deportistas
-    if (empty($deportistas)) {
-        echo "No hay deportistas asociados a este representante.";
-        exit();
-    }
-
     // Obtener los pagos asociados al representante
     $stmt = $conn->prepare("
         SELECT p.ID_PAGO, d.NOMBRE_DEPO, d.APELLIDO_DEPO, p.FECHA_PAGO, p.MONTO, p.MOTIVO, p.METODO_PAGO
         FROM tab_pagos p
         INNER JOIN tab_deportistas d ON p.ID_DEPORTISTA = d.ID_DEPORTISTA
         WHERE p.ID_REPRESENTANTE = :id_representante
-        ORDER BY d.NOMBRE_DEPO ASC, d.APELLIDO_DEPO ASC
+        ORDER BY p.FECHA_PAGO DESC
     ");
     $stmt->bindParam(':id_representante', $id_representante, PDO::PARAM_INT);
     $stmt->execute();
     $pagos = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
 } catch (PDOException $e) {
     echo "Error en la consulta: " . $e->getMessage();
     exit();
@@ -71,7 +50,6 @@ try {
 // Incluir el encabezado (header)
 include './Includes/header.php';
 ?>
-
 <main>
     <header class="page-header bg-white pb-10">
         <div class="container-xl px-4">
@@ -88,18 +66,13 @@ include './Includes/header.php';
         <div class="card mb-4">
             <div class="card-header">Lista de Pagos</div>
             <div class="card-body">
-
-                <!-- Botón para generar PDF -->
-                <div class="mb-3">
-                    <a href="./generar_pdf.php" class="btn btn-success">Generar PDF</a>
-                </div>
-                
                 <!-- Campo de búsqueda -->
                 <div class="mb-3">
                     <input type="text" id="searchInput" class="form-control" placeholder="Buscar...">
                 </div>
 
-                <table class="table table-bordered">
+                <!-- Tabla con DataTables -->
+                <table id="pagosTable" class="table table-bordered">
                     <thead>
                         <tr>
                             <th>Deportista</th>
@@ -126,7 +99,5 @@ include './Includes/header.php';
     </div>
 </main>
 
-<?php
-// Incluir el pie de página (footer)
-include './Includes/footer.php';
-?>
+<!-- Incluir el pie de página (footer) -->
+<?php include './Includes/footer.php'; ?>

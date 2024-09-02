@@ -33,7 +33,7 @@ try {
         INNER JOIN tab_representantes r ON p.ID_REPRESENTANTE = r.ID_REPRESENTANTE
         INNER JOIN tab_deportistas d ON p.ID_DEPORTISTA = d.ID_DEPORTISTA
         WHERE p.ID_REPRESENTANTE = :id_representante
-        AND p.REGISTRADO_POR NOT IN ('ADMIN', 'DEPO')
+        AND p.REGISTRADO_POR NOT IN ('ADMIN')
         ORDER BY p.FECHA_PAGO DESC";
 
     $stmt = $conn->prepare($sql);
