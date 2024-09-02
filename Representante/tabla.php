@@ -37,8 +37,8 @@ try {
         FROM tab_pagos p
         INNER JOIN tab_deportistas d ON p.ID_DEPORTISTA = d.ID_DEPORTISTA
         WHERE p.ID_REPRESENTANTE = :id_representante
-        ORDER BY p.FECHA_PAGO DESC
-    ");
+        ORDER BY d.NOMBRE_DEPO ASC, d.APELLIDO_DEPO ASC"
+    );
     $stmt->bindParam(':id_representante', $id_representante, PDO::PARAM_INT);
     $stmt->execute();
     $pagos = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -52,11 +52,11 @@ include './Includes/header.php';
 ?>
 
 <main>
-    <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
+    <header class="page-header bg-white pb-10">
         <div class="container-xl px-4">
             <div class="page-header-content pt-4">
-                <h1 class="text-primary">Tabla de Pagos</h1>
-                <p class="text-gray-700 mb-0">Aquí puedes ver la información detallada de los pagos realizados.</p>
+                <h1 class="text-dark">Tabla de Pagos</h1>
+                <p class="text-muted mb-0">Aquí puedes ver la información detallada de los pagos realizados.</p>
             </div>
         </div>
     </header>
@@ -67,7 +67,10 @@ include './Includes/header.php';
         <div class="card mb-4">
             <div class="card-header">Lista de Pagos</div>
             <div class="card-body">
-                <table class="table table-bordered">
+                <!-- Campo de búsqueda -->
+
+                <!-- Tabla con DataTables -->
+                <table id="pagosTable" class="table table-bordered">
                     <thead>
                         <tr>
                             <th>Deportista</th>
@@ -79,18 +82,7 @@ include './Includes/header.php';
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($pagos as $pago): ?>
-                            <tr>
-                                <td><?php echo htmlspecialchars($pago['NOMBRE_DEPO'] . ' ' . $pago['APELLIDO_DEPO'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                <td><?php echo htmlspecialchars(date('d/m/Y', strtotime($pago['FECHA_PAGO'])), ENT_QUOTES, 'UTF-8'); ?></td>
-                                <td><?php echo htmlspecialchars('$' . number_format($pago['MONTO'], 2), ENT_QUOTES, 'UTF-8'); ?></td>
-                                <td><?php echo htmlspecialchars($pago['METODO_PAGO'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                <td><?php echo htmlspecialchars($pago['MOTIVO'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                <td>
-                                    <a href="./detalle_pago.php?id_pago=<?php echo htmlspecialchars($pago['ID_PAGO'], ENT_QUOTES, 'UTF-8'); ?>" class="btn btn-primary btn-sm">Ver Detalle</a>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
+                        <!-- Aquí se generarán los datos con DataTables -->
                     </tbody>
                 </table>
             </div>
@@ -98,7 +90,67 @@ include './Includes/header.php';
     </div>
 </main>
 
-<?php
-// Incluir el pie de página (footer)
-include './Includes/footer.php';
-?>
+<!-- Incluir el pie de página (footer) -->
+<?php include './Includes/footer.php'; ?>
+
+<!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.3/css/buttons.dataTables.min.css">
+
+<!-- Bootstrap CSS -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css">
+
+<!-- DataTables JS -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.3/js/dataTables.buttons.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.2.2/jszip.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.3/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.3/js/buttons.print.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.3/js/buttons.colVis.min.js"></script>
+
+<!-- Bootstrap JS -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    $('#pagosTable').DataTable({
+        dom: 'Bfrtip',
+        ajax: {
+            url: 'historial_pagos.php',
+            dataSrc: 'data'
+        },
+        columns: [
+            { data: 'deportista' },
+            { data: 'fecha_pago' },
+            { data: 'monto' },
+            { data: 'metodo_pago' },
+            { data: 'motivo' },
+            { data: 'acciones' }
+        ],
+        buttons: [
+            {
+                extend: 'pdfHtml5',
+                text: 'Generar PDF',
+                className: 'btn btn-success',
+                title: 'Reporte de Pagos',
+                exportOptions: {
+                    columns: ':visible'
+                }
+            },
+            'colvis'
+        ],
+        language: {
+            url: 'https://cdn.datatables.net/plug-ins/1.13.4/i18n/Spanish.json'
+        },
+        columnDefs: [
+            { targets: '_all', orderable: false }
+        ]
+    });
+
+    // Función de búsqueda
+    $('#searchInput').on('keyup', function() {
+        $('#pagosTable').DataTable().search($(this).val()).draw();
+    });
+});
+</script>
