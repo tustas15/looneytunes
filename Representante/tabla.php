@@ -53,8 +53,8 @@ include './Includes/header.php';
     <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
         <div class="container-xl px-4">
             <div class="page-header-content pt-4">
-                <h1 class="text-primary">Tabla de Pagos</h1>
-                <p class="text-gray-700 mb-0">Aquí puedes ver la información detallada de los deportistas asociados.</p>
+                <h1 class="text-white">Tabla de Pagos</h1>
+                <p class="text-white-700 mb-0">Historial de Pagos de Deportistas Asociados</p>
             </div>
         </div>
     </header>
