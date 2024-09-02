@@ -32,6 +32,8 @@ try {
                         INNER JOIN tab_representantes_deportistas rd ON d.ID_DEPORTISTA = rd.ID_DEPORTISTA
                         WHERE rd.ID_REPRESENTANTE = :id_representante";
 
+                        
+
     $stmt = $conn->prepare($sql_deportistas);
     $stmt->bindParam(':id_representante', $id_representante, PDO::PARAM_INT);
     $stmt->execute();

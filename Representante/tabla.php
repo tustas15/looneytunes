@@ -37,8 +37,17 @@ try {
         FROM tab_pagos p
         INNER JOIN tab_deportistas d ON p.ID_DEPORTISTA = d.ID_DEPORTISTA
         WHERE p.ID_REPRESENTANTE = :id_representante
-        ORDER BY d.NOMBRE_DEPO ASC, d.APELLIDO_DEPO ASC"
-    );
+        ORDER BY p.FECHA_PAGO DESC
+    ");
+
+    // Paso 2: Obtener la lista de deportistas asociados al representante
+    $sql_deportistas = "
+        SELECT d.ID_DEPORTISTA, d.NOMBRE_DEPO, d.APELLIDO_DEPO 
+        FROM tab_deportistas d
+        INNER JOIN tab_representantes_deportistas rd 
+            ON d.ID_DEPORTISTA = rd.ID_DEPORTISTA
+        WHERE rd.ID_REPRESENTANTE = :id_representante
+    ";
     $stmt->bindParam(':id_representante', $id_representante, PDO::PARAM_INT);
     $stmt->execute();
     $pagos = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -55,13 +64,8 @@ include './Includes/header.php';
     <header class="page-header bg-white pb-10">
         <div class="container-xl px-4">
             <div class="page-header-content pt-4">
-<<<<<<< HEAD
                 <h1 class="text-dark">Tabla de Pagos</h1>
-                <p class="text-muted mb-0">Aquí puedes ver la info detallada de los pagos realizados.</p>
-=======
-                <h1 class="text-white">Tabla de Pagos</h1>
-                <p class="text-white-700 mb-0">Historial de Pagos de Deportistas Asociados</p>
->>>>>>> 7eb31307923f5c3f68b8f495efdd8a012dbcbb91
+                <p class="text-muted mb-0">Aquí puedes ver la información detallada de los pagos realizados.</p>
             </div>
         </div>
     </header>
@@ -73,6 +77,9 @@ include './Includes/header.php';
             <div class="card-header">Lista de Pagos</div>
             <div class="card-body">
                 <!-- Campo de búsqueda -->
+                <div class="mb-3">
+                    <input type="text" id="searchInput" class="form-control" placeholder="Buscar...">
+                </div>
 
                 <!-- Tabla con DataTables -->
                 <table id="pagosTable" class="table table-bordered">
@@ -98,14 +105,7 @@ include './Includes/header.php';
 <!-- Incluir el pie de página (footer) -->
 <?php include './Includes/footer.php'; ?>
 
-<!-- DataTables CSS -->
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
-<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.3/css/buttons.dataTables.min.css">
-
-<!-- Bootstrap CSS -->
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css">
-
-<!-- DataTables JS -->
+<!-- Scripts para inicializar DataTables y botones -->
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.3.3/js/dataTables.buttons.min.js"></script>
@@ -114,15 +114,12 @@ include './Includes/header.php';
 <script src="https://cdn.datatables.net/buttons/2.3.3/js/buttons.print.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.3.3/js/buttons.colVis.min.js"></script>
 
-<!-- Bootstrap JS -->
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-
 <script>
 $(document).ready(function() {
     $('#pagosTable').DataTable({
         dom: 'Bfrtip',
         ajax: {
-            url: 'historial_pagos.php',
+            url: '../Admin/configuracion/pagos/historial_pagos.php',
             dataSrc: 'data'
         },
         columns: [
