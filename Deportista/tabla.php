@@ -36,7 +36,7 @@ $id_usuario = $_SESSION['user_id'];
 
 try {
     // Obtener el ID_REPRESENTANTE correspondiente al ID_USUARIO
-    $stmt = $conn->prepare("SELECT ID_REPRESENTANTE FROM tab_representantes WHERE ID_USUARIO = :id_usuario");
+    $stmt = $conn->prepare("SELECT ID_DEPORTISTA FROM tab_deportistas WHERE ID_USUARIO = :id_usuario");
     $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
     $stmt->execute();
     $id_representante = $stmt->fetchColumn();
@@ -49,13 +49,13 @@ try {
 
     // Obtener los pagos asociados al representante
     $stmt = $conn->prepare("
-        SELECT p.ID_PAGO, d.NOMBRE_DEPO, d.APELLIDO_DEPO, p.FECHA_PAGO, p.MONTO, p.MOTIVO, p.METODO_PAGO
+        SELECT p.ID_PAGO, d.NOMBRE_REPRE, d.APELLIDO_REPRE, p.FECHA_PAGO, p.MONTO, p.MOTIVO, p.METODO_PAGO
         FROM tab_pagos p
-        INNER JOIN tab_deportistas d ON p.ID_DEPORTISTA = d.ID_DEPORTISTA
-        WHERE p.ID_REPRESENTANTE = :id_representante
+        INNER JOIN tab_representantes d ON p.ID_REPRESENTANTE = d.ID_REPRESENTANTE
+        WHERE p.ID_DEPORTISTA = :id_deportista
         ORDER BY p.FECHA_PAGO DESC
     ");
-    $stmt->bindParam(':id_representante', $id_representante, PDO::PARAM_INT);
+    $stmt->bindParam(':id_deportista', $id_representante, PDO::PARAM_INT);
     $stmt->execute();
     $pagos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -115,7 +115,7 @@ include './Includes/header.php';
                 <table id="pagosTable" class="table table-bordered">
                     <thead>
                         <tr>
-                            <th>Deportista</th>
+                            <th>Representante</th>
                             <th>Fecha de Pago</th>
                             <th>Monto</th>
                             <th>Método de Pago</th>
@@ -125,7 +125,7 @@ include './Includes/header.php';
                     <tbody>
                         <?php foreach ($pagos as $pago): ?>
                             <tr>
-                                <td><?php echo htmlspecialchars($pago['NOMBRE_DEPO'] . ' ' . $pago['APELLIDO_DEPO'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                <td><?php echo htmlspecialchars($pago['NOMBRE_REPRE'] . ' ' . $pago['APELLIDO_REPRE'], ENT_QUOTES, 'UTF-8'); ?></td>
                                 <td><?php echo htmlspecialchars(date('d/m/Y', strtotime($pago['FECHA_PAGO'])), ENT_QUOTES, 'UTF-8'); ?></td>
                                 <td><?php echo htmlspecialchars('$' . number_format($pago['MONTO'], 2), ENT_QUOTES, 'UTF-8'); ?></td>
                                 <td><?php echo htmlspecialchars($pago['METODO_PAGO'], ENT_QUOTES, 'UTF-8'); ?></td>
@@ -135,6 +135,8 @@ include './Includes/header.php';
                     </tbody>
                 </table>
                 <a href="pdf.php" class="btn btn-primary">Generar PDF</a>
+
+                </div>
             </div>
         </div>
   <!-- Contenedor para el gráfico -->
