@@ -7,6 +7,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 require_once('../admin/configuracion/conexion.php');
+
 // ID del usuario actual
 $user_id = $_SESSION['user_id'];
 
@@ -57,6 +58,33 @@ try {
     $stmt->bindParam(':id_representante', $id_representante, PDO::PARAM_INT);
     $stmt->execute();
     $pagos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Obtener los pagos agrupados por mes
+    $stmt = $conn->prepare("
+        SELECT DATE_FORMAT(p.FECHA_PAGO, '%Y-%m') AS mes, SUM(p.MONTO) AS total_mes
+        FROM tab_pagos p
+        WHERE p.ID_REPRESENTANTE = :id_representante
+        GROUP BY mes
+        ORDER BY mes
+    ");
+    $stmt->bindParam(':id_representante', $id_representante, PDO::PARAM_INT);
+    $stmt->execute();
+    $pagos_por_mes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Preparar datos para la gráfica
+    $monthlyData = [
+        'labels' => [],
+        'data' => []
+    ];
+
+    foreach ($pagos_por_mes as $pago_mes) {
+        $monthlyData['labels'][] = $pago_mes['mes'];
+        $monthlyData['data'][] = (float)$pago_mes['total_mes'];
+    }
+
+    // Convertir los datos a formato JSON
+    $monthlyData = json_encode($monthlyData);
+
 } catch (PDOException $e) {
     echo "Error en la consulta: " . $e->getMessage();
     exit();
@@ -106,59 +134,55 @@ include './Includes/header.php';
                         <?php endforeach; ?>
                     </tbody>
                 </table>
-<<<<<<< HEAD
                 <a href="pdf.php" class="btn btn-primary">Generar PDF</a>
 
-=======
                 </div>
->>>>>>> 6b61b9dae485b702a127787e06d74db77ce650cd
             </div>
         </div>
   <!-- Contenedor para el gráfico -->
   <div class="card mb-4">
-                <div class="card-header">Gráfico de Pagos por Mes</div>
-                <div class="card-body">
-                    <canvas id="pagosChart"></canvas>
-                </div>
-            </div>
+        <div class="card-header">Gráfico de Pagos por Mes</div>
+        <div class="card-body">
+            <canvas id="pagosChart"></canvas>
         </div>
+    </div>
     </main>
 
     <!-- Script para el gráfico -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Datos del gráfico (esto debe ser generado en el servidor)
-            var monthlyData = <?php echo json_encode($monthlyData); ?>;
+    document.addEventListener('DOMContentLoaded', function() {
+        // Datos del gráfico (esto debe ser generado en el servidor)
+        var monthlyData = <?php echo $monthlyData; ?>;
 
-            // Configuración del gráfico
-            var ctx = document.getElementById('pagosChart').getContext('2d');
-            var myChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: monthlyData.labels,
-                    datasets: [{
-                        label: 'Total de Pagos',
-                        data: monthlyData.data,
-                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
+        // Configuración del gráfico
+        var ctx = document.getElementById('pagosChart').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: monthlyData.labels,
+                datasets: [{
+                    label: 'Total de Pagos',
+                    data: monthlyData.data,
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
                     }
                 }
-            });
+            }
         });
-    </script>
+    });
+</script>
 
-    <!-- Incluir jQuery y Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<!-- Incluir jQuery y Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 
 <!-- Incluir el pie de página (footer) -->
