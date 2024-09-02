@@ -82,7 +82,7 @@ try {
         $pdf->Cell(30, 8, 'Fecha', 1, 0, 'C', 1);
         $pdf->Cell(30, 8, 'Monto', 1, 0, 'C', 1);
         $pdf->Cell(30, 8, 'Metodo', 1, 0, 'C', 1);
-        $pdf->Cell(50, 8, 'Motivo', 1, 1, 'C', 1);
+        $pdf->Cell(40, 8, 'Motivo', 1, 1, 'C', 1);
 
         // Datos de los pagos
         $pdf->SetFont('Arial', '', 12);
