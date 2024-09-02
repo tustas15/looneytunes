@@ -82,7 +82,7 @@ try {
         $pdf->Cell(30, 8, 'Fecha', 1, 0, 'C', 1);
         $pdf->Cell(30, 8, 'Monto', 1, 0, 'C', 1);
         $pdf->Cell(30, 8, 'Metodo', 1, 0, 'C', 1);
-        $pdf->Cell(40, 8, 'Motivo', 1, 1, 'C', 1);
+        $pdf->Cell(60, 8, 'Motivo', 1, 1, 'C', 1);
 
         // Datos de los pagos
         $pdf->SetFont('Arial', '', 12);
@@ -98,8 +98,9 @@ try {
             $pdf->Cell(30, 8, htmlspecialchars($pago['METODO_PAGO']), 'B', 0, 'C', 1);
             
             // Usar MultiCell para el motivo
-            $pdf->MultiCell(90, 8, htmlspecialchars($pago['MOTIVO']), 'B', 0,'C', 1);
+            $pdf->MultiCell(60, 8, htmlspecialchars($pago['MOTIVO']), 'B','L', 1);
             $pdf->SetX((210 - $totalWidth) / 2); // Alinear la siguiente fila
+          //  $pdf->MultiCell(90, 8, htmlspecialchars($pago['MOTIVO']), 'B', 'L', 1);
         }
     }
 

@@ -106,12 +106,8 @@ include './Includes/header.php';
                         <?php endforeach; ?>
                     </tbody>
                 </table>
-<<<<<<< HEAD
                 <a href="pdf.php" class="btn btn-primary">Generar PDF</a>
 
-=======
-                </div>
->>>>>>> 6b61b9dae485b702a127787e06d74db77ce650cd
             </div>
         </div>
   <!-- Contenedor para el gráfico -->
