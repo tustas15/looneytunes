@@ -67,10 +67,6 @@ include './Includes/header.php';
             <div class="card-header">Lista de Pagos</div>
             <div class="card-body">
                 <!-- Campo de búsqueda -->
-                <div class="mb-3">
-                    <input type="text" id="searchInput" class="form-control" placeholder="Buscar...">
-                </div>
-
                 <!-- Tabla con DataTables -->
                 <table id="pagosTable" class="table table-bordered">
                     <thead>
