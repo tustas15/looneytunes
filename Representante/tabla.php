@@ -64,8 +64,11 @@ include './Includes/header.php';
     <header class="page-header bg-white pb-10">
         <div class="container-xl px-4">
             <div class="page-header-content pt-4">
+<<<<<<< HEAD
                 <h1 class="text-dark">Tabla de Pagos</h1>
                 <p class="text-muted mb-0">Aquí puedes ver la información detallada de los pagos realizados.</p>
+=======
+>>>>>>> ec61eec89a943a84eabfc2427b98a67f942c51b1
             </div>
         </div>
     </header>
