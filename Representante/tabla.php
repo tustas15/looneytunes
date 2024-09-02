@@ -68,6 +68,7 @@ include './Includes/header.php';
             <div class="card-body">
                 <!-- Campo de búsqueda -->
                 <!-- Tabla con DataTables -->
+                <div class="table-responsive">
                 <table id="pagosTable" class="table table-bordered">
                     <thead>
                         <tr>
@@ -90,6 +91,7 @@ include './Includes/header.php';
                         <?php endforeach; ?>
                     </tbody>
                 </table>
+                </div>
             </div>
         </div>
     </div>
