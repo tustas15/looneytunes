@@ -148,7 +148,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
                         <div class="sidenav-menu-heading">Interfaz</div>
 
                         <!-- Enlace a Pago directamente -->
-                        <a class="nav-link" href="../representante/pagosre.php">
+                        <a class="nav-link" href="../representante/tabla.php">
                             <div class="nav-link-icon"><i class="fas fa-dollar-sign"></i></div>
                             Pago
                         </a>

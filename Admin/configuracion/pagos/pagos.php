@@ -224,7 +224,8 @@ include '../../IncludesPro/header.php';
 
 
 
-        function setFechaYMesActual() {
+         // Asegúrate de que estas funciones estén presentes en tu código
+         function setFechaYMesActual() {
             var today = new Date();
             var dd = String(today.getDate()).padStart(2, '0');
             var mm = String(today.getMonth() + 1).padStart(2, '0'); // Enero es 0!
@@ -240,34 +241,21 @@ include '../../IncludesPro/header.php';
             // Establecer el año actual
             document.getElementById('anio').value = yyyy;
 
-            // Actualizar motivo
+            // Actualizar el motivo
             actualizarMotivo();
         }
 
         function actualizarMotivo() {
             var mesSeleccionado = document.getElementById('mes');
             var mesTexto = mesSeleccionado.options[mesSeleccionado.selectedIndex].text;
-            var anioSeleccionado = document.getElementById('anio').value;
-
-            // Obtener el valor del mes seleccionado (con dos dígitos)
-            var mesValor = mesSeleccionado.value.padStart(2, '0');
-
-            // Obtener el día actual
-            var today = new Date();
-            var dd = String(today.getDate()).padStart(2, '0');
-
-            // Actualizar la fecha según el mes y año seleccionados
-            var nuevaFecha = anioSeleccionado + '-' + mesValor + '-' + dd;
-            document.getElementById('fecha').value = nuevaFecha;
-
-            // Actualizar motivo
+            //var anioSeleccionado = document.getElementById('anio').value;
             document.getElementById('motivo').value = 'Pago del mes de ' + mesTexto + ' ';
         }
 
         // Llamar a la función cuando se carga la página
         window.onload = setFechaYMesActual;
 
-        // Actualizar motivo y fecha cuando cambia el mes o el año
+        // Actualizar motivo cuando cambia el mes o el año
         document.getElementById('mes').addEventListener('change', actualizarMotivo);
         document.getElementById('anio').addEventListener('change', actualizarMotivo);
     </script>
