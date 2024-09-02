@@ -33,7 +33,7 @@ $tipo_usuario = $_SESSION['tipo_usuario']; // 'admin', 'entrenador', 'representa
 $id_perfil = isset($_GET['id']) ? intval($_GET['id']) : $id_usuario_logueado;
 
 // Inicializar las variables
-$nombre = $apellido = $telefono = $experiencia = $correo = $direccion = $cedula = '';
+$nombre = $apellido = $telefono = $correo = $direccion = $cedula = '';
 $deportistas = [];
 
 // Determinar el archivo de encabezado según el tipo de usuario
@@ -92,7 +92,7 @@ try {
     if ($tipo_usuario === 1) {
         $stmt = $conn->prepare("SELECT ID_USUARIO, NOMBRE_ADMIN AS NOMBRE, APELLIDO_ADMIN AS APELLIDO, CELULAR_ADMIN AS CELULAR FROM tab_administradores WHERE ID_USUARIO = :id_usuario");
     } elseif ($tipo_usuario === 2) {
-        $stmt = $conn->prepare("SELECT ID_USUARIO, NOMBRE_ENTRE AS NOMBRE, APELLIDO_ENTRE AS APELLIDO, CELULAR_ENTRE AS CELULAR, EXPERIENCIA_ENTRE AS EXPERIENCIA, CORREO_ENTRE AS CORREO, DIRECCION_ENTRE AS DIRECCION, CEDULA_ENTRE AS CEDULA FROM tab_entrenadores WHERE ID_USUARIO = :id_usuario");
+        $stmt = $conn->prepare("SELECT ID_USUARIO, NOMBRE_ENTRE AS NOMBRE, APELLIDO_ENTRE AS APELLIDO, CELULAR_ENTRE AS CELULAR, CORREO_ENTRE AS CORREO, DIRECCION_ENTRE AS DIRECCION, CEDULA_ENTRE AS CEDULA FROM tab_entrenadores WHERE ID_USUARIO = :id_usuario");
     } elseif ($tipo_usuario === 3) {
         $stmt = $conn->prepare("SELECT ID_USUARIO, NOMBRE_REPRE AS NOMBRE, APELLIDO_REPRE AS APELLIDO, CELULAR_REPRE AS CELULAR, CORREO_REPRE AS CORREO, DIRECCION_REPRE AS DIRECCION, CEDULA_REPRE AS CEDULA FROM tab_representantes WHERE ID_USUARIO = :id_usuario");
     } elseif ($tipo_usuario === 4) {
@@ -131,7 +131,7 @@ try {
         if ($tipo_usuario === 1) {
             $update_stmt = $conn->prepare("UPDATE tab_administradores SET NOMBRE_ADMIN = :nombre, APELLIDO_ADMIN = :apellido, CELULAR_ADMIN = :telefono WHERE ID_USUARIO = :id_usuario");
         } elseif ($tipo_usuario === 2) {
-            $update_stmt = $conn->prepare("UPDATE tab_entrenadores SET NOMBRE_ENTRE = :nombre, APELLIDO_ENTRE = :apellido, CELULAR_ENTRE = :telefono, CORREO_ENTRE = :email, DIRECCION_ENTRE = :direccion, EXPERIENCIA_ENTRE = :experiencia WHERE ID_USUARIO = :id_usuario");
+            $update_stmt = $conn->prepare("UPDATE tab_entrenadores SET NOMBRE_ENTRE = :nombre, APELLIDO_ENTRE = :apellido, CELULAR_ENTRE = :telefono, CORREO_ENTRE = :email, DIRECCION_ENTRE = :direccion WHERE ID_USUARIO = :id_usuario");
         } elseif ($tipo_usuario === 3) {
             $update_stmt = $conn->prepare("UPDATE tab_representantes SET NOMBRE_REPRE = :nombre, APELLIDO_REPRE = :apellido, CELULAR_REPRE = :telefono, CORREO_REPRE = :email, DIRECCION_REPRE = :direccion WHERE ID_USUARIO = :id_usuario");
         }
@@ -142,7 +142,6 @@ try {
         $update_stmt->bindParam(':id_usuario', $id_usuario_logueado, PDO::PARAM_INT);
 
         if ($tipo_usuario === 2) {
-            $update_stmt->bindParam(':experiencia', $_POST['experiencia'], PDO::PARAM_STR);
             $update_stmt->bindParam(':direccion', $_POST['direccion'], PDO::PARAM_STR);
             $update_stmt->bindParam(':email', $nuevo_email, PDO::PARAM_STR);
         } elseif ($tipo_usuario === 3) {
@@ -225,17 +224,6 @@ $conn = null;
                                 <div class="form-group">
                                     <label for="direccion">Dirección</label>
                                     <input type="text" class="form-control" id="direccion" name="direccion" value="<?php echo htmlspecialchars($direccion); ?>" required>
-                                </div>
-                            </div>
-                        </div>
-                    <?php endif; ?>
-
-                    <?php if ($tipo_usuario === 2): ?>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="experiencia">Experiencia</label>
-                                    <input type="text" class="form-control" id="experiencia" name="experiencia" value="<?php echo htmlspecialchars($experiencia); ?>" required>
                                 </div>
                             </div>
                         </div>

@@ -107,7 +107,6 @@ include '/xampp/htdocs/looneytunes/admin/includespro/header.php';
                                 <th>ID Usuario</th>
                                 <th>Nombre</th>
                                 <th>Apellido</th>
-                                <th>Experiencia</th>
                                 <th>Celular</th>
                                 <th>Correo</th>
                                 <th>Perfil</th>
@@ -120,7 +119,6 @@ include '/xampp/htdocs/looneytunes/admin/includespro/header.php';
                                 <th>ID Usuario</th>
                                 <th>Nombre</th>
                                 <th>Apellido</th>
-                                <th>Experiencia</th>
                                 <th>Celular</th>
                                 <th>Correo</th>
                                 <th>Perfil</th>
@@ -132,7 +130,7 @@ include '/xampp/htdocs/looneytunes/admin/includespro/header.php';
                             try {
                                 // Consulta para obtener todos los entrenadores con sus detalles
                                 $stmt = $conn->prepare("
-                                    SELECT e.ID_ENTRENADOR, e.ID_USUARIO, u.USUARIO, e.NOMBRE_ENTRE, e.APELLIDO_ENTRE, e.EXPERIENCIA_ENTRE, e.CELULAR_ENTRE, e.CORREO_ENTRE, e.status
+                                    SELECT e.ID_ENTRENADOR, e.ID_USUARIO, u.USUARIO, e.NOMBRE_ENTRE, e.APELLIDO_ENTRE, e.CELULAR_ENTRE, e.CORREO_ENTRE, e.status
                                     FROM tab_entrenadores e
                                     INNER JOIN tab_usuarios u ON e.ID_USUARIO = u.ID_USUARIO
                                     WHERE e.ID_USUARIO IN (
@@ -156,7 +154,6 @@ include '/xampp/htdocs/looneytunes/admin/includespro/header.php';
                                     echo "<td>" . htmlspecialchars($entrenador['ID_USUARIO']) . "</td>";
                                     echo "<td>" . htmlspecialchars($entrenador['NOMBRE_ENTRE']) . "</td>";
                                     echo "<td>" . htmlspecialchars($entrenador['APELLIDO_ENTRE']) . "</td>";
-                                    echo "<td>" . htmlspecialchars($entrenador['EXPERIENCIA_ENTRE']) . "</td>";
                                     echo "<td>" . htmlspecialchars($entrenador['CELULAR_ENTRE']) . "</td>";
                                     echo "<td>" . htmlspecialchars($entrenador['CORREO_ENTRE']) . "</td>";
                                     echo "<td><a href='../perfil/perfil_entrenador.php?ID_USUARIO=" . htmlspecialchars($entrenador['ID_USUARIO']) . "'>Ver Perfil</a></td>";
