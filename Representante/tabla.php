@@ -55,8 +55,13 @@ include './Includes/header.php';
     <header class="page-header bg-white pb-10">
         <div class="container-xl px-4">
             <div class="page-header-content pt-4">
+<<<<<<< HEAD
                 <h1 class="text-dark">Tabla de Pagos</h1>
                 <p class="text-muted mb-0">Aquí puedes ver la información detallada de los pagos realizados.</p>
+=======
+                <h1 class="text-white">Tabla de Pagos</h1>
+                <p class="text-white-700 mb-0">Historial de Pagos de Deportistas Asociados</p>
+>>>>>>> 7eb31307923f5c3f68b8f495efdd8a012dbcbb91
             </div>
         </div>
     </header>
