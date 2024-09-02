@@ -12,10 +12,10 @@ class PDF extends FPDF
     function Header()
     {
         $this->SetFont('Times', 'B', 20);
-        $this->Image('../img/triangulosrecortadosnaranja.png', 0, 0, 70);
+        $this->Image('../reportes/img/triangulosrecortadosnaranja.png', 0, 0, 70);
         $this->SetXY(60, 15);
         $this->Cell(100, 8, 'Reporte de Pagos', 0, 1, 'C', 0);
-        $this->Image('../img/logo_sinfondo.png', 160, 10, 35);
+        $this->Image('../reportes/img/logo_sinfondo.png', 160, 10, 35);
         $this->Ln(40);
     }
 
