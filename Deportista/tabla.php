@@ -39,10 +39,10 @@ try {
     $stmt = $conn->prepare("SELECT ID_DEPORTISTA FROM tab_deportistas WHERE ID_USUARIO = :id_usuario");
     $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
     $stmt->execute();
-    $id_representante = $stmt->fetchColumn();
+    $id_deportista = $stmt->fetchColumn();
 
     // Verificar si el ID_REPRESENTANTE fue encontrado
-    if (!$id_representante) {
+    if (!$id_deportista) {
         echo "No se encontró el representante para este usuario.";
         exit();
     }
@@ -55,7 +55,7 @@ try {
         WHERE p.ID_DEPORTISTA = :id_deportista
         ORDER BY p.FECHA_PAGO DESC
     ");
-    $stmt->bindParam(':id_deportista', $id_representante, PDO::PARAM_INT);
+    $stmt->bindParam(':id_deportista', $id_deportista, PDO::PARAM_INT);
     $stmt->execute();
     $pagos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -63,11 +63,11 @@ try {
     $stmt = $conn->prepare("
         SELECT DATE_FORMAT(p.FECHA_PAGO, '%Y-%m') AS mes, SUM(p.MONTO) AS total_mes
         FROM tab_pagos p
-        WHERE p.ID_REPRESENTANTE = :id_representante
+        WHERE p.ID_DEPORTISTA = :id_deportista
         GROUP BY mes
         ORDER BY mes
     ");
-    $stmt->bindParam(':id_representante', $id_representante, PDO::PARAM_INT);
+    $stmt->bindParam(':id_deportista', $id_deportista, PDO::PARAM_INT);
     $stmt->execute();
     $pagos_por_mes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
