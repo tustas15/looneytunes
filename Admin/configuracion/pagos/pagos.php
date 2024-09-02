@@ -537,18 +537,6 @@ include '../../IncludesPro/header.php';
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
         // Cargar bancos
         $.ajax({
             url: 'get_bancos.php',
