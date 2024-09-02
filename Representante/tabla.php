@@ -7,7 +7,22 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 require_once('../admin/configuracion/conexion.php');
+// ID del usuario actual
+$user_id = $_SESSION['user_id'];
 
+// Consulta para obtener la foto del usuario
+$sql = "
+    SELECT f.FOTO 
+    FROM tab_fotos_usuario f
+    JOIN tab_usu_tipo ut ON ut.ID_TIPO = f.ID_TIPO
+    WHERE ut.ID_USUARIO = :user_id
+";
+$stmt = $conn->prepare($sql);
+$stmt->execute(['user_id' => $user_id]);
+$foto = $stmt->fetchColumn();
+
+// Codificar la foto en base64
+$foto_src = $foto ? 'data:image/jpeg;base64,' . base64_encode($foto) : '/looneytunes/Assets/img/illustrations/profiles/profile-1.png';
 date_default_timezone_set('America/Guayaquil');
 
 // Verificar que la conexión se estableció correctamente
@@ -68,6 +83,7 @@ include './Includes/header.php';
             <div class="card-body">
                 <!-- Campo de búsqueda -->
                 <!-- Tabla con DataTables -->
+                <div class="table-responsive">
                 <table id="pagosTable" class="table table-bordered">
                     <thead>
                         <tr>
@@ -90,8 +106,12 @@ include './Includes/header.php';
                         <?php endforeach; ?>
                     </tbody>
                 </table>
+<<<<<<< HEAD
                 <a href="pdf.php" class="btn btn-primary">Generar PDF</a>
 
+=======
+                </div>
+>>>>>>> 6b61b9dae485b702a127787e06d74db77ce650cd
             </div>
         </div>
   <!-- Contenedor para el gráfico -->
