@@ -302,6 +302,10 @@ include './Includes/header.php';
                             <p>No hay registros de actividad para mostrar.</p>
                         <?php endif; ?>
                     </div>
+
+
+
+                    
             </div>
         </div>
     </div>

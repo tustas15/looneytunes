@@ -90,10 +90,56 @@ include './Includes/header.php';
                         <?php endforeach; ?>
                     </tbody>
                 </table>
+                <a href="pdf.php" class="btn btn-primary">Generar PDF</a>
+
             </div>
         </div>
-    </div>
-</main>
+  <!-- Contenedor para el gráfico -->
+  <div class="card mb-4">
+                <div class="card-header">Gráfico de Pagos por Mes</div>
+                <div class="card-body">
+                    <canvas id="pagosChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Script para el gráfico -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Datos del gráfico (esto debe ser generado en el servidor)
+            var monthlyData = <?php echo json_encode($monthlyData); ?>;
+
+            // Configuración del gráfico
+            var ctx = document.getElementById('pagosChart').getContext('2d');
+            var myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: monthlyData.labels,
+                    datasets: [{
+                        label: 'Total de Pagos',
+                        data: monthlyData.data,
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+
+    <!-- Incluir jQuery y Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
 
 <!-- Incluir el pie de página (footer) -->
 <?php include './Includes/footer.php'; ?>
