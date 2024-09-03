@@ -130,7 +130,7 @@ $storedPass = isset($_COOKIE['pass']) ? $_COOKIE['pass'] : '';
     <meta name="author" content="" />
     <title>LOONEY TUNES</title>
     <link href="../Assets/css/styles.css" rel="stylesheet" />
-    <link rel="icon" type="image/x-icon" href="/looneytunes/AssetsFree/img/logo.png" />
+    <link rel="icon" type="image/x-icon" href="/looneytunes/Assets/img/logo.png" />
     <script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.28.0/feather.min.js" crossorigin="anonymous"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.0/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
@@ -201,7 +201,7 @@ $storedPass = isset($_COOKIE['pass']) ? $_COOKIE['pass'] : '';
             <footer class="footer-admin mt-auto footer-dark">
                 <div class="container-xl px-4">
                     <div class="row">
-                        <div class="col-md-6 small">Copyright &copy; Looney Tunes 2023</div>
+                    <div class="col-md-6 small">Copyright &copy; Looney Tunes <?php echo date('Y'); ?></div>
                         <div class="col-md-6 text-md-end small">
                             <a href="../Public/Privacy_Policy.php">Privacy Policy</a>
                             &middot;

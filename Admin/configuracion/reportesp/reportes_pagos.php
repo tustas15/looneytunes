@@ -442,6 +442,8 @@ include '../../IncludesPro/header.php';
                             <!-- La fila de total se insertará aquí -->
                         </tfoot>
                     </table>
+                   <!-- <a href="generar_pdf.php?tipo_informe=categoria&id_especifico=1&fecha_inicio=2023-01-01&fecha_fin=2023-12-31" class="btn btn-primary">Generar PDF</a> -->
+
                 </div>
             </div>
         </div>

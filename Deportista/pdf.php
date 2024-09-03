@@ -1,7 +1,7 @@
 <?php 
 session_start();
 require_once('../admin/configuracion/conexion.php');
-require('../admin/reportes/fpdf/fpdf.php');
+require('../../reportes/fpdf/fpdf.php');
 
 // Definir la clase PDF
 class PDF extends FPDF
@@ -37,31 +37,35 @@ try {
         throw new Exception('Error de conexión a la base de datos.');
     }
 
-    // Obtener el ID del usuario desde la sesión
-    $id_usuario = $_SESSION['user_id'];
+       
+// Obtener el ID del usuario desde la sesión
+$id_usuario = $_SESSION['user_id'];
 
-    // Obtener el ID_REPRESENTANTE correspondiente al ID_USUARIO
-    $stmt = $conn->prepare("SELECT ID_REPRESENTANTE FROM tab_representantes WHERE ID_USUARIO = :id_usuario");
-    $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
-    $stmt->execute();
-    $id_representante = $stmt->fetchColumn();
 
-    // Verificar si el ID_REPRESENTANTE fue encontrado
-    if (!$id_representante) {
-        throw new Exception('No se encontró el representante para este usuario.');
-    }
+// Obtener el ID_REPRESENTANTE correspondiente al ID_USUARIO
+$stmt = $conn->prepare("SELECT ID_DEPORTISTA FROM tab_deportistas WHERE ID_USUARIO = :id_usuario");
+$stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
+$stmt->execute();
+$id_representante = $stmt->fetchColumn();
 
-    // Preparar la consulta para obtener los pagos
-    $stmt = $conn->prepare("
-        SELECT p.ID_PAGO, d.NOMBRE_DEPO, d.APELLIDO_DEPO, p.FECHA_PAGO, p.MONTO, p.MOTIVO, p.METODO_PAGO
-        FROM tab_pagos p
-        INNER JOIN tab_deportistas d ON p.ID_DEPORTISTA = d.ID_DEPORTISTA
-        WHERE p.ID_REPRESENTANTE = :id_representante
-        ORDER BY p.FECHA_PAGO DESC
-    ");
-    $stmt->bindParam(':id_representante', $id_representante, PDO::PARAM_INT);
-    $stmt->execute();
-    $pagos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+// Verificar si el ID_REPRESENTANTE fue encontrado
+if (!$id_representante) {
+    echo "No se encontró el representante para este usuario.";
+    exit();
+}
+
+// Obtener los pagos asociados al representante
+$stmt = $conn->prepare("
+    SELECT p.ID_PAGO, d.NOMBRE_REPRE, d.APELLIDO_REPRE, p.FECHA_PAGO, p.MONTO, p.MOTIVO, p.METODO_PAGO
+    FROM tab_pagos p
+    INNER JOIN tab_representantes d ON p.ID_REPRESENTANTE = d.ID_REPRESENTANTE
+    WHERE p.ID_DEPORTISTA = :id_deportista
+    ORDER BY p.FECHA_PAGO DESC
+");
+$stmt->bindParam(':id_deportista', $id_representante, PDO::PARAM_INT);
+$stmt->execute();
+$pagos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 
     // Verifica si la consulta devolvió resultados
     if (empty($pagos)) {
@@ -78,7 +82,7 @@ try {
 
         // Encabezados de las columnas
         $pdf->SetX((210 - $totalWidth) / 2);
-        $pdf->Cell(40, 8, 'Deportista', 1, 0, 'C', 1);
+        $pdf->Cell(40, 8, 'Representante', 1, 0, 'C', 1);
         $pdf->Cell(30, 8, 'Fecha', 1, 0, 'C', 1);
         $pdf->Cell(30, 8, 'Monto', 1, 0, 'C', 1);
         $pdf->Cell(30, 8, 'Metodo', 1, 0, 'C', 1);
@@ -92,7 +96,7 @@ try {
         foreach ($pagos as $pago) {
             $pdf->Ln();
             $pdf->SetX((210 - $totalWidth) / 2);
-            $pdf->Cell(40, 8, htmlspecialchars($pago['NOMBRE_DEPO'] . ' ' . $pago['APELLIDO_DEPO']), 'B', 0, 'C', 1);
+            $pdf->Cell(40, 8, htmlspecialchars($pago['NOMBRE_REPRE'] . ' ' . $pago['APELLIDO_REPRE']), 'B', 0, 'C', 1);
             $pdf->Cell(30, 8, htmlspecialchars(date('d/m/Y', strtotime($pago['FECHA_PAGO']))), 'B', 0, 'C', 1);
             $pdf->Cell(30, 8, htmlspecialchars('$' . number_format($pago['MONTO'], 2)), 'B', 0, 'C', 1);
             $pdf->Cell(30, 8, htmlspecialchars($pago['METODO_PAGO']), 'B', 0, 'C', 1);

@@ -2,20 +2,16 @@
 session_start();
 include_once('../../configuracion/conexion.php');
 require('../../reportes/fpdf/fpdf.php');
-header('Content-Type: application/pdf');
-header('Content-Disposition: attachment; filename="reporte.pdf"');
-echo $pdfContent; // Suponiendo que $pdfContent contiene los datos binarios del PDF
-
 class PDF extends FPDF
 {
     // Cabecera de página
     function Header()
     {
         $this->SetFont('Times', 'B', 20);
-        $this->Image('../img/triangulosrecortadosnaranja.png', 0, 0, 70);
+        $this->Image('../../reportes/img/triangulosrecortadosnaranja.png', 0, 0, 70);
         $this->SetXY(60, 15);
         $this->Cell(100, 8, 'Reporte de Pagos', 0, 1, 'C', 0);
-        $this->Image('../img/logo_sinfondo.png', 160, 10, 35);
+        $this->Image('../../reportes/img/logo_sinfondo.png', 160, 10, 35);
         $this->Ln(40);
     }
 
@@ -133,7 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         // Salida del PDF
-        $pdf->Output('D]Ln', 'Reporte_Pagos.pdf');
+        $pdf->Output('D', 'Reporte_Pagos.pdf');
     } catch (PDOException $e) {
         die("Error en la consulta: " . $e->getMessage());
     }

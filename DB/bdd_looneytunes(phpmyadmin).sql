@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 29-08-2024 a las 02:45:09
+-- Tiempo de generación: 03-09-2024 a las 17:33:43
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -20,19 +20,6 @@ SET time_zone = "+00:00";
 --
 -- Base de datos: `looneytunes`
 --
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `password_resets`
---
-
-CREATE TABLE `password_resets` (
-  `id` int(11) NOT NULL,
-  `email` varchar(100) NOT NULL,
-  `token` varchar(255) NOT NULL,
-  `expire` datetime NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -55,8 +42,7 @@ CREATE TABLE `tab_administradores` (
 
 INSERT INTO `tab_administradores` (`ID_ADMINISTRADOR`, `ID_USUARIO`, `NOMBRE_ADMIN`, `APELLIDO_ADMIN`, `CELULAR_ADMIN`, `status`) VALUES
 (3, 17, 'Carlos', 'Rosales', '0984657646', 'activo'),
-(5, 56, 'Santiago', 'Rosales', '0963060020', 'activo'),
-(8, 59, 'Edwin', 'Vilatuña', '0963060020', 'activo');
+(4, 55, 'Programador', 'ITSI', '0987654321', 'activo');
 
 -- --------------------------------------------------------
 
@@ -98,14 +84,14 @@ CREATE TABLE `tab_categorias` (
 --
 
 INSERT INTO `tab_categorias` (`ID_CATEGORIA`, `CATEGORIA`, `LIMITE_DEPORTISTAS`) VALUES
-(1, 'MOSQUITOS', 2),
-(2, 'PRE MINI', 2),
+(1, 'MOSQUITOS', 5),
+(2, 'PRE MINI', 5),
 (3, 'MINI DAMAS', 5),
 (4, 'MINI HOMBRES', 5),
-(5, 'U13 DAMAS', NULL),
-(6, 'U13 HOMBRES', NULL),
-(8, 'U15 HOMBRES', NULL),
-(12, 'U15 DAMAS', NULL);
+(5, 'U13 DAMAS', 10),
+(6, 'U13 HOMBRES', 0),
+(8, 'U15 HOMBRES', 0),
+(12, 'U15 DAMAS', 0);
 
 -- --------------------------------------------------------
 
@@ -126,6 +112,7 @@ INSERT INTO `tab_categoria_deportista` (`ID_CATEGORIA`, `ID_DEPORTISTA`) VALUES
 (1, 10),
 (1, 12),
 (2, 8),
+(5, 17),
 (8, 11),
 (8, 16);
 
@@ -156,7 +143,8 @@ INSERT INTO `tab_deportistas` (`ID_DEPORTISTA`, `ID_USUARIO`, `NOMBRE_DEPO`, `AP
 (10, 27, 'Brandon', 'Alvarez', '2003-08-26', '1001001001', '0987654322', 'Masculino', 'activo'),
 (11, 28, 'Pablo', 'Chasi', '2002-03-06', '1001001002', '0912345678', 'Masculino', 'activo'),
 (12, 29, 'Luis', 'Andrade', '2003-03-26', '1001001003', '0912365748', 'Masculino', 'activo'),
-(16, 50, 'Francisco', 'Vilatuña', '2006-01-26', '1005415003', '0963060020', 'Masculino', 'activo');
+(16, 50, 'Francisco', 'Vilatuña', '2006-01-26', '1005415003', '0963060020', 'Masculino', 'activo'),
+(17, 58, 'Cristiana', 'Pérez', '2010-07-22', '1002003003', '0985476321', 'Femenino', 'activo');
 
 -- --------------------------------------------------------
 
@@ -182,7 +170,12 @@ INSERT INTO `tab_detalles` (`ID_DETALLE`, `ID_USUARIO`, `NUMERO_CAMISA`, `ALTURA
 (18, 27, '47', '170', '70', '2024-07-01', 10),
 (19, 28, '13', '75', '95', '2024-07-01', 11),
 (20, 16, '13', '170', '50', '2024-08-13', 12),
-(21, 16, '13', '172', '55', '2024-09-14', 12);
+(21, 16, '13', '172', '55', '2024-09-14', 12),
+(27, 16, '47', '180', '80', '2024-08-22', 10),
+(29, 16, '13', '170', '70', '2024-08-26', 10),
+(30, 16, '13', '188', '50', '2024-09-02', 10),
+(31, 56, '22', '120', '60', '2024-09-02', 17),
+(32, 56, '1', '119', '55', '2024-08-01', 17);
 
 -- --------------------------------------------------------
 
@@ -209,7 +202,8 @@ CREATE TABLE `tab_entrenadores` (
 
 INSERT INTO `tab_entrenadores` (`ID_ENTRENADOR`, `ID_USUARIO`, `NOMBRE_ENTRE`, `APELLIDO_ENTRE`, `EXPERIENCIA_ENTRE`, `CELULAR_ENTRE`, `CORREO_ENTRE`, `DIRECCION_ENTRE`, `CEDULA_ENTRE`, `status`) VALUES
 (2, 16, 'Santiago', 'Andrade', '6 meses', '0984657646', 'andradebrandon26@gmail.com', 'Ibarra', '1003447560', 'activo'),
-(6, 54, 'Christian', 'Andrade', '2 años', '0963060020', 'tustasgamer@gmail.com', 'Calle Roca Y Olmedo', '1005415003', 'activo');
+(6, 54, 'Christian', 'Andrade', '1 año', '0963060020', 'tustasgamer@gmail.com', 'Calle Roca Y Olmedo', '1005415003', 'activo'),
+(7, 56, 'Christian', 'Pérez', '', '0985236741', 'entrenador_1@gmail.com', 'Ibarra', '1002003001', 'activo');
 
 -- --------------------------------------------------------
 
@@ -229,8 +223,38 @@ CREATE TABLE `tab_entrenador_categoria` (
 INSERT INTO `tab_entrenador_categoria` (`ID_ENTRENADOR`, `ID_CATEGORIA`) VALUES
 (2, 1),
 (2, 2),
-(2, 8),
-(6, 2);
+(7, 5);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `tab_estado_pagos`
+--
+
+CREATE TABLE `tab_estado_pagos` (
+  `id_estado` int(11) NOT NULL,
+  `id_deportista` int(11) DEFAULT NULL,
+  `id_pago` int(11) DEFAULT NULL,
+  `id_categoria` int(11) DEFAULT NULL,
+  `fecha` date DEFAULT NULL,
+  `estado` enum('PAGADO','PAGO ATRASADO') NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `tab_estado_pagos`
+--
+
+INSERT INTO `tab_estado_pagos` (`id_estado`, `id_deportista`, `id_pago`, `id_categoria`, `fecha`, `estado`) VALUES
+(1, 10, 62, 1, '2024-08-31', 'PAGADO'),
+(2, 8, 63, 2, '2024-07-29', 'PAGO ATRASADO'),
+(3, 10, 64, 1, '2024-06-20', 'PAGO ATRASADO'),
+(4, 10, 65, 1, '2024-07-23', 'PAGO ATRASADO'),
+(7, 16, 68, 8, '2024-07-25', 'PAGO ATRASADO'),
+(8, 8, 69, 2, '2024-08-31', 'PAGO ATRASADO'),
+(11, 10, 72, 1, '2024-10-01', 'PAGADO'),
+(12, 10, 73, 1, '2024-07-01', 'PAGADO'),
+(13, 10, 74, 1, '2024-09-01', 'PAGADO'),
+(14, 10, 75, 1, '2024-09-01', 'PAGADO');
 
 -- --------------------------------------------------------
 
@@ -277,8 +301,8 @@ CREATE TABLE `tab_informes` (
 --
 
 INSERT INTO `tab_informes` (`id_informe`, `id_deportista`, `id_representante`, `id_entrenador`, `informe`, `fecha_creacion`) VALUES
-(1, 12, 4, 2, 'Mal uniformado', '2024-08-14 01:33:13'),
-(3, 10, 3, 2, 'Todo correcto', '2024-08-14 02:50:29');
+(36, 10, 3, 2, 'Bien uniformado', '2024-09-01 19:42:31'),
+(42, 10, 3, 2, 'Atrasado', '2024-09-01 20:00:17');
 
 -- --------------------------------------------------------
 
@@ -301,8 +325,99 @@ CREATE TABLE `tab_logs` (
 --
 
 INSERT INTO `tab_logs` (`ID_LOG`, `ID_USUARIO`, `EVENTO`, `HORA_LOG`, `DIA_LOG`, `IP`, `TIPO_EVENTO`) VALUES
-(1, 17, 'Cierre de sesión', '19:43:35', '2024-08-28', '::1', 'cierre_sesion'),
-(2, 17, 'Inicio de sesion IP: ::1', '19:43:36', '2024-08-28', '::1', 'inicio_sesion');
+(34, 17, 'Nuevo Pago de Viviana', '15:44:15', '2024-08-31', '::1', 'nuevo_pago_agregado'),
+(35, 17, 'Nuevo Pago de Viviana', '15:49:18', '2024-08-31', '::1', 'nuevo_pago_agregado'),
+(36, 17, 'Nuevo Pago de Viviana', '15:50:10', '2024-08-31', '::1', 'nuevo_pago_agregado'),
+(37, 17, 'Nuevo Pago de Viviana', '15:50:52', '2024-08-31', '::1', 'nuevo_pago_agregado'),
+(38, 17, 'Nuevo Pago de Viviana', '16:31:50', '2024-08-31', '::1', 'nuevo_pago_agregado'),
+(39, 17, 'Nuevo Pago de Raquel', '16:50:15', '2024-08-31', '::1', 'nuevo_pago_agregado'),
+(40, 17, 'Nuevo Pago de Viviana', '17:09:00', '2024-08-31', '::1', 'nuevo_pago_agregado'),
+(41, 27, 'Inicio de sesion IP: ::1', '18:23:23', '2024-09-01', '::1', 'inicio_sesion'),
+(42, 18, 'Inicio de sesion IP: ::1', '18:27:07', '2024-09-01', '::1', 'inicio_sesion'),
+(43, 18, 'Cierre de sesión', '18:31:18', '2024-09-01', '::1', 'cierre_sesion'),
+(44, 17, 'Inicio de sesion IP: ::1', '18:31:33', '2024-09-01', '::1', 'inicio_sesion'),
+(45, 18, 'Inicio de sesion IP: ::1', '18:34:32', '2024-09-01', '::1', 'inicio_sesion'),
+(46, 18, 'Cierre de sesión', '18:43:19', '2024-09-01', '::1', 'cierre_sesion'),
+(47, 17, 'Inicio de sesion IP: ::1', '18:43:27', '2024-09-01', '::1', 'inicio_sesion'),
+(48, 17, 'Respaldo subido y restaurado exitosamente', '23:43:40', '2024-09-01', '::1', 'subida_base_datos'),
+(49, 17, 'Cierre de sesión', '18:44:16', '2024-09-01', '::1', 'cierre_sesion'),
+(50, 16, 'Inicio de sesion IP: ::1', '18:44:19', '2024-09-01', '::1', 'inicio_sesion'),
+(51, 16, 'Nueva Observacion de Brandon', '18:44:46', '2024-09-01', '::1', 'nuevo_observacion_enviada'),
+(52, 16, 'Cierre de sesión', '18:46:05', '2024-09-01', '::1', 'cierre_sesion'),
+(53, 17, 'Inicio de sesion IP: ::1', '18:46:19', '2024-09-01', '::1', 'inicio_sesion'),
+(54, 17, 'Nuevo Pago de Viviana', '18:47:32', '2024-09-01', '::1', 'nuevo_pago_agregado'),
+(55, 17, 'Nuevo Pago de Viviana', '18:49:28', '2024-09-01', '::1', 'nuevo_pago_agregado'),
+(56, 17, 'Nuevo Pago de Viviana', '19:03:54', '2024-09-01', '::1', 'nuevo_pago_agregado'),
+(57, 17, 'Nuevo Pago de Viviana', '19:06:48', '2024-09-01', '::1', 'nuevo_pago_agregado'),
+(58, 17, 'Nuevo Pago de Viviana', '19:08:37', '2024-09-01', '::1', 'nuevo_pago_agregado'),
+(59, 16, 'Inicio de sesion IP: ::1', '19:34:49', '2024-09-01', '::1', 'inicio_sesion'),
+(60, 16, 'Nuevo Dato de Brandon', '19:39:25', '2024-09-01', '::1', 'nuevo_dato_creado'),
+(61, 16, 'Nueva Observacion de Brandon', '19:42:31', '2024-09-01', '::1', 'nuevo_observacion_enviada'),
+(62, 16, 'Nueva Observacion de Brandon', '19:44:46', '2024-09-01', '::1', 'nuevo_observacion_enviada'),
+(63, 16, 'Nueva Observacion de Brandon', '19:45:07', '2024-09-01', '::1', 'nuevo_observacion_enviada'),
+(64, 16, 'Nueva Observacion de Brandon', '19:49:17', '2024-09-01', '::1', 'nuevo_observacion_enviada'),
+(65, 16, 'Nueva Observacion de Brandon', '19:50:51', '2024-09-01', '::1', 'nuevo_observacion_enviada'),
+(66, 16, 'Nueva Observacion de Brandon', '19:59:45', '2024-09-01', '::1', 'nuevo_observacion_enviada'),
+(67, 16, 'Observacion Eliminada de Brandon', '19:59:49', '2024-09-01', '::1', 'nuevo_observacion_eliminada'),
+(68, 16, 'Observacion Eliminada de Brandon', '19:59:50', '2024-09-01', '::1', 'nuevo_observacion_eliminada'),
+(69, 16, 'Observacion Eliminada de Brandon', '19:59:52', '2024-09-01', '::1', 'nuevo_observacion_eliminada'),
+(70, 16, 'Observacion Eliminada de Brandon', '19:59:54', '2024-09-01', '::1', 'nuevo_observacion_eliminada'),
+(71, 16, 'Observacion Eliminada de Brandon', '19:59:57', '2024-09-01', '::1', 'nuevo_observacion_eliminada'),
+(72, 16, 'Observacion Eliminada de Brandon', '19:59:59', '2024-09-01', '::1', 'nuevo_observacion_eliminada'),
+(73, 16, 'Nueva Observacion de Brandon', '20:00:17', '2024-09-01', '::1', 'nuevo_observacion_enviada'),
+(74, 16, 'Cierre de sesión', '20:01:53', '2024-09-01', '::1', 'cierre_sesion'),
+(75, 27, 'Inicio de sesion IP: ::1', '20:01:57', '2024-09-01', '::1', 'inicio_sesion'),
+(76, 27, 'Cierre de sesión', '20:02:05', '2024-09-01', '::1', 'cierre_sesion'),
+(77, 18, 'Inicio de sesion IP: ::1', '20:02:15', '2024-09-01', '::1', 'inicio_sesion'),
+(78, 18, 'Inicio de sesion IP: ::1', '20:13:24', '2024-09-01', '::1', 'inicio_sesion'),
+(79, 18, 'Cierre de sesión', '20:32:39', '2024-09-01', '::1', 'cierre_sesion'),
+(80, 27, 'Inicio de sesion IP: ::1', '20:32:42', '2024-09-01', '::1', 'inicio_sesion'),
+(81, 27, 'Cierre de sesión', '20:32:50', '2024-09-01', '::1', 'cierre_sesion'),
+(82, 18, 'Inicio de sesion IP: ::1', '20:33:04', '2024-09-01', '::1', 'inicio_sesion'),
+(83, 18, 'Cierre de sesión', '20:42:52', '2024-09-01', '::1', 'cierre_sesion'),
+(84, 17, 'Inicio de sesion IP: ::1', '20:42:59', '2024-09-01', '::1', 'inicio_sesion'),
+(85, 17, 'Nuevo Pago de Viviana', '20:45:58', '2024-09-01', '::1', 'nuevo_pago_agregado'),
+(86, 17, 'Cierre de sesión', '20:52:01', '2024-09-01', '::1', 'cierre_sesion'),
+(87, 16, 'Inicio de sesion IP: ::1', '20:52:07', '2024-09-01', '::1', 'inicio_sesion'),
+(88, 16, 'Nueva Observacion de Brandon', '20:53:05', '2024-09-01', '::1', 'nuevo_observacion_enviada'),
+(89, 16, 'Observacion Eliminada de Brandon', '20:53:16', '2024-09-01', '::1', 'nuevo_observacion_eliminada'),
+(90, 16, 'Carga de la hoja de vida', '20:53:43', '2024-09-01', '::1', 'subida_pdf'),
+(91, 16, 'Carga de la hoja de vida', '20:53:48', '2024-09-01', '::1', 'subida_pdf'),
+(92, 16, 'Descarga de la hoja de vida', '20:53:53', '2024-09-01', '::1', 'descarga_pdf'),
+(93, 16, 'Cierre de sesión', '20:54:45', '2024-09-01', '::1', 'cierre_sesion'),
+(94, 18, 'Inicio de sesion IP: ::1', '20:54:57', '2024-09-01', '::1', 'inicio_sesion'),
+(95, 18, 'Descarga pdf del entrenador Santiago', '20:56:47', '2024-09-01', '::1', 'descarga_pdf'),
+(96, 18, 'Cierre de sesión', '20:57:07', '2024-09-01', '::1', 'cierre_sesion'),
+(97, 27, 'Inicio de sesion IP: ::1', '20:57:10', '2024-09-01', '::1', 'inicio_sesion'),
+(98, 27, 'Cierre de sesión', '21:06:49', '2024-09-01', '::1', 'cierre_sesion'),
+(99, 18, 'Inicio de sesion IP: ::1', '21:09:19', '2024-09-01', '::1', 'inicio_sesion'),
+(100, 18, 'Cierre de sesión', '21:11:42', '2024-09-01', '::1', 'cierre_sesion'),
+(101, 40, 'Inicio de sesion IP: ::1', '21:11:59', '2024-09-01', '::1', 'inicio_sesion'),
+(102, 40, 'Cierre de sesión', '21:16:42', '2024-09-01', '::1', 'cierre_sesion'),
+(103, 16, 'Inicio de sesion IP: ::1', '21:16:48', '2024-09-01', '::1', 'inicio_sesion'),
+(104, 16, 'Cierre de sesión', '21:18:55', '2024-09-01', '::1', 'cierre_sesion'),
+(105, 17, 'Inicio de sesion IP: ::1', '21:19:03', '2024-09-01', '::1', 'inicio_sesion'),
+(106, 17, 'Categoría registrada: Balones', '04:23:02', '2024-09-02', '::1', ''),
+(107, 17, 'Categoría registrada: Trampolines', '04:23:16', '2024-09-02', '::1', ''),
+(108, 17, 'Categoría registrada: Escaleras', '04:23:38', '2024-09-02', '::1', ''),
+(109, 17, 'Producto registrado: Reboteador', '04:24:15', '2024-09-02', '::1', ''),
+(110, 17, 'Producto registrado: De salto', '04:25:48', '2024-09-02', '::1', ''),
+(111, 17, 'Producto registrado: Coordinacion', '04:26:48', '2024-09-02', '::1', ''),
+(112, 17, 'Categoría registrada: Pesas', '04:27:02', '2024-09-02', '::1', ''),
+(113, 17, 'Producto registrado: Rusas 2kg', '04:28:02', '2024-09-02', '::1', ''),
+(114, 17, 'Nuevo admin: programador.itsi', '21:30:36', '2024-09-01', '::1', 'nuevo_usuario'),
+(115, 17, 'Nuevo entrenador: christian.pérez', '21:34:01', '2024-09-01', '::1', 'nuevo_usuario'),
+(116, 17, 'Nuevo representante: carla.gudiño', '21:35:31', '2024-09-01', '::1', 'nuevo_usuario'),
+(117, 17, 'Nuevo deportista: cristiana.pérez', '21:37:49', '2024-09-01', '::1', 'nuevo_usuario'),
+(118, 17, 'Límite modificado 20 en U13 DAMAS', '21:38:21', '2024-09-01', '::1', 'nuevo_limite_categoria_deportistas_definido'),
+(119, 17, 'Límite modificado 10 en U13 DAMAS', '21:38:57', '2024-09-01', '::1', 'nuevo_limite_categoria_deportistas_definido'),
+(120, 17, 'Cierre de sesión', '21:39:06', '2024-09-01', '::1', 'cierre_sesion'),
+(121, 56, 'Inicio de sesion IP: ::1', '21:39:19', '2024-09-01', '::1', 'inicio_sesion'),
+(122, 56, 'Nuevo Dato de Cristiana', '21:39:38', '2024-09-01', '::1', 'nuevo_dato_creado'),
+(123, 56, 'Nuevo Dato de Cristiana', '21:40:22', '2024-09-01', '::1', 'nuevo_dato_creado'),
+(124, 56, 'Cierre de sesión', '21:41:06', '2024-09-01', '::1', 'cierre_sesion'),
+(125, 55, 'Inicio de sesion IP: ::1', '21:41:51', '2024-09-01', '::1', 'inicio_sesion'),
+(126, 17, 'Respaldo subido y restaurado exitosamente', '15:37:26', '2024-09-02', '::1', 'subida_base_datos');
 
 -- --------------------------------------------------------
 
@@ -320,18 +435,25 @@ CREATE TABLE `tab_pagos` (
   `FECHA_PAGO` date DEFAULT NULL,
   `MOTIVO` text DEFAULT NULL,
   `NOMBRE_ARCHIVO` varchar(50) NOT NULL,
-  `ENTIDAD_ORIGEN` varchar(100) NOT NULL
+  `ENTIDAD_ORIGEN` varchar(100) NOT NULL,
+  `REGISTRADO_POR` enum('ADMIN','REPRE','DEPO','') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `tab_pagos`
 --
 
-INSERT INTO `tab_pagos` (`ID_PAGO`, `ID_REPRESENTANTE`, `ID_DEPORTISTA`, `ID_BANCO`, `METODO_PAGO`, `MONTO`, `FECHA_PAGO`, `MOTIVO`, `NOMBRE_ARCHIVO`, `ENTIDAD_ORIGEN`) VALUES
-(56, 4, 12, 0, 'efectivo', 123456.00, '2024-08-08', 'Pago del mes de Agosto ', '', ''),
-(57, 4, 16, 2, 'transferencia', 123456.00, '2024-08-08', 'Pago del mes de Agosto ', 'Acta de recepcion de producto.docx', 'lalalalallala'),
-(70, 4, 16, 0, 'efectivo', 51.00, '2024-08-12', 'Pago del mes de Agosto ', '', ''),
-(71, 4, 16, 0, 'efectivo', 15.00, '2024-08-13', 'Pago del mes de Agosto ', '', '');
+INSERT INTO `tab_pagos` (`ID_PAGO`, `ID_REPRESENTANTE`, `ID_DEPORTISTA`, `ID_BANCO`, `METODO_PAGO`, `MONTO`, `FECHA_PAGO`, `MOTIVO`, `NOMBRE_ARCHIVO`, `ENTIDAD_ORIGEN`, `REGISTRADO_POR`) VALUES
+(62, 3, 10, 0, 'efectivo', 35.00, '2024-08-31', 'Pago del mes de Agosto ', '', '', 'ADMIN'),
+(63, 3, 8, 0, 'efectivo', 35.00, '2024-07-29', 'Pago del mes de Julio ', '', '', 'ADMIN'),
+(64, 3, 10, 0, 'efectivo', 35.00, '2024-06-20', 'Pago del mes de Junio ', '', '', 'ADMIN'),
+(65, 3, 10, 0, 'efectivo', 35.00, '2024-07-23', 'Pago del mes de Julio ', '', '', 'ADMIN'),
+(68, 4, 16, 0, 'efectivo', 35.00, '2024-07-25', 'Pago del mes de Julio ', '', '', 'ADMIN'),
+(69, 3, 8, 0, 'efectivo', 35.00, '2024-08-31', 'Pago del mes de Agosto ', '', '', 'ADMIN'),
+(72, 3, 10, 0, 'efectivo', 35.00, '2024-10-01', 'Pago del mes de Octubre ', '', '', 'ADMIN'),
+(73, 3, 10, 0, 'efectivo', 35.00, '2024-07-01', 'Pago del mes de Julio ', '', '', 'ADMIN'),
+(74, 3, 10, 0, 'efectivo', 35.00, '2024-09-01', 'Pago del mes de Julio ', '', '', 'ADMIN'),
+(75, 3, 10, 0, 'efectivo', 35.00, '2024-09-01', 'Pago del mes de Septiembre ', '', '', 'ADMIN');
 
 -- --------------------------------------------------------
 
@@ -352,7 +474,7 @@ CREATE TABLE `tab_pdfs` (
 --
 
 INSERT INTO `tab_pdfs` (`id_pdf`, `id_usuario`, `file_name`, `file_path`, `uploaded_at`) VALUES
-(13, 16, '16_cv.pdf', '/looneytunes/entrenador/pdfs/16_cv.pdf', '2024-08-20 22:03:09');
+(17, 16, '16_cv.pdf', '/entrenador/pdfs/16_cv.pdf', '2024-09-01 20:53:48');
 
 -- --------------------------------------------------------
 
@@ -376,9 +498,10 @@ CREATE TABLE `tab_productos` (
 --
 
 INSERT INTO `tab_productos` (`id_producto`, `producto_codigo`, `producto_nombre`, `producto_precio`, `producto_stock`, `producto_foto`, `id_categoria_producto`, `ID_USUARIO`) VALUES
-(1, '1234', 'Balon', 15.00, 15, '', 1, 17),
-(2, 'BK002', 'Canasta de Baloncesto', 150.00, 5, 'canasta_basket.jpg', 2, 17),
-(3, 'BK003', 'Zapatillas de Baloncesto', 75.00, 8, 'zapatillas_basket.jpg', 1, 17);
+(1, '1', 'Reboteador', 2.50, 2, '', 3, 17),
+(2, '2', 'De salto', 81.99, 2, 'De_salto_20.jpg', 4, 17),
+(3, '3', 'Coordinacion', 81.99, 2, 'Coordinacion_100.jpg', 4, 17),
+(4, '4', 'Rusas 2kg', 8.99, 2, 'Rusas_2kg_57.jpg', 6, 17);
 
 -- --------------------------------------------------------
 
@@ -397,10 +520,10 @@ CREATE TABLE `tab_producto_categoria` (
 --
 
 INSERT INTO `tab_producto_categoria` (`id_categoria_producto`, `categoria_nombre`, `categoria_ubicacion`) VALUES
-(1, 'Balones', 'Ibarra'),
-(2, 'Indumentaria', 'Otavalo'),
-(3, 'Equipamiento de Baloncesto', 'Ibarra'),
-(4, 'Instalaciones', 'Otavalo');
+(3, 'Balones', 'Salon 1'),
+(4, 'Trampolines', 'Salon 2'),
+(5, 'Escaleras', 'Salon 1'),
+(6, 'Pesas', 'Salon 1');
 
 -- --------------------------------------------------------
 
@@ -425,8 +548,9 @@ CREATE TABLE `tab_representantes` (
 --
 
 INSERT INTO `tab_representantes` (`ID_REPRESENTANTE`, `ID_USUARIO`, `NOMBRE_REPRE`, `APELLIDO_REPRE`, `CELULAR_REPRE`, `CORREO_REPRE`, `DIRECCION_REPRE`, `CEDULA_REPRE`, `status`) VALUES
-(3, 18, 'Viviana', 'Alvarez', '0987654321', 'user_3@gmail.com', 'Pimampiro', '1002536181', 'activo'),
-(4, 40, 'Raquel', 'Andrade', '0963060020', 'santy_rosales2003@hotmail.com', 'La victoria', '1005415003', 'activo');
+(3, 18, 'Viviana', 'Alvarez', '0984657646', 'user_3@gmail.com', 'Pimampiro', '1002536181', 'activo'),
+(4, 40, 'Raquel', 'Andrade', '0963060020', 'santy_rosales2003@hotmail.com', 'La Victoria', '1005415003', 'activo'),
+(5, 57, 'Carla', 'Gudiño', '0963245871', 'representante_1@gmail.com', 'Ibarra', '1002003002', 'activo');
 
 -- --------------------------------------------------------
 
@@ -447,19 +571,8 @@ INSERT INTO `tab_representantes_deportistas` (`ID_DEPORTISTA`, `ID_REPRESENTANTE
 (8, 3),
 (10, 3),
 (12, 4),
-(16, 4);
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `tab_tareas_programadas`
---
-
-CREATE TABLE `tab_tareas_programadas` (
-  `ID_TAREA` int(11) NOT NULL,
-  `ID_DEPORTISTA` int(11) NOT NULL,
-  `FECHA_PROGRAMADA` datetime NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+(16, 4),
+(17, 5);
 
 -- --------------------------------------------------------
 
@@ -478,14 +591,6 @@ CREATE TABLE `tab_temp_deportistas` (
   `NUMERO_CELULAR` varchar(10) DEFAULT NULL,
   `GENERO` varchar(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `tab_temp_deportistas`
---
-
-INSERT INTO `tab_temp_deportistas` (`ID_TEMP_DEPORTISTA`, `ID_USUARIO`, `ID_DEPORTISTA`, `NOMBRE_DEPO`, `APELLIDO_DEPO`, `FECHA_NACIMIENTO`, `CEDULA_DEPO`, `NUMERO_CELULAR`, `GENERO`) VALUES
-(39, 16, 10, 'Brandon', 'Alvarez', '2003-08-26', '1001001001', '0987654322', 'Masculino'),
-(40, 16, 11, 'Pablo', 'Chasi', '2002-03-06', '1001001002', '0912345678', 'Masculino');
 
 -- --------------------------------------------------------
 
@@ -520,29 +625,29 @@ CREATE TABLE `tab_usuarios` (
   `PASS` varchar(100) DEFAULT NULL,
   `intentos_fallidos` int(11) DEFAULT 0,
   `bloqueado_hasta` datetime DEFAULT NULL,
-  `status` enum('activo','inactivo') NOT NULL DEFAULT 'activo',
-  `reset_token` varchar(100) DEFAULT NULL,
-  `reset_token_exp` datetime DEFAULT NULL
+  `status` enum('activo','inactivo') NOT NULL DEFAULT 'activo'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `tab_usuarios`
 --
 
-INSERT INTO `tab_usuarios` (`ID_USUARIO`, `USUARIO`, `PASS`, `intentos_fallidos`, `bloqueado_hasta`, `status`, `reset_token`, `reset_token_exp`) VALUES
-(16, 'Santiago', '$2y$10$drUQ3gjrFF5PtnRVAkWGgeQbXtqZqF451Ilzl2IDL80Z0aHsh9L8C', 0, NULL, 'activo', NULL, NULL),
-(17, 'Carlos', '$2y$10$q/IbwCdYWpIeFPQpFamUtuzRyX9sqe8eMPQfiP.MN06OV.zxzpyxu', 0, NULL, 'activo', NULL, NULL),
-(18, 'Viviana', '$2y$10$P2FXS9k8pp00fhFN8qEtg.0RkvMXforjqfrdAonnIlE.MdDN7NEb6', 0, NULL, 'activo', NULL, NULL),
-(25, 'Samia', '$2y$10$2.Ex7qBAmjTyMxrxbKtQJuUHElXIaBDroT5DJBrwb4LZBAIyel/qm', 0, NULL, 'activo', NULL, NULL),
-(27, 'Brandon', '$2y$10$zuA7jncJXXMeFMzmb/XUROEIg8dHJe4igng4mWeSja12DFZOC4rzG', 0, NULL, 'activo', NULL, NULL),
-(28, 'Pablo', '$2y$10$tsyl.IF1cagtsdNELZEhOOgmNM4/Lv7akbOVUqd5JZ04imKNWDyEi', 0, NULL, 'activo', NULL, NULL),
-(29, 'Luis', '$2y$10$W.YAEcunEQqWJJqTyLa8zOh9429IExWPMDs40iU40QKDSSeZKmmvq', 0, NULL, 'activo', NULL, NULL),
-(39, 'Carlos', '$2y$10$ttXulishggwe2v.fz.4EPOkUw8logHb7Wmo0J4ian89FM688uiWUG', 0, NULL, 'activo', NULL, NULL),
-(40, 'Raquel', '$2y$10$EhWPbmIm70wlbIjNCxbnmeelozAQVV2hguti/EB3.bsjf0noOkW1e', 0, NULL, 'activo', NULL, NULL),
-(50, 'Francisco', '$2y$10$Y6QBinOgrECiNVyDDX.pUufzLqlRA53bkBLAg8PLZerNZgyrkbBUi', 0, NULL, 'activo', NULL, NULL),
-(54, 'Christian', '$2y$10$TceF7SOJPbNHyWIugR6t8.m2CshOc/IRBPmZ7zLU99a.YcFEXR5a2', 0, NULL, 'activo', NULL, NULL),
-(56, 'santiago.rosales', '$2y$10$bkWPEZWYouKXzovq6x3Yf.YDBgtXpxk0/vaQCypaQIAaktpS4UHTC', 0, NULL, 'activo', NULL, NULL),
-(59, 'edwin.vilatuña', '$2y$10$PkNS/Py3BMjsRzq7bCnDrOlL9hg/11.Km24jnt3KYGnq9DKrggqBW', 0, NULL, 'activo', NULL, NULL);
+INSERT INTO `tab_usuarios` (`ID_USUARIO`, `USUARIO`, `PASS`, `intentos_fallidos`, `bloqueado_hasta`, `status`) VALUES
+(16, 'Santiago', '$2y$10$drUQ3gjrFF5PtnRVAkWGgeQbXtqZqF451Ilzl2IDL80Z0aHsh9L8C', 0, '0000-00-00 00:00:00', 'activo'),
+(17, 'Carlos', '$2y$10$q/IbwCdYWpIeFPQpFamUtuzRyX9sqe8eMPQfiP.MN06OV.zxzpyxu', 0, '0000-00-00 00:00:00', 'activo'),
+(18, 'Viviana', '$2y$10$P2FXS9k8pp00fhFN8qEtg.0RkvMXforjqfrdAonnIlE.MdDN7NEb6', 0, '0000-00-00 00:00:00', 'activo'),
+(25, 'Samia', '$2y$10$2.Ex7qBAmjTyMxrxbKtQJuUHElXIaBDroT5DJBrwb4LZBAIyel/qm', 0, '0000-00-00 00:00:00', 'activo'),
+(27, 'Brandon', '$2y$10$zuA7jncJXXMeFMzmb/XUROEIg8dHJe4igng4mWeSja12DFZOC4rzG', 0, '0000-00-00 00:00:00', 'activo'),
+(28, 'Pablo', '$2y$10$tsyl.IF1cagtsdNELZEhOOgmNM4/Lv7akbOVUqd5JZ04imKNWDyEi', 0, '0000-00-00 00:00:00', 'activo'),
+(29, 'Luis', '$2y$10$W.YAEcunEQqWJJqTyLa8zOh9429IExWPMDs40iU40QKDSSeZKmmvq', 0, '0000-00-00 00:00:00', 'activo'),
+(39, 'Carlos', '$2y$10$ttXulishggwe2v.fz.4EPOkUw8logHb7Wmo0J4ian89FM688uiWUG', 0, '0000-00-00 00:00:00', 'activo'),
+(40, 'Raquel', '$2y$10$EhWPbmIm70wlbIjNCxbnmeelozAQVV2hguti/EB3.bsjf0noOkW1e', 0, '0000-00-00 00:00:00', 'activo'),
+(50, 'Francisco', '$2y$10$Y6QBinOgrECiNVyDDX.pUufzLqlRA53bkBLAg8PLZerNZgyrkbBUi', 0, '0000-00-00 00:00:00', 'activo'),
+(54, 'Christian', '$2y$10$TceF7SOJPbNHyWIugR6t8.m2CshOc/IRBPmZ7zLU99a.YcFEXR5a2', 0, '0000-00-00 00:00:00', 'activo'),
+(55, 'programador.itsi', '$2y$10$doV5rGaptI6CQlFCXfDmwe2XV5VtWlzDlUB7mAYqD5fAA348eoVJC', 0, '0000-00-00 00:00:00', 'activo'),
+(56, 'christian.pérez', '$2y$10$P2PbE7mVtFk3rjVzdrItTeCUYFGpg5NYzHv021LV7rmSChbHsxtP6', 0, '0000-00-00 00:00:00', 'activo'),
+(57, 'carla.gudiño', '$2y$10$IhPdWotskAfY.hLyfseqzeKhsFnLLXz2iYZqYEEjdYzpuS1dkkSgu', 0, '0000-00-00 00:00:00', 'activo'),
+(58, 'cristiana.pérez', '$2y$10$j/O/7tCABtUpjxgyeHhQo.uJT3L/Z1UA5KV104TNGKkfQoMlRg6Lq', 0, '0000-00-00 00:00:00', 'activo');
 
 -- --------------------------------------------------------
 
@@ -572,18 +677,14 @@ INSERT INTO `tab_usu_tipo` (`ID_USU_TIPO`, `ID_TIPO`, `ID_USUARIO`) VALUES
 (40, 3, 40),
 (50, 4, 50),
 (54, 2, 54),
-(56, 1, 56),
-(59, 1, 59);
+(55, 1, 55),
+(56, 2, 56),
+(57, 3, 57),
+(58, 4, 58);
 
 --
 -- Índices para tablas volcadas
 --
-
---
--- Indices de la tabla `password_resets`
---
-ALTER TABLE `password_resets`
-  ADD PRIMARY KEY (`id`);
 
 --
 -- Indices de la tabla `tab_administradores`
@@ -641,6 +742,15 @@ ALTER TABLE `tab_entrenador_categoria`
   ADD KEY `ID_CATEGORIA` (`ID_CATEGORIA`);
 
 --
+-- Indices de la tabla `tab_estado_pagos`
+--
+ALTER TABLE `tab_estado_pagos`
+  ADD PRIMARY KEY (`id_estado`),
+  ADD KEY `id_deportista` (`id_deportista`),
+  ADD KEY `id_pago` (`id_pago`),
+  ADD KEY `id_categoria` (`id_categoria`);
+
+--
 -- Indices de la tabla `tab_fotos_usuario`
 --
 ALTER TABLE `tab_fotos_usuario`
@@ -660,7 +770,8 @@ ALTER TABLE `tab_informes`
 -- Indices de la tabla `tab_logs`
 --
 ALTER TABLE `tab_logs`
-  ADD PRIMARY KEY (`ID_LOG`);
+  ADD PRIMARY KEY (`ID_LOG`),
+  ADD KEY `FK_REFERENCE_14` (`ID_USUARIO`);
 
 --
 -- Indices de la tabla `tab_pagos`
@@ -707,12 +818,6 @@ ALTER TABLE `tab_representantes_deportistas`
   ADD KEY `ID_REPRESENTANTE` (`ID_REPRESENTANTE`);
 
 --
--- Indices de la tabla `tab_tareas_programadas`
---
-ALTER TABLE `tab_tareas_programadas`
-  ADD PRIMARY KEY (`ID_TAREA`);
-
---
 -- Indices de la tabla `tab_temp_deportistas`
 --
 ALTER TABLE `tab_temp_deportistas`
@@ -745,16 +850,10 @@ ALTER TABLE `tab_usu_tipo`
 --
 
 --
--- AUTO_INCREMENT de la tabla `password_resets`
---
-ALTER TABLE `password_resets`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT de la tabla `tab_administradores`
 --
 ALTER TABLE `tab_administradores`
-  MODIFY `ID_ADMINISTRADOR` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `ID_ADMINISTRADOR` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `tab_bancos`
@@ -766,25 +865,31 @@ ALTER TABLE `tab_bancos`
 -- AUTO_INCREMENT de la tabla `tab_categorias`
 --
 ALTER TABLE `tab_categorias`
-  MODIFY `ID_CATEGORIA` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `ID_CATEGORIA` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT de la tabla `tab_deportistas`
 --
 ALTER TABLE `tab_deportistas`
-  MODIFY `ID_DEPORTISTA` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `ID_DEPORTISTA` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT de la tabla `tab_detalles`
 --
 ALTER TABLE `tab_detalles`
-  MODIFY `ID_DETALLE` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `ID_DETALLE` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT de la tabla `tab_entrenadores`
 --
 ALTER TABLE `tab_entrenadores`
-  MODIFY `ID_ENTRENADOR` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `ID_ENTRENADOR` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT de la tabla `tab_estado_pagos`
+--
+ALTER TABLE `tab_estado_pagos`
+  MODIFY `id_estado` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT de la tabla `tab_fotos_usuario`
@@ -796,49 +901,43 @@ ALTER TABLE `tab_fotos_usuario`
 -- AUTO_INCREMENT de la tabla `tab_informes`
 --
 ALTER TABLE `tab_informes`
-  MODIFY `id_informe` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_informe` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
 
 --
 -- AUTO_INCREMENT de la tabla `tab_logs`
 --
 ALTER TABLE `tab_logs`
-  MODIFY `ID_LOG` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `ID_LOG` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=127;
 
 --
 -- AUTO_INCREMENT de la tabla `tab_pagos`
 --
 ALTER TABLE `tab_pagos`
-  MODIFY `ID_PAGO` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=72;
+  MODIFY `ID_PAGO` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=76;
 
 --
 -- AUTO_INCREMENT de la tabla `tab_pdfs`
 --
 ALTER TABLE `tab_pdfs`
-  MODIFY `id_pdf` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id_pdf` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT de la tabla `tab_productos`
 --
 ALTER TABLE `tab_productos`
-  MODIFY `id_producto` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_producto` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `tab_producto_categoria`
 --
 ALTER TABLE `tab_producto_categoria`
-  MODIFY `id_categoria_producto` int(7) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id_categoria_producto` int(7) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `tab_representantes`
 --
 ALTER TABLE `tab_representantes`
-  MODIFY `ID_REPRESENTANTE` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
-
---
--- AUTO_INCREMENT de la tabla `tab_tareas_programadas`
---
-ALTER TABLE `tab_tareas_programadas`
-  MODIFY `ID_TAREA` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `ID_REPRESENTANTE` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `tab_temp_deportistas`
@@ -856,13 +955,13 @@ ALTER TABLE `tab_tipo_usuario`
 -- AUTO_INCREMENT de la tabla `tab_usuarios`
 --
 ALTER TABLE `tab_usuarios`
-  MODIFY `ID_USUARIO` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
+  MODIFY `ID_USUARIO` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
 
 --
 -- AUTO_INCREMENT de la tabla `tab_usu_tipo`
 --
 ALTER TABLE `tab_usu_tipo`
-  MODIFY `ID_USU_TIPO` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
+  MODIFY `ID_USU_TIPO` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
 
 --
 -- Restricciones para tablas volcadas
@@ -908,6 +1007,14 @@ ALTER TABLE `tab_entrenador_categoria`
   ADD CONSTRAINT `tab_entrenador_categoria_ibfk_2` FOREIGN KEY (`ID_CATEGORIA`) REFERENCES `tab_categorias` (`ID_CATEGORIA`);
 
 --
+-- Filtros para la tabla `tab_estado_pagos`
+--
+ALTER TABLE `tab_estado_pagos`
+  ADD CONSTRAINT `tab_estado_pagos_ibfk_1` FOREIGN KEY (`id_deportista`) REFERENCES `tab_deportistas` (`ID_DEPORTISTA`),
+  ADD CONSTRAINT `tab_estado_pagos_ibfk_2` FOREIGN KEY (`id_pago`) REFERENCES `tab_pagos` (`ID_PAGO`),
+  ADD CONSTRAINT `tab_estado_pagos_ibfk_3` FOREIGN KEY (`id_categoria`) REFERENCES `tab_categorias` (`ID_CATEGORIA`);
+
+--
 -- Filtros para la tabla `tab_fotos_usuario`
 --
 ALTER TABLE `tab_fotos_usuario`
@@ -920,6 +1027,12 @@ ALTER TABLE `tab_informes`
   ADD CONSTRAINT `tab_informes_ibfk_1` FOREIGN KEY (`id_deportista`) REFERENCES `tab_deportistas` (`ID_DEPORTISTA`),
   ADD CONSTRAINT `tab_informes_ibfk_2` FOREIGN KEY (`id_representante`) REFERENCES `tab_representantes` (`ID_REPRESENTANTE`),
   ADD CONSTRAINT `tab_informes_ibfk_3` FOREIGN KEY (`id_entrenador`) REFERENCES `tab_entrenadores` (`ID_ENTRENADOR`);
+
+--
+-- Filtros para la tabla `tab_logs`
+--
+ALTER TABLE `tab_logs`
+  ADD CONSTRAINT `FK_REFERENCE_14` FOREIGN KEY (`ID_USUARIO`) REFERENCES `tab_usuarios` (`ID_USUARIO`);
 
 --
 -- Filtros para la tabla `tab_pagos`
