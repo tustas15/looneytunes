@@ -112,11 +112,6 @@ if (isset($_GET['message'])) {
                                                 <option value="Otro">Otro</option>
                                             </select>
                                         </div>
-                                        <!-- Form Group (correo electrónico) -->
-                                        <div class="mb-3">
-                                            <label class="small mb-1" for="correo_d">Correo Electrónico</label>
-                                            <input class="form-control" id="correo_d" name="correo_d" type="email" placeholder="Ingrese el correo electrónico" required />
-                                        </div>
                                         <!-- Form Group (categoría) -->
                                         <div class="mb-3">
                                             <label class="small mb-1" for="categoria_d">Categoría</label>
