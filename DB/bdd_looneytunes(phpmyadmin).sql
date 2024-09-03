@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 02-09-2024 a las 17:39:16
+-- Tiempo de generación: 03-09-2024 a las 17:33:43
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -577,18 +577,6 @@ INSERT INTO `tab_representantes_deportistas` (`ID_DEPORTISTA`, `ID_REPRESENTANTE
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `tab_tareas_programadas`
---
-
-CREATE TABLE `tab_tareas_programadas` (
-  `ID_TAREA` int(11) NOT NULL,
-  `ID_DEPORTISTA` int(11) NOT NULL,
-  `FECHA_PROGRAMADA` datetime NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
 -- Estructura de tabla para la tabla `tab_temp_deportistas`
 --
 
@@ -782,7 +770,8 @@ ALTER TABLE `tab_informes`
 -- Indices de la tabla `tab_logs`
 --
 ALTER TABLE `tab_logs`
-  ADD PRIMARY KEY (`ID_LOG`);
+  ADD PRIMARY KEY (`ID_LOG`),
+  ADD KEY `FK_REFERENCE_14` (`ID_USUARIO`);
 
 --
 -- Indices de la tabla `tab_pagos`
@@ -827,12 +816,6 @@ ALTER TABLE `tab_representantes`
 ALTER TABLE `tab_representantes_deportistas`
   ADD PRIMARY KEY (`ID_DEPORTISTA`,`ID_REPRESENTANTE`),
   ADD KEY `ID_REPRESENTANTE` (`ID_REPRESENTANTE`);
-
---
--- Indices de la tabla `tab_tareas_programadas`
---
-ALTER TABLE `tab_tareas_programadas`
-  ADD PRIMARY KEY (`ID_TAREA`);
 
 --
 -- Indices de la tabla `tab_temp_deportistas`
@@ -957,12 +940,6 @@ ALTER TABLE `tab_representantes`
   MODIFY `ID_REPRESENTANTE` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
--- AUTO_INCREMENT de la tabla `tab_tareas_programadas`
---
-ALTER TABLE `tab_tareas_programadas`
-  MODIFY `ID_TAREA` int(11) NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT de la tabla `tab_temp_deportistas`
 --
 ALTER TABLE `tab_temp_deportistas`
@@ -1050,6 +1027,12 @@ ALTER TABLE `tab_informes`
   ADD CONSTRAINT `tab_informes_ibfk_1` FOREIGN KEY (`id_deportista`) REFERENCES `tab_deportistas` (`ID_DEPORTISTA`),
   ADD CONSTRAINT `tab_informes_ibfk_2` FOREIGN KEY (`id_representante`) REFERENCES `tab_representantes` (`ID_REPRESENTANTE`),
   ADD CONSTRAINT `tab_informes_ibfk_3` FOREIGN KEY (`id_entrenador`) REFERENCES `tab_entrenadores` (`ID_ENTRENADOR`);
+
+--
+-- Filtros para la tabla `tab_logs`
+--
+ALTER TABLE `tab_logs`
+  ADD CONSTRAINT `FK_REFERENCE_14` FOREIGN KEY (`ID_USUARIO`) REFERENCES `tab_usuarios` (`ID_USUARIO`);
 
 --
 -- Filtros para la tabla `tab_pagos`
