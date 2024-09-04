@@ -47,18 +47,6 @@ try {
         exit();
     }
 
-    // Obtener los pagos asociados al representante
-    $stmt = $conn->prepare("
-        SELECT p.ID_PAGO, d.NOMBRE_REPRE, d.APELLIDO_REPRE, p.FECHA_PAGO, p.MONTO, p.MOTIVO, p.METODO_PAGO
-        FROM tab_pagos p
-        INNER JOIN tab_representantes d ON p.ID_REPRESENTANTE = d.ID_REPRESENTANTE
-        WHERE p.ID_DEPORTISTA = :id_deportista
-        ORDER BY p.FECHA_PAGO DESC
-    ");
-    $stmt->bindParam(':id_deportista', $id_deportista, PDO::PARAM_INT);
-    $stmt->execute();
-    $pagos = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
     // Obtener los pagos agrupados por mes
     $stmt = $conn->prepare("
         SELECT DATE_FORMAT(p.FECHA_PAGO, '%Y-%m') AS mes, SUM(p.MONTO) AS total_mes
@@ -89,6 +77,52 @@ try {
     echo "Error en la consulta: " . $e->getMessage();
     exit();
 }
+
+// Obtener los pagos paginados para DataTables
+$start = isset($_GET['start']) ? intval($_GET['start']) : 0;
+$length = isset($_GET['length']) ? intval($_GET['length']) : 10;
+$searchValue = isset($_GET['search']['value']) ? $_GET['search']['value'] : '';
+
+// Preparar la consulta base
+$sql = "
+    SELECT p.ID_PAGO, d.NOMBRE_REPRE, d.APELLIDO_REPRE, p.FECHA_PAGO, p.MONTO, p.MOTIVO, p.METODO_PAGO
+    FROM tab_pagos p
+    INNER JOIN tab_representantes d ON p.ID_REPRESENTANTE = d.ID_REPRESENTANTE
+    WHERE p.ID_DEPORTISTA = :id_deportista
+";
+
+// Añadir búsqueda si se ha ingresado un valor
+if (!empty($searchValue)) {
+    $sql .= " AND (d.NOMBRE_REPRE LIKE :search OR d.APELLIDO_REPRE LIKE :search OR p.MOTIVO LIKE :search)";
+    $searchValue = "%$searchValue%";
+}
+
+// Añadir orden y límites
+$sql .= " ORDER BY p.FECHA_PAGO DESC LIMIT :start, :length";
+
+$stmt = $conn->prepare($sql);
+$stmt->bindParam(':id_deportista', $id_deportista, PDO::PARAM_INT);
+if (!empty($searchValue)) {
+    $stmt->bindParam(':search', $searchValue, PDO::PARAM_STR);
+}
+$stmt->bindParam(':start', $start, PDO::PARAM_INT);
+$stmt->bindParam(':length', $length, PDO::PARAM_INT);
+$stmt->execute();
+$pagos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Contar el total de registros
+$stmt = $conn->prepare("SELECT COUNT(*) FROM tab_pagos WHERE ID_DEPORTISTA = :id_deportista");
+$stmt->bindParam(':id_deportista', $id_deportista, PDO::PARAM_INT);
+$stmt->execute();
+$totalData = $stmt->fetchColumn();
+
+// Preparar la respuesta en formato JSON
+$response = [
+    "draw" => isset($_GET['draw']) ? intval($_GET['draw']) : 1,
+    "recordsTotal" => intval($totalData),
+    "recordsFiltered" => intval($totalData),  // Cambiar esto si hay búsqueda
+    "data" => $pagos
+];
 
 // Incluir el encabezado (header)
 include './Includes/header.php';
@@ -135,55 +169,73 @@ include './Includes/header.php';
                     </tbody>
                 </table>
                 <a href="pdf.php" class="btn btn-primary">Generar PDF</a>
-
                 </div>
             </div>
         </div>
-  <!-- Contenedor para el gráfico -->
-  <div class="card mb-4">
-        <div class="card-header">Gráfico de Pagos por Mes</div>
-        <div class="card-body">
-            <canvas id="pagosChart"></canvas>
+
+        <!-- Contenedor para el gráfico -->
+        <div class="card mb-4">
+            <div class="card-header">Gráfico de Pagos por Mes</div>
+            <div class="card-body">
+                <canvas id="pagosChart"></canvas>
+            </div>
         </div>
     </div>
-    </main>
+</main>
 
-    <!-- Script para el gráfico -->
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Datos del gráfico (esto debe ser generado en el servidor)
-        var monthlyData = <?php echo $monthlyData; ?>;
+<!-- Script para el gráfico -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Datos del gráfico (esto debe ser generado en el servidor)
+    var monthlyData = <?php echo $monthlyData; ?>;
 
-        // Configuración del gráfico
-        var ctx = document.getElementById('pagosChart').getContext('2d');
-        var myChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: monthlyData.labels,
-                datasets: [{
-                    label: 'Total de Pagos',
-                    data: monthlyData.data,
-                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
+    // Configuración del gráfico
+    var ctx = document.getElementById('pagosChart').getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: monthlyData.labels,
+            datasets: [{
+                label: 'Total de Pagos',
+                data: monthlyData.data,
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
                 }
             }
-        });
+        }
     });
+});
 </script>
 
-<!-- Incluir jQuery y Bootstrap JS -->
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-<script src="https://maxcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
+<!-- Script para cargar DataTables con AJAX -->
+<script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap4.min.js"></script>
+<script>
+$(document).ready(function() {
+    $('#pagosTable').DataTable({
+        "processing": true,
+        "serverSide": true,
+        "ajax": {
+            "url": "", // URL actual del archivo PHP
+            "type": "GET"
+        },
+        "columns": [
+            { "data": "NOMBRE_REPRE" },
+            { "data": "FECHA_PAGO" },
+            { "data": "MONTO" },
+            { "data": "METODO_PAGO" },
+            { "data": "MOTIVO" }
+        ]
+    });
+});
+</script>
 
 <!-- Incluir el pie de página (footer) -->
 <?php include './Includes/footer.php'; ?>
