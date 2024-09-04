@@ -135,11 +135,8 @@ include './Includes/header.php';
                     </tbody>
                 </table>
                 <a href="pdf.php" class="btn btn-primary">Generar PDF</a>
-<<<<<<< HEAD
-=======
 
                 </div>
->>>>>>> 582dadc23a7e5544afc93af324aa29d23db7ef54
             </div>
         </div>
   <!-- Contenedor para el gráfico -->
