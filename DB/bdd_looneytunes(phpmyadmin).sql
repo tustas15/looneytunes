@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 03-09-2024 a las 17:33:43
+-- Tiempo de generación: 10-09-2024 a las 19:52:32
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -20,6 +20,19 @@ SET time_zone = "+00:00";
 --
 -- Base de datos: `looneytunes`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `password_resets`
+--
+
+CREATE TABLE `password_resets` (
+  `id` int(11) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `token` varchar(255) NOT NULL,
+  `expire` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -625,29 +638,31 @@ CREATE TABLE `tab_usuarios` (
   `PASS` varchar(100) DEFAULT NULL,
   `intentos_fallidos` int(11) DEFAULT 0,
   `bloqueado_hasta` datetime DEFAULT NULL,
-  `status` enum('activo','inactivo') NOT NULL DEFAULT 'activo'
+  `status` enum('activo','inactivo') NOT NULL DEFAULT 'activo',
+  `reset_token` varchar(100) DEFAULT NULL,
+  `reset_token_exp` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `tab_usuarios`
 --
 
-INSERT INTO `tab_usuarios` (`ID_USUARIO`, `USUARIO`, `PASS`, `intentos_fallidos`, `bloqueado_hasta`, `status`) VALUES
-(16, 'Santiago', '$2y$10$drUQ3gjrFF5PtnRVAkWGgeQbXtqZqF451Ilzl2IDL80Z0aHsh9L8C', 0, '0000-00-00 00:00:00', 'activo'),
-(17, 'Carlos', '$2y$10$q/IbwCdYWpIeFPQpFamUtuzRyX9sqe8eMPQfiP.MN06OV.zxzpyxu', 0, '0000-00-00 00:00:00', 'activo'),
-(18, 'Viviana', '$2y$10$P2FXS9k8pp00fhFN8qEtg.0RkvMXforjqfrdAonnIlE.MdDN7NEb6', 0, '0000-00-00 00:00:00', 'activo'),
-(25, 'Samia', '$2y$10$2.Ex7qBAmjTyMxrxbKtQJuUHElXIaBDroT5DJBrwb4LZBAIyel/qm', 0, '0000-00-00 00:00:00', 'activo'),
-(27, 'Brandon', '$2y$10$zuA7jncJXXMeFMzmb/XUROEIg8dHJe4igng4mWeSja12DFZOC4rzG', 0, '0000-00-00 00:00:00', 'activo'),
-(28, 'Pablo', '$2y$10$tsyl.IF1cagtsdNELZEhOOgmNM4/Lv7akbOVUqd5JZ04imKNWDyEi', 0, '0000-00-00 00:00:00', 'activo'),
-(29, 'Luis', '$2y$10$W.YAEcunEQqWJJqTyLa8zOh9429IExWPMDs40iU40QKDSSeZKmmvq', 0, '0000-00-00 00:00:00', 'activo'),
-(39, 'Carlos', '$2y$10$ttXulishggwe2v.fz.4EPOkUw8logHb7Wmo0J4ian89FM688uiWUG', 0, '0000-00-00 00:00:00', 'activo'),
-(40, 'Raquel', '$2y$10$EhWPbmIm70wlbIjNCxbnmeelozAQVV2hguti/EB3.bsjf0noOkW1e', 0, '0000-00-00 00:00:00', 'activo'),
-(50, 'Francisco', '$2y$10$Y6QBinOgrECiNVyDDX.pUufzLqlRA53bkBLAg8PLZerNZgyrkbBUi', 0, '0000-00-00 00:00:00', 'activo'),
-(54, 'Christian', '$2y$10$TceF7SOJPbNHyWIugR6t8.m2CshOc/IRBPmZ7zLU99a.YcFEXR5a2', 0, '0000-00-00 00:00:00', 'activo'),
-(55, 'programador.itsi', '$2y$10$doV5rGaptI6CQlFCXfDmwe2XV5VtWlzDlUB7mAYqD5fAA348eoVJC', 0, '0000-00-00 00:00:00', 'activo'),
-(56, 'christian.pérez', '$2y$10$P2PbE7mVtFk3rjVzdrItTeCUYFGpg5NYzHv021LV7rmSChbHsxtP6', 0, '0000-00-00 00:00:00', 'activo'),
-(57, 'carla.gudiño', '$2y$10$IhPdWotskAfY.hLyfseqzeKhsFnLLXz2iYZqYEEjdYzpuS1dkkSgu', 0, '0000-00-00 00:00:00', 'activo'),
-(58, 'cristiana.pérez', '$2y$10$j/O/7tCABtUpjxgyeHhQo.uJT3L/Z1UA5KV104TNGKkfQoMlRg6Lq', 0, '0000-00-00 00:00:00', 'activo');
+INSERT INTO `tab_usuarios` (`ID_USUARIO`, `USUARIO`, `PASS`, `intentos_fallidos`, `bloqueado_hasta`, `status`, `reset_token`, `reset_token_exp`) VALUES
+(16, 'Santiago', '$2y$10$drUQ3gjrFF5PtnRVAkWGgeQbXtqZqF451Ilzl2IDL80Z0aHsh9L8C', 0, '0000-00-00 00:00:00', 'activo', NULL, NULL),
+(17, 'Carlos', '$2y$10$q/IbwCdYWpIeFPQpFamUtuzRyX9sqe8eMPQfiP.MN06OV.zxzpyxu', 0, '0000-00-00 00:00:00', 'activo', NULL, NULL),
+(18, 'Viviana', '$2y$10$P2FXS9k8pp00fhFN8qEtg.0RkvMXforjqfrdAonnIlE.MdDN7NEb6', 0, '0000-00-00 00:00:00', 'activo', NULL, NULL),
+(25, 'Samia', '$2y$10$2.Ex7qBAmjTyMxrxbKtQJuUHElXIaBDroT5DJBrwb4LZBAIyel/qm', 0, '0000-00-00 00:00:00', 'activo', NULL, NULL),
+(27, 'Brandon', '$2y$10$zuA7jncJXXMeFMzmb/XUROEIg8dHJe4igng4mWeSja12DFZOC4rzG', 0, '0000-00-00 00:00:00', 'activo', NULL, NULL),
+(28, 'Pablo', '$2y$10$tsyl.IF1cagtsdNELZEhOOgmNM4/Lv7akbOVUqd5JZ04imKNWDyEi', 0, '0000-00-00 00:00:00', 'activo', NULL, NULL),
+(29, 'Luis', '$2y$10$W.YAEcunEQqWJJqTyLa8zOh9429IExWPMDs40iU40QKDSSeZKmmvq', 0, '0000-00-00 00:00:00', 'activo', NULL, NULL),
+(39, 'Carlos', '$2y$10$ttXulishggwe2v.fz.4EPOkUw8logHb7Wmo0J4ian89FM688uiWUG', 0, '0000-00-00 00:00:00', 'activo', NULL, NULL),
+(40, 'Raquel', '$2y$10$EhWPbmIm70wlbIjNCxbnmeelozAQVV2hguti/EB3.bsjf0noOkW1e', 0, '0000-00-00 00:00:00', 'activo', NULL, NULL),
+(50, 'Francisco', '$2y$10$Y6QBinOgrECiNVyDDX.pUufzLqlRA53bkBLAg8PLZerNZgyrkbBUi', 0, '0000-00-00 00:00:00', 'activo', NULL, NULL),
+(54, 'Christian', '$2y$10$TceF7SOJPbNHyWIugR6t8.m2CshOc/IRBPmZ7zLU99a.YcFEXR5a2', 0, '0000-00-00 00:00:00', 'activo', '4a18333664eabf79293e817584eabc0b0ede254ba968820be892ed8dd0bf68851561a366dbf12f401f948808954252d543b3', '2024-09-10 20:52:06'),
+(55, 'programador.itsi', '$2y$10$doV5rGaptI6CQlFCXfDmwe2XV5VtWlzDlUB7mAYqD5fAA348eoVJC', 0, '0000-00-00 00:00:00', 'activo', NULL, NULL),
+(56, 'christian.pérez', '$2y$10$P2PbE7mVtFk3rjVzdrItTeCUYFGpg5NYzHv021LV7rmSChbHsxtP6', 0, '0000-00-00 00:00:00', 'activo', NULL, NULL),
+(57, 'carla.gudiño', '$2y$10$IhPdWotskAfY.hLyfseqzeKhsFnLLXz2iYZqYEEjdYzpuS1dkkSgu', 0, '0000-00-00 00:00:00', 'activo', NULL, NULL),
+(58, 'cristiana.pérez', '$2y$10$j/O/7tCABtUpjxgyeHhQo.uJT3L/Z1UA5KV104TNGKkfQoMlRg6Lq', 0, '0000-00-00 00:00:00', 'activo', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -685,6 +700,12 @@ INSERT INTO `tab_usu_tipo` (`ID_USU_TIPO`, `ID_TIPO`, `ID_USUARIO`) VALUES
 --
 -- Índices para tablas volcadas
 --
+
+--
+-- Indices de la tabla `password_resets`
+--
+ALTER TABLE `password_resets`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indices de la tabla `tab_administradores`
@@ -848,6 +869,12 @@ ALTER TABLE `tab_usu_tipo`
 --
 -- AUTO_INCREMENT de las tablas volcadas
 --
+
+--
+-- AUTO_INCREMENT de la tabla `password_resets`
+--
+ALTER TABLE `password_resets`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `tab_administradores`
